@@ -1,6 +1,6 @@
 # Skillet-Classic  -Ace3-
 
-## [2.14](https://github.com/b-morgan/Skillet-Classic/tree/2.14) (2025-06-21)
-[Full Changelog](https://github.com/b-morgan/Skillet-Classic/compare/2.13...2.14) [Previous Releases](https://github.com/b-morgan/Skillet-Classic/releases)
+## [2.15](https://github.com/b-morgan/Skillet-Classic/tree/2.15) (2025-07-07)
+[Full Changelog](https://github.com/b-morgan/Skillet-Classic/compare/2.14...2.15) [Previous Releases](https://github.com/b-morgan/Skillet-Classic/releases)
 
-- More C\_Item. fixes  
+- Fix over optimization of bag data  

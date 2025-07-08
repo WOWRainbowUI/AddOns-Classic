@@ -32,8 +32,8 @@ L["alts"] = "分身"
 L["Appearance"] = "外觀"
 L["APPEARANCEDESC"] = "控制如何顯示專業助手的設定選項"
 L["Auction"] = "拍賣"
-L["bank"] = "銀行"
 L["Bank"] = "銀行"
+L["bank"] = "銀行"
 L["Blizzard"] = "暴雪預設"
 L["Buy Reagents"] = "購買材料"
 L["buyable"] = "可購買"
@@ -100,13 +100,9 @@ L["Features"] = "功能"
 L["FEATURESDESC"] = "可選擇是否啟用的額外功能"
 L["Filter"] = "過濾方式"
 L["Filter recipes by source"] = "依來源過濾配方"
---[[Translation missing --]]
 L["FLASHONEMPTYQUEUEDESC"] = "排程空了要閃爍圖示"
---[[Translation missing --]]
 L["FLASHONEMPTYQUEUENAME"] = "排程空掉時閃爍"
---[[Translation missing --]]
 L["FLASHONREMOVEQUEUEDESC"] = "有項目從排程中移除時要閃爍圖示"
---[[Translation missing --]]
 L["FLASHONREMOVEQUEUENAME"] = "移除排程項目時閃爍"
 L["Flat"] = "不分群組"
 L["Flush All Data"] = "立即輸出所有資料"
@@ -283,9 +279,7 @@ L["SORTDESC"] = "配方清單從最低 (頂部) 到最高 (底部) 遞增排序"
 L["Sorting"] = "排序"
 L["SOUNDONEMPTYQUEUEDESC"] = "排程全部完成時播放音效"
 L["SOUNDONEMPTYQUEUENAME"] = "排程完成音效"
---[[Translation missing --]]
 L["SOUNDONREMOVEQUEUEDESC"] = "有項目從排程中移除時要播放音效"
---[[Translation missing --]]
 L["SOUNDONREMOVEQUEUENAME"] = "移除排程項目時播放音效"
 L["Source:"] = "來源:"
 L["STANDBYDESC"] = "切換待命模式開啟/關閉"

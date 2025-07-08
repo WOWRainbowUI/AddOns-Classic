@@ -33,9 +33,9 @@ L["Appearance"] = "外观"
 L["APPEARANCEDESC"] = "控制 Skillet 显示方式的选项"
 --[[Translation missing --]]
 L["Auction"] = "Auction"
-L["bank"] = "银行"
 --[[Translation missing --]]
 L["Bank"] = "Bank"
+L["bank"] = "银行"
 L["Blizzard"] = "暴雪"
 L["Buy Reagents"] = "购买材料"
 L["buyable"] = "可购买"
