@@ -13,6 +13,8 @@ local GetTotemInfo = _G.GetTotemInfo
 local GetTotemTimeLeft = _G.GetTotemTimeLeft
 
 local classBarBorderColor = { 0.45, 0.45, 0.45, 1 }
+local wowversion, wowbuild, wowdate, wowtocversion = GetBuildInfo()
+
 
 local PALADINPOWERBAR_SHOW_LEVEL = PALADINPOWERBAR_SHOW_LEVEL or 10
 local function _UnitHasVehicleUI(unit)
@@ -28,6 +30,7 @@ local GetSpecialization = _G.GetSpecialization or _GetSpecialization
 
 
 local function setClassBar(frame, object, frameLevel, visible)
+if not frame then return end
 	frame:SetParent(object)
 	frame:SetFrameLevel(frameLevel or object.classBar:GetFrameLevel())
 	if visible then
@@ -68,6 +71,11 @@ local function createClassBar(object)
 	object:SetFrameLevel(4)
 	object.classBar = CreateFrame("Frame", object:GetName().."_ClassBar", object)
 	object.classBar:SetFrameLevel(3)
+
+if wowtocversion and wowtocversion < 50000 then
+	IUF.db.classBar.use = false
+
+end
 end
 
 local function updateTotemDurationText()
@@ -1219,6 +1227,7 @@ elseif playerClass == "PRIEST" then
 
 	function IUF:ClassBarSetup(object)	-- PRIEST
 	IUF.db.classBar.useBlizzard= true
+
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard then
 				object.classBar.addOn:Hide()
