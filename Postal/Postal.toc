@@ -1,9 +1,9 @@
-## Interface: 11507, 30403, 50500, 110005, 110007
+## Interface: 11507, 30404, 50500, 110105, 110107
 ## Title: Postal
-## Version: v4.2.3 Fix
-## X-Build: 640
-## X-ReleaseDate: 2024-12-23T22:40:05Z
-## X-Revision: 640
+## Version: v4.2.9
+## X-Build: 653
+## X-ReleaseDate: 2025-07-06T16:46:43Z
+## X-Revision: 653
 ## Author: Xinhuan
 ## X-Credits: Ammo, Rabbit, Grennon, Mikk, oscarucb, Jonny aka The_Original_Manbot
 ## X-Category: Mail
@@ -24,7 +24,7 @@
 
 ## Title-zhTW: |cffB973CC[物品]|r 超強信箱 
 ## Notes-zhTW: Postal |n|n強化信箱功能。收件人可以快速地選擇分身，避免寄錯；一次收取所有信件，還有更多功能。
-## X-Category-zhTW: 物品
+## Category-zhTW: 物品
 
 Localization.lua
 Postal.lua

@@ -1,8 +1,19 @@
 ------------------------------------------------------------------------
-r640 | Zimzarina | 2024-12-23 22:40:05 +0000 (Mon, 23 Dec 2024) | 1 line
+r653 | Zimzarina | 2025-07-06 16:46:43 +0000 (Sun, 06 Jul 2025) | 1 line
 Changed paths:
-   M /trunk/Postal.toc
+   M /trunk/Postal.lua
 
 
+------------------------------------------------------------------------
+r652 | Zimzarina | 2025-07-06 16:42:03 +0000 (Sun, 06 Jul 2025) | 1 line
+Changed paths:
+   M /trunk/Modules/BlackBook.lua
+   M /trunk/Modules/Express.lua
+   M /trunk/Modules/Forward.lua
+   M /trunk/Modules/QuickAttach.lua
+   M /trunk/Postal.lua
+   A /trunk/Postal_Mists.toc
+
+Added support for Mists pre-patch.
 ------------------------------------------------------------------------
 
