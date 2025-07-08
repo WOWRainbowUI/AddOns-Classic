@@ -1,52 +1,76 @@
-tag a8673afbbc1d26cba73788bfbe47f5d090b64f45 v2.0.1
+tag 9251b897d5a683b8cb1f5764ef0c40097c6c5cab v2.0.2
 Author:	skyler-code <skylerh15@github.com>
-Date:	Thu Jul 3 17:14:21 2025 -0500
+Date:	Sun Jul 6 22:51:55 2025 -0500
 
-commit cfa0c08bf13da952efb6d8af8d980ccb2f230536
+commit 5071c17f65996405a2697176d819be853eddb551
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Jul 3 17:13:24 2025 -0500
+Date:   Sun Jul 6 22:28:23 2025 -0500
 
-    restructured conversion to be more readable
+    update destro preset
 
-commit 3fd3f640220245a562c5167d6f71367a99851087
+commit 8a727ab7babb5ddee72e47bde87f71d9dbfb8980
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Jul 3 15:46:15 2025 -0500
+Date:   Sun Jul 6 22:04:45 2025 -0500
 
-    forgot to commit this
+    corrected holy weight
 
-commit a55c42fd8ef3832c4ee5ab0e01aa9584a4330286
+commit 1ddee1e6f9a0bdf663af56f5ca09568e768daa57
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Jul 3 15:45:52 2025 -0500
+Date:   Sun Jul 6 21:55:50 2025 -0500
 
-    dont need isplayerspell checks
+    corrected disc preset
 
-commit 34f4eebe3346b049a84596d867f64846e6f8a27d
+commit a986c833ec33f810623fcbe78cdfcca7e7b6629b
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Jul 3 15:20:30 2025 -0500
+Date:   Sun Jul 6 21:55:40 2025 -0500
 
-    small cleanup
+    cache reforgeId as the actual value we'll be using
 
-commit b5b5efc50b21de2cd541e5c0c9d723effe6e50ed
+commit a30d9bfcff106ddf2c56295d7e7205f21e8466f4
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Jul 3 15:15:02 2025 -0500
+Date:   Sun Jul 6 01:34:21 2025 -0500
 
-    Reforge IDs!!! Thank you Blizzard!!!
+    increment quality step by 20
 
-commit 05f0aa2237076156fa7c6e8b9306ee167448fdb5
+commit fb1811e451cab9fc5aeede8cfd3187e910a28aaa
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Jul 3 14:49:30 2025 -0500
+Date:   Fri Jul 4 20:25:42 2025 -0500
 
-    cache conversion
+    Fixed conversion detection when user has reset then swapped specs
 
-commit 42e5659348e3f9df91ed60035da79895a23f9750
+commit 4bec5bea714333d95fbaa9f8c0a661d9a7768972
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Jul 3 13:11:27 2025 -0500
+Date:   Fri Jul 4 18:25:19 2025 -0500
 
-    dont need equippredicate anymore
+    more cleanup
 
-commit 33793506e9d297fffce5b440bb28d7c50212313d
+commit 3659f07f9297d9df49807092b14f9dcc3ceb8b30
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Jul 3 13:03:45 2025 -0500
+Date:   Fri Jul 4 16:41:23 2025 -0500
 
-    latest MF preset
+    only hook tooltip if feature is enabled
+
+commit d4903962c636172fd8d564265b7be453049926f8
+Author: skyler-code <skylerh15@github.com>
+Date:   Fri Jul 4 16:01:53 2025 -0500
+
+    cleanup
+
+commit 7acd7c9a6f962e4e555b060c0c90e91a800ad948
+Author: skyler-code <skylerh15@github.com>
+Date:   Fri Jul 4 12:32:14 2025 -0500
+
+    whitespace
+
+commit bd00b306b1a146913ac1b497217e51d5abb39afa
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Jul 3 20:53:04 2025 -0500
+
+    convert reforgeId to number
+
+commit b61daaa623bb7c5ad3707d468615123d3474e51f
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Jul 3 20:52:52 2025 -0500
+
+    prevent tooltip scanning on items that aren't reforged
 

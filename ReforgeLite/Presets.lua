@@ -343,8 +343,6 @@ local TankCaps = {
   HardExpCap
 }
 
-local RangedCaps = { HitCap }
-
 local CasterCaps = { HitCapSpell }
 
 local specInfo = {}
@@ -640,23 +638,12 @@ do
     ["PRIEST"] = {
       [specs.priest.discipline] = {
         weights = {
-          120, 0, 0, 0, 80, 120, 0, 40
+          120, 0, 0, 0, 120, 40, 0, 80
         },
       },
       [specs.priest.holy] = {
         weights = {
-          150, 0, 0, 0, 80, 120, 0, 40
-        },
-        caps = {
-          {
-            stat = StatHaste,
-            points = {
-              {
-                method = AtLeast,
-                preset = CAPS.FirstHasteBreak,
-              }
-            }
-          }
+          150, 0, 0, 0, 120, 40, 0, 80
         },
       },
       [specs.priest.shadow] = {
@@ -714,7 +701,7 @@ do
       },
       [specs.warlock.destruction] = {
         weights = {
-          0, 0, 0, 150, 50, 120, 0, 100
+          0, 0, 0, 83, 59, 57, 0, 61
         },
         caps = CasterCaps,
       },

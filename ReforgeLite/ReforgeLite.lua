@@ -1,6 +1,5 @@
 local addonName, addonTable = ...
 local addonTitle = C_AddOns.GetAddOnMetadata(addonName, "title")
-local GetItemStats = addonTable.GetItemStatsUp
 
 local ReforgeLite = CreateFrame("Frame", addonName, UIParent, "BackdropTemplate")
 addonTable.ReforgeLite = ReforgeLite
@@ -9,8 +8,10 @@ local L = addonTable.L
 local GUI = addonTable.GUI
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 addonTable.MAX_LOOPS = 200000
+local MIN_LOOPS = 1000
 
 local DeepCopy = addonTable.DeepCopy
+local GetItemStats = addonTable.GetItemStatsUp
 
 local gprint = print
 local function print(...)
@@ -77,9 +78,8 @@ local function ReforgeFrameIsVisible()
   return ReforgingFrame and ReforgingFrame:IsShown()
 end
 
-addonTable.localeClass, addonTable.playerClass, addonTable.playerClassID = UnitClass ("player")
-addonTable.playerRace = select(2,UnitRace ("player"))
-local playerClass, playerRace, localeClass = addonTable.playerClass, addonTable.playerRace, addonTable.localeClass
+addonTable.localeClass, addonTable.playerClass, addonTable.playerClassID = UnitClass("player")
+addonTable.playerRace = select(2, UnitRace("player"))
 local UNFORGE_INDEX = -1
 addonTable.StatCapMethods = {
   AtLeast = 1,
@@ -159,29 +159,30 @@ local function GetFireSpirit()
   return 0
 end
 
-function ReforgeLite:CreateItemStats()
-  local function RatingStat (i, name_, tip_, long_, id_)
-    return {
-      name = name_,
-      tip = tip_,
-      long = long_,
-      getter = function ()
-        local rating = GetCombatRating(id_)
-        if id_ == CR_HIT_SPELL then
-          rating = rating - GetFireSpirit()
-        end
-        return rating
-      end,
-      mgetter = function (method, orig)
-        return (orig and method.orig_stats and method.orig_stats[i]) or method.stats[i]
+local CR_HIT, CR_CRIT, CR_HASTE = CR_HIT_SPELL, CR_CRIT_SPELL, CR_HASTE_SPELL
+if addonTable.playerClass == "HUNTER" then
+  CR_HIT, CR_CRIT, CR_HASTE = CR_HIT_RANGED, CR_CRIT_RANGED, CR_HASTE_RANGED
+end
+
+local function RatingStat (i, name_, tip_, long_, id_)
+  return {
+    name = name_,
+    tip = tip_,
+    long = long_,
+    getter = function ()
+      local rating = GetCombatRating(id_)
+      if id_ == CR_HIT then
+        rating = rating - GetFireSpirit()
       end
-    }
-  end
-  local CR_HIT, CR_CRIT, CR_HASTE = CR_HIT_SPELL, CR_CRIT_SPELL, CR_HASTE_SPELL
-  if playerClass == "HUNTER" then
-    CR_HIT, CR_CRIT, CR_HASTE = CR_HIT_RANGED, CR_CRIT_RANGED, CR_HASTE_RANGED
-  end
-  self.itemStats = {
+      return rating
+    end,
+    mgetter = function (method, orig)
+      return (orig and method.orig_stats and method.orig_stats[i]) or method.stats[i]
+    end
+  }
+end
+
+ReforgeLite.itemStats = {
     {
       name = "ITEM_MOD_SPIRIT_SHORT",
       tip = SPELL_STAT5_NAME,
@@ -203,12 +204,10 @@ function ReforgeLite:CreateItemStats()
     RatingStat (statIds.CRIT,    "ITEM_MOD_CRIT_RATING",          CRIT_ABBR,      STAT_CRITICAL_STRIKE, CR_CRIT),
     RatingStat (statIds.HASTE,   "ITEM_MOD_HASTE_RATING",         STAT_HASTE,     STAT_HASTE,           CR_HASTE),
     RatingStat (statIds.EXP,     "ITEM_MOD_EXPERTISE_RATING",     EXPERTISE_ABBR, STAT_EXPERTISE,       CR_EXPERTISE),
-    RatingStat (statIds.MASTERY, "ITEM_MOD_MASTERY_RATING_SHORT", STAT_MASTERY,   STAT_MASTERY,         CR_MASTERY)
-  }
-end
-ReforgeLite:CreateItemStats()
+    RatingStat (statIds.MASTERY, "ITEM_MOD_MASTERY_RATING_SHORT", STAT_MASTERY,   STAT_MASTERY,         CR_MASTERY),
+}
 
-ReforgeLite.REFORGE_TABLE_BASE = 112
+local REFORGE_TABLE_BASE = 112
 local reforgeTable = {
   {statIds.SPIRIT, statIds.DODGE}, {statIds.SPIRIT, statIds.PARRY}, {statIds.SPIRIT, statIds.HIT}, {statIds.SPIRIT, statIds.CRIT}, {statIds.SPIRIT, statIds.HASTE}, {statIds.SPIRIT, statIds.EXP}, {statIds.SPIRIT, statIds.MASTERY},
   {statIds.DODGE, statIds.SPIRIT}, {statIds.DODGE, statIds.PARRY}, {statIds.DODGE, statIds.HIT}, {statIds.DODGE, statIds.CRIT}, {statIds.DODGE, statIds.HASTE}, {statIds.DODGE, statIds.EXP}, {statIds.DODGE, statIds.MASTERY},
@@ -262,7 +261,7 @@ function ReforgeLite:ValidateWoWSimsString(importStr)
         return L["%s does not match your currently equipped %s. ReforgeLite only supports equipped items."]:format(importItemLink or ("item:"..simItemInfo.id), equippedItemInfo.item)
       end
       if simItemInfo.reforging then
-        item.src, item.dst = unpack(self.reforgeTable[simItemInfo.reforging - self.REFORGE_TABLE_BASE])
+        item.src, item.dst = unpack(self.reforgeTable[simItemInfo.reforging - REFORGE_TABLE_BASE])
       else
         item.src, item.dst = nil, nil
       end
@@ -1200,8 +1199,8 @@ function ReforgeLite:CreateOptionList ()
   self.quality = CreateFrame ("Slider", nil, self.content, "UISliderTemplateWithLabels")
   self:SetAnchor (self.quality, "LEFT", self.computeButton, "RIGHT", 10, 0)
   self.quality:SetSize(150, 15)
-  self.quality:SetMinMaxValues (1000, addonTable.MAX_LOOPS)
-  self.quality:SetValueStep (1000)
+  self.quality:SetMinMaxValues (MIN_LOOPS, addonTable.MAX_LOOPS)
+  self.quality:SetValueStep ((addonTable.MAX_LOOPS - MIN_LOOPS) / 20)
   self.quality:SetObeyStepOnDrag(true)
   self.quality:SetValue (self.db.speed)
   self.quality:EnableMouseWheel (false)
@@ -1250,13 +1249,23 @@ function ReforgeLite:FillSettings()
     self.db.openOnReforge, function (val) self.db.openOnReforge = val end), "LEFT")
 
   self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Summarize reforged stats"],
-    self.db.updateTooltip, function (val) self.db.updateTooltip = val end), "LEFT")
+    self.db.updateTooltip,
+    function (val)
+      self.db.updateTooltip = val
+      if val then
+        self:HookTooltipScripts()
+      end
+    end),
+    "LEFT")
 
   self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Enable spec profiles"],
     self.db.specProfiles, function (val)
       self.db.specProfiles = val
-      if not val then
+      if val then
+        self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+      else
         self.pdb.prevSpecSettings = nil
+        self:UnregisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
       end
     end),
     "LEFT")
@@ -1374,30 +1383,32 @@ function ReforgeLite:GetReforgeTableIndex(src, dst)
   return UNFORGE_INDEX
 end
 
- local reforgeIdStringCache = setmetatable({}, {
+local reforgeIdStringCache = setmetatable({}, {
   __index = function(self, key)
     local _, itemOptions = GetItemInfoFromHyperlink(key)
     if not itemOptions then return false end
     local reforgeId = select(10, LinkUtil.SplitLinkOptions(itemOptions))
-    if reforgeId == "" then
+    reforgeId = tonumber(reforgeId)
+    if not reforgeId then
       reforgeId = UNFORGE_INDEX
+    else
+      reforgeId = reforgeId - REFORGE_TABLE_BASE
     end
     rawset(self, key, reforgeId)
     return reforgeId
   end
 })
 
-function ReforgeLite:GetReforgeIDFromString(item)
+local function GetReforgeIDFromString(item)
   local id = reforgeIdStringCache[item]
-  return ((id and id ~= UNFORGE_INDEX) and (id - self.REFORGE_TABLE_BASE) or nil)
+  if id and id ~= UNFORGE_INDEX then
+    return id
+  end
 end
 
-function ReforgeLite:GetReforgeID(slotId)
+local function GetReforgeID(slotId)
   if ignoredSlots[slotId] then return end
-  local reforgeId = self:GetReforgeIDFromString(GetInventoryItemLink('player', slotId))
-  if reforgeId and reforgeId > UNFORGE_INDEX then
-    return reforgeId
-  end
+  return GetReforgeIDFromString(GetInventoryItemLink('player', slotId))
 end
 
 function ReforgeLite:UpdateItems()
@@ -1415,7 +1426,7 @@ function ReforgeLite:UpdateItems()
       v.quality:SetVertexColor(v.qualityColor.r, v.qualityColor.g, v.qualityColor.b)
       v.quality:Show()
       stats = GetItemStats(v.item, self.pdb.ilvlCap)
-      v.reforge = self:GetReforgeID(v.slotId)
+      v.reforge = GetReforgeID(v.slotId)
       if v.reforge then
         local srcId, dstId = unpack(reforgeTable[v.reforge])
         reforgeSrc, reforgeDst = self.itemStats[srcId].name, self.itemStats[dstId].name
@@ -1688,13 +1699,13 @@ function ReforgeLite:IsReforgeMatching (slotId, reforge, override)
     return true
   end
 
-  local oreforge = self:GetReforgeID (slotId)
+  local oreforge = GetReforgeID (slotId)
 
   if override == -1 then
     return reforge == oreforge
   end
 
-  local stats = GetItemStats(GetInventoryItemLink("player", slotId))
+  local stats = GetItemStats(GetInventoryItemLink("player", slotId), self.pdb.ilvlCap)
 
   local deltas = {}
   for i = 1, #self.itemStats do
@@ -1842,7 +1853,7 @@ function ReforgeLite:DoReforgeUpdate()
         C_Reforge.SetReforgeFromCursorItem()
         if newReforge then
           local id = UNFORGE_INDEX
-          local stats = GetItemStats (slotInfo.item)
+          local stats = GetItemStats (slotInfo.item, self.pdb.ilvlCap)
           for s, reforgeInfo in ipairs(reforgeTable) do
             local srcstat, dststat = unpack(reforgeInfo)
             if (stats[self.itemStats[srcstat].name] or 0) ~= 0 and (stats[self.itemStats[dststat].name] or 0) == 0 then
@@ -1853,7 +1864,7 @@ function ReforgeLite:DoReforgeUpdate()
               coroutine.yield()
             end
           end
-        elseif self:GetReforgeID(slotInfo.slotId) then
+        elseif GetReforgeID(slotInfo.slotId) then
           C_Reforge.ReforgeItem (UNFORGE_INDEX)
           coroutine.yield()
         end
@@ -1865,22 +1876,23 @@ end
 
 --------------------------------------------------------------------------
 
-function ReforgeLite:OnTooltipSetItem (tip)
-  if not self.db.updateTooltip then return end
+local function HandleTooltipUpdate(tip)
+  if not ReforgeLite.db.updateTooltip then return end
   local _, item = tip:GetItem()
   if not item then return end
+  local reforgeId = GetReforgeIDFromString(item)
+  if not reforgeId then return end
   for _, region in pairs({tip:GetRegions()}) do
     if region:GetObjectType() == "FontString" and region:GetText() == REFORGED then
-      local reforgeId = self:GetReforgeIDFromString(item)
-      if not reforgeId or reforgeId == UNFORGE_INDEX then return end
       local srcId, destId = unpack(reforgeTable[reforgeId])
-      region:SetText(("%s (%s > %s)"):format(REFORGED, self.itemStats[srcId].long, self.itemStats[destId].long))
+      region:SetText(("%s (%s > %s)"):format(REFORGED, ReforgeLite.itemStats[srcId].long, ReforgeLite.itemStats[destId].long))
       return
     end
   end
 end
 
-function ReforgeLite:SetUpHooks ()
+function ReforgeLite:HookTooltipScripts()
+  if self.tooltipsHooked then return end
   local tooltips = {
     "GameTooltip",
     "ShoppingTooltip1",
@@ -1892,9 +1904,10 @@ function ReforgeLite:SetUpHooks ()
   for _, tooltipName in ipairs(tooltips) do
     local tooltip = _G[tooltipName]
     if tooltip then
-      tooltip:HookScript("OnTooltipSetItem", function(tip) self:OnTooltipSetItem(tip) end)
+      tooltip:HookScript("OnTooltipSetItem", HandleTooltipUpdate)
     end
   end
+  self.tooltipsHooked = true
 end
 
 --------------------------------------------------------------------------
@@ -1959,9 +1972,18 @@ function ReforgeLite:PLAYER_REGEN_DISABLED()
   self:Hide()
 end
 
-function ReforgeLite:ACTIVE_TALENT_GROUP_CHANGED()
-  self:GetConversion()
-  self:SwapSpecProfiles()
+local currentSpec -- hack because this event likes to fire twice
+function ReforgeLite:ACTIVE_TALENT_GROUP_CHANGED(curr)
+  if currentSpec ~= curr then
+    currentSpec = curr
+    self:SwapSpecProfiles()
+  end
+end
+
+function ReforgeLite:PLAYER_SPECIALIZATION_CHANGED(unitId)
+  if unitId == 'player' then
+    self:GetConversion()
+  end
 end
 
 function ReforgeLite:PLAYER_ENTERING_WORLD()
@@ -1986,12 +2008,17 @@ function ReforgeLite:ADDON_LOADED (addon)
 
   self.conversion = {}
 
-  self:SetUpHooks()
+  if self.db.updateTooltip then
+    self:HookTooltipScripts()
+  end
   self:RegisterEvent("FORGE_MASTER_OPENED")
   self:RegisterEvent("FORGE_MASTER_CLOSED")
   self:RegisterEvent("PLAYER_REGEN_DISABLED")
-  self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
+  self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+  if self.db.specProfiles then
+    self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
+  end
 
   for event in pairs(queueUpdateEvents) do
     self:RegisterEvent(event)
