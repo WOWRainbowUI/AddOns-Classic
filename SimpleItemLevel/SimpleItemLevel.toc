@@ -4,7 +4,7 @@
 ## Notes: Show item levels in useful places
 ## OptionalDeps: LibAppropriateItems-1.0
 ## SavedVariables: SimpleItemLevelDB
-## Version: v50
+## Version: v51
 ## IconAtlas: poi-door-arrow-up
 
 ## Category-enUS: Inventory
