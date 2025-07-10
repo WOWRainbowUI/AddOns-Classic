@@ -683,19 +683,35 @@ function ReforgeLite:CreateFrame()
 end
 
 function ReforgeLite:CreateItemTable ()
-  local lockTip = self:CreateFontString (nil, "OVERLAY", "GameFontNormal")
-  lockTip:SetTextColor (1, 1, 1)
-  lockTip:SetText (L["Click an item to lock it"])
-  lockTip:SetPoint ("TOPLEFT", 12, -28)
+  self.playerSpecTexture = self:CreateTexture (nil, "ARTWORK")
+  self.playerSpecTexture:SetPoint ("TOPLEFT", 10, -28)
+  self.playerSpecTexture:SetSize(18, 18)
+  self.playerSpecTexture:SetTexCoord(0.0825, 0.0825, 0.0825, 0.9175, 0.9175, 0.0825, 0.9175, 0.9175)
+
+  self.playerTalents = {}
+  for tier = 1, MAX_NUM_TALENT_TIERS do
+    self.playerTalents[tier] = self:CreateTexture(nil, "ARTWORK")
+    self.playerTalents[tier]:SetPoint("TOPLEFT", self.playerTalents[tier-1] or self.playerSpecTexture, "TOPRIGHT", 4, 0)
+    self.playerTalents[tier]:SetSize(18, 18)
+    self.playerTalents[tier]:SetTexCoord(0.0825, 0.0825, 0.0825, 0.9175, 0.9175, 0.0825, 0.9175, 0.9175)
+  end
+
+  self:UpdatePlayerSpecInfo()
 
   self.itemTable = GUI:CreateTable (#self.itemSlots + 1, #self.itemStats, ITEM_SIZE, ITEM_SIZE + 4, {0.5, 0.5, 0.5, 1}, self)
-  self.itemTable:SetPoint ("TOPLEFT", lockTip, "BOTTOMLEFT", 0, -10)
+  self.itemTable:SetPoint ("TOPLEFT", self.playerSpecTexture, "BOTTOMLEFT", 0, -6)
   self.itemTable:SetPoint ("BOTTOM", 0, 10)
   self.itemTable:SetWidth (400)
 
   self.itemLevel = self:CreateFontString (nil, "OVERLAY", "GameFontNormal")
-  self.itemLevel:SetPoint ("BOTTOMRIGHT", self.itemTable, "TOPRIGHT", 0, 10)
+  ReforgeLite.itemLevel:SetPoint ("BOTTOMRIGHT", ReforgeLite.itemTable, "TOPRIGHT", 0, 8)
   self.itemLevel:SetTextColor (1, 1, 0.8)
+
+  self.itemLockHelpButton = CreateFrame("Button",nil, self ,"MainHelpPlateButton")
+  self.itemLockHelpButton:SetScale(0.5)
+  GUI:SetTooltip(self.itemLockHelpButton, L["The current state of your equipment.\nClicking an item icon will lock it. ReforgeLite will ignore the item(s) in future calculations."])
+
+  self.itemTable:SetCell(0, 0, self.itemLockHelpButton, "TOPLEFT", -5, 10)
 
   for i, v in ipairs (self.itemStats) do
     self.itemTable:SetCellText (0, i, v.tip)
@@ -1479,10 +1495,45 @@ function ReforgeLite:UpdateItems()
       end
     end
   end
+  self.itemLevel:SetFormattedText(CHARACTER_LINK_ITEM_LEVEL_TOOLTIP, select(2,GetAverageItemLevel()))
+  self:RefreshMethodStats()
+end
 
-  self.itemLevel:SetText (STAT_AVERAGE_ITEM_LEVEL .. ": " .. floor(select(2,GetAverageItemLevel())))
-
-  self:RefreshMethodStats ()
+function ReforgeLite:UpdatePlayerSpecInfo()
+  if not self.playerSpecTexture then return end
+  local _, specName, _, icon = C_SpecializationInfo.GetSpecializationInfo(C_SpecializationInfo.GetSpecialization())
+  if specName == "" then
+    specName, icon = NONE, 132222
+  end
+  self.playerSpecTexture:SetTexture(icon)
+  local activeSpecGroup = C_SpecializationInfo.GetActiveSpecGroup()
+  for tier = 1, MAX_NUM_TALENT_TIERS do
+    self.playerTalents[tier]:Show()
+    local tierAvailable, selectedTalentColumn = GetTalentTierInfo(tier, activeSpecGroup, false, "player")
+    if tierAvailable then
+      if selectedTalentColumn > 0 then
+        local talentInfo = C_SpecializationInfo.GetTalentInfo({
+          tier = tier,
+          column = selectedTalentColumn,
+          groupIndex = activeSpecGroup,
+          target = 'player'
+        })
+        self.playerTalents[tier]:SetTexture(talentInfo.icon)
+        self.playerTalents[tier]:SetScript("OnEnter", function(f)
+          GameTooltip:SetOwner(f, "ANCHOR_LEFT")
+          GameTooltip:SetTalent(talentInfo.talentID, false, false, activeSpecGroup)
+          GameTooltip:Show()
+        end)
+        self.playerTalents[tier]:SetScript("OnLeave", function() GameTooltip:Hide() end)
+      else
+        self.playerTalents[tier]:SetTexture(132222)
+        self.playerTalents[tier]:SetScript("OnEnter", nil)
+        self.playerTalents[tier]:SetScript("OnLeave", nil)
+      end
+    else
+      self.playerTalents[tier]:Hide()
+    end
+  end
 end
 
 local queueUpdateEvents = {
@@ -1983,6 +2034,7 @@ end
 function ReforgeLite:PLAYER_SPECIALIZATION_CHANGED(unitId)
   if unitId == 'player' then
     self:GetConversion()
+    self:UpdatePlayerSpecInfo()
   end
 end
 

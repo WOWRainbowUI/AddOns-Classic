@@ -1,76 +1,10 @@
-tag 9251b897d5a683b8cb1f5764ef0c40097c6c5cab v2.0.2
+tag 17ecd36b67a696921ed97a06ced32f3cd3a04b31 v2.0.3a
 Author:	skyler-code <skylerh15@github.com>
-Date:	Sun Jul 6 22:51:55 2025 -0500
+Date:	Tue Jul 8 21:28:20 2025 -0500
 
-commit 5071c17f65996405a2697176d819be853eddb551
+commit 725642f8f4da03555f94f20a4f80aea2bfa80013
 Author: skyler-code <skylerh15@github.com>
-Date:   Sun Jul 6 22:28:23 2025 -0500
+Date:   Tue Jul 8 21:26:18 2025 -0500
 
-    update destro preset
-
-commit 8a727ab7babb5ddee72e47bde87f71d9dbfb8980
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Jul 6 22:04:45 2025 -0500
-
-    corrected holy weight
-
-commit 1ddee1e6f9a0bdf663af56f5ca09568e768daa57
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Jul 6 21:55:50 2025 -0500
-
-    corrected disc preset
-
-commit a986c833ec33f810623fcbe78cdfcca7e7b6629b
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Jul 6 21:55:40 2025 -0500
-
-    cache reforgeId as the actual value we'll be using
-
-commit a30d9bfcff106ddf2c56295d7e7205f21e8466f4
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Jul 6 01:34:21 2025 -0500
-
-    increment quality step by 20
-
-commit fb1811e451cab9fc5aeede8cfd3187e910a28aaa
-Author: skyler-code <skylerh15@github.com>
-Date:   Fri Jul 4 20:25:42 2025 -0500
-
-    Fixed conversion detection when user has reset then swapped specs
-
-commit 4bec5bea714333d95fbaa9f8c0a661d9a7768972
-Author: skyler-code <skylerh15@github.com>
-Date:   Fri Jul 4 18:25:19 2025 -0500
-
-    more cleanup
-
-commit 3659f07f9297d9df49807092b14f9dcc3ceb8b30
-Author: skyler-code <skylerh15@github.com>
-Date:   Fri Jul 4 16:41:23 2025 -0500
-
-    only hook tooltip if feature is enabled
-
-commit d4903962c636172fd8d564265b7be453049926f8
-Author: skyler-code <skylerh15@github.com>
-Date:   Fri Jul 4 16:01:53 2025 -0500
-
-    cleanup
-
-commit 7acd7c9a6f962e4e555b060c0c90e91a800ad948
-Author: skyler-code <skylerh15@github.com>
-Date:   Fri Jul 4 12:32:14 2025 -0500
-
-    whitespace
-
-commit bd00b306b1a146913ac1b497217e51d5abb39afa
-Author: skyler-code <skylerh15@github.com>
-Date:   Thu Jul 3 20:53:04 2025 -0500
-
-    convert reforgeId to number
-
-commit b61daaa623bb7c5ad3707d468615123d3474e51f
-Author: skyler-code <skylerh15@github.com>
-Date:   Thu Jul 3 20:52:52 2025 -0500
-
-    prevent tooltip scanning on items that aren't reforged
+    melee hit fix
 

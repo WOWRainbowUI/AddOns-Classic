@@ -151,7 +151,7 @@ ReforgeLite.capPresets = {
     value = CAPS.MeleeHitCap,
     name = L["Melee hit cap"],
     getter = function ()
-      return ReforgeLite:RatingPerPoint (StatHit) * (ReforgeLite:GetNeededMeleeHit () - ReforgeLite:GetMeleeHitBonus ())
+      return floor(ReforgeLite:RatingPerPoint (StatHit) * (ReforgeLite:GetNeededMeleeHit () - ReforgeLite:GetMeleeHitBonus ()))
     end,
     category = StatHit
   },
@@ -163,7 +163,7 @@ ReforgeLite.capPresets = {
       if ReforgeLite.conversion[StatExp] and ReforgeLite.conversion[StatExp][StatHit] then
         result = result + math.floor(GetCombatRating(CR_EXPERTISE) * ReforgeLite.conversion[StatExp][StatHit])
       end
-      return result
+      return floor(result)
     end,
     category = StatHit
   },
