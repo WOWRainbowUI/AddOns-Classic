@@ -227,6 +227,7 @@ local function objectOnEvent(object, event, unit, ...)
 end
 
 function IUF:RegisterObjectEvents(object)
+
 	object:RegisterUnitEvent("UNIT_NAME_UPDATE", object.realunit, object.petunit)
 	object:RegisterUnitEvent("UNIT_HEALTH", object.realunit, object.petunit)
 	object:RegisterUnitEvent("UNIT_MAXHEALTH", object.realunit, object.petunit)
@@ -240,6 +241,7 @@ function IUF:RegisterObjectEvents(object)
 	object:RegisterUnitEvent("UNIT_POWER_BAR_SHOW", object.realunit, object.petunit)
 	object:RegisterUnitEvent("UNIT_POWER_BAR_HIDE", object.realunit, object.petunit)
 	object:RegisterUnitEvent("UNIT_AURA", object.realunit, object.petunit)
+
 	object:RegisterUnitEvent("UNIT_LEVEL", object.realunit, object.petunit)
 	object:RegisterUnitEvent("UNIT_FACTION", object.realunit, object.petunit)
 	object:RegisterUnitEvent("UNIT_CLASSIFICATION_CHANGED", object.realunit, object.petunit)
@@ -256,6 +258,7 @@ function IUF:RegisterObjectEvents(object)
 	object:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", object.realunit, object.petunit)
 	object:RegisterUnitEvent("UNIT_HAPPINESS", object.realunit, object.petunit)
 	object:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", object.realunit, object.petunit)
+
 --[[
 	if object.realunit == "player" or object.objectType == "party" then
 		for event in pairs(objectVehicleEvents) do

@@ -72,10 +72,14 @@ local function createClassBar(object)
 	object.classBar = CreateFrame("Frame", object:GetName().."_ClassBar", object)
 	object.classBar:SetFrameLevel(3)
 
-if wowtocversion and wowtocversion < 50000 then
+if wowtocversion and wowtocversion < 50000 and playerClass~="DRUID" then
+
 	IUF.db.classBar.use = false
 
+
 end
+
+
 end
 
 local function updateTotemDurationText()
@@ -149,22 +153,25 @@ local function updateAddOnBorder(f)
 				else
 					--f.anchors[i]:SetTexture(1, 1, 1)
 				end
+
 				if i == 1 then
 					f.anchors[i]:SetPoint("TOPLEFT", 2, -2)
+
 				else
+
 					f.anchors[i]:SetPoint("TOPLEFT", f.anchors[i - 1], "TOPRIGHT", 2, 0)
-					f.anchors[i].s = f:CreateTexture(nil, "ARTWORK")
-					f.anchors[i].s:SetSize(f.height, f.height)
-					f.anchors[i].s:SetPoint("CENTER", f.anchors[i], "LEFT", 0, 0)
-					f.anchors[i].s:SetTexture("Interface\\AddOns\\InvenUnitFrames\\Texture\\SmallIconBorder3")
-					f.anchors[i].s:SetVertexColor(unpack(classBarBorderColor))
+--					f.anchors[i].s = f:CreateTexture(nil, "ARTWORK")
+--					f.anchors[i].s:SetSize(f.height, f.height)
+--					f.anchors[i].s:SetPoint("CENTER", f.anchors[i], "LEFT", 0, 0)
+--					f.anchors[i].s:SetTexture("Interface\\AddOns\\InvenUnitFrames\\Texture\\SmallIconBorder3")
+--					f.anchors[i].s:SetVertexColor(unpack(classBarBorderColor))
 				end
 			end
 			f.anchors[i]:Show()
 			f.anchors[i]:SetWidth(w - 2)
-			if f.anchors[i].s then
-				f.anchors[i].s:Show()
-			end
+--			if f.anchors[i].s then
+--				f.anchors[i].s:Show()
+--			end
 			if f.anchors[i].bar then
 				f.anchors[i].bar:Show()
 				m, M = f.anchors[i].bar:GetMinMaxValues()
@@ -177,9 +184,9 @@ local function updateAddOnBorder(f)
 		end
 		for i = f.num + 1, #f.anchors do
 			f.anchors[i]:Hide()
-			if f.anchors[i].s then
-				f.anchors[i].s:Hide()
-			end
+--			if f.anchors[i].s then
+--				f.anchors[i].s:Hide()
+--			end
 			if f.anchors[i].bar then
 				f.anchors[i].bar:Hide()
 			end
@@ -248,6 +255,7 @@ local function createTotem(object, num, pos, shown)
 	object.totem:SetScript("OnEvent", function(self)
 		local visible, haveTotem, name, icon
 		for i = 1, self.num do
+			if self.anchors[i] then
 			haveTotem, name, self.anchors[i].bar.startTime, self.anchors[i].bar.duration, icon = GetTotemInfo(self.anchors[i].bar:GetID())
 			if haveTotem and self.anchors[i].bar.duration > 0 then
 				visible = true
@@ -258,6 +266,7 @@ local function createTotem(object, num, pos, shown)
 			else
 				self.anchors[i].bar:Hide()
 				self.anchors[i].bar.startTime, self.anchors[i].bar.duration, self.anchors[i].bar.timeLeft = nil
+			end
 			end
 		end
 		if visible then
@@ -273,8 +282,11 @@ local function createTotem(object, num, pos, shown)
 	end
 
 	for i = 1, object.totem.num do
+	
+	if object.totem.anchors[i] then
 		object.totem.anchors[i].bar.click:SetScript("OnEnter", totemOnEnter)
 		object.totem.anchors[i].bar.click:SetScript("OnLeave", GameTooltip_Hide)
+	end
 	end
 
 	object.totem.onEvent = object.totem:GetScript("OnEvent")
@@ -327,8 +339,9 @@ local function findBuffById(id, filter)
 end
 
 if playerClass == "DRUID" then
+
 	local function updateVisible()	-- DRUID
-	
+
 	local hideMana = false
 
 --	if (GetShapeshiftFormID() == CAT_FORM or GetShapeshiftFormID == BEAR_FORM ) then --BEAR_FORM returns 5
@@ -345,8 +358,10 @@ if playerClass == "DRUID" then
 				IUF.units.player.classBar.addOn.mana:RegisterUnitEvent("UNIT_MAXPOWER", "player")
 				IUF.units.player.classBar.addOn.mana:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
 				IUF.units.player.classBar.addOn.mana:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
+
 			end
 		end
+
 	else
 
 
@@ -357,7 +372,13 @@ if playerClass == "DRUID" then
 		end
 --]]
 	end
-	IUF.db.classBar.useBlizzard= true
+	
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
+
 		if IUF.db.classBar.use then
 			if hideMana then
 				IUF.units.player.classBar.addOn.mana:SetAlpha(0)
@@ -455,13 +476,16 @@ if playerClass == "DRUID" then
 			if IUF.db.classBar.druidManaDisible and (GetShapeshiftFormID() == DRUID_CAT_FORM or  GetShapeshiftForm() > 3 ) then
 				druidManaDisible = true
 			end
+
 			if event == "UNIT_POWER_FREQUENT" or event == "UNIT_POWER_UPDATE" then
+
 				if powerType == "MANA" and not druidManaDisible then
 					self.cur = UnitPower("player", 0)
 					self.anchors[1].bar:SetValue(self.cur)
 					IUF:SetStatusBarValue(self.text, 2, self.cur, self.max)
 				end
 			elseif event == "UNIT_MAXPOWER" then
+
 				if powerType == "MANA" and not druidManaDisible then
 					self.max, self.cur = UnitPowerMax("player", 0), UnitPower("player", 0)
 					self.anchors[1].bar:SetMinMaxValues(0, self.max)
@@ -726,7 +750,12 @@ if playerClass == "DRUID" then
 	end
 
 	function IUF:ClassBarSetup(object)	-- DRUID
-	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard= false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
+--	IUF.db.classBar.useBlizzard= true
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard then
 				IUF.units.player.classBar.addOn:Hide()
@@ -1337,7 +1366,7 @@ elseif playerClass == "PALADIN" then
 	local function updateVisible()	-- PALADIN
 	IUF.db.classBar.useBlizzard= true
 		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+			if IUF.db.classBar.useBlizzard and PaladinPowerBarFrame then
 				if TotemFrame and TotemFrame:IsShown() then
 					IUF.units.player.classBar:SetHeight(40)
 				elseif PaladinPowerBarFrame:IsShown() then	-- if GetPrimaryTalentTree() == SPEC_PALADIN_RETRIBUTION then
@@ -1444,7 +1473,7 @@ elseif playerClass == "PALADIN" then
 	function IUF:ClassBarSetup(object)	-- PALADIN
 	IUF.db.classBar.useBlizzard= true
 		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+			if IUF.db.classBar.useBlizzard and PaladinPowerBarFrame then
 				object.classBar.addOn:Hide()
 				if not object.classBar.setupBlizzard then
 					object.classBar.setupBlizzard = true
@@ -1561,7 +1590,9 @@ elseif playerClass == "PALADIN" then
 
 
 elseif playerClass == "MONK" then
+
 	local function updateVisible()	-- MONK
+
 	IUF.db.classBar.useBlizzard= true
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard then
@@ -1596,6 +1627,7 @@ elseif playerClass == "MONK" then
 	end
 
 	function IUF:CreateClassBar(object)	-- MONK
+
 		createClassBar(object)
 		object = createAddOnClassBar(object)
 
@@ -1613,6 +1645,7 @@ elseif playerClass == "MONK" then
 		setAddOnBorder(object.mana, 1, true)
 		object.mana.text = object.mana:CreateFontString(nil, "OVERLAY", "FriendsFont_Small")
 		object.mana.text:SetPoint("CENTER", 0, 0)
+
 		object.mana:SetScript("OnEvent", function(self, event, _, powerType)
 			if event == "UNIT_POWER_FREQUENT" or event == "UNIT_POWER_UPDATE" then
 
@@ -1709,7 +1742,8 @@ elseif playerClass == "MONK" then
 			elseif event == "UNIT_DISPLAYPOWER" or event == "PLAYER_TALENT_UPDATE" then
 				self.prevChi = UnitPower("player", chi)
 				updateChi(self)
-			elseif not UnitHasVehicleUI("player") then
+
+			elseif event=="UNIT_ENTERED_VEHICLE" or event =="UNIT_NOT_VEHICLE" and not UnitHasVehicleUI("player") then
 				if not self:IsShown() then
 					self:Show()
 					self:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
@@ -1718,13 +1752,16 @@ elseif playerClass == "MONK" then
 				end
 				self.prevChi = UnitPower("player", chi)
 				updateChi(self)
+
 			elseif self:IsShown() then
 				self:Hide()
 				self:UnregisterEvent("UNIT_POWER_FREQUENT")
 				self:UnregisterEvent("UNIT_DISPLAYPOWER")
 				updateVisible()
+
 			end
 		end)
+
 		object.bar:RegisterEvent("PLAYER_ENTERING_WORLD")
 --		object.bar:RegisterEvent("PLAYER_TALENT_UPDATE")
 		object.bar:RegisterUnitEvent("UNIT_ENTERED_VEHICLE", "player")
@@ -1732,6 +1769,7 @@ elseif playerClass == "MONK" then
 		object.bar:Hide()
 
 		createTotem(object, 1, "BOTTOM", updateVisible)
+
 	end
 
 	function IUF:ClassBarSetup(object)	-- MONK
@@ -2628,6 +2666,7 @@ elseif playerClass == "ROGUE" then
 		end
 	end	
 else
+
 	local function updateVisible()	-- OTHER
 	IUF.db.classBar.useBlizzard= true
 		if IUF.db.classBar.use then
