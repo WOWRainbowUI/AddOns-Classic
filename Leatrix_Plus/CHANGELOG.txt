@@ -1,4 +1,8 @@
-﻿5.0.01 - 5th July 2025
+﻿5.0.02 - 8th July 2025
+- For 'Enhance tooltip' ('Interface'), fixed an anchor to cursor positioning issue.
+- Updates for Mists of Pandaria Classic.
+
+5.0.01 - 5th July 2025
 - The 'Enhance dressup' option ('Interace') now also hides model controls for the Blizzard shop.
 - The 'Auction house extras' option ('Interface') has been removed since it's now included in the game.
 - Various fixes for Mists of Pandaria Classic.
