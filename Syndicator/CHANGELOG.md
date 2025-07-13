@@ -1,7 +1,6 @@
 # Syndicator
 
-## [212](https://github.com/Baganator/Syndicator/tree/212) (2025-07-08)
-[Full Changelog](https://github.com/Baganator/Syndicator/compare/211...212) 
+## [217](https://github.com/Baganator/Syndicator/tree/217) (2025-07-13)
+[Full Changelog](https://github.com/Baganator/Syndicator/compare/216...217) 
 
-- Filter out multiple existences unique items from tier token search  
-- Search: Fallback for corrupted stored items missing quality value  
+- [Fixes #74, Fixes #73] Fix error on login when no price source configured  
