@@ -6,6 +6,8 @@ local ZoneDB = QuestieLoader:ImportModule("ZoneDB")
 ZoneDB.private.subZoneToParentZoneOverride = [[return {
     [3545] = 3483,  -- Hellfire Citadel -> Hellfire Peninsula
     [5786] = 4265, -- The Nexus -> The Nexus
+    [6384] = 796, -- Scarlet Monastery - Dungeon - Forlorn Cloister
+    [6386] = 796, -- Scarlet Monastery - Dungeon - Crusader's Chapel
     [10000] = 2100, -- Maraudon - Zaetar's Grave (fake ID for Maraudon)
     [10001] = 2017, -- Stratholme - The Gauntlet (fake ID for Stratholme)
     [10002] = 1584, -- Blackrock Depths - Shadowforge City (fake ID for Blackrock Depths)
@@ -74,6 +76,7 @@ ZoneDB.private.subZoneToParentZoneOverride = [[return {
     [10070] = 4812, -- Icecrown Citadel -> Upper Spire (fake ID for ICC)
     [10071] = 4812, -- Icecrown Citadel -> Blood Queen Lana'thel (fake ID for ICC)
     [10072] = 4812, -- Icecrown Citadel -> The Frozen Throne (fake ID for ICC)
+    [10076] = 6052, -- Scarlet Halls - Dungeon - Athenaeum
 }]]
 
 --! Generated table, add something manually here and i'll kill you //Logon

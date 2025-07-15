@@ -1537,6 +1537,9 @@ function QuestieQuestFixes:Load()
         [4144] = {
             [questKeys.specialFlags] = specialFlags.REPEATABLE, -- #1590
         },
+        [4146] = { -- Zapper Fuel
+            [questKeys.zoneOrSort] = zoneIDs.UN_GORO_CRATER,
+        },
         [4181] = {
             [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
         },
@@ -1944,7 +1947,7 @@ function QuestieQuestFixes:Load()
             [questKeys.preQuestSingle] = {5401,5503,5405},
         },
         [5526] = {
-            [questKeys.zoneOrSort] = zoneIDs.DIRE_MAUL,
+            [questKeys.zoneOrSort] = zoneIDs.MOONGLADE,
             [questKeys.requiredSourceItems] = {18501},
         },
         [5561] = {
