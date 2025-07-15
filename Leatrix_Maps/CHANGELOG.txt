@@ -1,4 +1,7 @@
-﻿5.0.01 - 7th July 2025
+﻿5.0.02 - 14th July 2025
+- Fixed the Southern Barrens map.
+
+5.0.01 - 7th July 2025
 - The default UI map options dropdown menu is now shown at the top of the map frame.
 - The 'Show objectives' and 'Show digsites' options have been removed as you can access them from the map options dropdown menu.
 - Fixed the Wintergrasp map.
