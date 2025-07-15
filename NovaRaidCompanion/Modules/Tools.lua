@@ -737,7 +737,7 @@ function NRC:getCoinString(money, size, color)
 	if (NRC.db.global.moneyString == "text") then
 		return NRC:convertMoney(money, true, "", true, color);
 	else
-		return GetCoinTextureString(money, size);
+		return C_CurrencyInfo.GetCoinTextureString(money, size);
 	end
 end
 
@@ -1001,4 +1001,17 @@ function NRC.getClassColor(class)
 	end
 	local r, g, b, hex = GetClassColor(class);
 	return r, g, b, hex;
+end
+
+function NRC:selectGossipOption(id)
+	local SelectGossipOption = C_GossipInfo and C_GossipInfo.SelectOptionByIndex or SelectGossipOption;
+	--A fix so the addon "Immersion" doesn't clash with gossip automation.
+	--SelectGossipOption seems to require the Blizzard dialog open.
+	--C_GossipInfo.SelectOptionByIndex seems to remember the last opened and works after it's closed?
+	if (ImmersionAPI and C_GossipInfo and C_GossipInfo.SelectOptionByIndex) then
+		--C_GossipInfo.SelectOptionByIndex index starts at 0 so we need to minus 1.
+		SelectGossipOption(id - 1)
+	else
+		SelectGossipOption(id);
+	end
 end

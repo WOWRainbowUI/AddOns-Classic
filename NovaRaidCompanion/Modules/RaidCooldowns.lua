@@ -2530,7 +2530,7 @@ function NRC:raidCooldownsCleanup()
 	--Do this seperately from the rest, it's only really needed after relog or reload.
 	for k, v in pairs(NRC.data.raidCooldowns) do
 		for kk, vv in pairs(v) do
-			if (not vv.endTime or vv.endTime < GetServerTime()) then
+			if (not vv.endTime or vv.endTime < GetServerTime() or vv.endTime > GetServerTime() + 43200) then
 				NRC.data.raidCooldowns[k][kk] = nil;
 			end
 		end

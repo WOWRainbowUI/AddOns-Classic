@@ -632,7 +632,7 @@ function NRC:receivedString(cmd, dataReceived, sender, distribution)
 										--Update NRC.cooldownList data so our update func picks it up;
 										if (cooldownTime) then
 											--If we supplied a cooldown arg then use that instead.
-											charData.endTime = GetServerTime() + cooldownTime;
+											charData.endTime = tonumber(cooldownTime);
 										else
 											charData.endTime = GetServerTime() + spellData.cooldown;
 										end
@@ -683,7 +683,7 @@ function NRC:receivedString(cmd, dataReceived, sender, distribution)
 					if (cooldownName) then
 						if (cooldownTime) then
 							--If we supplied a cooldown arg then use that instead.
-							endTime = GetServerTime() + cooldownTime;
+							endTime = tonumber(cooldownTime);
 						else
 							endTime = GetServerTime() + cooldown;
 						end

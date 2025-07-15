@@ -5755,25 +5755,14 @@ local function loadNewVersionFrame(version, notes, title, icon, x, y)
 end
 
 function NRC:checkNewVersion()
-	--NRC.db.global.versions = {};
-	local newVersionNotes = 1.68;
+	--.db.global.versions = {};
+	local newVersionNotes = 1.70;
 	if (NRC.version and NRC.version == newVersionNotes) then
 		if (not NRC.db.global.versions[NRC.version]) then
 			--if (NRC.isClassic) then
 				local notes = {
-					"|cFF00FF00[General]|r",
-					"Fixed cooldown frames sometimes displaying a long number if a player is dead.",
-					"Fixed an issue sometimes preventing raid status snapshot from opening properly in the raid log.",
-					"Fixed death count during raids.",
-					"Many small improvements/bug fixes.",
-					"|cFF00FF00[Mists of Pandaria Stuff]|r",
-					"Added a glyph detection system that can adjust cooldowns to if certain glyphs are being used.",
-					"Added system to detect cheat death/purgatory style death saves, they can now be selected in the class cooldowns list for MoP.",
-					"Added system to reset certain cooldowns for a player if they use Cold Snap or the like.",
-					"Added all MoP class cooldowns that are worth being tracked to the addon database ready for launch.",
-					"Added all MoP consumes and buffs to database to be displayed in the raid status and consumes log.",
-					"Added all MoP class talents data so viewing any players talents will still work from the raid status window and when inspecting.",
-					"Added a MoP version of the talents display frame that also includes a glyphs display since they can be inspected now too in MoP (for when you inspect someone or click a player to view talents in the raid status/log snapshot).",
+					--"|cFF00FF00[General]|r",
+					"Fixed raid cooldowns showing a long cooldown number if someone else with the addon installed used a cooldown in raid.",
 				};
 				loadNewVersionFrame(NRC.version, notes, "Nova Raid Companion", "Interface\\AddOns\\NovaRaidCompanion\\Media\\nrc_icon2", 0, 300);
 			--end
