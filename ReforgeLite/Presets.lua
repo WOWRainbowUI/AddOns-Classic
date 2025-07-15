@@ -151,7 +151,7 @@ ReforgeLite.capPresets = {
     value = CAPS.MeleeHitCap,
     name = L["Melee hit cap"],
     getter = function ()
-      return floor(ReforgeLite:RatingPerPoint (StatHit) * (ReforgeLite:GetNeededMeleeHit () - ReforgeLite:GetMeleeHitBonus ()))
+      return ReforgeLite:RatingPerPoint(StatHit) * (ReforgeLite:GetNeededMeleeHit() - ReforgeLite:GetMeleeHitBonus())
     end,
     category = StatHit
   },
@@ -161,9 +161,9 @@ ReforgeLite.capPresets = {
     getter = function ()
       local result = ReforgeLite:RatingPerPoint (addonTable.statIds.SPELLHIT) * (ReforgeLite:GetNeededSpellHit () - ReforgeLite:GetSpellHitBonus ())
       if ReforgeLite.conversion[StatExp] and ReforgeLite.conversion[StatExp][StatHit] then
-        result = result + math.floor(GetCombatRating(CR_EXPERTISE) * ReforgeLite.conversion[StatExp][StatHit])
+        result = result + floor(GetCombatRating(CR_EXPERTISE) * ReforgeLite.conversion[StatExp][StatHit])
       end
-      return floor(result)
+      return result
     end,
     category = StatHit
   },
@@ -171,7 +171,7 @@ ReforgeLite.capPresets = {
     value = CAPS.MeleeDWHitCap,
     name = L["Melee DW hit cap"],
     getter = function ()
-      return ReforgeLite:RatingPerPoint (StatHit) * (ReforgeLite:GetNeededMeleeHit () + 19 - ReforgeLite:GetMeleeHitBonus ())
+      return ReforgeLite:RatingPerPoint(StatHit) * (ReforgeLite:GetNeededMeleeHit() + 19 - ReforgeLite:GetMeleeHitBonus())
     end,
     category = StatHit
   },
@@ -179,7 +179,7 @@ ReforgeLite.capPresets = {
     value = CAPS.ExpSoftCap,
     name = L["Expertise soft cap"],
     getter = function ()
-      return ReforgeLite:RatingPerPoint (StatExp) * (ReforgeLite:GetNeededExpertiseSoft () - ReforgeLite:GetExpertiseBonus ())
+      return ReforgeLite:RatingPerPoint (StatExp) * (ReforgeLite:GetNeededExpertiseSoft() - ReforgeLite:GetExpertiseBonus())
     end,
     category = StatExp
   },
@@ -187,7 +187,7 @@ ReforgeLite.capPresets = {
     value = CAPS.ExpHardCap,
     name = L["Expertise hard cap"],
     getter = function ()
-      return ReforgeLite:RatingPerPoint (StatExp) * (ReforgeLite:GetNeededExpertiseHard () - ReforgeLite:GetExpertiseBonus ())
+      return ReforgeLite:RatingPerPoint (StatExp) * (ReforgeLite:GetNeededExpertiseHard() - ReforgeLite:GetExpertiseBonus())
     end,
     category = StatExp
   },
@@ -350,62 +350,17 @@ local specInfo = {}
 do
 
   local specs = {
-    deathknight = {
-      blood = 250,
-      frost = 251,
-      unholy = 252
-    },
-    druid = {
-      balance = 102,
-      feralcombat = 103,
-      guardian = 104,
-      restoration = 105
-    },
-    hunter = {
-      beastmastery = 253,
-      marksmanship = 254,
-      survival = 255
-    },
-    mage = {
-      arcane = 62,
-      fire = 63,
-      frost = 64,
-    },
-    monk = {
-      brewmaster = 268,
-      mistweaver = 270,
-      windwalker = 269,
-    },
-    paladin = {
-      holy = 65,
-      protection = 66,
-      retribution = 70,
-    },
-    priest = {
-      discipline = 256,
-      holy = 257,
-      shadow = 258
-    },
-    rogue = {
-      assassination = 259,
-      combat = 260,
-      subtlety = 261
-    },
-    shaman = {
-      elemental = 262,
-      enhancement = 263,
-      restoration = 264
-    },
-    warlock = {
-      afflication = 265,
-      demonology = 266,
-      destruction = 267,
-    },
-    warrior = {
-      arms = 71,
-      fury = 72,
-      protection = 73,
-    }
+    deathknight = { blood = 250, frost = 251, unholy = 252 },
+    druid = { balance = 102, feralcombat = 103, guardian = 104, restoration = 105 },
+    hunter = { beastmastery = 253, marksmanship = 254, survival = 255 },
+    mage = { arcane = 62, fire = 63, frost = 64 },
+    monk = { brewmaster = 268, mistweaver = 270, windwalker = 269 },
+    paladin = { holy = 65, protection = 66, retribution = 70 },
+    priest = { discipline = 256, holy = 257, shadow = 258 },
+    rogue = { assassination = 259, combat = 260, subtlety = 261 },
+    shaman = { elemental = 262, enhancement = 263, restoration = 264 },
+    warlock = { afflication = 265, demonology = 266, destruction = 267 },
+    warrior = { arms = 71, fury = 72, protection = 73 }
   }
 
   for _,ids in pairs(specs) do
@@ -585,9 +540,8 @@ do
       },
       [specs.monk.mistweaver] = {
         weights = {
-          0, 0, 0, 141, 46, 57, 99, 39
+          80, 0, 0, 0, 200, 40, 0, 30
         },
-        caps = MeleeCaps,
       },
       [specs.monk.windwalker] = {
         weights = {

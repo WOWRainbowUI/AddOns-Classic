@@ -465,7 +465,7 @@ local function SetTextDelta (text, value, cur, override)
   else
     text:SetTextColor (1, 0.4, 0.4)
   end
-  text:SetText (format (value - cur >= 0 and "+%s" or "%s", value - cur))
+  text:SetFormattedText(value - cur >= 0 and "+%s" or "%s", value - cur)
 end
 
 ------------------------------------------------------------------------
@@ -826,12 +826,13 @@ function ReforgeLite:AddCapPoint (i, loading)
     local rating = pointValue / self:RatingPerPoint(cap.stat)
     if cap.stat == statIds.HIT then
       local meleeHitBonus = self:GetMeleeHitBonus()
+      rating = RoundToSignificantDigits(rating, 1)
       if meleeHitBonus > 0 then
         rating = ("%.2f%% + %s%% = %.2f"):format(rating, meleeHitBonus, rating + meleeHitBonus)
       else
         rating = ("%.2f"):format(rating)
       end
-      local spellHitRating = pointValue / self:RatingPerPoint(statIds.SPELLHIT)
+      local spellHitRating = RoundToSignificantDigits(pointValue / self:RatingPerPoint(statIds.SPELLHIT), 1)
       local spellHitBonus = self:GetSpellHitBonus()
       if spellHitBonus > 0 then
         spellHitRating = ("%.2f%% + %s%% = %.2f"):format(spellHitRating,spellHitBonus,spellHitRating+spellHitBonus)
@@ -840,11 +841,12 @@ function ReforgeLite:AddCapPoint (i, loading)
       end
       rating = ("%s: %s%%\n%s: %s%%"):format(MELEE, rating, STAT_CATEGORY_SPELL, spellHitRating)
     elseif cap.stat == statIds.EXP then
+      rating = RoundToSignificantDigits(rating, 1)
       local expBonus = self:GetExpertiseBonus()
       if expBonus > 0 then
-        rating = ("%.2f + %s = %.2f"):format(rating, expBonus, rating + expBonus)
+        rating = ("%.2f%% + %s = %.2f"):format(rating, expBonus, rating + expBonus)
       else
-        rating = ("%.2f"):format(rating)
+        rating = ("%.2f%%"):format(rating)
       end
     elseif cap.stat == statIds.HASTE then
       local meleeHaste, rangedHaste, spellHaste = self:CalcHasteWithBonuses(rating)
@@ -908,12 +910,12 @@ function ReforgeLite:UpdateCapPreset (i, point)
     self.statCaps.cells[row][3]:SetTextColor (0.5, 0.5, 0.5)
     self.statCaps.cells[row][3]:SetMouseClickEnabled (false)
     self.statCaps.cells[row][3]:ClearFocus ()
-    self.pdb.caps[i].points[point].value = max(0, ceil (self.capPresets[preset].getter ()))
+    self.pdb.caps[i].points[point].value = max(0, floor(self.capPresets[preset].getter()))
   else
     self.statCaps.cells[row][3]:SetTextColor (1, 1, 1)
     self.statCaps.cells[row][3]:SetMouseClickEnabled (true)
   end
-  self.statCaps.cells[row][3]:SetText (self.pdb.caps[i].points[point].value)
+  self.statCaps.cells[row][3]:SetText(self.pdb.caps[i].points[point].value)
 end
 function ReforgeLite:UpdateCapPoints (i)
   local base = (i == 1 and 1 or #self.pdb.caps[1].points + 2)
@@ -1369,7 +1371,7 @@ function ReforgeLite:RefreshMethodStats()
       for i, v in ipairs (self.itemStats) do
         local mvalue = v.mgetter (self.pdb.method)
         if v.percent then
-          self.methodStats[i].value:SetText (format ("%.2f%%", mvalue))
+          self.methodStats[i].value:SetFormattedText("%.2f%%", mvalue)
         else
           self.methodStats[i].value:SetText (mvalue)
         end
@@ -1724,7 +1726,7 @@ function ReforgeLite:RefreshMethodWindow()
     end
     local slotInfo = self.pdb.method.items[i]
     if slotInfo.reforge then
-      v.reforge:SetText (format ("%d %s > %s", slotInfo.amount, self.itemStats[slotInfo.src].long, self.itemStats[slotInfo.dst].long))
+      v.reforge:SetFormattedText("%d %s > %s", slotInfo.amount, self.itemStats[slotInfo.src].long, self.itemStats[slotInfo.dst].long)
       v.reforge:SetTextColor (1, 1, 1)
     else
       v.reforge:SetText (L["No reforge"])
@@ -1936,7 +1938,7 @@ local function HandleTooltipUpdate(tip)
   for _, region in pairs({tip:GetRegions()}) do
     if region:GetObjectType() == "FontString" and region:GetText() == REFORGED then
       local srcId, destId = unpack(reforgeTable[reforgeId])
-      region:SetText(("%s (%s > %s)"):format(REFORGED, ReforgeLite.itemStats[srcId].long, ReforgeLite.itemStats[destId].long))
+      region:SetFormattedText("%s (%s > %s)", REFORGED, ReforgeLite.itemStats[srcId].long, ReforgeLite.itemStats[destId].long)
       return
     end
   end

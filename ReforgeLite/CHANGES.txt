@@ -1,10 +1,28 @@
-tag 17ecd36b67a696921ed97a06ced32f3cd3a04b31 v2.0.3a
+tag 091019240fa245cfb1afcc767321c640f1b7f246 v2.0.4
 Author:	skyler-code <skylerh15@github.com>
-Date:	Tue Jul 8 21:28:20 2025 -0500
+Date:	Thu Jul 10 00:43:00 2025 -0500
 
-commit 725642f8f4da03555f94f20a4f80aea2bfa80013
+commit 087d5073ed4cb327f3ccb1ecf5cc4a368f618d92
 Author: skyler-code <skylerh15@github.com>
-Date:   Tue Jul 8 21:26:18 2025 -0500
+Date:   Wed Jul 9 15:23:28 2025 -0500
 
-    melee hit fix
+    mistweaver weight correction
+
+commit 6fb6c9ad81786fc61076b305d1aef9a7661cab2a
+Author: skyler-code <skylerh15@github.com>
+Date:   Wed Jul 9 15:18:26 2025 -0500
+
+    removing whitespace
+
+commit c6188834048dfd97836e91edcf69cb77e29ddc7f
+Author: skyler-code <skylerh15@github.com>
+Date:   Wed Jul 9 10:28:28 2025 -0500
+
+    more hit rating fixes
+
+commit 246264d85567494b3263152c4b4537638d836d69
+Author: skyler-code <skylerh15@github.com>
+Date:   Wed Jul 9 03:37:28 2025 -0500
+
+    utilize SetFormattedText functions
 

@@ -2,7 +2,7 @@
 ## Author: d07.RiV (Iroared) (Continued by Brues)
 ## Title: ReforgeLite Classic
 ## Notes: Calculates optimal reforging for given weights/caps.
-## Version: v2.0.3a
+## Version: v2.0.4
 ## SavedVariables: ReforgeLiteDB
 ## OptionalDeps: Ace3, LibStub, !LibUIDropDownMenu, Pawn
 ## X-Website: https://github.com/skyler-code/ReforgeLite/issues
