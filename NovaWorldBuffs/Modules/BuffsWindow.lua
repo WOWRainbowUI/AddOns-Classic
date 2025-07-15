@@ -868,8 +868,8 @@ function NWB:recalcBuffsLineFramesTooltip(obj)
 								line = line .. " ";
 								obj.tooltip.fsCalc:SetText(line);
 							end
-							text = text .. line .. " " .. GetCoinTextureString(v.gold, 10);
-							--text = text .. "\n|c" .. classColor .. k .. "|r " .. GetCoinTextureString(v.gold, 10);
+							text = text .. line .. " " .. C_CurrencyInfo.GetCoinTextureString(v.gold, 10);
+							--text = text .. "\n|c" .. classColor .. k .. "|r " .. C_CurrencyInfo.GetCoinTextureString(v.gold, 10);
 						end
 					end
 				end
@@ -881,7 +881,7 @@ function NWB:recalcBuffsLineFramesTooltip(obj)
 				line = line .. " ";
 				obj.tooltip.fsCalc:SetText(line);
 			end
-			line = line .. " " .. GetCoinTextureString(total, 10);
+			line = line .. " " .. C_CurrencyInfo.GetCoinTextureString(total, 10);
 			obj.tooltip.fs:SetText(text .. line);
 		elseif (type == "char") then
 			if (data.playerName) then
@@ -928,7 +928,7 @@ function NWB:recalcBuffsLineFramesTooltip(obj)
 							.. color2 .. data.totalBagSlots .. "|r";
 				end
 				if (data.gold) then
-					text = text .. "\n" .. color1 .. L["Gold"] .. ":|r " .. color2 .. GetCoinTextureString(data.gold, 10) .. "|r";
+					text = text .. "\n" .. color1 .. L["Gold"] .. ":|r " .. color2 .. C_CurrencyInfo.GetCoinTextureString(data.gold, 10) .. "|r";
 				end
 				local durabilityAverage = data.durabilityAverage or 100;
 				local displayDurability;

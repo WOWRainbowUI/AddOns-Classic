@@ -521,6 +521,19 @@ NWB.dalaranCreatures = {
 	[32690] = "Bitty Frostflinger",
 };
 
+--Have a couple npcs ready to go incase layering start point is pandaria.
+--[[NWB.pandariaCreatures = {
+	[62996] = "Madam Vee Luo",
+	[64041] = "Mifan",
+	[64044] = "Warpweaver Shafiee",
+	[64045] = "Thaumaturge Anjool",
+	[64149] = "Matron Vi Vinh",
+	[64076] = "Bonni Chang",
+	[64573] = "Warpweaver Ramahesh",
+	[64045] = "Thaumaturge Faraket",
+	
+};]]
+
 NWB.companionCreatures = {
 	--Classic.
 	[9662] = "Sprite Darter Hatchling",
@@ -858,18 +871,42 @@ if (NWB.isWrath) then
 	for k, v in pairs(NWB.dalaranCreatures) do
 		NWB.npcs[k] = v;
 	end
+--elseif (NWB.isMOP) then
+--	NWB.map = 390;
+--	NWB.mapName = L["Vale of Eternal Blossoms"];
+--	for k, v in pairs(NWB.pandariaCreatures) do
+--		NWB.npcs[k] = v;
+--	end
 else
 	if (NWB.faction == "Horde") then
-		NWB.map = 1454;
+		if (NWB.expansionNum > 4) then
+			--Seems a bunch of map IDs changed with MoP.
+			--This may need changing to the new padaria capitals like with wrath the layering start point was moved to the new expanion continent by blizz.
+			NWB.map = 85;
+		else
+			NWB.map = 1454;
+		end
 		NWB.mapName = L["Orgrimmar"];
 		for k, v in pairs(NWB.orgrimmarCreatures) do
 			NWB.npcs[k] = v;
 		end
 	else
-		NWB.map = 1453;
+		if (NWB.expansionNum > 4) then
+			NWB.map = 84;
+		else
+			NWB.map = 1453;
+		end
 		NWB.mapName = L["Stormwind"];
 		for k, v in pairs(NWB.stormwindCreatures) do
 			NWB.npcs[k] = v;
 		end
 	end
 end
+
+--[[function NWB:getContinentMapIds()
+	--As of mop beta, these ids could change again, some strange choices here to only have some change and not others.
+	--12 kalimdor, 13 eastern kingdoms, outlands, 1467, 113 northrend, 424 Pandaria
+	for k, v in ipairs(C_Map.GetMapChildrenInfo(424)) do
+		print("NWB.layerMapWhitelist[" .. v.mapID .. "] = \"" .. v.name .. "\";");
+	end
+end]]

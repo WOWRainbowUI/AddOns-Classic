@@ -1094,3 +1094,9 @@ L["resetFramesDesc"] = "Click here to reset all window positions back to middle 
 
 L["buffHasNoCooldown"] = "This drop doesn't trigger a cooldown";
 L["noCooldown"] = "No cooldown";
+
+L["showDisableLayerButtonsTitle"] = "Show Disable Layer Button"
+L["showDisableLayerButtonsDesc"] = "Show disable layer button on the timers/layers frame.";
+
+L["Show Quest Handins Only"] = "Show Quest Handins Only";
+L["showQuestHandinsTooltip"] = "Only display log entries of rend quest being handed in."

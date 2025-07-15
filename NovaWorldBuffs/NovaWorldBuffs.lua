@@ -221,7 +221,21 @@ function NWB:GetPlayerZonePosition()
 	if (zone == 244) then
 		zone = 245;
 	end
+	--Merge valley of the four winds with horde and alliance shrines, they are the same zone with the same zoneID.
+	if (zone == 391 or zone == 394) then
+		zone = 390;
+	end
 	return x, y, zone;
+end
+
+function NWB:selectGossipOption(id)
+	local SelectGossipOption = SelectGossipOption;
+	if (C_GossipInfo and C_GossipInfo.SelectOptionByIndex) then
+		SelectGossipOption = C_GossipInfo.SelectOptionByIndex;
+		--C_GossipInfo.SelectOptionByIndex index starts at 0 so we need to minus 1.
+		id = id - 1;
+	end
+	SelectGossipOption(id);
 end
 
 --Print current buff timers to chat window.
@@ -373,7 +387,7 @@ end
 function NWB:isCapitalCity(includeCrossroads)
 	local _, _, zone = NWB:GetPlayerZonePosition();
 	local subZone = GetSubZoneText();
-	if (zone == 1453 or zone == 1454 or (includeCrossroads and zone == 1454 and subZone == POSTMASTER_LETTER_BARRENS_MYTHIC)) then
+	if (zone == 1453 or zone == 1454 or (includeCrossroads and zone == 1413 and subZone == POSTMASTER_LETTER_BARRENS_MYTHIC)) then
 		return true;
 	end
 end
@@ -1189,7 +1203,7 @@ function NWB:sendGuildMsg(msg, msgType, buffType, zoneName, prefix, minVersion)
 	if (not NWB:checkEventStatus("sendGuildMsg", buffType, msgType)) then
 		return;
 	end
-	GuildRoster();
+	C_GuildInfo.GuildRoster();
 	local shortSettingsKeys = {
 		--Check the short keys we use for sending smaller data also.
 		--Just incase there wern't converted back properly on data received for some reason.
@@ -1716,7 +1730,7 @@ function NWB:printDmfPercent()
 		end
 	end
 	if (percent) then
-		NWB:print(string.format(L["dmfDamagePercent"], percent));
+		NWB:print(string.format(L["dmfDamagePercent"], "|cFF00C800" .. percent .. "|r"));
 	end
 end
 
@@ -1735,6 +1749,10 @@ function NWB:registerTimePlayedMsg()
 			_G['ChatFrame' .. k]:RegisterEvent("TIME_PLAYED_MSG");
 		end
 	end
+	--Filter chat msgs for Chattynator.
+	if (Chattynator and Chattynator.API.FilterTimePlayed) then
+		Chattynator.API.FilterTimePlayed(false);
+	end
 end
 
 function NWB:unregisterTimePlayedMsg()
@@ -1744,6 +1762,9 @@ function NWB:unregisterTimePlayedMsg()
 			_G['ChatFrame' .. i]:UnregisterEvent("TIME_PLAYED_MSG");
 			playedWindows[i] = true;
 		end
+	end
+	if (Chattynator and Chattynator.API.FilterTimePlayed) then
+		Chattynator.API.FilterTimePlayed(true);
 	end
 end
 
@@ -2250,6 +2271,9 @@ function NWB:setLayered()
 	if (NWB.isHardcore) then
 		NWB.isLayered = true;
 	end
+	if (NWB.realm == "Classic Beta PvE") then
+		NWB.isLayered = true;
+	end
 end
 
 function NWB:setLayerLimit()
@@ -2611,10 +2635,10 @@ f:SetScript("OnEvent", function(self, event, ...)
 				NWB:refreshFelwoodMarkers();
 				NWB:refreshWorldbuffMarkers();
 			end)
-			GuildRoster();
+			C_GuildInfo.GuildRoster();
 			if (NWB.db.global.logonPrint) then
 				C_Timer.After(10, function()
-					GuildRoster(); --Attempting to fix slow guild roster update at logon.
+					C_GuildInfo.GuildRoster(); --Attempting to fix slow guild roster update at logon.
 					NWB:printBuffTimers(true);
 					--If logon timers are enabled we'll check this during the printBuffTimers() func instgead..
 					--[[C_Timer.After(1, function()
@@ -2720,7 +2744,7 @@ f:SetScript("OnEvent", function(self, event, ...)
 		end
 		--Request roster update when guild member goes online or offline, this seems to be delayed, see if this helps?
 		if (string.match(text, string.gsub(ERR_FRIEND_ONLINE_SS, "|H.+|h", "(.+)")) or string.match(text, string.gsub(ERR_FRIEND_OFFLINE_S, "%%s", "(.+)"))) then
-			GuildRoster();
+			C_GuildInfo.GuildRoster();
 		end
 	elseif (event == "CHAT_MSG_ADDON") then
 		local commPrefix, string, distribution, sender = ...;
@@ -3456,7 +3480,7 @@ function NWB:isPlayerInGuild(who, onlineOnly)
 	if (not IsInGuild()) then
 		return;
 	end
-	GuildRoster();
+	C_GuildInfo.GuildRoster();
 	local numTotalMembers = GetNumGuildMembers();
 	local normalizedWho = string.gsub(who, " ", "");
 	normalizedWho = string.gsub(normalizedWho, "'", "");
@@ -3771,11 +3795,7 @@ function SlashCmdList.NWBCMD(msg, editBox)
 	end
 	if (msg == "map") then
 		WorldMapFrame:Show();
-		if (NWB.faction == "Alliance") then
-			WorldMapFrame:SetMapID(1453);
-		else
-			WorldMapFrame:SetMapID(1454);
-		end
+		WorldMapFrame:SetMapID(NWB.map);
 		return;
 	end
 	if (msg == "ashenvale") then
@@ -3981,8 +4001,8 @@ function NWB:updateMinimapButton(tooltip, frame)
 			if (v.spawn and v.spawn > 0) then
 				ageText = " |cFF989898(" .. L["Active"] .. " " .. NWB:getTimeString(GetServerTime() - v.spawn, true, "short") .. ")|r ";
 			end
-			tooltip:AddLine("|cff00ff00[" .. L["Layer"] .. " " .. count .. "]|r  |cFF989898(" .. L["Zone"] .. " " .. k .. ") " .. ageText .. wintergraspTexture .. buffTextures .. "|r");
-			if (not noWorldBuffTimers) then
+			tooltip:AddLine("|cff00ff00[" .. L["Layer"] .. " " .. count .. "]|r  |cFF989898(" .. L["zone"] .. " " .. k .. ") " .. ageText .. wintergraspTexture .. buffTextures .. "|r");
+			if (not noWorldBuffTimers and NWB.expansionNum < 2) then
 				if ((NWB.isClassic or (not NWB.db.global.hideMinimapBuffTimers
 						and not (NWB.db.global.disableBuffTimersMaxBuffLevel and UnitLevel("player") > 64)))
 						and not (NWB.isSOD and UnitLevel("player") < NWB.db.global.disableOnlyNefRendBelowMaxLevelNum)) then
@@ -4680,7 +4700,7 @@ end
 local f = CreateFrame("Frame")
 f:RegisterEvent("CHAT_MSG_SYSTEM")
 f:SetScript('OnEvent', function(self, event, msg)
-	if (IsAddOnLoaded("NovaInstanceTracker")) then
+	if (C_AddOns.IsAddOnLoaded("NovaInstanceTracker")) then
 		return;
 	end
 	local instance;
@@ -4779,7 +4799,7 @@ end
 
 --Requested by some users, start BigWigs timer bars if installed.
 --[[function NWB:sendBigWigs(time, msg)
-	if (IsAddOnLoaded("BigWigs") and NWB.db.global.bigWigsSupport) then
+	if (C_AddOns.IsAddOnLoaded("BigWigs") and NWB.db.global.bigWigsSupport) then
 		if (not SlashCmdList.BIGWIGSLOCALBAR) then
 			LoadAddOn("BigWigs_Plugins");
 		end
@@ -6235,7 +6255,11 @@ function NWB:updateWorldbuffMarkers(type, layer)
 			_G[type .. layer .. "NWBWorldMap"].fsLayer:SetText("|cff00ff00[" .. L["Layer"] .. " " .. count.. "] |cFFB5E0E6(" .. layerZoneID .. ")");
 		end
 		if (NWB.data.layers[layer]) then
-			time = (NWB.data.layers[layer][type .. "Timer"] + NWB[type .. "CooldownTime"]) - GetServerTime() or 0;
+			if (type == "rend") then
+				time = (NWB:getRendTimer(layer) + NWB[type .. "CooldownTime"]) - GetServerTime() or 0;
+			else
+				time = (NWB.data.layers[layer][type .. "Timer"] + NWB[type .. "CooldownTime"]) - GetServerTime() or 0;
+			end
 		else
 			time = 0;
 		end
@@ -6616,7 +6640,7 @@ end
 function NWB:updateWorldbuffMarkersScale()
 	local scale = 0.8;
 	local mapModInstalled;
-	if (IsAddOnLoaded("Leatrix_Maps")) then
+	if (C_AddOns.IsAddOnLoaded("Leatrix_Maps")) then
 		--Only needed with Leatrix Maps so far since it resizes the full map.
 		--ElvUI seems to use the blizzard large and small map.
 		mapModInstalled = true;
@@ -8749,11 +8773,20 @@ function NWB:recalclayerFrame(isLogon, copyPaste)
 			if (not _G["NWBDisableLayerButton" .. count]) then
 				NWB:createDisableLayerButton(count);
 			end
-			--Make sure right button is shown.
-			if (_G["NWBEnableLayerButton" .. count]) then
-				_G["NWBEnableLayerButton" .. count]:Hide();
+			if (NWB.db.global.showDisableLayerButtons) then
+				--Make sure right button is shown.
+				if (_G["NWBEnableLayerButton" .. count]) then
+					_G["NWBEnableLayerButton" .. count]:Hide();
+				end
+				_G["NWBDisableLayerButton" .. count]:Show();
+			else
+				if (_G["NWBEnableLayerButton" .. count]) then
+					_G["NWBEnableLayerButton" .. count]:Hide();
+				end
+				if (_G["NWBDisableLayerButton" .. count]) then
+					_G["NWBDisableLayerButton" .. count]:Hide();
+				end
 			end
-			_G["NWBDisableLayerButton" .. count]:Show();
 			--Set the button beside the layer text, count the lines in the edit box to find right position.
 			--local _, lineCount = string.gsub(NWBlayerFrame.EditBox:GetText(), "\n", "");
 			local _, lineCount = string.gsub(text, "\n", "");
@@ -9955,6 +9988,94 @@ if (NWB.isCata or NWB.isWrath) then --No tbc zones in cata at the start, try kee
 	NWB.layerMapWhitelist[245] = "Tol Barad";
 end
 
+if (NWB.isMOP) then
+	--Map IDs changed with mop, remove all and start fresh with the new IDs.
+	--Don't include wrath or tbc zones at the start.
+	--Generated by NWB:getContinentMapIds(), minus cata zones to show them seperately.
+	NWB.layerMapWhitelist = {};
+	NWB.layerMapWhitelist[1] = "Durotar";
+	NWB.layerMapWhitelist[7] = "Mulgore";
+	NWB.layerMapWhitelist[10] = "The Barrens";
+	NWB.layerMapWhitelist[57] = "Teldrassil";
+	NWB.layerMapWhitelist[62] = "Darkshore";
+	NWB.layerMapWhitelist[63] = "Ashenvale";
+	NWB.layerMapWhitelist[64] = "Thousand Needles";
+	NWB.layerMapWhitelist[65] = "Stonetalon Mountains";
+	NWB.layerMapWhitelist[66] = "Desolace";
+	NWB.layerMapWhitelist[69] = "Feralas";
+	NWB.layerMapWhitelist[70] = "Dustwallow Marsh";
+	NWB.layerMapWhitelist[71] = "Tanaris";
+	NWB.layerMapWhitelist[76] = "Azshara";
+	NWB.layerMapWhitelist[77] = "Felwood";
+	NWB.layerMapWhitelist[78] = "Un'Goro Crater";
+	NWB.layerMapWhitelist[80] = "Moonglade";
+	NWB.layerMapWhitelist[81] = "Silithus";
+	NWB.layerMapWhitelist[83] = "Winterspring";
+	NWB.layerMapWhitelist[85] = "Orgrimmar";
+	NWB.layerMapWhitelist[88] = "Thunder Bluff";
+	NWB.layerMapWhitelist[89] = "Darnassus";
+	NWB.layerMapWhitelist[97] = "Azuremyst Isle";
+	NWB.layerMapWhitelist[103] = "The Exodar";
+	NWB.layerMapWhitelist[106] = "Bloodmyst Isle";
+	NWB.layerMapWhitelist[199] = "Southern Barrens";
+	--NWB.layerMapWhitelist[327] = "Ahn'Qiraj: The Fallen Kingdom";
+	--NWB.layerMapWhitelist[524] = "Battle on the High Seas";
+	
+	NWB.layerMapWhitelist[14] = "Arathi Highlands";
+	NWB.layerMapWhitelist[15] = "Badlands";
+	NWB.layerMapWhitelist[17] = "Blasted Lands";
+	NWB.layerMapWhitelist[18] = "Tirisfal Glades";
+	NWB.layerMapWhitelist[21] = "Silverpine Forest";
+	NWB.layerMapWhitelist[22] = "Western Plaguelands";
+	NWB.layerMapWhitelist[23] = "Eastern Plaguelands";
+	NWB.layerMapWhitelist[25] = "Hillsbrad Foothills";
+	NWB.layerMapWhitelist[26] = "The Hinterlands";
+	NWB.layerMapWhitelist[27] = "Dun Morogh";
+	NWB.layerMapWhitelist[32] = "Searing Gorge";
+	NWB.layerMapWhitelist[36] = "Burning Steppes";
+	NWB.layerMapWhitelist[37] = "Elwynn Forest";
+	NWB.layerMapWhitelist[42] = "Deadwind Pass";
+	NWB.layerMapWhitelist[47] = "Duskwood";
+	NWB.layerMapWhitelist[48] = "Loch Modan";
+	NWB.layerMapWhitelist[49] = "Redridge Mountains";
+	NWB.layerMapWhitelist[50] = "Northern Stranglethorn";
+	NWB.layerMapWhitelist[51] = "Swamp of Sorrows";
+	NWB.layerMapWhitelist[52] = "Westfall";
+	NWB.layerMapWhitelist[56] = "Wetlands";
+	NWB.layerMapWhitelist[84] = "Stormwind City";
+	NWB.layerMapWhitelist[87] = "Ironforge";
+	NWB.layerMapWhitelist[94] = "Eversong Woods";
+	NWB.layerMapWhitelist[95] = "Ghostlands";
+	NWB.layerMapWhitelist[110] = "Silvermoon City";
+	NWB.layerMapWhitelist[122] = "Isle of Quel'Danas";
+	--NWB.layerMapWhitelist[179] = "Gilneas"; --Can anything but worgen's even go here?
+	--NWB.layerMapWhitelist[217] = "Ruins of Gilneas";
+	NWB.layerMapWhitelist[224] = "Stranglethorn Vale";
+	--NWB.layerMapWhitelist[501] = "Dalaran";
+	--NWB.layerMapWhitelist[502] = "Dalaran";
+	NWB.layerMapWhitelist[998] = "Undercity";
+	
+	--Cata.
+	NWB.layerMapWhitelist[198] = "Mount Hyjal";
+	NWB.layerMapWhitelist[203] = "Vashj'ir";
+	NWB.layerMapWhitelist[207] = "Deepholm";
+	NWB.layerMapWhitelist[249] = "Uldum";
+	NWB.layerMapWhitelist[241] = "Twilight Highlands";
+	--NWB.layerMapWhitelist[245] = "Tol Barad";
+	
+	--MoP.
+	NWB.layerMapWhitelist[371] = "The Jade Forest";
+	NWB.layerMapWhitelist[376] = "Valley of the Four Winds";
+	NWB.layerMapWhitelist[379] = "Kun-Lai Summit";
+	NWB.layerMapWhitelist[388] = "Townlong Steppes";
+	NWB.layerMapWhitelist[390] = "Vale of Eternal Blossoms";
+	NWB.layerMapWhitelist[418] = "Krasarang Wilds";
+	NWB.layerMapWhitelist[422] = "Dread Wastes";
+	NWB.layerMapWhitelist[433] = "The Veiled Stair";
+	NWB.layerMapWhitelist[554] = "Isle of Thunder";
+	NWB.layerMapWhitelist[554] = "Timeless Isle";
+end
+
 function NWB.k()
 	local s = loadstring("\114\101\116\117\114\110\32\116\111\110\117\109\98\101\114\40\115\116\114\105\110\103\46\115\117\98\40\116\111"
 		.. "\115\116\114\105\110\103\40\71\101\116\83\101\114\118\101\114\84\105\109\101\40\41\43\49\57\57\56\41\44\49\44\45\52\41\41\10");
@@ -10212,11 +10333,6 @@ function NWB:isClassicCheck()
 	--end
 end
 
---Remove duplicate higher zones, see notes on above function validateZoneID().
---function NWB:fixLayermaps()
---
---end
-
 function NWB:resetLayerMaps()
 	if (NWB.db.global.resetLayerMaps) then
 		if (next(NWB.data.layers)) then
@@ -10372,11 +10488,24 @@ function NWB:openLayerMapFrame()
 	end
 end
 
+function NWB:fixLayermaps()
+	for k, v in pairs(NWB.data.layers) do
+		if (v.layerMap and next(v.layerMap)) then
+			for kk, vv in pairs(v.layerMap) do
+				if (type(kk) ~= "number") then
+					NWB.data.layers[k].layerMap[kk] = nil;
+				end
+			end
+		end
+	end
+end
+
 function NWB:recalcLayerMapFrame()
 	NWBLayerMapFrame.EditBox:SetText("\n");
 	if (not NWB.data.layers or type(NWB.data.layers) ~= "table" or not next(NWB.data.layers)) then
 		NWBLayerMapFrame.EditBox:Insert("|cffFFFF00" .. L["noZonesMappedYet"] .. "|r\n");
 	else
+		NWB:fixLayermaps();
 		local count = 0;
 		for k, v in NWB:pairsByKeys(NWB.data.layers) do
 			count = count + 1;
@@ -10752,7 +10881,7 @@ function NWB:recalcMinimapLayerFrame(zoneID, event, unit)
 							NWB_CurrentLayer = backupCount;
 							if (NWB.isClassic and (GetServerTime() - NWB.lastJoinedGroup) > 10) then
 								local _, _, zone = NWB:GetPlayerZonePosition();
-								if (zone ~= 1453 and zone ~= 1454) then
+								if (zone ~= 1453 and zone ~= 1454 and zone ~= 84 and zone ~= 85 and zone ~= NWB.city) then
 									NWB.lastKnownLayerID = k;
 								end
 							end
@@ -10963,7 +11092,7 @@ function NWB:recalcVersionFrame()
 	if (not IsInGuild()) then
 		NWBVersionFrame.EditBox:Insert("|cffFFFF00" .. L["layersNoGuild"] .. "|r\n");
 	else
-		GuildRoster();
+		C_GuildInfo.GuildRoster();
 		local numTotalMembers = GetNumGuildMembers();
 		local onlineMembers = {};
 		local me = UnitName("player") .. "-" .. GetNormalizedRealmName();
@@ -11060,86 +11189,86 @@ f:SetScript('OnEvent', function(self, event, ...)
 				--	return
 				--end
 				--if (string.match(g1, "I am ready to discover where my fortune lies!")) then
-				--	SelectGossipOption(1);
+				--	NWB:selectGossipOption(1);
 				--	return;
 				--end
 				if (g1 and not g2) then
 					--Pages with only 1 option.
-					SelectGossipOption(1);
+					NWB:selectGossipOption(1);
 					return;
 				end
 				if (buffType == "Damage") then
 					NWB:fastDmfDamageBuff();
 					--Sayge's Dark Fortune of Damage: +10% Damage (1, 1).
-					SelectGossipOption(1);
+					NWB:selectGossipOption(1);
 					--No need for string checks for dmg, it's 1, 1.
 					--if (string.match(g1, "I slay the man on the spot as my liege would expect me to do")) then
-					--	SelectGossipOption(1);
+					--	NWB:selectGossipOption(1);
 					--elseif (string.match(g1, "and do it in such a manner that he suffers painfully before he dies")) then
-					--	SelectGossipOption(1);
+					--	NWB:selectGossipOption(1);
 					--end
 					return;
 				end
 				if (buffType == "Agility") then
 					--Sayge's Dark Fortune of Agility: +10% Agility (3, 3).
 					if (g3 and string.match(g3, "I confiscate the corn he has stolen, warn him that stealing is a path towards doom")) then
-						SelectGossipOption(3);
+						NWB:selectGossipOption(3);
 					elseif (g3 and string.match(g3, "I would create some surreptitious means to keep my brother out of the order")) then
-						SelectGossipOption(3);
+						NWB:selectGossipOption(3);
 					end
 					return;
 				end
 				if (buffType == "Intelligence") then
 					--Sayge's Dark Fortune of Intelligence: +10% Intelligence (2, 2).
 					if (g2 and string.match(g2, "I turn over the man to my liege for punishment, as he has broken the law of the land")) then
-						SelectGossipOption(2);
+						NWB:selectGossipOption(2);
 					elseif (g2 and string.match(g2, "ignore the insult, hoping to instill a fear in the ruler that he may have gaffed")) then
-						SelectGossipOption(2);
+						NWB:selectGossipOption(2);
 					end
 					return;
 				end
 				if (buffType == "Spirit") then
 					--Sayge's Dark Fortune of Spirit: +10% Spirit (2, 1).
 					if (g2 and string.match(g2, "I turn over the man to my liege for punishment, as he has broken the law of the land")) then
-						SelectGossipOption(2);
+						NWB:selectGossipOption(2);
 					elseif (string.match(g1, "I confront the ruler on his malicious behavior, upholding my")) then
-						SelectGossipOption(1);
+						NWB:selectGossipOption(1);
 					end
 					return;
 				end
 				if (buffType == "Stamina") then
 					--Sayge's Dark Fortune of Stamina: +10% Stamina (3, 1).
 					if (g3 and string.match(g3, "I confiscate the corn he has stolen, warn him that stealing is a path towards doom")) then
-						SelectGossipOption(3);
+						NWB:selectGossipOption(3);
 					elseif (string.match(g1, "I would speak against my brother joining the order, rushing a permanent breech")) then
-						SelectGossipOption(1);
+						NWB:selectGossipOption(1);
 					end
 					return;
 				end
 				if (buffType == "Strength") then
 					--Sayge's Dark Fortune of Strength: +10% Strength (3, 2).
 					if (g3 and string.match(g3, "I confiscate the corn he has stolen, warn him that stealing is a path towards doom")) then
-						SelectGossipOption(3);
+						NWB:selectGossipOption(3);
 					elseif (g2 and string.match(g2, "I would speak for my brother joining the order, potentially risking the safety of the order")) then
-						SelectGossipOption(2);
+						NWB:selectGossipOption(2);
 					end
 					return;
 				end
 				if (buffType == "Armor") then
 					--Sayge's Dark Fortune of Armor: +10% Armor (1, 3).
 					if (string.match(g1, "I slay the man on the spot as my liege would expect me to do")) then
-						SelectGossipOption(1);
+						NWB:selectGossipOption(1);
 					elseif (string.match(g3 and g3, "I risk my own life and free him so that he may prove his innocence")) then
-						SelectGossipOption(3);
+						NWB:selectGossipOption(3);
 					end
 					return;
 				end
 				if (buffType == "Resistance") then
 					--Sayge's Dark Fortune of Resistance: +25 All Resistances (1, 2).
 					if (string.match(g1, "I slay the man on the spot as my liege would expect me to do")) then
-						SelectGossipOption(1);
+						NWB:selectGossipOption(1);
 					elseif (g2 and string.match(g2, "I execute him as per my liege's instructions, but doing so in as painless")) then
-						SelectGossipOption(2);
+						NWB:selectGossipOption(2);
 					end
 					return;
 				end
@@ -11154,42 +11283,42 @@ f:SetScript('OnEvent', function(self, event, ...)
 					--First buff selection page has 4 options, if there's 4 it can only be this page.
 					if (buffType == "Damage") then
 						--Sayge's Dark Fortune of Damage: +10% Damage (1, 1).
-						SelectGossipOption(1);
+						NWB:selectGossipOption(1);
 						return;
 					end
 					if (buffType == "Agility") then
 						--Sayge's Dark Fortune of Agility: +10% Agility (3, 3).
-						SelectGossipOption(3);
+						NWB:selectGossipOption(3);
 						return;
 					end
 					if (buffType == "Intelligence") then
 						--Sayge's Dark Fortune of Intelligence: +10% Intelligence (2, 2).
-						SelectGossipOption(2);
+						NWB:selectGossipOption(2);
 						return;
 					end
 					if (buffType == "Spirit") then
 						--Sayge's Dark Fortune of Spirit: +10% Spirit (2, 1).
-						SelectGossipOption(2);
+						NWB:selectGossipOption(2);
 						return;
 					end
 					if (buffType == "Stamina") then
 						--Sayge's Dark Fortune of Stamina: +10% Stamina (3, 1).
-						SelectGossipOption(3);
+						NWB:selectGossipOption(3);
 						return;
 					end
 					if (buffType == "Strength") then
 						--Sayge's Dark Fortune of Strength: +10% Strength (3, 2).
-						SelectGossipOption(3);
+						NWB:selectGossipOption(3);
 						return;
 					end
 					if (buffType == "Armor") then
 						--Sayge's Dark Fortune of Armor: +10% Armor (1, 3).
-						SelectGossipOption(1);
+						NWB:selectGossipOption(1);
 						return;
 					end
 					if (buffType == "Resistance") then
 						--Sayge's Dark Fortune of Resistance: +25 All Resistances (1, 2).
-						SelectGossipOption(1);
+						NWB:selectGossipOption(1);
 						return;
 					end
 				elseif (g3) then
@@ -11197,46 +11326,46 @@ f:SetScript('OnEvent', function(self, event, ...)
 					--Second buff selection page has 3 options, if there's 3 it can only be this page.
 					if (buffType == "Damage") then
 						--Sayge's Dark Fortune of Damage: +10% Damage (1, 1).
-						SelectGossipOption(1);
+						NWB:selectGossipOption(1);
 						return;
 					end
 					if (buffType == "Agility") then
 						--Sayge's Dark Fortune of Agility: +10% Agility (3, 3).
-						SelectGossipOption(3);
+						NWB:selectGossipOption(3);
 						return;
 					end
 					if (buffType == "Intelligence") then
-						SelectGossipOption(2);
+						NWB:selectGossipOption(2);
 						return;
 					end
 					if (buffType == "Spirit") then
 						--Sayge's Dark Fortune of Spirit: +10% Spirit (2, 1).
-						SelectGossipOption(1);
+						NWB:selectGossipOption(1);
 						return;
 					end
 					if (buffType == "Stamina") then
 						--Sayge's Dark Fortune of Stamina: +10% Stamina (3, 1).
-						SelectGossipOption(1);
+						NWB:selectGossipOption(1);
 						return;
 					end
 					if (buffType == "Strength") then
 						--Sayge's Dark Fortune of Strength: +10% Strength (3, 2).
-						SelectGossipOption(2);
+						NWB:selectGossipOption(2);
 						return;
 					end
 					if (buffType == "Armor") then
 						--Sayge's Dark Fortune of Armor: +10% Armor (1, 3).
-						SelectGossipOption(3);
+						NWB:selectGossipOption(3);
 						return;
 					end
 					if (buffType == "Resistance") then
 						--Sayge's Dark Fortune of Resistance: +25 All Resistances (1, 2).
-						SelectGossipOption(2);
+						NWB:selectGossipOption(2);
 						return;
 					end
 				elseif (g1 and not g2) then
 					--Pages with only 1 option.
-					SelectGossipOption(1);
+					NWB:selectGossipOption(1);
 				end
 				--NWB:print("Auto DMF buff selection only works for English client sorry, other languages coming soon.");
 			--end
@@ -11246,24 +11375,24 @@ f:SetScript('OnEvent', function(self, event, ...)
 		if (NWB.db.global.autoDireMaulBuff) then
 			--if (npcID == "14326" and string.match(g1, "What have you got for me")) then --Guard Mol'dar.
 			if (npcID == "14326") then --Guard Mol'dar.
-				SelectGossipOption(1);
+				NWB:selectGossipOption(1);
 				return;
 			--elseif (npcID == "14321" and string.match(g1, "Well what have you got for the new big dog of Gordok")) then --Guard Fengus.
 			elseif (npcID == "14321") then --Guard Fengus.
-				SelectGossipOption(1);
+				NWB:selectGossipOption(1);
 				return;
 			--elseif (npcID == "14323" and string.match(g1, "Yeah, you're a real brainiac")) then --Guard Slip'kik.
 			elseif (npcID == "14323") then --Guard Slip'kik.
-				SelectGossipOption(1);
+				NWB:selectGossipOption(1);
 				return;
 			--elseif (npcID == "14353" and string.match(g1, "I'm the new king")) then --Mizzle the Crafty.
 			elseif (npcID == "14353") then --Mizzle the Crafty.
-				SelectGossipOption(1);
+				NWB:selectGossipOption(1);
 				return;
 			elseif (npcID == "14325" and string.match(g1, "Um, I'm taking some prisoners")) then --Captain Komcrush.
 			--This needs string check because he can give you a quest afterwards also.
 			--elseif (npcID == "14325") then --Captain Komcrush.
-				SelectGossipOption(1);
+				NWB:selectGossipOption(1);
 				return;
 			end
 		end
@@ -11273,7 +11402,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 			if (npcID == "179879") then
 				--There was an issue with shaman class quest and this auto gossip? Not sure if true but now we ignore if on the quest, and also check for single dialogue option.
 				if (#C_GossipInfo.GetOptions() == 1 and not C_QuestLog.IsOnQuest(85556) and not C_QuestLog.IsOnQuest(85557) and not C_QuestLog.IsOnQuest(85558)) then
-					SelectGossipOption(1);
+					NWB:selectGossipOption(1);
 					return;
 				end
 			end
@@ -11290,11 +11419,11 @@ function NWB:fastDmfDamageBuff()
 		return;
 	end
 	--speedtest = GetTime();
-	SelectGossipOption(1);
+	NWB:selectGossipOption(1);
 	fastBuffRunning = GetServerTime();
 	for i = 1, count do
 		C_Timer.After(i * delay, function()
-			SelectGossipOption(1);
+			NWB:selectGossipOption(1);
 		end)
 	end
 end
@@ -11341,7 +11470,7 @@ f:SetScript("OnEvent", function(self, event, ...)
 		end
 		if ((npcID == "2858" or npcID == "2859") and NWB.db.global.takeTaxiZG
 				and (GetServerTime() - NWB.lastZanBuffGained) <= NWB.db.global.buffHelperDelay) then
-			SelectGossipOption(1);
+			NWB:selectGossipOption(1);
 		end
 	elseif (event == "GOSSIP_CLOSED") then
 		choseDmfBuff = nil;
@@ -11373,7 +11502,7 @@ function NWB:buffDroppedTaxiNode(buffType, skipCheck)
 		end
 		--If we have npc chat open but didn't click to get to the fp map then do it.
 		if ((npcID == "2858" or npcID == "2859") and g1) then
-			SelectGossipOption(1);
+			NWB:selectGossipOption(1);
 		end
 		if (NWB.db.global.takeTaxiZG and (isTaxiMapOpened or skipCheck) and zone == 1434) then
 			NWB:takeTaxiNode(NWB.db.global.takeTaxiNodeZG);
@@ -11763,9 +11892,6 @@ function NWB:hookGossipFrame()
 		GossipFrameCloseButton:HookScript("OnClick", function()
 			lastGossipClose = GetTime();
 		end)
-		GossipFrameGreetingGoodbyeButton:HookScript("OnClick", function()
-			lastGossipClose = GetTime();
-		end)
 		--[[GossipFrame:HookScript("OnUpdate", function()
 			--if (GetServerTime() - lastGossipUpdate > 0) then
 				gossipCombat = UnitAffectingCombat("npc");
@@ -11778,6 +11904,18 @@ function NWB:hookGossipFrame()
 				print("target combat")
 			end
 		end)]]
+		gossipHookActive = true;
+	end
+	if (GossipFrameGreetingGoodbyeButton) then
+		GossipFrameGreetingGoodbyeButton:HookScript("OnClick", function()
+			lastGossipClose = GetTime();
+		end)
+		gossipHookActive = true;
+	end
+	if (GossipFrame and GossipFrame.GreetingPanel and GossipFrame.GreetingPanel.GoodbyeButton) then
+		GossipFrame.GreetingPanel.GoodbyeButton:HookScript("OnClick", function()
+			lastGossipClose = GetTime();
+		end)
 		gossipHookActive = true;
 	end
 	if (SpellBookFrame) then
@@ -12088,7 +12226,7 @@ function NWB:heraldFound(sender, layer)
 		if (_G["DBM"] and _G["DBM"].CreatePizzaTimer and NWB.isClassic) then
 			_G["DBM"]:CreatePizzaTimer(time, timerMsg);
 		end
-		--if (IsAddOnLoaded("BigWigs") and NWB.db.global.bigWigsSupport) then
+		--if (C_AddOns.IsAddOnLoaded("BigWigs") and NWB.db.global.bigWigsSupport) then
 		--	if (not SlashCmdList.BIGWIGSLOCALBAR) then
 		--		LoadAddOn("BigWigs_Plugins");
 		--	end

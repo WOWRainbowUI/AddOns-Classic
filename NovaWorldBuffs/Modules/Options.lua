@@ -326,24 +326,32 @@ NWB.options = {
 			get = "getBigWigsSupport",
 			set = "setBigWigsSupport",
 		},
+		showDisableLayerButtons = {
+			type = "toggle",
+			name = L["showDisableLayerButtonsTitle"],
+			desc = L["showDisableLayerButtonsDesc"],
+			order = 139,
+			get = "getShowDisableLayerButtons",
+			set = "setShowDisableLayerButtons",
+		},
 		resetFrames = {
 			type = "execute",
 			name = L["resetFramesTitle"],
 			desc = L["resetFramesDesc"],
 			func = "resetFrames",
-			order = 139,
+			order = 140,
 			width = 1,
 		},
 		logonHeader = {
 			type = "header",
 			name = NWB.prefixColor .. L["logonHeaderDesc"],
-			order = 140,
+			order = 143,
 		},
 		logonPrint = {
 			type = "toggle",
 			name = L["logonPrintTitle"],
 			desc = L["logonPrintDesc"],
-			order = 141,
+			order = 144,
 			get = "getLogonPrint",
 			set = "setLogonPrint",
 		},
@@ -351,7 +359,7 @@ NWB.options = {
 			type = "toggle",
 			name = L["logonRendTitle"],
 			desc = L["logonRendDesc"],
-			order = 142,
+			order = 145,
 			get = "getLogonRend",
 			set = "setLogonRend",
 		},
@@ -359,7 +367,7 @@ NWB.options = {
 			type = "toggle",
 			name = L["logonOnyTitle"],
 			desc = L["logonOnyDesc"],
-			order = 143,
+			order = 146,
 			get = "getLogonOny",
 			set = "setLogonOny",
 		},
@@ -367,7 +375,7 @@ NWB.options = {
 			type = "toggle",
 			name = L["logonNefTitle"],
 			desc = L["logonNefDesc"],
-			order = 144,
+			order = 147,
 			get = "getLogonNef",
 			set = "setLogonNef",
 		},
@@ -375,7 +383,7 @@ NWB.options = {
 			type = "toggle",
 			name = L["logonDmfSpawnTitle"],
 			desc = L["logonDmfSpawnDesc"],
-			order = 145,
+			order = 148,
 			get = "getLogonDmfSpawn",
 			set = "setLogonDmfSpawn",
 		},
@@ -383,7 +391,7 @@ NWB.options = {
 			type = "toggle",
 			name = L["logonDmfBuffCooldownTitle"],
 			desc = L["logonDmfBuffCooldownDesc"],
-			order = 146,
+			order = 149,
 			get = "getLogonDmfBuffCooldown",
 			set = "setLogonDmfBuffCooldown",
 		},
@@ -2018,6 +2026,7 @@ NWB.optionDefaults = {
 		minimapLayerScale = 1,
 		buffsFrameMinLevel = 2,
 		skipDmfCookie = true,
+		showDisableLayerButtons = false,
 		
 		--TBC options
 		disableSoundsAboveMaxBuffLevel = true,
@@ -2299,23 +2308,17 @@ end
 
 function NWB:checkNewVersion()
 	--NWB.db.global.versions = {};
-	local newVersionNotes = 3.06;
+	local newVersionNotes = 3.08;
 	if (NWB.version and NWB.version == newVersionNotes) then
 		if (not NWB.db.global.versions[NWB.version]) then
 			--if (NWB.isClassic) then
 				--if (NWB:GetCurrentRegion() == 1 and not string.match(NWB.realm, "(AU)")) then
 					local notes = {
-						"Rend timers displayed anywhere on the addon will now check the \"Rend Log\" data first to try and adjust the timer based on if someone with this addon installed has handed in the last rend buff (to try combat the broken rend timers but this only works if the person handing in the buff has this addon installed).",
-						"Rend guild chat msgs are disabled on all realms with more than 1 layer due to the above mentioned rend timer layer issues, there's no point sending wrong timer msgs and if you want to view them they're still displayed on the addon in the regular places.",
-						"Added seperate sound/flash options for when a buff is about to drop so rend/nef/zand can now play different sounds or be muted.",
-						"Fixed a bug that prevented the guild layers list from populating properly, it should show more guildies now.",
-						"Fixed DMF cooldown timer on Hardcore realms resetting while offline 8h when it doesn't actually reset in that game version.",
-						"Added button in config to reset all windows back to middle of the screen.",
-						"Change some text displayed to match the fact Nef has no cooldown anymore.",
-						"Disabled tol barad guild msgs for Cata in prep for MoP.",
-						"Guild master settings to mute all guild msgs now also check guild info text (was previously only the GM's public note), info for this setting is on the curse page.",
-						"Reminder: Nef has no cooldown since it was broken a while back in all versions of the game, this is why no nef timers are set in this addon atm.",
-						"I've also just made a post on the classicwow subreddit with a detailed technical explanation why rend timers are currently broken and how Blizzard could maybe help fix it, should be easy enough to find there if you want a read.",
+						"Fixed capital city map icons not auto adjusting rend timers from the rend log data.",
+						"Fixed the layer map display not loading all layers properly sometimes.",
+						"Fixed some comptibility issues with some addons that change how NPC gossip options look.",
+						"The \"Disable Layer\" button on the main window is now hidden as it's not really needed anymore, it can be turned back on in options if wanted.",
+						"Removed Naxx dungeon portal map marker from showing in later expansions when the raid doesn't exist.",
 					};
 					loadNewVersionFrame(NWB.version, notes, "Nova World Buffs", "Interface\\Icons\\inv_misc_head_dragon_01", -50, 350);
 				--end
@@ -4034,6 +4037,18 @@ end
 
 function NWB:getBigWigsSupport(info)
 	return self.db.global.bigWigsSupport;
+end
+
+--Show disable layer buttons.
+function NWB:setShowDisableLayerButtons(info, value)
+	self.db.global.showDisableLayerButtons = value;
+	if (_G["NWBlayerFrame"] and _G["NWBlayerFrame"]:IsShown()) then
+		NWB:recalclayerFrame();
+	end
+end
+
+function NWB:getShowDisableLayerButtons(info)
+	return self.db.global.showDisableLayerButtons;
 end
 
 --Capping support.

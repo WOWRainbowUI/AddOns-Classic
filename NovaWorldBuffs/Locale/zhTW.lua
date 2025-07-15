@@ -1192,3 +1192,9 @@ L["resetFramesDesc"] = "點擊此處將所有視窗位置重設回螢幕中央�
 
 L["buffHasNoCooldown"] = "此次上繳不會觸發冷卻時間";
 L["noCooldown"] = "無冷卻時間";
+
+["showDisableLayerButtonsTitle"] = "顯示停用鏡像按鈕"
+L["showDisableLayerButtonsDesc"] = "在時間/鏡像框架顯示停用鏡像按鈕。";
+
+L["Show Quest Handins Only"] = "只顯示已交回的任務";
+L["showQuestHandinsTooltip"] = "只顯示已交回的「為部落而戰！」任務日誌項目。"
