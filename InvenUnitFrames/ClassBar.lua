@@ -72,9 +72,16 @@ local function createClassBar(object)
 	object.classBar = CreateFrame("Frame", object:GetName().."_ClassBar", object)
 	object.classBar:SetFrameLevel(3)
 
-if wowtocversion and wowtocversion < 50000 and playerClass~="DRUID" then
+if wowtocversion and wowtocversion < 50000 then
+	if playerClass=="DRUID" then
+	--Classic has different constant
+		if not DRUID_CAT_FORM then DRUID_CAT_FORM = CAT_FORM end
+		if not DRUID_BEAR_FORM then DRUID_BEAR_FORM = BEAR_FORM end
 
-	IUF.db.classBar.use = false
+	else
+
+		IUF.db.classBar.use = false
+	end
 
 
 end
@@ -345,6 +352,7 @@ if playerClass == "DRUID" then
 	local hideMana = false
 
 --	if (GetShapeshiftFormID() == CAT_FORM or GetShapeshiftFormID == BEAR_FORM ) then --BEAR_FORM returns 5
+
 		if (GetShapeshiftFormID() == DRUID_CAT_FORM or GetShapeshiftFormID() == DRUID_BEAR_FORM or GetShapeshiftForm() > 3) then
 		if IUF.db.classBar.druidManaDisible then
 
@@ -1743,7 +1751,10 @@ elseif playerClass == "MONK" then
 				self.prevChi = UnitPower("player", chi)
 				updateChi(self)
 
+--Removed this section to avoid WoW crash for Monk
+--[[
 			elseif event=="UNIT_ENTERED_VEHICLE" or event =="UNIT_NOT_VEHICLE" and not UnitHasVehicleUI("player") then
+
 				if not self:IsShown() then
 					self:Show()
 					self:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
@@ -1752,7 +1763,7 @@ elseif playerClass == "MONK" then
 				end
 				self.prevChi = UnitPower("player", chi)
 				updateChi(self)
-
+--]]
 			elseif self:IsShown() then
 				self:Hide()
 				self:UnregisterEvent("UNIT_POWER_FREQUENT")
