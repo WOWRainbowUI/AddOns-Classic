@@ -1,8 +1,8 @@
 ## Interface: 11507
-## Title: |TInterface/Icons/Spell_Frost_Stun:16:16:0:0:512:512:64:448:64:448|t SpellActivationOverlay |cffffffff2.5.4|r |TInterface/Icons/inv_misc_food_31:16:16:0:0:512:512:32:480:32:480|t
+## Title: |TInterface/Icons/Spell_Frost_Stun:16:16:0:0:512:512:64:448:64:448|t SpellActivationOverlay |cffffffff2.5.7|r |TInterface/Icons/inv_misc_food_31:16:16:0:0:512:512:32:480:32:480|t
 ## Notes: Display overlays and glow buttons to improve your gameplay!
 ## Author: Vinny/Ennvina
-## Version: 2.5.4
+## Version: 2.5.7
 ## SavedVariables: SpellActivationOverlayDB
 ## X-SAO-Build: vanilla
 
@@ -69,6 +69,7 @@ classes\warrior.lua
 
 options\defaults.lua
 options\db.lua
+options\questions.lua
 options\variables.lua
 options\InterfaceOptionsPanels.lua
 options\InterfaceOptionsPanels.xml
