@@ -57,7 +57,10 @@ if (NIT.expansionNum < 10) then
 	NIT.classic = true;
 end
 NIT.latestRemoteVersion = version;
-if (NIT.isCata) then
+if (NIT.isMOP) then
+	NIT.hourlyLimit = 10;
+	NIT.dailyLimit = 999;
+elseif (NIT.isCata) then
 	NIT.hourlyLimit = 5;
 	NIT.dailyLimit = 999;
 elseif (NIT.isWrath) then
@@ -1075,7 +1078,12 @@ function NIT:updateMinimapButton(tooltip, frame)
 			--	tooltip:AddLine("|cFF9CD6DE" .. HONORABLE_KILLS .. ":|r |cFFFFFFFF" .. data.hk);
 			--end
 			if (UnitLevel("player") ~= NIT.maxLevel and data.type ~= "arena") then
-				tooltip:AddLine("|cFF9CD6DE" .. L["experience"] .. ":|r |cFFFFFFFF" .. (NIT:commaValue(data.xpFromChat) or "Unknown"));
+				local xpForNextLevelText = "";
+				if (data.xpForNextLevel and data.xpFromChat and data.xpFromChat > 0) then
+					local percent = data.xpFromChat / data.xpForNextLevel * 100;
+					xpForNextLevelText = " (" .. NIT:round(percent, 1) .. "% of level)";
+				end
+				tooltip:AddLine("|cFF9CD6DE" .. L["experience"] .. ":|r |cFFFFFFFF" .. (NIT:commaValue(data.xpFromChat) or "Unknown") .. xpForNextLevelText);
 				--tooltip:AddLine("|cFF9CD6DE" .. L["experience"] .. ":|r |cFFFFFFFF" .. (NIT:commaValue(data.xpFromChat) or "Unknown"));
 				--tooltip:AddLine("|cFF9CD6DE" .. L["experience"] .. ":|r |cFFFFFFFF" .. (NIT:commaValue(data.xpFromChat) or "Unknown"));
 				--tooltip:AddLine("|cFF9CD6DE" .. L["experience"] .. ":|r |cFFFFFFFF" .. (NIT:commaValue(data.xpFromChat) or "Unknown"));
@@ -1306,7 +1314,7 @@ function NIT:getMinimapButtonNextExpires(char)
 	local found;
 	for k, v in ipairs(self.data.instances) do
 		local noLockout;
-		if (v.isPvp or v.type == "delve" or v.type == "scenario" or (NIT.noRaidLockouts and v.instanceID and NIT.zones[v.instanceID] and NIT.zones[v.instanceID].noLockout)) then
+		if (not NIT:instanceHasLockout(v.instanceID, v)) then
 			noLockout = true;
 		end
 		if (not v.isPvp and not noLockout and v.type ~= "delve" and v.type ~= "delve" and (not NIT.perCharOnly or char == v.playerName)) then
@@ -1355,16 +1363,21 @@ local lockoutsFrame;
 local lockoutsFrameWidth = 100;
 function NIT:openLockoutsFrame()
 	if (not lockoutsFrame) then
-		--lockoutsFrame = NRC:createSimpleInputScrollFrame("NRCLockoutsFrame", 200, 400, 0, 100);
-		lockoutsFrame = NIT:createSimpleTextFrame("NRCLockoutsFrame", lockoutsFrameWidth, 100, 0, 330, 3)
+		--lockoutsFrame = NIT:createSimpleTextFrame("NRCLockoutsFrame", lockoutsFrameWidth, 100, 0, 330, 3);
+		lockoutsFrame = NIT:createSimpleScrollFrame("NRCLockoutsFrame", lockoutsFrameWidth, 100, 0, 330, 3);
 		lockoutsFrame.onUpdateFunction = "recalcLockoutsFrame";
-		lockoutsFrame.fs:SetText("|cFFFFFF00" .. L["Raid Lockouts (Including Alts)"] .. "|r");
-		lockoutsFrame.closeButton:SetPoint("TOPRIGHT", 3.45, 3.2);
-		lockoutsFrame.closeButton:SetWidth(28);
-		lockoutsFrame.closeButton:SetHeight(28);
+		lockoutsFrame.scrollChild.fs:SetText("|cFFFFFF00" .. L["Raid Lockouts (Including Alts)"] .. "|r");
+		lockoutsFrame:SetClampedToScreen(true);
+		lockoutsFrame:ClearAllPoints();
+		lockoutsFrame:SetPoint("TOP", UIParent, "CENTER", 0, 270);
+		lockoutsFrame.scrollFrame.ScrollBar:Hide();
 	end
 	if (not lockoutsFrame:IsShown()) then
 		lockoutsFrame:Show();
+		C_Timer.After(0.001, function()
+			--A delay is required to calc scrollbar hide/show stuff properly, not sure why.
+			NIT:recalcLockoutsFrame();
+		end)
 	else
 		lockoutsFrame:Hide();
 	end
@@ -1376,7 +1389,7 @@ function NIT:recalcLockoutsFrame()
 	local text = "";
 	local data = {};
 	for k, v in pairs(NIT.db.global) do
-		if (type(v) == "table" and k ~= "minimpIcon" and k ~= "versions" and v.myChars) then
+		if (type(v) == "table" and k ~= "minimapIcon" and k ~= "versions" and v.myChars) then
 			for char, charData in pairs(v.myChars) do
 				local t = {
 					char = char,
@@ -1473,16 +1486,25 @@ function NIT:recalcLockoutsFrame()
 	if (not found) then
 		text = L["noCurrentRaidLockouts"];
 	end
-	lockoutsFrame.fs2:SetText(text);
-	local width = lockoutsFrame.fs2:GetStringWidth();
+	lockoutsFrame.scrollChild.fs2:SetText(text);
+	local width = lockoutsFrame.scrollChild.fs2:GetStringWidth();
 	if (width < 200) then
 		width = 200;
 	end
 	if (width > lockoutsFrameWidth) then
 		lockoutsFrameWidth = width;
-		lockoutsFrame:SetWidth(width + 18);
+		lockoutsFrame:SetWidth(width + 40);
 	end
-	lockoutsFrame:SetHeight(lockoutsFrame.fs2:GetStringHeight() + 40);
+	local height = lockoutsFrame.scrollChild.fs2:GetStringHeight() + 50;
+	if (height > 800) then
+		height = 800;
+		if (not lockoutsFrame.scrollFrame.ScrollBar:IsShown()) then
+			lockoutsFrame.scrollFrame.ScrollBar:Show();
+		end
+	else
+		lockoutsFrame.scrollFrame.ScrollBar:Hide();
+	end
+	lockoutsFrame:SetHeight(height);
 end
 
 local NITInstanceFrame = CreateFrame("ScrollFrame", "NITInstanceFrame", UIParent, NIT:addBackdrop("NIT_InputScrollFrameTemplate"));
@@ -2559,10 +2581,10 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 				heroicString = " (|cFF00C800D|r)";
 			end
 		elseif (data.type == "scenario") then
-      heroicString = " (|cFFFF2222S|r)";
+			heroicString = " (|cFFFF2222S|r)";
 		end
 		local text = timeColor .. L["Instance"] .. " " .. obj.count .. " (" .. data.instanceName .. heroicString .. ")|r";
-		if (not data.isPvp and data.instanceID and (NIT.noRaidLockouts and NIT.zones[data.instanceID] and NIT.zones[data.instanceID].noLockout)) then
+		if (not NIT:instanceHasLockout(data.instanceID, data)) then
 			timeColor = "|cFFFFA500";
 			text = timeColor .. L["Instance"] .. " " .. obj.count .. " (" .. data.instanceName .. ") (No lockout)|r";
 		end
@@ -2581,6 +2603,10 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 		end
 		if (data.enteredLevel ~= NIT.maxLevel and (not data.isPvp or (data.xpFromChat and data.xpFromChat > 0))) then
 			text = text .. "\n|cFF9CD6DE" .. L["experience"] .. ":|r " .. (NIT:commaValue(data.xpFromChat) or "Unknown");
+			if (data.xpForNextLevel and data.xpFromChat and data.xpFromChat > 0) then
+				local percent = data.xpFromChat / data.xpForNextLevel * 100;
+				text = text .. " (" .. NIT:round(percent, 1) .. "% of level)";
+			end
 			if (timeSpentRaw and timeSpentRaw > 0 and tonumber(data.xpFromChat) and data.xpFromChat > 0) then
 				local xpPerHour = NIT:commaValue(NIT:round((tonumber(data.xpFromChat) / timeSpentRaw) * 3600));
 				text = text .. "\n|cFF9CD6DE" .. L["experiencePerHour"] .. ":|r " .. xpPerHour;
@@ -2933,17 +2959,17 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 				local time = NIT:getTimeFormat(v.time, true, true);
 				local timeAgo = GetServerTime() - v.time;
 				if (v.playerMoney > 0) then
-					msg = msg .. "[|cFFDEDE42" .. time .. "|r] |cFF9CD6DE" .. L["gave"] .. " |r" .. NIT:getCoinString(v.playerMoney)
-							.. "|r |cFF9CD6DE" .. L["to"] .. " |c"
-							.. classColorHex .. v.tradeWho .. NIT.chatColor .. " |cFF9CD6DE" .. L["in"] .. " " .. v.where 
-							.. " (" .. NIT:getTimeString(timeAgo, true) .. " " .. L["ago"] .. "\n"
+					msg = msg .. "|cFF9CD6DE[|cFFDEDE42" .. time .. "|r] " .. L["gave"] .. " |cFFFFFFFF" .. NIT:getCoinString(v.playerMoney)
+							.. "|r " .. L["to"] .. " |c"
+							.. classColorHex .. v.tradeWho .. "|r " .. L["in"] .. " " .. v.where 
+							.. " (" .. NIT:getTimeString(timeAgo, true) .. " " .. L["ago"] .. "|r\n";
 					foundTrades = true;
 				end
 				if (v.targetMoney > 0) then
-					msg = msg .. "[|cFFDEDE42" .. time .. "|r] |cFF9CD6DE" .. L["received"] .. " |r" .. NIT:getCoinString(v.targetMoney)
-							.. "|r |cFF9CD6DE" .. L["from"] .. " |c"
-							.. classColorHex .. v.tradeWho .. NIT.chatColor .. " |cFF9CD6DE" .. L["in"] .. " " .. v.where 
-							.. " (" .. NIT:getTimeString(timeAgo, true) .. " " .. L["ago"] .. ")\n"
+					msg = msg .. "|cFF9CD6DE[|cFFDEDE42" .. time .. "|r] " .. L["received"] .. " |cFFFFFFFF" .. NIT:getCoinString(v.targetMoney)
+							.. "|r " .. L["from"] .. " |c"
+							.. classColorHex .. v.tradeWho .. "|r " .. L["in"] .. " " .. v.where 
+							.. " (" .. NIT:getTimeString(timeAgo, true) .. " " .. L["ago"] .. ")|r\n";
 					foundTrades = true;
 				end
 				trades = trades .. msg;
@@ -5390,6 +5416,137 @@ function NIT:createSimpleTextFrame(name, width, height, x, y, borderSpacing)
 	return frame;
 end
 
+--Simple frame, just using fontstrings and not seperate frames for each line, no hover over tooltips etc.
+function NIT:createSimpleScrollFrame(name, width, height, x, y, borderSpacing, notSpecialFrames)
+	local frame = CreateFrame("Frame", name, UIParent, "BackdropTemplate");
+	frame.scrollFrame = CreateFrame("ScrollFrame", "$parentScrollFrame", frame, "UIPanelScrollFrameTemplate");
+	--frame.scrollFrame:SetAllPoints();
+	frame.scrollChild = CreateFrame("Frame", "$parentScrollChild", frame.scrollFrame);
+	frame.scrollFrame:SetScrollChild(frame.scrollChild);
+	--frame.scrollChild:SetWidth(frame:GetWidth() - 30);
+	frame.scrollChild:SetAllPoints();
+	frame.scrollChild:SetPoint("RIGHT", -40, 0);
+	frame.scrollChild:SetPoint("TOP", 0, -20);
+	frame.scrollChild:SetHeight(1);
+	frame.scrollChild:SetScript("OnSizeChanged", function(self,event)
+		frame.scrollChild:SetWidth(self:GetWidth())
+	end)
+	frame.scrollFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -8);
+	frame.scrollFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 8);
+	
+	frame:SetBackdrop({
+		bgFile = "Interface\\Buttons\\WHITE8x8",
+		insets = {top = 4, left = 4, bottom = 4, right = 4},
+		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+		tileEdge = true,
+		edgeSize = 16,
+	});
+	frame:SetBackdropColor(0, 0, 0, 0.9);
+	frame:SetBackdropBorderColor(1, 1, 1, 0.7);
+	frame.scrollFrame.ScrollBar:ClearAllPoints();
+	--frame.scrollFrame.ScrollBar:SetPoint("TOPRIGHT", -5, -(frame.scrollFrame.ScrollBar.ScrollDownButton:GetHeight()) + 1);
+	frame.scrollFrame.ScrollBar:SetPoint("TOPRIGHT", -5, -(frame.scrollFrame.ScrollBar.ScrollDownButton:GetHeight()) - 15);
+	frame.scrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", -5, frame.scrollFrame.ScrollBar.ScrollUpButton:GetHeight());
+	frame:SetToplevel(true);
+	frame:SetMovable(true);
+	frame:EnableMouse(true);
+	if (not notSpecialFrames) then
+		tinsert(UISpecialFrames, frame);
+		frame:SetUserPlaced(false);
+	end
+	frame:SetPoint("CENTER", UIParent, x, y);
+	frame:SetSize(width, height);
+	frame:SetFrameStrata("HIGH");
+	frame:SetFrameLevel(140);
+	frame.lastUpdate = 0;
+	frame:SetScript("OnUpdate", function(self)
+		--Update throddle.
+		if (GetTime() - frame.lastUpdate > 1) then
+			frame.lastUpdate = GetTime();
+			if (frame.onUpdateFunction) then
+				--If we declare an update function for this frame to run when shown.
+				NIT[frame.onUpdateFunction]();
+			end
+		end
+	end)
+	frame:SetScript("OnMouseDown", function(self, button)
+		if (button == "LeftButton" and not self.isMoving) then
+			self:StartMoving();
+			self.isMoving = true;
+			if (notSpecialFrames) then
+				self:SetUserPlaced(false);
+			end
+		end
+	end)
+	frame:SetScript("OnMouseUp", function(self, button)
+		if (button == "LeftButton" and self.isMoving) then
+			self:StopMovingOrSizing();
+			self.isMoving = false;
+		end
+	end)
+	frame:SetScript("OnHide", function(self)
+		if (self.isMoving) then
+			self:StopMovingOrSizing();
+			self.isMoving = false;
+		end
+	end)
+	
+	frame.scrollChild:SetScript("OnMouseDown", function(self, button)
+		if (button == "LeftButton" and not self:GetParent():GetParent().isMoving) then
+			self:GetParent():GetParent():StartMoving();
+			self:GetParent():GetParent().isMoving = true;
+			if (notSpecialFrames) then
+				self:GetParent():GetParent():SetUserPlaced(false);
+			end
+		end
+	end)
+	frame.scrollChild:SetScript("OnMouseUp", function(self, button)
+		if (button == "LeftButton" and self:GetParent():GetParent().isMoving) then
+			self:GetParent():GetParent():StopMovingOrSizing();
+			self:GetParent():GetParent().isMoving = false;
+		end
+	end)
+	frame.scrollChild:SetScript("OnHide", function(self)
+		if (self:GetParent():GetParent().isMoving) then
+			self:GetParent():GetParent():StopMovingOrSizing();
+			self:GetParent():GetParent().isMoving = false;
+		end
+	end)
+	
+	frame.scrollChild:EnableMouse(true);
+	frame.scrollChild:SetHyperlinksEnabled(true);
+	frame.scrollChild:SetScript("OnHyperlinkClick", ChatFrame_OnHyperlinkShow);
+	--Set all fonts in the module using the frame.
+	--Header string.
+	frame.scrollChild.fs = frame.scrollChild:CreateFontString(name .. "FS", "ARTWORK");
+	frame.scrollChild.fs:SetPoint("TOP", 0, -0);
+	frame.scrollChild.fs:SetFont(NIT.regionFont, 14);
+	--The main display string.
+	frame.scrollChild.fs2 = frame.scrollChild:CreateFontString(name .. "FS2", "ARTWORK");
+	frame.scrollChild.fs2:SetPoint("TOPLEFT", 10, -24);
+	frame.scrollChild.fs2:SetJustifyH("LEFT");
+	frame.scrollChild.fs2:SetFont(NIT.regionFont, 14);
+	--Bottom string.
+	frame.scrollChild.fs3 = frame.scrollChild:CreateFontString(name .. "FS3", "ARTWORK");
+	frame.scrollChild.fs3:SetPoint("BOTTOM", 0, -20);
+	--frame.scrollChild.fs3:SetFont(NRC.regionFont, 14);
+	--Top right X close button.
+	frame.close = CreateFrame("Button", name .. "Close", frame, "UIPanelCloseButton");
+	--frame.close:SetPoint("TOPRIGHT", -22, -4);
+	frame.close:SetPoint("TOPRIGHT", -3.45, -3.2);
+	frame.close:SetWidth(20);
+	frame.close:SetHeight(20);
+	frame.close:SetScript("OnClick", function(self, arg)
+		frame:Hide();
+	end)
+	frame.close:GetNormalTexture():SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125);
+	frame.close:GetHighlightTexture():SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125);
+	frame.close:GetPushedTexture():SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125);
+	frame.close:GetDisabledTexture():SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125);
+	frame:Hide();
+	return frame;
+end
+
 local NITCopyFrame = CreateFrame("ScrollFrame", "NITCopyFrame", nil, NIT:addBackdrop("NIT_InputScrollFrameTemplate"));
 NITCopyFrame:Hide();
 NITCopyFrame:SetToplevel(true);
@@ -5666,15 +5823,13 @@ function NIT:sendGroupComm(msg)
 end
 
 function NIT:selectGossipOption(id)
-	--A fix so the addon "Immersion" doesn't clash with gossip automation.
-	--SelectGossipOption seems to require the Blizzard dialog open.
-	--C_GossipInfo.SelectOptionByIndex seems to remember the last opened and works after it's closed?
-	if (ImmersionAPI and C_GossipInfo and C_GossipInfo.SelectOptionByIndex) then
+	local SelectGossipOption = SelectGossipOption;
+	if (C_GossipInfo and C_GossipInfo.SelectOptionByIndex) then
+		SelectGossipOption = C_GossipInfo.SelectOptionByIndex;
 		--C_GossipInfo.SelectOptionByIndex index starts at 0 so we need to minus 1.
-		C_GossipInfo.SelectOptionByIndex(id - 1)
-	else
-		SelectGossipOption(id);
+		id = id - 1;
 	end
+	SelectGossipOption(id);
 end
 	
 function NIT:createPopupString(name)

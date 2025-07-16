@@ -13,31 +13,31 @@ end
 
 --Name needs to match the bosses table below, we lookup data via name since there are different npcIDs across different game versions.
 local douses = {
-	[1] = {name = "Magmadar", order = 1, rune = "Rune of Kress"},
-	[2] = {name = "Gehennas", order = 2, rune = "Rune of Mohn"},
-	[3] = {name = "Garr", order = 3, rune = "Rune of Blaz"},
-	[4] = {name = "Baron Geddon", order = 4, rune = "Rune of Zeth"},
-	[5] = {name = "Shazzrah", order = 5, rune = "Rune of Mazj"},
-	[6] = {name = "Sulfuron Harbinger", order = 6, rune = "Rune of Koro"},
-	[7] = {name = "Golemagg the Incinerator", order = 7, rune = "Rune of Theri"},
+	[1] = {name = L["Magmadar"], order = 1, rune = "Rune of Kress"},
+	[2] = {name = L["Gehennas"], order = 2, rune = "Rune of Mohn"},
+	[3] = {name = L["Garr"], order = 3, rune = "Rune of Blaz"},
+	[4] = {name = L["Baron Geddon"], order = 4, rune = "Rune of Zeth"},
+	[5] = {name = L["Shazzrah"], order = 5, rune = "Rune of Mazj"},
+	[6] = {name = L["Sulfuron Harbinger"], order = 6, rune = "Rune of Koro"},
+	[7] = {name = L["Golemagg the Incinerator"], order = 7, rune = "Rune of Theri"},
 };
 
 --Seperate table with both classic and SoD NPC IDs for faster lookups.
 local bosses = {
-	[11982] = "Magmadar",
-	[228430] = "Magmadar",
-	[12259] = "Gehennas",
-	[228431] = "Gehennas",
-	[12057] = "Garr",
-	[228432] = "Garr",
-	[12056] = "Baron Geddon",
-	[228433] = "Baron Geddon",
-	[12264] = "Shazzrah",
-	[228434] = "Shazzrah",
-	[12098] = "Sulfuron Harbinger",
-	[228436] = "Sulfuron Harbinger",
-	[11988] = "Golemagg the Incinerator",
-	[228435] = "Golemagg the Incinerator",
+	[11982] = L["Magmadar"],
+	[228430] = L["Magmadar"],
+	[12259] = L["Gehennas"],
+	[228431] = L["Gehennas"],
+	[12057] = L["Garr"],
+	[228432] = L["Garr"],
+	[12056] = L["Baron Geddon"],
+	[228433] = L["Baron Geddon"],
+	[12264] = L["Shazzrah"],
+	[228434] = L["Shazzrah"],
+	[12098] = L["Sulfuron Harbinger"],
+	[228436] = L["Sulfuron Harbinger"],
+	[11988] = L["Golemagg the Incinerator"],
+	[228435] = L["Golemagg the Incinerator"],
 };
 
 local function getDousedStatus(name)

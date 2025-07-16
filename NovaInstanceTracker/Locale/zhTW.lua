@@ -503,6 +503,17 @@ L["autoTwilightBuffReminder"] = "從 %s 取得暮光地城的增益。";
 
 L["douseDisclaimer"] = "注意：此淨化模組會根據「最後擊殺的首領」及其他因素做出最佳推測，可能不盡準確。";
 L["Not Doused"] = "沒有淨化";
+L["Doused"] = "已淨化";
+L["Aqual Quintessence"] = "水之精華";
+L["Magmadar"] = "瑪格曼達";
+L["Gehennas"] = "基赫納斯";
+L["Garr"] = "加爾";
+L["Baron Geddon"] = "迦頓男爵";
+L["Shazzrah"] = "沙斯拉爾";
+L["Sulfuron Harbinger"] = "薩弗隆先驅者";
+L["Golemagg the Incinerator"] = "焚化者古雷曼格";
+
+L["of level"] = "當前等級"; --This for XP display during a dung (23.4% of level)
 
 --增加
 L["Nova Instance Tracker"] = "Nova 副本進度追蹤";

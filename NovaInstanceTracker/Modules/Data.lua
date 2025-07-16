@@ -384,6 +384,11 @@ f:SetScript('OnEvent', function(self, event, ...)
 		C_Timer.After(2, function()
 			NIT:recordCharacterData();
 		end)
+		if (NIT.inInstance) then
+			if (UnitLevel("player") < NIT.maxLevel) then
+				NIT.data.instances[1].xpForNextLevel = UnitXPMax("player");
+			end
+		end
 	elseif (event == "PLAYER_DEAD") then
 		NIT:throddleEventByFunc(event, 2, "recordDurabilityData", ...);
 	elseif (event == "BAG_UPDATE" or event == "PLAYER_MONEY") then
@@ -1301,9 +1306,9 @@ function NIT:enteredInstance(isReload, isLogon, checkAgain)
 			instanceType = "party";
 			type = "delve";
 		else
-		  instanceType = "party";
-      type = "scenario";
-    end
+			instanceType = "party";
+			type = "scenario";
+		end
 	end
 	if (instance == true and (instanceType == "party" or instanceType == "raid"
 			or type == "bg" or type == "arena")) then
@@ -1328,7 +1333,7 @@ function NIT:enteredInstance(isReload, isLogon, checkAgain)
 		elseif (type == "delve") then
 			instanceNameMsg = instanceNameMsg .. " |cFF9CD6DE(|r|cFF00C800D|r|cFF9CD6DE)|r";
 		elseif (type == "scenario") then
-      instanceNameMsg = instanceNameMsg .. " |cFF9CD6DE(|r|cFFFF2222H|r|cFF9CD6DE)|r";
+      		instanceNameMsg = instanceNameMsg .. " |cFF9CD6DE(|r|cFFFF2222H|r|cFF9CD6DE)|r";
 		end
 		if (isGhost) then
 			--This never worked and doesn't need to anyway.
@@ -1338,7 +1343,7 @@ function NIT:enteredInstance(isReload, isLogon, checkAgain)
 				--		.. "If you would like to force record a new instance click |HNITCustomLink:deletelast|h" .. texture .. "|h");
 			--end
 		else
-			if (not isReload) then
+			if (not isReload or not NIT.data.instances[1]) then
 				local class, classEnglish = UnitClass("player");
 				local t = {
 					playerName = UnitName("player"),
@@ -1347,11 +1352,11 @@ function NIT:enteredInstance(isReload, isLogon, checkAgain)
 					instanceName = instanceName,
 					instanceID = instanceID,
 					difficultyID = difficultyID,
-					type = type,
+					type = type or instanceType,
 					enteredTime = GetServerTime(),
-					enteredLevel = UnitLevel("player");
-					enteredLevelPercent = NIT:getLevelPercentage();
-					enteredXP = UnitXP("player");
+					enteredLevel = UnitLevel("player"),
+					enteredLevelPercent = NIT:getLevelPercentage(),
+					enteredXP = UnitXP("player"),
 					enteredMoney = GetMoney(),
 					leftTime = 0,
 					leftMoney = 0,
@@ -1362,6 +1367,9 @@ function NIT:enteredInstance(isReload, isLogon, checkAgain)
 					group = {},
 					rep = {},
 				};
+				if (UnitLevel("player") < NIT.maxLevel) then
+					t.xpForNextLevel = UnitXPMax("player");
+				end
 				--No API available to get alpha/beta/gamma difficulty yet.
 				--t.subDifficulty = getDungeonSubDifficulty();
 				if (type == "bg") then
@@ -1409,7 +1417,7 @@ function NIT:enteredInstance(isReload, isLogon, checkAgain)
 				--end
 				--This should really be called noLockout instead of raid but not changing it or the local string now.
 				local raid;
-				if (NIT.noRaidLockouts and instanceID and NIT.zones[instanceID] and NIT.zones[instanceID].noLockout) then
+				if (NIT:isRaidWithNoLockout(instanceID)) then
 					raid = true;
 				end
 				--Insert as first row, instances are stored newest first in the data table.
@@ -1526,6 +1534,9 @@ function NIT:recordLeftInstanceStats()
 		if (levelPercentage) then
 			NIT.data.instances[1]["leftLevelPercent"] = levelPercentage;
 		end
+		if (UnitLevel("player") < NIT.maxLevel) then
+			NIT.data.instances[1].xpForNextLevel = UnitXPMax("player");
+		end
 		NIT.data.instances[1]["leftXP"] = UnitXP("player");
 		NIT.data.instances[1]["leftMoney"] = GetMoney();
 	end
@@ -1579,6 +1590,7 @@ function NIT:showInstanceStats(id, output, showAll, customPrefix, showDate)
 	local timeSpent = "";
 	local timeSpentRaw = 0;
 	local nonClickable;
+	local isMe = data.playerName == UnitName("player");
 	if (data.enteredTime and data.leftTime and data.enteredTime > 0 and data.leftTime > 0) then
 		timeSpentRaw = data.leftTime - data.enteredTime;
 	elseif (data.enteredTime and data.leftTime and data.enteredTime > 0 and (GetServerTime() - data.enteredTime) < 21600
@@ -1645,6 +1657,10 @@ function NIT:showInstanceStats(id, output, showAll, customPrefix, showDate)
 		end
 		if ((NIT.db.global.instanceStatsOutputXP or showAll) and level ~= NIT.maxLevel) then
 			text = text .. pColor .. " " .. L["statsXP"] .. "|r " .. sColor .. NIT:commaValue(data.xpFromChat) .. "|r";
+			if (NIT.db.global.instanceStatsOutputXPPercent and id == 1 and isMe and data.xpFromChat and data.xpFromChat > 0 and data.xpForNextLevel) then
+				local percent = data.xpFromChat / data.xpForNextLevel * 100;
+				text = text .. " " .. sColor .. "(" .. NIT:round(percent, 1) .. "%)|r";
+			end
 		end
 		if ((NIT.db.global.instanceStatsOutputXpPerHour or showAll) and level ~= NIT.maxLevel) then
 			if (timeSpentRaw and timeSpentRaw > 0 and tonumber(data.xpFromChat) and data.xpFromChat > 0) then
@@ -1929,6 +1945,9 @@ function NIT:mergeLastInstances(GUID, source)
 	NIT.data.instances[2].playerName = UnitName("player");
 	NIT.data.instances[2].class = class;
 	NIT.data.instances[2].classEnglish = classEnglish;
+	if (UnitLevel("player") < NIT.maxLevel) then
+		NIT.data.instances[2].xpForNextLevel = UnitXPMax("player");
+	end
 	--This stuff should already be recorded and overwriting it would have been incorrect.
 	--NIT.data.instances[2].enteredLevel = UnitLevel("player");
 	--NIT.data.instances[2].enteredXP = UnitXP("player");
@@ -2128,7 +2147,7 @@ function NIT:getInstanceLockoutInfo(char)
 	end
 	for k, v in ipairs(NIT.data.instances) do
 		if (not NIT.perCharOnly or target == v.playerName) then
-			if (v.isPvp or v.type == "delve" or v.type == "scenario" or (NIT.noRaidLockouts and v.instanceID and NIT.zones[v.instanceID] and NIT.zones[v.instanceID].noLockout)) then
+			if (not NIT:instanceHasLockout(v.instanceID, v)) then
 				--NIT:debug("skipping raid", v.instanceID);
 			else
 				count = count + 1;
@@ -3969,6 +3988,29 @@ function NIT:getLevelPercentage()
 		local percent = (xp / UnitXPMax("player")) * 100;
 		playerLevel = tonumber(UnitLevel("player") .. "." .. string.format("%02.f", percent));
 		return playerLevel;
+	end
+end
+
+--When I tested mop prepatch lockouts I got locked to 10 regular dungs, and couldn't enter more.
+--Then I went to raid and could enter 1 more over the cap, went out and reset and couldn';t enter a second raid.
+--So maybe the cap is 10 but they allow you 1 spare raid id over that?
+function NIT:instanceHasLockout(instanceID, data)
+	if (NIT.noRaidLockouts and data.type == "raid") then
+		return;
+	end
+	if (data and (data.isPvp or data.type == "delve" or data.type == "scenario")) then
+		return;
+	end
+	if (instanceID and (NIT.zones[instanceID] and NIT.zones[instanceID].noLockout) and NIT.expansionNum < 4) then
+		return;
+	end
+	return true;
+end
+
+--Is this a raid that doesn't give a lockout when NIT.noRaidLockouts is true.
+function NIT:isRaidWithNoLockout(instanceID)
+	if (NIT.noRaidLockouts and instanceID and NIT.zones[instanceID] and NIT.zones[instanceID].noLockout) then
+		return true;
 	end
 end
 

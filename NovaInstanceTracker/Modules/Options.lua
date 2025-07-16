@@ -833,6 +833,7 @@ NIT.optionDefaults = {
 		showMoneyTradedChat = true,
 		instanceStatsOutputMobCount = true,
 		instanceStatsOutputXP = true,
+		instanceStatsOutputXPPercent = true,
 		instanceStatsOutputAverageXP = false,
 		instanceStatsOutputTime = true,
 		instanceStatsOutputGold = true,
@@ -1033,15 +1034,15 @@ end
 
 function NIT:checkNewVersion()
 	--NIT.db.global.versions = {}; --To test.
-	local newVersionNotes = 1.95;
+	local newVersionNotes = 1.98;
 	if (NIT.version and NIT.version == newVersionNotes) then
 		if (not NIT.db.global.versions[NIT.version]) then
 			--if (NIT.isClassic) then
 				local notes = {
-					"|cFF00FF00Version 1.95|r",
-					"Added auto get buff and missing buff reminder for Twilight dungeons in cata, works the same way it did in wrath for gamma dungs. It will auto get the right buff for your spec or you can set an overide in config, or hold shift to pick a different buff (bit late adding this I know).",
-					"|cFF00FF00Version 1.93|r",
-					"Added SoD Scarlet Enclave weekly quest \"Prove your worth\" to be tracked in your characters window, right click minimap button to open and mouseover a name to check if the weekly has been done (must log character once after updating for it to be tracked).";
+					--"Fixed an error if a player fresh installed this addon while inside an instance.",
+					"Added XP percentage of lvl gained while inside dungeon to stats shown at the end.",
+					"Made the lockouts frame scrollable if you have a lot of alts with lockouts.",
+					"Fixed lockout count to match how MoP works (10 per hour including raids).";
 				};
 				loadNewVersionFrame(NIT.version, notes, "Nova Instance Tracker", "Interface\\AddOns\\NovaInstanceTracker\\Media\\portal", 30, 200);
 			--end

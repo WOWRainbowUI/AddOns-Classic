@@ -626,3 +626,15 @@ L["autoTwilightBuffReminder"] = "Get Twilight Dungeon buff from %s.";
 
 L["douseDisclaimer"] = "Note: This douses module uses best guess based on\nlast boss killed and other factors, could be inaccurate.";
 L["Not Doused"] = "Not Doused";
+L["Doused"] = "Doused";
+L["Aqual Quintessence"] = "Aqual Quintessence";
+
+L["Magmadar"] = "Magmadar";
+L["Gehennas"] = "Gehennas";
+L["Garr"] = "Garr";
+L["Baron Geddon"] = "Baron Geddon";
+L["Shazzrah"] = "Shazzrah";
+L["Sulfuron Harbinger"] = "Sulfuron Harbinger";
+L["Golemagg the Incinerator"] = "Golemagg the Incinerator";
+
+L["of level"] = "of level"; --This for XP display during a dung (23.4% of level)
