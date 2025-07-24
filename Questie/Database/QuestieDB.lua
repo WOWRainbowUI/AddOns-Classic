@@ -1016,7 +1016,7 @@ function QuestieDB.IsDoable(questId, debugPrint)
         end
         -- Check if the other breadcrumbs are active
         local otherBreadcrumbs = QuestieDB.QueryQuestSingle(breadcrumbForQuestId, "breadcrumbs")
-        for _, breadcrumbId in ipairs(otherBreadcrumbs) do
+        for _, breadcrumbId in ipairs(otherBreadcrumbs or {}) do -- TODO: Remove `or {}` when we have a validation for the breadcrumb data
             if breadcrumbId ~= questId and QuestiePlayer.currentQuestlog[breadcrumbId] then
                 if debugPrint then Questie:Debug(Questie.DEBUG_SPAM, "[QuestieDB.IsDoable] Alternative breadcrumb quest in the quest log for quest " .. questId) end
                 return false
@@ -1874,6 +1874,10 @@ local questsRequiringTamingPandariaAchievement = {
     [33222] = true, -- Little Tommy Newcomer
 }
 
+local questsRequiringDreadHasteMakesDreadWasteAchievement = {
+    [32030] = true, -- Once in a Hundred Lifetimes
+}
+
 function _QuestieDB:CheckAchievementRequirements(questId)
     -- So far the only Quests that we know of that requires an earned Achievement are the ones offered by:
     -- https://www.wowhead.com/wotlk/npc=35094/crusader-silverdawn
@@ -1916,6 +1920,10 @@ function _QuestieDB:CheckAchievementRequirements(questId)
 
     if questsRequiringTamingPandariaAchievement[questId] then
         return select(13, GetAchievementInfo(6606)) -- Taming Pandaria
+    end
+
+    if questsRequiringDreadHasteMakesDreadWasteAchievement[questId] then
+        return select(13, GetAchievementInfo(6540)) -- Dread Haste Makes Dread Waste
     end
 end
 
