@@ -18,8 +18,13 @@ function BaganatorItemViewCommonBankViewMixin:OnLoad()
 
   self.Tabs = {}
 
-  self.Character = CreateFrame("Frame", nil, self, self.characterTemplate)
-  self.Character:SetPoint("TOPLEFT")
+  if self.characterTabsTemplate and Syndicator.Constants.CharacterBankTabsActive then
+    self.Character = CreateFrame("Frame", nil, self, self.characterTabsTemplate)
+    self.Character:SetPoint("TOPLEFT")
+  else
+    self.Character = CreateFrame("Frame", nil, self, self.characterTemplate)
+    self.Character:SetPoint("TOPLEFT")
+  end
   self:InitializeWarband(self.warbandTemplate)
 
   self.currentTab = self.Character
@@ -143,6 +148,10 @@ function BaganatorItemViewCommonBankViewMixin:OnEvent(eventName)
 end
 
 function BaganatorItemViewCommonBankViewMixin:OnShow()
+  if Syndicator.Constants.CharacterBankTabsActive then
+    BankFrame.BankPanel:Show()
+  end
+
   if Syndicator.Constants.WarbandBankActive then
     if C_PlayerInteractionManager.IsInteractingWithNpcOfType(Enum.PlayerInteractionType.AccountBanker) then
       self:SetTab(2)
@@ -173,6 +182,10 @@ function BaganatorItemViewCommonBankViewMixin:OnHide()
     C_Bank.CloseBankFrame()
   else
     CloseBankFrame()
+  end
+
+  if Syndicator.Constants.CharacterBankTabsActive then
+    BankFrame.BankPanel:Hide()
   end
 
   addonTable.CallbackRegistry:TriggerEvent("SearchTextChanged", "")

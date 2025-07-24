@@ -1,6 +1,8 @@
 # Baganator
 
-## [706](https://github.com/Baganator/Baganator/tree/706) (2025-07-19)
-[Full Changelog](https://github.com/Baganator/Baganator/compare/705...706) 
+## [708](https://github.com/Baganator/Baganator/tree/708) (2025-07-22)
+[Full Changelog](https://github.com/Baganator/Baganator/compare/707...708) 
 
-- Fix export text being blank if |K or |k found in export string  
+- Forgot to add locale strings for disabling categories  
+- Support disabling categories on certain views  
+- 11.2 PTR: Fix right-click to transfer items into the account bank  
