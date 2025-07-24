@@ -57,7 +57,13 @@ if (NIT.expansionNum < 10) then
 	NIT.classic = true;
 end
 NIT.latestRemoteVersion = version;
-if (NIT.isMOP) then
+if (NIT.isRetail) then
+	--Retail is 10 per hour and account wide not per character.
+	NIT.hourlyLimit = 10;
+	NIT.dailyLimit = 999;
+	NIT.noDailyLockout = true;
+--elseif (NIT.isMOP) then
+elseif (NIT.expansionNum > 4) then
 	NIT.hourlyLimit = 10;
 	NIT.dailyLimit = 999;
 elseif (NIT.isCata) then
@@ -69,16 +75,10 @@ elseif (NIT.isWrath) then
 elseif (NIT.isTBC) then
 	NIT.hourlyLimit = 5;
 	NIT.dailyLimit = 999;
-elseif (NIT.isRetail) then
-	--Retail is 10 per hour and account wide not per character.
-	NIT.hourlyLimit = 10;
-	NIT.dailyLimit = 999;
-	NIT.noDailyLockout = true;
 else
-	NIT.noRaidLockouts = true;
+	--NIT.noRaidLockouts = true;
 	NIT.hourlyLimit = 5;
 	NIT.dailyLimit = 999;
-	NIT.noRaidLockout = nil;
 end
 NIT.maxLevel = GetMaxPlayerLevel();
 NIT.prefixColor = "|cFFFF6900";
@@ -1413,7 +1413,12 @@ function NIT:recalcLockoutsFrame()
 		local _, _, _, classColorHex = GetClassColor(v.class);
 		local text2 = "\n|c" .. classColorHex .. v.char .. "|r";
 		if (v.savedInstances) then
-			for instance, instanceData in pairs(v.savedInstances) do
+			local lockouts = {};
+			for instance, v in pairs(v.savedInstances) do
+				tinsert(lockouts, v);
+			end
+			table.sort(lockouts, function(a, b) return a.name < b.name end);
+			for _, instanceData in ipairs(lockouts) do
 				if (instanceData.locked and instanceData.resetTime and instanceData.resetTime > GetServerTime()) then
 					local timeString = "(" .. NIT:getTimeString(instanceData.resetTime - GetServerTime(), true, NIT.db.global.timeStringType) .. ")";
 					local name = instanceData.name;
@@ -2586,7 +2591,7 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 		local text = timeColor .. L["Instance"] .. " " .. obj.count .. " (" .. data.instanceName .. heroicString .. ")|r";
 		if (not NIT:instanceHasLockout(data.instanceID, data)) then
 			timeColor = "|cFFFFA500";
-			text = timeColor .. L["Instance"] .. " " .. obj.count .. " (" .. data.instanceName .. ") (No lockout)|r";
+			text = timeColor .. L["Instance"] .. " " .. obj.count .. " (" .. data.instanceName .. ") (" .. L["noLockout"] .. ")|r";
 		end
 		if (UnitName("player") ~= data.playerName) then
 			timeColor = "|cFFA1A1A1";
@@ -5890,7 +5895,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 	if (not npcID) then
 		return;
 	end
-	if (npcID == "20735" and NIT.db.global.autoWrathDailies) then
+	if (npcID == "20735" and NIT.db.global.autoWrathDailies and NIT.isWrath) then
 		if (event == "GOSSIP_SHOW") then
 			--Select available quests.
 			local availableQuests = C_GossipInfo.GetAvailableQuests();
