@@ -253,6 +253,9 @@ local function SetupTutorials()
 			imageY = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and 9 or 16,
 			imageAbsolute = true,
 			text = "            |T"..helpPath.."help_whats-new_title:32:181:0:0:256:32:0:181:0:32|t\n\n"..
+					cTitle.."版本 4.2.2|r\n"..
+					"- 修正 - 取得不正確的任務資料時出錯 (未複製，可能會導致新的錯誤)\n"..
+					"\n"..
 					cTitle.."版本 4.2.1|r\n"..
 					"- 修正 (任務) - 儲存不正確的任務資料\n"..
 					"- 回復 - 任務等級的值為 nil \n"..

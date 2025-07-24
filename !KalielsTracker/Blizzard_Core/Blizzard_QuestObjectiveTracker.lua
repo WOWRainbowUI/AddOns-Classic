@@ -241,11 +241,7 @@ local function EnumQuestWatchData(func)
 	for i = 1, KT_GetNumQuestWatches() do
 		questInfo = KT_GetQuestListInfo(i)
 		questLogIndex = GetQuestLogIndexByID(questInfo.id)
-		if questLogIndex and questLogIndex > 0 then
-			questWatchInfoList[i] = { KT_GetQuestWatchInfo(questLogIndex) }
-		else
-			questWatchInfoList[i] = {}
-		end
+		questWatchInfoList[i] = { KT_GetQuestWatchInfo(questLogIndex) }
 	end
 
 	KT.Filters:QuestSort(questWatchInfoList)

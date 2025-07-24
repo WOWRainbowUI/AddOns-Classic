@@ -1,4 +1,6 @@
 # Kaliel's Tracker Classic changelog
+### 4.2.2
+- FIXED - error getting incorrect quest data (not replicated, may cause new errors)
 ### 4.2.1
 - FIXED (quests) - incorrect quest data saved
 - REVERTED - &quot;fix(quests): nil value of quest level&quot;

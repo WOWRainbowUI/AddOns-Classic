@@ -931,6 +931,9 @@ function M:QuestSort(questWatchInfoList)
 	if dbChar.quests.sort == "zone" then
 		-- by Zone
 		tsort(questWatchInfoList, function(a, b)
+			if next(a) == nil or next(b) == nil then
+				return false
+			end
 			local aZone, bZone = KT_GetQuestListInfo(a[1], true).zone, KT_GetQuestListInfo(b[1], true).zone
 			if aZone == bZone then
 				return a[2] < b[2]
@@ -940,8 +943,9 @@ function M:QuestSort(questWatchInfoList)
 	elseif dbChar.quests.sort == "level" then
 		-- by Level
 		tsort(questWatchInfoList, function(a, b)
-			assert(a[2], KT.Debug("a = "..KT.PrintTable(a).."\nb = "..KT.PrintTable(b)))
-			assert(b[2], KT.Debug("a = "..KT.PrintTable(a).."\nb = "..KT.PrintTable(b)))
+			if next(a) == nil or next(b) == nil then
+				return false
+			end
 			if a[2] == b[2] then
 				return a[3] < b[3]
 			end
@@ -950,6 +954,9 @@ function M:QuestSort(questWatchInfoList)
 	elseif dbChar.quests.sort == "levelReversed" then
 		-- by Level (reverse)
 		tsort(questWatchInfoList, function(a, b)
+			if next(a) == nil or next(b) == nil then
+				return false
+			end
 			if a[2] == b[2] then
 				return a[3] < b[3]
 			end
