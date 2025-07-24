@@ -9,7 +9,7 @@ local format = string.format
 -- WoW
 local function C_Map_GetAreaInfo(id)
     local d = C_Map.GetAreaInfo(id)
-    return d or ("GetAreaInfo"..id)
+    return d or ("GetAreaInfo" .. id)
 end
 
 -- ----------------------------------------------------------------------------
@@ -24,15 +24,18 @@ local ALIL = AtlasLoot.IngameLocales
 
 local GetForVersion = AtlasLoot.ReturnForGameVersion
 
---local RAIDFINDER_DIFF = data:AddDifficulty("Raid Finder", nil, nil, nil, true)
+local TWILIGHT_DIFF = data:AddDifficulty(AL["Elemental Rune Twilight"], nil, nil, nil, true)
+local CELESTIAL_DIFF = data:AddDifficulty("CELESTIAL", nil, nil, nil, true)
+local FLEXIBLE_DIFF = data:AddDifficulty("FLEXIBLE", nil, nil, nil, true)
 
-local TWILIGHT_DIFF = data:AddDifficulty("Elemental Rune Twilight", nil, nil, nil, true)
 local NORMAL_DIFF = data:AddDifficulty("NORMAL", nil, nil, nil, true)
 local HEROIC_DIFF = data:AddDifficulty("HEROIC", nil, nil, nil, true)
 local RAID10_DIFF = data:AddDifficulty("10RAID")
 local RAID10H_DIFF = data:AddDifficulty("10RAIDH")
 local RAID25_DIFF = data:AddDifficulty("25RAID")
 local RAID25H_DIFF = data:AddDifficulty("25RAIDH")
+local MAJOR_GLYPHS_DIFF = data:AddDifficulty(ALIL["Major Glyphs"], "majorglyphs", 0)
+local MINOR_GLYPHS_DIFF = data:AddDifficulty(ALIL["Minor Glyphs"], "minorglyphs", 0)
 
 local VENDOR_DIFF = data:AddDifficulty(AL["Vendor"], "vendor", 0)
 local T10_1_DIFF = data:AddDifficulty(AL["10H / 25 / 25H"], "T10_1", 0)
@@ -51,6 +54,7 @@ end
 
 local NORMAL_ITTYPE = data:AddItemTableType("Item", "Item")
 local SET_ITTYPE = data:AddItemTableType("Set", "Item")
+local PROF_ITTYPE = data:AddItemTableType("Profession", "Item")
 
 local QUEST_EXTRA_ITTYPE = data:AddExtraItemTableType("Quest")
 local PRICE_EXTRA_ITTYPE = data:AddExtraItemTableType("Price")
@@ -62,6 +66,7 @@ local SET_CONTENT = data:AddContentType(AL["Sets"], ATLASLOOT_PVP_COLOR)
 local COLLECTIONS_CONTENT = data:AddContentType(AL["Collections"], ATLASLOOT_COLLECTIONS_COLOR)
 local WORLD_EVENT_CONTENT = data:AddContentType(AL["World Events"], ATLASLOOT_SEASONALEVENTS_COLOR)
 
+local REPLICA_SET_FORMAT = format(AL["%s Replica Set"], "%s")
 -- colors
 local SUPERIOR_QUALITY = "|cff0070dd%s|r"
 local EPIC_QUALITY = "|cffa335ee%s|r"
@@ -664,8 +669,289 @@ data["TierSets"] = {
                 {28, 40021064 }, -- Paladin DPS
             },
         }),
+        AtlasLoot:GameVersion_GE(AtlasLoot.MOP_VERSION_NUM, {
+            name = format(AL["Tier %s Sets"], "14"),
+            CoinTexture = "MOP",
+            [CELESTIAL_DIFF] = {
+                    {1, 50001143 }, -- Warlock
+                    {3, 50001137 }, -- Priest Holy
+                    {4, 50001138 }, -- Priest Shadow
+                    {6, 50001139 }, -- Rogue
+                    {8, 50001129 }, -- Hunter
+                    {10, 50001145 }, -- Warrior Tank
+                    {11, 50001144 }, -- Warrior Dps
+                    {13, 50001124 }, -- Death Knight Tank
+                    {14, 50001123 }, -- Death Knight DPS
+                    {16, 50001130 }, -- Mage
+                    {18, 50001125 }, -- Druid Resto
+                    {19, 50001126 }, -- Druid Balance
+                    {20, 50001127 }, -- Druid Feral
+                    {21, 50001128 }, -- Druid Guardian
+                    {23, 50001141 }, -- Shaman Resto
+                    {24, 50001140 }, -- Shaman Elemental
+                    {25, 50001142 }, -- Shaman Enhance
+                    {27, 50001134 }, -- Paladin Holy
+                    {28, 50001136 }, -- Paladin Prot
+                    {29, 50001135 }, -- Paladin DPS
+                    {101, 50001131 }, -- Monk Mistweaver
+                    {102, 50001133 }, -- Monk Brewmaster
+                    {103, 50001132 }, -- Monk Windwalker
+            },
+            [NORMAL_DIFF] = {
+                    {1, 50011143 }, -- Warlock
+                    {3, 50011137 }, -- Priest Holy
+                    {4, 50011138 }, -- Priest Shadow
+                    {6, 50011139 }, -- Rogue
+                    {8, 50011129 }, -- Hunter
+                    {10, 50011145 }, -- Warrior Tank
+                    {11, 50011144 }, -- Warrior Dps
+                    {13, 50011124 }, -- Death Knight Tan
+                    {14, 50011123 }, -- Death Knight DPS
+                    {16, 50011130 }, -- Mage
+                    {18, 50011125 }, -- Druid Resto
+                    {19, 50011126 }, -- Druid Balance
+                    {20, 50011127 }, -- Druid Feral
+                    {21, 50011128 }, -- Druid Guardian
+                    {23, 50011141 }, -- Shaman Resto
+                    {24, 50011140 }, -- Shaman Elemental
+                    {25, 50011142 }, -- Shaman Enhance
+                    {27, 50011134 }, -- Paladin Holy
+                    {28, 50011136 }, -- Paladin Prot
+                    {29, 50011135 }, -- Paladin DPS
+                    {101, 50011131 }, -- Monk Mistweaver
+                    {102, 50011133 }, -- Monk Brewmaster
+                    {103, 50011132 }, -- Monk Windwalker
+            },
+            [HEROIC_DIFF] = {
+                    {1, 50021143 }, -- Warlock
+                    {3, 50021137 }, -- Priest Holy
+                    {4, 50021138 }, -- Priest Shadow
+                    {6, 50021139 }, -- Rogue
+                    {8, 50021129 }, -- Hunter
+                    {10, 50021145 }, -- Warrior Tank
+                    {11, 50021144 }, -- Warrior Dps
+                    {13, 50021124 }, -- Death Knight Tan
+                    {14, 50021123 }, -- Death Knight DPS
+                    {16, 50021130 }, -- Mage
+                    {18, 50021125 }, -- Druid Resto
+                    {19, 50021126 }, -- Druid Balance
+                    {20, 50021127 }, -- Druid Feral
+                    {21, 50021128 }, -- Druid Guardian
+                    {23, 50021141 }, -- Shaman Resto
+                    {24, 50021140 }, -- Shaman Elemental
+                    {25, 50021142 }, -- Shaman Enhance
+                    {27, 50021134 }, -- Paladin Holy
+                    {28, 50021136 }, -- Paladin Prot
+                    {29, 50021135 }, -- Paladin DPS
+                    {101, 50021131 }, -- Monk Mistweaver
+                    {102, 50021133 }, -- Monk Brewmaster
+                    {103, 50021132 }, -- Monk Windwalker
+            },
+        }),
+        AtlasLoot:GameVersion_GE(AtlasLoot.MOP_VERSION_NUM, {
+            name = format(AL["Tier %s Sets"], "15"),
+            CoinTexture = "MOP",
+            ContentPhaseMoP = 3,
+            [CELESTIAL_DIFF] = {
+                    { 1, 50001171 }, -- Warlock
+                    { 3, 50001165 }, -- Priest Holy
+                    { 4, 50001166 }, -- Priest Shadow
+                    { 6, 50001167 }, -- Rogue
+                    { 8, 50001157 }, -- Hunter
+                    { 10, 50001173 }, -- Warrior Tank
+                    { 11, 50001172 }, -- Warrior Dps
+                    { 13, 50001151 }, -- Death Knight Tank
+                    { 14, 50001152 }, -- Death Knight DPS
+                    { 16, 50001158 }, -- Mage
+                    { 18, 50001154 }, -- Druid Resto
+                    { 19, 50001156 }, -- Druid Guardian
+                    { 20, 50001155 }, -- Druid Balance
+                    { 21, 50001153 }, -- Druid Feral
+                    { 23, 50001168 }, -- Shaman Resto
+                    { 24, 50001170 }, -- Shaman Elemental
+                    { 25, 50001169 }, -- Shaman Enhance
+                    { 27, 50001163 }, -- Paladin Holy
+                    { 28, 50001164 }, -- Paladin Prot
+                    { 29, 50001162 }, -- Paladin DPS
+                    { 101, 50001160 }, -- Monk Mistweaver
+                    { 102, 50001161 }, -- Monk Brewmaster
+                    { 103, 50001159 }, -- Monk Windwalker
+            },
+            [NORMAL_DIFF] = {
+                    { 1, 50011171 }, -- Warlock
+                    { 3, 50011165 }, -- Priest Holy
+                    { 4, 50011166 }, -- Priest Shadow
+                    { 6, 50011167 }, -- Rogue
+                    { 8, 50011157 }, -- Hunter
+                    { 10, 50011173 }, -- Warrior Tank
+                    { 11, 50011172 }, -- Warrior Dps
+                    { 13, 50011151 }, -- Death Knight Tank
+                    { 14, 50011152 }, -- Death Knight DPS
+                    { 16, 50011158 }, -- Mage
+                    { 18, 50011154 }, -- Druid Resto
+                    { 19, 50011156 }, -- Druid Guardian
+                    { 20, 50011155 }, -- Druid Balance
+                    { 21, 50011153 }, -- Druid Feral
+                    { 23, 50011168 }, -- Shaman Resto
+                    { 24, 50011170 }, -- Shaman Elemental
+                    { 25, 50011169 }, -- Shaman Enhance
+                    { 27, 50011163 }, -- Paladin Holy
+                    { 28, 50011164 }, -- Paladin Prot
+                    { 29, 50011162 }, -- Paladin DPS
+                    { 101, 50011160 }, -- Monk Mistweaver
+                    { 102, 50011161 }, -- Monk Brewmaster
+                    { 103, 50011159 }, -- Monk Windwalker
+            },
+            [HEROIC_DIFF] = {
+                    { 1, 50021171 }, -- Warlock
+                    { 3, 50021165 }, -- Priest Holy
+                    { 4, 50021166 }, -- Priest Shadow
+                    { 6, 50021167 }, -- Rogue
+                    { 8, 50021157 }, -- Hunter
+                    { 10, 50021173 }, -- Warrior Tank
+                    { 11, 50021172 }, -- Warrior Dps
+                    { 13, 50021151 }, -- Death Knight Tank
+                    { 14, 50021152 }, -- Death Knight DPS
+                    { 16, 50021158 }, -- Mage
+                    { 18, 50021154 }, -- Druid Resto
+                    { 19, 50021156 }, -- Druid Guardian
+                    { 20, 50021155 }, -- Druid Balance
+                    { 21, 50021153 }, -- Druid Feral
+                    { 23, 50021168 }, -- Shaman Resto
+                    { 24, 50021170 }, -- Shaman Elemental
+                    { 25, 50021169 }, -- Shaman Enhance
+                    { 27, 50021163 }, -- Paladin Holy
+                    { 28, 50021164 }, -- Paladin Prot
+                    { 29, 50021162 }, -- Paladin DPS
+                    { 101, 50021160 }, -- Monk Mistweaver
+                    { 102, 50021161 }, -- Monk Brewmaster
+                    { 103, 50021159 }, -- Monk Windwalker
+            },
+        }),
+                AtlasLoot:GameVersion_GE(AtlasLoot.MOP_VERSION_NUM, {
+            name = format(AL["Tier %s Sets"], "16"),
+            CoinTexture = "MOP",
+            ContentPhaseMoP = 5,
+            [CELESTIAL_DIFF] = {
+                    { 1, 50001181 }, -- Warlock
+                    { 3, 50001187 }, -- Priest Holy
+                    { 4, 50001186 }, -- Priest Shadow
+                    { 6, 50001185 }, -- Rogue
+                    { 8, 50001195 }, -- Hunter
+                    { 10, 50001179 }, -- Warrior Tank
+                    { 11, 50001180 }, -- Warrior Dps
+                    { 13, 50001201 }, -- Death Knight Tank
+                    { 14, 50001200 }, -- Death Knight DPS
+                    { 16, 50001194 }, -- Mage
+                    { 18, 50001198 }, -- Druid Resto
+                    { 19, 50001196 }, -- Druid Guardian
+                    { 20, 50001197 }, -- Druid Balance
+                    { 21, 50001199 }, -- Druid Feral
+                    { 23, 50001184 }, -- Shaman Resto
+                    { 24, 50001182 }, -- Shaman Elemental
+                    { 25, 50001183 }, -- Shaman Enhance
+                    { 27, 50001189 }, -- Paladin Holy
+                    { 28, 50001188 }, -- Paladin Prot
+                    { 29, 50001190 }, -- Paladin DPS
+                    { 101, 50001192 }, -- Monk Mistweaver
+                    { 102, 50001191 }, -- Monk Brewmaster
+                    { 103, 50001193 }, -- Monk Windwalker
+            },
+            [FLEXIBLE_DIFF] = {
+                    { 1, 50011181 }, -- Warlock
+                    { 3, 50011187 }, -- Priest Holy
+                    { 4, 50011186 }, -- Priest Shadow
+                    { 6, 50011185 }, -- Rogue
+                    { 8, 50011195 }, -- Hunter
+                    { 10, 50011179 }, -- Warrior Tank
+                    { 11, 50011180 }, -- Warrior Dps
+                    { 13, 50011201 }, -- Death Knight Tank
+                    { 14, 50011200 }, -- Death Knight DPS
+                    { 16, 50011194 }, -- Mage
+                    { 18, 50011198 }, -- Druid Resto
+                    { 19, 50011196 }, -- Druid Guardian
+                    { 20, 50011197 }, -- Druid Balance
+                    { 21, 50011199 }, -- Druid Feral
+                    { 23, 50011184 }, -- Shaman Resto
+                    { 24, 50011182 }, -- Shaman Elemental
+                    { 25, 50011183 }, -- Shaman Enhance
+                    { 27, 50011189 }, -- Paladin Holy
+                    { 28, 50011188 }, -- Paladin Prot
+                    { 29, 50011190 }, -- Paladin DPS
+                    { 101, 50011192 }, -- Monk Mistweaver
+                    { 102, 50011191 }, -- Monk Brewmaster
+                    { 103, 50011193 }, -- Monk Windwalker
+            },
+            [NORMAL_DIFF] = {
+                    { 1, 50021181 }, -- Warlock
+                    { 3, 50021187 }, -- Priest Holy
+                    { 4, 50021186 }, -- Priest Shadow
+                    { 6, 50021185 }, -- Rogue
+                    { 8, 50021195 }, -- Hunter
+                    { 10, 50021179 }, -- Warrior Tank
+                    { 11, 50021180 }, -- Warrior Dps
+                    { 13, 50021201 }, -- Death Knight Tank
+                    { 14, 50021200 }, -- Death Knight DPS
+                    { 16, 50021194 }, -- Mage
+                    { 18, 50021198 }, -- Druid Resto
+                    { 19, 50021196 }, -- Druid Guardian
+                    { 20, 50021197 }, -- Druid Balance
+                    { 21, 50021199 }, -- Druid Feral
+                    { 23, 50021184 }, -- Shaman Resto
+                    { 24, 50021182 }, -- Shaman Elemental
+                    { 25, 50021183 }, -- Shaman Enhance
+                    { 27, 50021189 }, -- Paladin Holy
+                    { 28, 50021188 }, -- Paladin Prot
+                    { 29, 50021190 }, -- Paladin DPS
+                    { 101, 50021192 }, -- Monk Mistweaver
+                    { 102, 50021191 }, -- Monk Brewmaster
+                    { 103, 50021193 }, -- Monk Windwalker
+            },
+            [HEROIC_DIFF] = {
+                    { 1, 50031181 }, -- Warlock
+                    { 3, 50031187 }, -- Priest Holy
+                    { 4, 50031186 }, -- Priest Shadow
+                    { 6, 50031185 }, -- Rogue
+                    { 8, 50031195 }, -- Hunter
+                    { 10, 50031179 }, -- Warrior Tank
+                    { 11, 50031180 }, -- Warrior Dps
+                    { 13, 50031201 }, -- Death Knight Tank
+                    { 14, 50031200 }, -- Death Knight DPS
+                    { 16, 50031194 }, -- Mage
+                    { 18, 50031198 }, -- Druid Resto
+                    { 19, 50031196 }, -- Druid Guardian
+                    { 20, 50031197 }, -- Druid Balance
+                    { 21, 50031199 }, -- Druid Feral
+                    { 23, 50031184 }, -- Shaman Resto
+                    { 24, 50031182 }, -- Shaman Elemental
+                    { 25, 50031183 }, -- Shaman Enhance
+                    { 27, 50031189 }, -- Paladin Holy
+                    { 28, 50031188 }, -- Paladin Prot
+                    { 29, 50031190 }, -- Paladin DPS
+                    { 101, 50031192 }, -- Monk Mistweaver
+                    { 102, 50031191 }, -- Monk Brewmaster
+                    { 103, 50031193 }, -- Monk Windwalker
+            },
+        }),
     },
 }
+
+--[[ -- Future potential addition
+data["Glyphs"] = {
+    name = AL["Glyphs"],
+    ContentType = SET_CONTENT,
+    TableType = PROF_ITTYPE,
+    items = {
+        {
+            name = ALIL["DRUID"],
+            CoinTexture = "DRUID",
+            [MAJOR_GLYPHS_DIFF] = {
+                { 1, 54810 },
+            },
+        },
+    }
+}
+--]]
 
 data["DungeonSets"] = {
     name = AL["Dungeon Sets"],
@@ -773,7 +1059,7 @@ data["AQSets"] = {
     ContentPhase = 5,
     items = {
         { -- AQ20
-            name = format(AL["%s Sets"], C_Map_GetAreaInfo(3428).." 20"),
+            name = format(AL["%s Sets"], C_Map_GetAreaInfo(3428) .. " 20"),
             [ALLIANCE_DIFF] = {
                 { 1,  500 }, -- Warlock
                 { 3,  508 }, -- Priest
@@ -791,7 +1077,7 @@ data["AQSets"] = {
             },
         },
         { -- AQ40
-            name = format(AL["%s Sets"], C_Map_GetAreaInfo(3428).." 40"),
+            name = format(AL["%s Sets"], C_Map_GetAreaInfo(3428) .. " 40"),
             [ALLIANCE_DIFF] = {
                 { 1,  499 }, -- Warlock
                 { 3,  507 }, -- Priest
@@ -934,7 +1220,7 @@ data["WorldEpics"] = {
             },
         },
         {
-            name = AL["Ranged Weapons"].." & "..ALIL["Shield"],
+            name = AL["Ranged Weapons"] .. " / " .. ALIL["Shield"],
             [NORMAL_DIFF] = {
                 -- Bow
                 { 1, 2824 }, -- Hurricane
@@ -950,7 +1236,7 @@ data["WorldEpics"] = {
             },
         },
         {
-            name = ALIL["Trinket"].." & "..ALIL["Finger"].." & "..ALIL["Neck"],
+            name = ALIL["Trinket"] .. " / " .. ALIL["Finger"] .. " / " .. ALIL["Neck"],
             [NORMAL_DIFF] = {
                 -- Trinket
                 { 1, 14557 }, -- The Lion Horn of Stormwind
@@ -1331,7 +1617,6 @@ data["Darkmoon"] = {
     FactionID = 909,
     ContentType = WORLD_EVENT_CONTENT,
     LoadDifficulty = LOAD_DIFF,
-    ContentPhase = 3,
     items = {
         { -- Exalted
             name = AL["Decks"],
@@ -1359,7 +1644,7 @@ data["Darkmoon"] = {
             },
         },
         {
-            name = ALIL["Replica Mage Sets"],
+            name = format(REPLICA_SET_FORMAT, ALIL["MAGE"]),
             [NORMAL_DIFF] = {
                 {1, 78190}, -- Replica Magister's Set
                 {2, 78186},
@@ -1380,7 +1665,7 @@ data["Darkmoon"] = {
             },
         },
         {
-            name = ALIL["Replica Warlock Sets"],
+            name = format(REPLICA_SET_FORMAT, ALIL["WARLOCK"]),
             [NORMAL_DIFF] = {
                 {1, 78225}, -- Replica Dreadmist Set
                 {2, 78224},
@@ -1401,7 +1686,7 @@ data["Darkmoon"] = {
             },
         },
         {
-            name = ALIL["Replica Priest Sets"],
+            name = format(REPLICA_SET_FORMAT, ALIL["PRIEST"]),
             [NORMAL_DIFF] = {
                 {1, 78209}, -- Replica Devout Set
                 {2, 78210},
@@ -1422,7 +1707,7 @@ data["Darkmoon"] = {
             },
         },
         {
-            name = ALIL["Replica Druid Sets"],
+            name = format(REPLICA_SET_FORMAT, ALIL["DRUID"]),
             [NORMAL_DIFF] = {
                 {1, 78242}, -- Replica Wildheart Set
                 {2, 78243},
@@ -1443,7 +1728,7 @@ data["Darkmoon"] = {
             },
         },
         {
-            name = ALIL["Replica Rogue Sets"],
+            name = format(REPLICA_SET_FORMAT, ALIL["ROGUE"]),
             [NORMAL_DIFF] = {
                 {1, 78254}, -- Replica Shadowcraft Set
                 {2, 78256},
@@ -1464,7 +1749,7 @@ data["Darkmoon"] = {
             },
         },
         {
-            name = ALIL["Replica Hunter Sets"],
+            name = format(REPLICA_SET_FORMAT, ALIL["HUNTER"]),
             [NORMAL_DIFF] = {
                 {1, 78270}, -- Replica Beaststalker's Set
                 {2, 78272},
@@ -1485,7 +1770,7 @@ data["Darkmoon"] = {
             },
         },
         {
-            name = ALIL["Replica Shaman Sets"],
+            name = format(REPLICA_SET_FORMAT, ALIL["SHAMAN"]),
             [NORMAL_DIFF] = {
                 {1, 78290}, -- Replica Elements Set
                 {2, 78292},
@@ -1506,7 +1791,7 @@ data["Darkmoon"] = {
             },
         },
         {
-            name = ALIL["Replica Paladin Sets"],
+            name = format(REPLICA_SET_FORMAT, ALIL["PALADIN"]),
             [NORMAL_DIFF] = {
                 {1, 78306}, -- Replica Lightforge Set
                 {2, 78309},
@@ -1527,7 +1812,7 @@ data["Darkmoon"] = {
             },
         },
         {
-            name = ALIL["Replica Warrior Sets"],
+            name = format(REPLICA_SET_FORMAT, ALIL["WARRIOR"]),
             [NORMAL_DIFF] = {
                 {1, 78323}, -- Replica Valor Set
                 {2, 78318},
@@ -1548,7 +1833,7 @@ data["Darkmoon"] = {
             },
         },
         {
-            name = ALIL["Pets / Mounts / Misc"],
+            name = ALIL["Mounts"] .. " / " .. ALIL["Pets"] .. " / " .. AL["Toys"],
             [NORMAL_DIFF] = {
                 {1, 73766}, -- Darkmoon Dancing Bear
                 {2, 72140}, -- Swift Forest Strider
@@ -1569,17 +1854,21 @@ data["Darkmoon"] = {
                 {19, 97994}, -- Darkmoon Seesaw
                 {20, 105898}, -- Moonfang's Paw
                 {21, 101571}, -- Moonfang Shroud
-                {23, 77158}, -- Darkmoon "Tiger"
-                {24, 19291}, -- Darkmoon Storage Box
-                {25, 19295}, -- Darkmoon Flower
-                {26, 77256}, -- Darkmoon "Sword"
-                {27, 78341}, -- Darkmoon Hammer
-                {28, 78340}, -- Cloak of the Darkmoon Faire
-                {30, 74034}, -- Pit Fighter
-                {101, "SPECIAL_ACHIEVEMENT", nil, AL["Achievements"], nil, "AC_DarkmoonFaire"},
           },
       },
-        AtlasLoot:GameVersion_GE(AtlasLoot.CATA_VERSION_NUM,{
+      {
+        name = AL["Misc"],
+        [NORMAL_DIFF] = {
+            {1, 77158}, -- Darkmoon "Tiger"
+            {2, 19291}, -- Darkmoon Storage Box
+            {3, 19295}, -- Darkmoon Flower
+            {4, 77256}, -- Darkmoon "Sword"
+            {16, 78341}, -- Darkmoon Hammer
+            {17, 78340}, -- Cloak of the Darkmoon Faire
+            {19, 74034}, -- Pit Fighter
+        }
+      },
+        AtlasLoot:GameVersion_GE(AtlasLoot.MOP_VERSION_NUM,{
         name = format(BOA_QUALITY, AL["Heirlooms"]),
         [NORMAL_DIFF] = {
                 { 1,  42985 }, -- Tattered Dreadmist Mantle
@@ -1630,11 +1919,15 @@ data["Darkmoon"] = {
                 { 121, 93897 }, -- Piercing Eye of the Beast
                 { 122, 42991 }, -- Swift Hand of Justice
                 { 123, 93896 }, -- Forceful Hand of Justice
-                { 125, 93902 }, -- Flamescarred Draconian Deflector
-                { 126, 93903 }, -- Weathered Observer's Shield
-                { 127, 93904 }, -- Musty Tome of the Lost
             },
         }),
+        {
+            name = AL["Achievements"],
+            ExtraList = true,
+            [NORMAL_DIFF] = {
+                {1, "SPECIAL_ACHIEVEMENT", nil, AL["Achievements"], nil, "AC_DarkmoonFaire"},
+            }
+        },
     },
 }
 
@@ -1889,7 +2182,7 @@ data["Halloween"] = {
     CorrespondingFields = private.HALLOWEEN,
     items = {
         { -- Halloween1
-            name = AL["Hallow's End"].." - "..AL["Misc"],
+            name = AL["Hallow's End"] .. " - " .. AL["Misc"],
             [NORMAL_DIFF] = {
                 { 1,  20400 }, -- Pumpkin Bag
                 { 3,  18633 }, -- Styleen's Sour Suckerpop
@@ -1902,7 +2195,7 @@ data["Halloween"] = {
             },
         },
         { -- Halloween1
-            name = AL["Hallow's End"].." - "..AL["Wands"],
+            name = AL["Hallow's End"] .. " - " .. AL["Wands"],
             [NORMAL_DIFF] = {
                 { 1, 20410 }, -- Hallowed Wand - Bat
                 { 2, 20409 }, -- Hallowed Wand - Ghost
@@ -1915,7 +2208,7 @@ data["Halloween"] = {
             },
         },
         { -- Halloween3
-            name = AL["Hallow's End"].." - "..AL["Masks"],
+            name = AL["Hallow's End"] .. " - " .. AL["Masks"],
             [NORMAL_DIFF] = {
                 { 1,  20561 }, -- Flimsy Male Dwarf Mask
                 { 2,  20391 }, -- Flimsy Male Gnome Mask
@@ -2202,7 +2495,7 @@ data["ScourgeInvasion"] = {
             },
         },
         {
-            name = C_Map_GetAreaInfo(2017).." - "..AL["Balzaphon"],
+            name = C_Map_GetAreaInfo(2017) .. " - " .. AL["Balzaphon"],
             [NORMAL_DIFF] = {
                 { 1,  23126 }, -- Waistband of Balzaphon
                 { 2,  23125 }, -- Chains of the Lich
@@ -2210,7 +2503,7 @@ data["ScourgeInvasion"] = {
             }
         },
         {
-            name = C_Map_GetAreaInfo(2057).." - "..AL["Lord Blackwood"],
+            name = C_Map_GetAreaInfo(2057) .. " - " .. AL["Lord Blackwood"],
             [NORMAL_DIFF] = {
                 { 1,  23132 }, -- Lord Blackwood's Blade
                 { 2,  23156 }, -- Blackwood's Thigh
@@ -2218,7 +2511,7 @@ data["ScourgeInvasion"] = {
             }
         },
         {
-            name = C_Map_GetAreaInfo(2557).." - "..AL["Revanchion"],
+            name = C_Map_GetAreaInfo(2557) .. " - " .. AL["Revanchion"],
             [NORMAL_DIFF] = {
                 { 1, 23127 }, -- Cloak of Revanchion
                 { 2, 23129 }, -- Bracers of Mending
@@ -2226,7 +2519,7 @@ data["ScourgeInvasion"] = {
             }
         },
         {
-            name = AL["Scarlet Monastery - Graveyard"].." - "..AL["Scorn"],
+            name = AL["Scarlet Monastery - Graveyard"] .. " - " .. AL["Scorn"],
             [NORMAL_DIFF] = {
                 { 1, 23169 }, -- Scorn's Icy Choker
                 { 2, 23170 }, -- The Frozen Clutch
@@ -2234,14 +2527,14 @@ data["ScourgeInvasion"] = {
             }
         },
         {
-            name = C_Map_GetAreaInfo(209).." - "..AL["Sever"],
+            name = C_Map_GetAreaInfo(209) .. " - " .. AL["Sever"],
             [NORMAL_DIFF] = {
                 { 1, 23173 }, -- Abomination Skin Leggings
                 { 2, 23171 }, -- The Axe of Severing
             }
         },
         {
-            name = C_Map_GetAreaInfo(722).." - "..AL["Lady Falther'ess"],
+            name = C_Map_GetAreaInfo(722) .. " - " .. AL["Lady Falther'ess"],
             [NORMAL_DIFF] = {
                 { 1, 23178 }, -- Mantle of Lady Falther'ess
                 { 2, 23177 }, -- Lady Falther'ess' Finger

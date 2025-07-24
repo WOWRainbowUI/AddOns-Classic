@@ -2,7 +2,7 @@
 
 if not AL then return end
 
--- These localization strings are translated on Curseforge: https://www.curseforge.com/wow/addons/atlaslootclassic-cata/localization
+-- These localization strings are translated on Curseforge: https://www.curseforge.com/wow/addons/atlaslootclassic-mists/localization
 -- Collections
 AL["'%s %s' Vendor"] = "'%s %s' 商人"
 AL["%s Sets"] = "%s 套裝"
@@ -45,7 +45,6 @@ AL["Hallow's End"] = "萬鬼節"
 AL["Harvest Festival"] = "收穫節"
 AL["High Marshal Whirlaxis"] = "大元帥維拉希斯"
 AL["Hoary Templar"] = "蒼白聖殿騎士"
-AL["Legendarys"] = "傳說物品"
 AL["Lord Skwol"] = "斯古恩領主"
 AL["Love is in the Air"] = "愛就在身邊"
 AL["Lucky Red Envelope"] = "幸運紅包袋"
@@ -63,7 +62,6 @@ AL["Rare Fish"] = "稀有魚"
 AL["Rare Fish Rewards"] = "稀有魚獎勵"
 AL["Scarlet Monastery - Graveyard"] = "血色修道院 - 墓地"
 AL["Scourge Invasion"] = "天譴軍入侵"
-AL["Sidereal Essence"] = "恆星精華"
 AL["Silithus Abyssal"] = "深淵議會"
 AL["Smokywood Pastures"] = "熏木農場"
 AL["Smokywood Pastures Special Gift"] = "熏木農場特殊禮物"

@@ -1,48 +1,62 @@
 # TODO for MoP Release
 - [ ] PvP Module needs to be populated
-    - [ ] Mounts
-    - [ ] S12 gear
-    - [ ] World PvP objectives/rewards (5.1 stuff?)
+    - [ ] S13 gear
+    - [ ] S14 gear
+    - [ ] S15 gear
+    - [x] Mounts
+    - [x] Sets
 - [ ] Collections module needs to be populated
-    - [ ] New tier sets
     - [ ] Legendaries clean up, add gems and other stuff
-    - [ ] World Drops
-    - [ ] JP and VP vendors
-    - [ ] Celestial dungeon vendor
-    - [ ] Cooking vendors?
-    - [ ] Spirit of Harmony vendor
-    - [ ] Proving grounds rewards?
-    - [ ] New mounts
-    - [ ] New pets
-    - [ ] New heirlooms
-    - [ ] New tabards
-    - [ ] World event changes
-    - ???
+    - [x] Celestial dungeon vendor
+        - [ ] clean up!
+    - [ ] Brawler's Guild
+    - [x] JP and VP vendors
+    - [x] Spirit of Harmony vendor
+    - [x] New tier sets
+    - [x] World Drops
+    - [x] World event changes
+    - [x] New mounts
+    - [x] New pets
+    - [x] New heirlooms
+    - [x] New tabards
 - [ ] Finish Crafting module
+    - [x] Inscription
+        - [ ] MoP glyphs
+        - [ ] Redo all old glyphs under wrath/cata
+    - [x] Leatherworking
+        - [ ] Crafted PvP gear
+        - [ ] Sets
+    - [x] Blacksmithing
 - [ ] Finish Dungeons and Raids module
     - [ ] Add Celestial Dungeon stuff to Dungeons and Raids
     - [ ] Make world bosses data more compact/usable
-    - [ ] Add valor/justice/fragments drops
+    - [ ] Add valor/justice/fragments currency drops
     - [ ] Add source data to Data module (last step, with script)
-    - [ ] Tier sets (from Collections module)
-- [ ] Clean up rest of Factions module
-- [ ] Add item sets data (Data/ItemSet.lua)
-    - [x] T14
-    - [ ] T15
-    - [ ] T16
-    - [ ] PvP
-    - [ ] Misc
+    - [x] Tier sets (from Collections module)
+- [ ] Organize Factions module
 - [ ] Add tokens data (Data/Token.lua)
-- [ ] Add vendor price data (Data/VendorPrice.lua)
-- [ ] Add recipe data (Data/Recipe.lua)
 - [ ] Add Content phase data (Data/ContentPhase.lua)
-- [ ] Add any missing locale strings
+- [x] Add vendor price data (Data/VendorPrice.lua)
+- [x] Add recipe data (Data/Recipe.lua)
+- [x] Add item sets data (Data/ItemSet.lua)
+    - [x] T14
+    - [x] T15
+    - [x] T16
+    - [x] PvP
+    - [x] Item to set data (script)
 
 # Bugs and Other Problems
-- [ ] Need to fix profession data having wrong skill levels for orange/yellow/green/gray
 - [ ] Remove Model button and replace with link to Dungeon Journal
-- [ ] Add update changes screen?
+- [x] Finish update notifier
+- [x] Linking items to chat seems broken, NVM BLIZZARD PROBLEM
+- [x] Add any missing locale strings
+
+# Maybe Someday
+- [ ] Update requirements (Data/Requirements.lua) needs rework
+- [ ] Investigate recipes that don't exist to players, but in game files?
+- [ ] Fix profession data having wrong skill levels for yellow/green/gray
+- [ ] All glyphs in collections
 
 # External Stuff
+- [ ] Update CurseForge icon
 - [x] Rename addon for MoP
-- [ ] Update CurseForge descriptions/icon

@@ -1,6 +1,6 @@
 ## Interface: 50500
 ## Author: Snowflame0
-## Version: v5.0.0-beta1
+## Version: v5.0.0
 ## Dependencies: AtlasLootClassic
 ## LoadOnDemand: 1
 

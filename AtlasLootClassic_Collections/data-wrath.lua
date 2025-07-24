@@ -963,8 +963,10 @@ data["DefilersScourgestone"] = {
         })
     }, {
         name = AL["Misc"],
-        [NORMAL_DIFF] = {{1, "INV_Box_01", nil, AL["Sidereal Essence: 1 for 1"], nil}, {2, 49908}, -- Primordial Saronite
-                         {3, 47242} -- Trophy of the Crusade
+        [NORMAL_DIFF] = {
+            { 1, "c2589", [PRICE_EXTRA_ITTYPE] = "DefilersScourgestone:1" },
+            { 2, 49908 }, -- Primordial Saronite
+            { 3, 47242 }, -- Trophy of the Crusade
         }
     }}
 }

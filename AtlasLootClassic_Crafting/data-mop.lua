@@ -27,7 +27,6 @@ local LEATHER_DIFF = data:AddDifficulty(ALIL["Leather"], "leather", 0)
 local MAIL_DIFF = data:AddDifficulty(ALIL["Mail"], "mail", 0)
 local PLATE_DIFF = data:AddDifficulty(ALIL["Plate"], "plate", 0)
 
-local PRIME_GLYPHS_DIFF = data:AddDifficulty(ALIL["Prime Glyphs"], "primeglyphs", 0)
 local MAJOR_GLYPHS_DIFF = data:AddDifficulty(ALIL["Major Glyphs"], "majorglyphs", 0)
 local MINOR_GLYPHS_DIFF = data:AddDifficulty(ALIL["Minor Glyphs"], "minorglyphs", 0)
 
@@ -41,10 +40,8 @@ local PRICE_EXTRA_ITTYPE = data:AddExtraItemTableType("Price")
 local PROF_CONTENT = data:AddContentType(ALIL["Professions"], ATLASLOOT_PRIMPROFESSION_COLOR)
 local PROF_GATH_CONTENT = data:AddContentType(ALIL["Gathering Professions"], ATLASLOOT_PRIMPROFESSION_COLOR)
 local PROF_SEC_CONTENT = data:AddContentType(AL["Secondary Professions"], ATLASLOOT_SECPROFESSION_COLOR)
-local PROF_CLASS_CONTENT = data:AddContentType(AL["Class Professions"], ATLASLOOT_CLASSPROFESSION_COLOR)
 
 local GEM_FORMAT1 = ALIL["Gems"].." - %s"
-local GEM_FORMAT2 = ALIL["Gems"].." - %s & %s"
 
 data["AlchemyMoP"] = {
     name = ALIL["Alchemy"],
@@ -137,176 +134,280 @@ data["BlacksmithingMoP"] = {
         { -- Daggers
             name = AL["Weapons"].." - "..ALIL["Daggers"],
             [NORMAL_DIFF] = {
-                { 1, 99652 }, -- Brainsplinter
-                { 2, 99653 }, -- Masterwork Elementium Spellblade
-                { 3, 76449 }, -- Elementium Spellblade
-                { 4, 76453 }, -- Elementium Shank
-                { 5, 76434 }, -- Cold Forged Shank
+                { 1, 122648 }, -- Masterwork Ghost Shard
+                { 2, 122641 }, -- Ghost Shard
             }
         },
         { -- Axes
             name = AL["Weapons"].." - "..AL["Axes"],
             [NORMAL_DIFF] = {
-                { 1, "INV_sword_04", nil, ALIL["One-Handed Axes"] },
-                { 2, 99655 },   -- Elementium-Edged Scalper
-                { 3, 76452 },	-- Elementium Bonesplitter
-                { 4, 94718 },	-- Elementium Gutslicer
-                { 5, 76433 },	-- Decapitator's Razor
+                { 1, "INV_axe_04", nil, ALIL["One-Handed Axes"] },
+                { 2, 138878 }, -- "Black Planar Edge, Reborn"
+                { 3, 138880 }, -- "Wicked Edge of the Planes, Reborn"
+                { 4, 138876 }, -- "The Planar Edge, Reborn"
+                { 5, 122644 }, -- Masterwork Forgewire Axe
+                { 6, 122637 }, -- Forgewire Axe
+                { 16, "INV_axe_09", nil, ALIL["Two-Handed Axes"] },
+                { 17, 138881 }, -- "Bloodmoon, Reborn"
+                { 18, 138879 }, -- "Mooncleaver, Reborn"
+                { 19, 138877 }, -- "Lunar Crescent, Reborn"
+                { 20, 122647 }, -- Masterwork Spiritblade Decimator
+                { 21, 122640 }, -- Spiritblade Decimator
             }
         },
         { -- Maces
             name = AL["Weapons"].." - "..AL["Maces"],
             [NORMAL_DIFF] = {
-                { 1, "INV_sword_04", nil, ALIL["One-Handed Maces"] },
-                { 2, 99654 }, -- Lightforged Elementium Hammer
-                { 3, 76450 }, -- Elementium Hammer
-                { 4, 76436 }, -- Lifeforce Hammer
-                { 16, "INV_sword_04", nil, ALIL["Two-Handed Maces"] },
-                { 17, 94732 }, -- Forged Elementium Mindcrusher
+                { 1, "INV_mace_04", nil, ALIL["One-Handed Maces"] },
+                { 2, 138885 }, -- "Dragonmaw, Reborn"
+                { 3, 138886 }, -- "Dragonstrike, Reborn"
+                { 4, 138882 }, -- "Drakefist Hammer, Reborn"
+                { 5, 122646 }, -- Masterwork Phantasmal Hammer
+                { 6, 122639 }, -- Phantasmal Hammer
+                { 16, "INV_mace_07", nil, ALIL["Two-Handed Maces"] },
+                { 17, 138884 }, -- "Deep Thunder, Reborn"
+                { 18, 138887 }, -- "Stormherald, Reborn"
+                { 19, 138883 }, -- "Thunder, Reborn"
             }
         },
         { -- Swords
             name = AL["Weapons"].." - "..AL["Swords"],
             [NORMAL_DIFF] = {
                 { 1, "INV_sword_04", nil, ALIL["One-Handed Swords"] },
-                { 2, 99657 }, -- Unbreakable Guardian
-                { 3, 99656 }, -- Pyrium Spellward
-                { 16, "INV_sword_06", nil, ALIL["Two-Handed Swords"] },
-                { 17, 99658 }, -- Masterwork Elementium Deathblade
-                { 18, 76437 }, -- Obsidian Executioner
-            }
-        },
-        { -- Polearms
-            name = AL["Weapons"].." - "..ALIL["Polearms"],
-            [NORMAL_DIFF] = {
-                { 1, 99660 }, -- Witch Hunter's Harvester
-                { 2, 76451 }, -- Elementium Poleaxe
-                { 3, 76474 }, -- Obsidium Bladespear
+                { 2, 138892 }, -- "Blazefury, Reborn"
+                { 3, 138890 }, -- "Blazeguard, Reborn"
+                { 4, 138888 }, -- "Fireguard, Reborn"
+                { 5, 122645 }, -- Masterwork Ghost-Forged Blade
+                { 6, 122638 }, -- Ghost-Forged Blade
+                { 16, "INV_sword_19", nil, ALIL["Two-Handed Swords"] },
+                { 17, 138893 }, -- "Lionheart Executioner, Reborn"
+                { 18, 138891 }, -- "Lionheart Champion, Reborn"
+                { 19, 138889 }, -- "Lionheart Blade, Reborn"
             }
         },
         { -- Shield
             name = AL["Weapons"].." - "..ALIL["Shield"],
             [NORMAL_DIFF] = {
-                { 1, 76454 }, -- Elementium Earthguard
-                { 2, 76455 }, -- Elementium Stormshield
-                { 3, 76293 }, -- Stormforged Shield
-                { 4, 76291 }, -- Hardened Obsidium Shield
+                { 1, 122642 }, -- Masterwork Lightsteel Shield
+                { 2, 122643 }, -- Masterwork Spiritguard Shield
+                { 3, 122635 }, -- Lightsteel Shield
+                { 4, 122636 }, -- Spiritguard Shield
+                { 16, 143195 }, -- Crafted Malevolent Gladiator's Barrier
+                { 17, 143196 }, -- Crafted Malevolent Gladiator's Redoubt
+                { 18, 143197 }, -- Crafted Malevolent Gladiator's Shield Wall
             }
         },
         { -- Head
             name = AL["Armor"].." - "..ALIL["Head"],
             [PLATE_DIFF] = {
-                { 1, 76463 },	-- Bloodied Pyrium Helm
-                { 2, 76471 },	-- Ornate Pyrium Helm
-                { 3, 76288 },	-- Stormforged Helm
-                { 4, 76260 },	-- Hardened Obsidium Helm
-                { 5, 76269 },	-- Redsteel Helm
+                { 1, 137767 }, -- Haunted Steel Headcover
+                { 2, 137771 }, -- Haunted Steel Headguard
+                { 3, 137769 }, -- Haunted Steel Greathelm
+                { 4, 122616 }, -- Contender's Revenant Helm
+                { 5, 122624 }, -- Contender's Spirit Helm
+                { 6, 122600 }, -- Masterwork Ghost-Forged Helm
+                { 7, 122608 }, -- Masterwork Lightsteel Helm
+                { 8, 122592 }, -- Masterwork Spiritguard Helm
+                { 9, 122576 }, -- Ghost-Forged Helm
+                { 10, 122584 }, -- Lightsteel Helm
+                { 11, 122568 }, -- Spiritguard Helm
+                { 16, 140844 }, -- Crafted Dreadful Gladiator's Dreadplate Helm
+                { 17, 137784 }, -- Crafted Dreadful Gladiator's Ornamented Headcover
+                { 18, 137795 }, -- Crafted Dreadful Gladiator's Plate Helm
+                { 19, 137773 }, -- Crafted Dreadful Gladiator's Scaled Helm
+                { 21, 143165 }, -- Crafted Malevolent Gladiator's Dreadplate Helm
+                { 22, 143181 }, -- Crafted Malevolent Gladiator's Ornamented Headcover
+                { 23, 143192 }, -- Crafted Malevolent Gladiator's Plate Helm
+                { 24, 143170 }, -- Crafted Malevolent Gladiator's Scaled Helm
             },
         },
         { -- Shoulder
             name = AL["Armor"].." - "..ALIL["Shoulder"],
             [PLATE_DIFF] = {
-                { 1, 76461 },	-- Bloodied Pyrium Shoulders
-                { 2, 76469 },	-- Ornate Pyrium Shoulders
-                { 3, 76286 },	-- Stormforged Shoulders
-                { 4, 76258 },	-- Hardened Obsidium Shoulders
-                { 5, 76266 },	-- Redsteel Shoulders
+                { 1, 122617 }, -- Contender's Revenant Shoulders
+                { 2, 122625 }, -- Contender's Spirit Shoulders
+                { 3, 122601 }, -- Masterwork Ghost-Forged Shoulders
+                { 4, 122609 }, -- Masterwork Lightsteel Shoulders
+                { 5, 122593 }, -- Masterwork Spiritguard Shoulders
+                { 6, 122577 }, -- Ghost-Forged Shoulders
+                { 7, 122585 }, -- Lightsteel Shoulders
+                { 8, 122569 }, -- Spiritguard Shoulders
+                { 16, 140842 }, -- Crafted Dreadful Gladiator's Dreadplate Shoulders
+                { 17, 137786 }, -- Crafted Dreadful Gladiator's Ornamented Spaulders
+                { 18, 137797 }, -- Crafted Dreadful Gladiator's Plate Shoulders
+                { 19, 137775 }, -- Crafted Dreadful Gladiator's Scaled Shoulders
+                { 21, 143167 }, -- Crafted Malevolent Gladiator's Dreadplate Shoulders
+                { 22, 143183 }, -- Crafted Malevolent Gladiator's Ornamented Spaulders
+                { 23, 143194 }, -- Crafted Malevolent Gladiator's Plate Shoulders
+                { 24, 143172 }, -- Crafted Malevolent Gladiator's Scaled Shoulders
             },
         },
         { -- Chest
             name = AL["Armor"].." - "..ALIL["Chest"],
             [PLATE_DIFF] = {
-                { 1, 76443 },	-- Hardened Elementium Hauberk
-                { 2, 76445 },	-- Elementium Deathplate
-                { 3, 76447 },	-- Light Elementium Chestguard
-                { 4, 76472 },	-- Ornate Pyrium Breastplate
-                { 5, 76464 },	-- Bloodied Pyrium Breastplate
-                { 6, 76270 },	-- Redsteel Breastplate
-                { 7, 76289 },	-- Stormforged Breastplate
-                { 8, 76261 },	-- Hardened Obsidium Breastplate
-            },
-        },
-        { -- Feet
-            name = AL["Armor"].." - "..ALIL["Feet"],
-            [PLATE_DIFF] = {
-                { 1, 99452 }, -- Warboots of Mighty Lords
-                { 2, 99453 }, -- Mirrored Boots
-                { 3, 99454 }, -- Emberforged Elementium Boots
-                { 4, 76459 }, -- Bloodied Pyrium Boots
-                { 5, 76468 }, -- Ornate Pyrium Boots
-                { 6, 76265 }, -- Redsteel Boots
-                { 7, 76285 }, -- Stormforged Boots
-                { 8, 76182 }, -- Hardened Obsidium Boots
-            },
-        },
-        { -- Hand
-            name = AL["Armor"].." - "..ALIL["Hand"],
-            [PLATE_DIFF] = {
-                { 1, 99439 }, -- Fists of Fury
-                { 2, 99440 }, -- Eternal Elementium Handguards
-                { 3, 99441 }, -- Holy Flame Gauntlets
-                { 4, 76466 }, -- Ornate Pyrium Gauntlets
-                { 5, 76457 }, -- Bloodied Pyrium Gauntlets
-                { 6, 76281 }, -- Stormforged Gauntlets
-                { 7, 76180 }, -- Hardened Obsidium Gauntlets
-                { 8, 76263 }, -- Redsteel Gauntlets
-            },
-        },
-        { -- Legs
-            name = AL["Armor"].." - "..ALIL["Legs"],
-            [PLATE_DIFF] = {
-                { 1, 101924 }, -- Pyrium Legplates of Purified Evil
-                { 2, 101925 }, -- Unstoppable Destroyer's Legplates
-                { 3, 101928 }, -- Foundations of Courage
-                { 4, 76470 },  -- Ornate Pyrium Legguards
-                { 5,76462 },   -- Bloodied Pyrium Legguards
-                { 6, 76287 },  -- Stormforged Legguards
-                { 7, 76267 },  -- Redsteel Legguards
-                { 8, 76259 },  -- Hardened Obsidium Legguards
-            },
-        },
-        { -- Waist
-            name = AL["Armor"].." - "..ALIL["Waist"],
-            [PLATE_DIFF] = {
-                { 1, 76444 }, -- Hardened Elementium Girdle
-                { 2, 76446 }, -- Elementium Girdle of Pain
-                { 3, 76448 }, -- Light Elementium Belt
-                { 4, 76467 }, -- Ornate Pyrium Belt
-                { 5, 76458 }, -- Bloodied Pyrium Belt
-                { 6, 76264 }, -- Redsteel Belt
-                { 7, 76283 }, -- Stormforged Belt
-                { 8, 76181 }, -- Hardened Obsidium Belt
+                { 1, 126854 }, -- Chestplate of Limitless Faith
+                { 2, 126852 }, -- Ornate Battleplate of the Master
+                { 3, 126850 }, -- Unyielding Bloodplate
+                { 4, 122653 }, -- Breastplate of Ancient Steel
+                { 5, 122649 }, -- Ghost Reaver's Breastplate
+                { 6, 122651 }, -- Living Steel Breastplate
+                { 7, 122618 }, -- Contender's Revenant Breastplate
+                { 8, 122626 }, -- Contender's Spirit Breastplate
+                { 9, 122602 }, -- Masterwork Ghost-Forged Breastplate
+                { 10, 122610 }, -- Masterwork Lightsteel Breastplate
+                { 11, 122594 }, -- Masterwork Spiritguard Breastplate
+                { 12, 122578 }, -- Ghost-Forged Breastplate
+                { 13, 122586 }, -- Lightsteel Breastplate
+                { 14, 122570 }, -- Spiritguard Breastplate
+                { 16, 140846 }, -- Crafted Dreadful Gladiator's Dreadplate Chestpiece
+                { 17, 137782 }, -- Crafted Dreadful Gladiator's Ornamented Chestguard
+                { 18, 137793 }, -- Crafted Dreadful Gladiator's Plate Chestpiece
+                { 19, 140841 }, -- Crafted Dreadful Gladiator's Scaled Chestpiece
+                { 21, 143163 }, -- Crafted Malevolent Gladiator's Dreadplate Chestpiece
+                { 22, 143179 }, -- Crafted Malevolent Gladiator's Ornamented Chestguard
+                { 23, 143190 }, -- Crafted Malevolent Gladiator's Plate Chestpiece
+                { 24, 143168 }, -- Crafted Malevolent Gladiator's Scaled Chestpiece
             },
         },
         { -- Wrist
             name = AL["Armor"].." - "..ALIL["Wrist"],
             [PLATE_DIFF] = {
-                { 1, 101929 }, -- Soul Redeemer Bracers
-                { 2, 101931 }, -- Bracers off DEstructive Strength
-                { 3, 101932 }, -- Titanguard Wristplates
-                { 4, 76456 }, -- Bloodied Pyrium Bracers
-                { 5, 76465 }, -- Ornate Pyrium Bracers
-                { 6, 76179 }, -- Hardened Obsidium Bracers
-                { 7, 76262 }, -- Redsteel Bracers
-                { 8, 76280 }, -- Stormforged Bracers
+                { 1, 122621 }, -- Contender's Revenant Bracers
+                { 2, 122629 }, -- Contender's Spirit Bracers
+                { 3, 122605 }, -- Masterwork Ghost-Forged Bracers
+                { 4, 122613 }, -- Masterwork Lightsteel Bracers
+                { 5, 122597 }, -- Masterwork Spiritguard Bracers
+                { 6, 122581 }, -- Ghost-Forged Bracers
+                { 7, 122589 }, -- Lightsteel Bracers
+                { 8, 122573 }, -- Spiritguard Bracers
+                { 16, 137792 }, -- Crafted Dreadful Gladiator's Armplates of Alacrity
+                { 17, 137791 }, -- Crafted Dreadful Gladiator's Armplates of Proficiency
+                { 18, 137781 }, -- Crafted Dreadful Gladiator's Bracers of Meditation
+                { 19, 137780 }, -- Crafted Dreadful Gladiator's Bracers of Prowess
+                { 21, 143178 }, -- Crafted Malevolent Gladiator's Bracers of Meditation
+                { 22, 143177 }, -- Crafted Malevolent Gladiator's Bracers of Prowess
+                { 23, 143189 }, -- Crafted Malevolent Gladiator's Armplates of Alacrity
+                { 24, 143188 }, -- Crafted Malevolent Gladiator's Armplates of Proficiency
+            },
+        },
+        { -- Hand
+            name = AL["Armor"].." - "..ALIL["Hand"],
+            [PLATE_DIFF] = {
+                { 1, 126853 }, -- Bloodforged Warfists
+                { 2, 126851 }, -- Gauntlets of Battle Command
+                { 3, 126855 }, -- Gauntlets of Unbound Devotion
+                { 4, 122654 }, -- Gauntlets of Ancient Steel
+                { 5, 122650 }, -- Ghost Reaver's Gauntlets
+                { 6, 122652 }, -- Living Steel Gauntlets
+                { 7, 122619 }, -- Contender's Revenant Gauntlets
+                { 8, 122627 }, -- Contender's Spirit Gauntlets
+                { 9, 122603 }, -- Masterwork Ghost-Forged Gauntlets
+                { 10, 122611 }, -- Masterwork Lightsteel Gauntlets
+                { 11, 122595 }, -- Masterwork Spiritguard Gauntlets
+                { 12, 122579 }, -- Ghost-Forged Gauntlets
+                { 13, 122571 }, -- Spiritguard Gauntlets
+                { 14, 122587 }, -- Lightsteel Gauntlets
+                { 16, 140845 }, -- Crafted Dreadful Gladiator's Dreadplate Gauntlets
+                { 17, 137783 }, -- Crafted Dreadful Gladiator's Ornamented Gloves
+                { 18, 137794 }, -- Crafted Dreadful Gladiator's Plate Gauntlets
+                { 19, 137772 }, -- Crafted Dreadful Gladiator's Scaled Gauntlets
+                { 21, 143164 }, -- Crafted Malevolent Gladiator's Dreadplate Gauntlets
+                { 22, 143180 }, -- Crafted Malevolent Gladiator's Ornamented Gloves
+                { 23, 143191 }, -- Crafted Malevolent Gladiator's Plate Gauntlets
+                { 24, 143169 }, -- Crafted Malevolent Gladiator's Scaled Gauntlets
+            },
+        },
+        { -- Waist
+            name = AL["Armor"].." - "..ALIL["Waist"],
+            [PLATE_DIFF] = {
+                { 1, 142968 }, -- Avenger's Trillium Waistplate
+                { 2, 142963 }, -- Blessed Trillium Belt
+                { 3, 142967 }, -- Protector's Trillium Waistguard
+                { 4, 122623 }, -- Contender's Revenant Belt
+                { 5, 122631 }, -- Contender's Spirit Belt
+                { 6, 122607 }, -- Masterwork Ghost-Forged Belt
+                { 7, 122615 }, -- Masterwork Lightsteel Belt
+                { 8, 122599 }, -- Masterwork Spiritguard Belt
+                { 9, 122583 }, -- Ghost-Forged Belt
+                { 10, 122575 }, -- Spiritguard Belt
+                { 11, 122591 }, -- Lightsteel Belt
+                { 16, 137776 }, -- Crafted Dreadful Gladiator's Clasp of Cruelty
+                { 17, 137777 }, -- Crafted Dreadful Gladiator's Clasp of Meditation
+                { 18, 137787 }, -- Crafted Dreadful Gladiator's Girdle of Accuracy
+                { 19, 137788 }, -- Crafted Dreadful Gladiator's Girdle of Prowess
+                { 21, 143173 }, -- Crafted Malevolent Gladiator's Clasp of Cruelty
+                { 22, 143174 }, -- Crafted Malevolent Gladiator's Clasp of Meditation
+                { 23, 143184 }, -- Crafted Malevolent Gladiator's Girdle of Accuracy
+                { 24, 143185 }, -- Crafted Malevolent Gladiator's Girdle of Prowess
+            },
+        },
+        { -- Legs
+            name = AL["Armor"].." - "..ALIL["Legs"],
+            [PLATE_DIFF] = {
+                { 1, 142958 }, -- Protector's Trillium Legguards
+                { 2, 142959 }, -- Avenger's Trillium Legplates
+                { 3, 142954 }, -- Blessed Trillium Greaves
+                { 4, 122620 }, -- Contender's Revenant Legplates
+                { 5, 122628 }, -- Contender's Spirit Legplates
+                { 6, 122604 }, -- Masterwork Ghost-Forged Legplates
+                { 7, 122596 }, -- Masterwork Spiritguard Legplates
+                { 8, 122612 }, -- Masterwork Lightsteel Legplates
+                { 9, 122580 }, -- Ghost-Forged Legplates
+                { 10, 122588 }, -- Lightsteel Legplates
+                { 11, 122572 }, -- Spiritguard Legplates
+                { 16, 140843 }, -- Crafted Dreadful Gladiator's Dreadplate Legguards
+                { 17, 137785 }, -- Crafted Dreadful Gladiator's Ornamented Legplates
+                { 18, 137796 }, -- Crafted Dreadful Gladiator's Plate Legguards
+                { 19, 137774 }, -- Crafted Dreadful Gladiator's Scaled Legguards
+                { 21, 143166 }, -- Crafted Malevolent Gladiator's Dreadplate Legguards
+                { 22, 143182 }, -- Crafted Malevolent Gladiator's Ornamented Legplates
+                { 23, 143193 }, -- Crafted Malevolent Gladiator's Plate Legguards
+                { 24, 143171 }, -- Crafted Malevolent Gladiator's Scaled Legguards
+
+            },
+        },
+        { -- Feet
+            name = AL["Armor"].." - "..ALIL["Feet"],
+            [PLATE_DIFF] = {
+                { 1, 137766 }, -- Haunted Steel Greaves
+                { 2, 137768 }, -- Haunted Steel Treads
+                { 3, 137770 }, -- Haunted Steel Warboots
+                { 4, 122622 }, -- Contender's Revenant Boots
+                { 5, 122630 }, -- Contender's Spirit Boots
+                { 6, 122606 }, -- Masterwork Ghost-Forged Boots
+                { 7, 122614 }, -- Masterwork Lightsteel Boots
+                { 8, 122598 }, -- Masterwork Spiritguard Boots
+                { 9, 122582 }, -- Ghost-Forged Boots
+                { 10, 122590 }, -- Lightsteel Boots
+                { 11, 122574 }, -- Spiritguard Boots
+                { 16, 137778 }, -- Crafted Dreadful Gladiator's Greaves of Alacrity
+                { 17, 137779 }, -- Crafted Dreadful Gladiator's Greaves of Meditation
+                { 18, 137790 }, -- Crafted Dreadful Gladiator's Warboots of Alacrity
+                { 19, 137789 }, -- Crafted Dreadful Gladiator's Warboots of Cruelty
+                { 21, 143175 }, -- Crafted Malevolent Gladiator's Greaves of Alacrity
+                { 22, 143176 }, -- Crafted Malevolent Gladiator's Greaves of Meditation
+                { 23, 143187 }, -- Crafted Malevolent Gladiator's Warboots of Alacrity
+                { 24, 143186 }, -- Crafted Malevolent Gladiator's Warboots of Cruelty
             },
         },
         { -- Enhancements
             name = AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 76439 }, -- Ebonsteel Belt Buckle
-                { 5, 55641 }, -- Socket Gloves
-                { 16, 76440 }, -- Pyrium Shield Spike
-                { 18, 76442 }, -- Pyrium Weapon Chain
-                { 20, 55628 }, -- Socket Bracer
+                { 1, 122632 }, -- Living Steel Belt Buckle
+                { 5, 114112 }, -- Socket Gloves
+                { 16, 131928 }, -- Ghost Iron Shield Spike
+                { 18, 131929 }, -- Living Steel Weapon Chain
+                { 20, 113263 }, -- Socket Bracer
             }
         },
         { -- Misc
             name = AL["Misc"],
             [NORMAL_DIFF] = {
-                { 1, 76438 }, -- Obsidium Skeleton Key
-                { 3, 92375 }, -- Elementium Rod
-                { 16, 76178 }, -- Folded Obsidium
+                { 1, 122633 }, -- Ghostly Skeleton Key
+                { 16, 126869 }, -- Folded Ghost Iron
+                { 17, 138646 }, -- Lightning Steel Ingot
+                { 18, 143255 }, -- Balanced Trillium Ingot
+                { 19, 146921 }, -- Accelerated Balanced Trillium Ingot
             }
         },
     }
@@ -322,106 +423,85 @@ data["EnchantingMoP"] = {
         {
             name = ALIL["Weapon"].." - "..AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 74246 }, -- Enchant Weapon - Landslide
-                { 2, 74242 }, -- Enchant Weapon - Power Torrent
-                { 3, 74244 }, -- Enchant Weapon - Windwalk
-                { 4, 74225 }, -- Enchant Weapon - Heartsong
-                { 5, 74223 }, -- Enchant Weapon - Hurricane
-                { 6, 74211 }, -- Enchant Weapon - Elemental Slayer
-                { 7, 74195 }, -- Enchant Weapon - Mending
-                { 8, 74197 }, -- Enchant Weapon - Avalanche
-            }
-        },
-        {
-            name = ALIL["2H Weapon"].." - "..AL["Enhancements"],
-            [NORMAL_DIFF] = {
-                { 1, 95471 }, -- Enchant 2H Weapon - Mighty Agility
+                { 1, 104440 }, -- Enchant Weapon - Colossus
+                { 2, 104434 }, -- Enchant Weapon - Dancing Steel
+                { 3, 104430 }, -- Enchant Weapon - Elemental Force
+                { 4, 104427 }, -- Enchant Weapon - Jade Spirit
+                { 5, 104442 }, -- Enchant Weapon - River's Song
+                { 6, 104425 }, -- Enchant Weapon - Windsong
             }
         },
         {
             name = ALIL["Cloak"].." - "..AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 74247 }, -- Enchant Cloak - Greater Critical Strike
-                { 2, 74240 }, -- Enchant Cloak - Greater Intellect
-                { 3, 74234 }, -- Enchant Cloak - Protection
-                { 4, 74230 }, -- Enchant Cloak - Critical Strike
-                { 5, 74202 }, -- Enchant Cloak - Intellect
-                { 6, 74192 }, -- Enchant Cloak - Greater Spell Piercing
+                { 1, 104398 }, -- Enchant Cloak - Accuracy
+                { 2, 104401 }, -- Enchant Cloak - Greater Protection
+                { 3, 104404 }, -- Enchant Cloak - Superior Critical Strike
+                { 4, 104403 }, -- Enchant Cloak - Superior Intellect
             }
         },
         {
             name = ALIL["Chest"].." - "..AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 74251 }, -- Enchant Chest - Greater Stamina
-                { 2, 74250 }, -- Enchant Chest - Peerless Stats
-                { 3, 74231 }, -- Enchant Chest - Exceptional Spirit
-                { 4, 74214 }, -- Enchant Chest - Mighty Resilience
-                { 5, 74200 }, -- Enchant Chest - Stamina
-                { 6, 74191 }, -- Enchant Chest - Mighty Stats
+                { 1, 104395 }, -- Enchant Chest - Glorious Stats
+                { 2, 104393 }, -- Enchant Chest - Mighty Spirit
+                { 3, 104392 }, -- Enchant Chest - Super Resilience
+                { 4, 104397 }, -- Enchant Chest - Superior Stamina
             }
         },
         {
             name = ALIL["Feet"].." - "..AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 74252 }, -- Enchant Boots - Assassin's Step
-                { 2, 74253 }, -- Enchant Boots - Lavawalker
-                { 3, 74238 }, -- Enchant Boots - Mastery
-                { 4, 74236 }, -- Enchant Boots - Precision
-                { 5, 74213 }, -- Enchant Boots - Major Agility
-                { 6, 74199 }, -- Enchant Boots - Haste
-                { 7, 74189 }, -- Enchant Boots - Earthen Vitality
+                { 1, 104409 }, -- Enchant Boots - Blurred Speed
+                { 2, 104407 }, -- Enchant Boots - Greater Haste
+                { 3, 104408 }, -- Enchant Boots - Greater Precision
+                { 4, 104414 }, -- Enchant Boots - Pandaren's Step
             }
         },
         {
             name = ALIL["Hand"].." - "..AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 74255 }, -- Enchant Gloves - Greater Mastery
-                { 2, 74254 }, -- Enchant Gloves - Mighty Strength
-                { 3, 74220 }, -- Enchant Gloves - Greater Expertise
-                { 4, 74212 }, -- Enchant Gloves - Exceptional Strength
-                { 5, 74198 }, -- Enchant Gloves - Haste
-                { 6, 74132 }, -- Enchant Gloves - Mastery
+                { 1, 104416 }, -- Enchant Gloves - Greater Haste
+                { 2, 104419 }, -- Enchant Gloves - Super Strength
+                { 3, 104417 }, -- Enchant Gloves - Superior Expertise
+                { 4, 104420 }, -- Enchant Gloves - Superior Mastery
             }
         },
         {
-            name = ALIL["Off-Hand/Shield"].." - "..AL["Enhancements"],
+            name = ALIL["Off Hand"] .. "/" .. ALIL["Shield"] .. " - " .. AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 74235 }, -- Enchant Off-Hand - Superior Intellect
-                { 16, 74226 }, -- Enchant Shield - Mastery
-                { 17, 74207 }, -- Enchant Shield - Protection
+                { 1, 104445 }, -- Enchant Off-Hand - Major Intellect
+                { 2, 130758 }, -- Enchant Shield - Greater Parry
             }
         },
         {
             name = ALIL["Wrist"].." - "..AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 74248 }, -- Enchant Bracer - Greater Critical Strike
-                { 2, 74256 }, -- Enchant Bracer - Greater Speed
-                { 3, 96264 }, -- Enchant Bracer - Agility
-                { 4, 96261 }, -- Enchant Bracer - Major Strength
-                { 5, 96262 }, -- Enchant Bracer - Mighty Intellect
-                { 6, 74239 }, -- Enchant Bracer - Greater Expertise
-                { 7, 74237 }, -- Enchant Bracer - Exceptional Spirit
-                { 8, 74232 }, -- Enchant Bracer - Precision
-                { 9, 74229 }, -- Enchant Bracer - Superior Dodge
-                { 10, 74201 }, -- Enchant Bracer - Critical Strike
-                { 11, 74193 }, -- Enchant Bracer - Speed
+                { 1, 104390 }, -- Enchant Bracer - Exceptional Strength
+                { 2, 104391 }, -- Enchant Bracer - Greater Agility
+                { 3, 104385 }, -- Enchant Bracer - Major Dodge
+                { 4, 104338 }, -- Enchant Bracer - Mastery
+                { 5, 104389 }, -- Enchant Bracer - Super Intellect
             }
         },
         {
             name = AL["Ring"].." - "..AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 74216 }, -- Enchant Ring - Agility
-                { 2, 74218 }, -- Enchant Ring - Greater Stamina
-                { 3, 74217 }, -- Enchant Ring - Intellect
-                { 4, 74215 }, -- Enchant Ring - Strength
+                { 1, 103461 }, -- Enchant Ring - Greater Agility
+                { 2, 103462 }, -- Enchant Ring - Greater Intellect
+                { 3, 103463 }, -- Enchant Ring - Greater Stamina
+                { 4, 103465 }, -- Enchant Ring - Greater Strength
             }
         },
         {
             name = AL["Misc"],
             [NORMAL_DIFF] = {
-                { 1, 92370 }, -- Runed Elementium Rod
-                { 3, 104698 }, -- Maelstrom Shatter
-                { 16, [ATLASLOOT_IT_ALLIANCE] = 93843, [ATLASLOOT_IT_HORDE] = 93841 }, -- Magic Lamp/Enchanted Lantern
+                { 1, 116498 }, -- Ethereal Shard
+                { 2, 118238 }, -- Ethereal Shatter
+                { 3, 118237 }, -- Mysterious Diffusion
+                { 4, 116497 }, -- Mysterious Essence
+                { 5, 116499 }, -- Sha Crystal
+                { 6, 118239 }, -- Sha Shatter
             }
         },
     }
@@ -435,98 +515,97 @@ data["EngineeringMoP"] = {
     CorrespondingFields = private.ENGINEERING_LINK,
     items = {
         {
-            name = AL["Armor"].." - "..ALIL["Head"].." - "..ALIL["Cloth"],
+            name = AL["Armor"].." - "..ALIL["Head"],
             [NORMAL_DIFF] = {
-                { 1, 81725 }, -- Lightweight Bio-Optic Killshades
-                { 16, 84406 }, -- Authentic Jr. Engineer Goggles
-            }
-        },
-        {
-            name = AL["Armor"].." - "..ALIL["Head"].." - "..ALIL["Leather"],
-            [NORMAL_DIFF] = {
-                { 1, 81724 },	-- Camouflage Bio-Optic Killshades
-                { 2, 81722 },	-- Agile Bio-Optic Killshades
-            }
-        },
-        {
-            name = AL["Armor"].." - "..ALIL["Head"].." - "..ALIL["Mail"],
-            [NORMAL_DIFF] = {
-                { 1, 81720 },	-- Energized Bio-Optic Killshades
-                { 2, 81716 },	-- Deadly Bio-Optic Killshades
-            }
-        },
-        {
-            name = AL["Armor"].." - "..ALIL["Head"].." - "..ALIL["Plate"],
-            [NORMAL_DIFF] = {
-                { 1, 81715 },	-- Specialized Bio-Optic Killshades
-                { 2, 81714 },	-- Reinforced Bio-Optic Killshades
+                { 1, 127117 }, -- Lightweight Retinal Armor
+                { 3, 127118 }, -- Agile Retinal Armor
+                { 4, 127119 }, -- Camouflage Retinal Armor
+                { 6, 127120 }, -- Deadly Retinal Armor
+                { 7, 127121 }, -- Energized Retinal Armor
+                { 9, 127123 }, -- Reinforced Retinal Armor
+                { 10, 127122 }, -- Specialized Retinal Armor
+                { 16, 131211 }, -- Flashing Tinker's Gear
+                { 17, 131212 }, -- Fractured Tinker's Gear
+                { 18, 131213 }, -- Precise Tinker's Gear
+                { 19, 131214 }, -- Quick Tinker's Gear
+                { 20, 131215 }, -- Rigid Tinker's Gear
+                { 21, 131216 }, -- Smooth Tinker's Gear
+                { 22, 131217 }, -- Sparkling Tinker's Gear
+                { 23, 131218 }, -- Subtle Tinker's Gear
             }
         },
         {
             name = AL["Armor"].." - "..ALIL["Trinket"],
             [NORMAL_DIFF] = {
-                { 1, 84418 },	-- Elementium Dragonling
+                { 1, 127134 }, -- Ghost Iron Dragonling
             }
         },
         {
             name = ALIL["Weapon"].." - "..AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 84428 },	-- Gnomish X-Ray Scope
-                { 2, 100587 },	-- Flintlocke's Woodchucker
-                { 3, 84408 },	-- R19 Threatfinder
-                { 4, 84410 },	-- Safety Catch Removal Kit
+                { 1, 127115 }, -- Lord Blastington's Scope of Doom
+                { 2, 127116 }, -- Mirror Scope
             }
         },
         {
             name = AL["Weapons"],
             [NORMAL_DIFF] = {
-                { 1, 100687 },	-- Extreme-Impact Hole Puncher
-                { 2, 84432 },	-- Kickback 5000
-                { 3, 84431 },	-- Overpowered Chicken Splitter
-                { 4, 84417 },	-- Volatile Thunderstick
-                { 5, 84420 },	-- Finely-Tuned Throat Needler
-                { 16, 84411 },	-- High-Powered Bolt Gun
+                { 1, 127136 }, -- Big Game Hunter
+                { 2, 127137 }, -- Long-Range Trillium Sniper
+            }
+        },
+        {
+            name = AL["Mounts"] .. " / " .. AL["Pets"],
+            [NORMAL_DIFF] = {
+                { 1, 127138 }, -- Depleted-Kyparium Rocket
+                { 2, 127139 }, -- Geosynchronous World Spinner
+                { 3, 139192 }, -- Sky Golem
+                { 16, 127135 }, -- Mechanical Pandaren Dragonling
+                { 17, 139196 }, -- Pierre
+                { 18, 143714 }, -- Rascal-Bot
             }
         },
         {
             name = ALIL["Parts"],
             [NORMAL_DIFF] = {
-                { 1, 94748 },	-- Electrified Ether
-                { 2, 84403 },	-- Handful of Obsidium Bolts
+                { 1, 127113 }, -- Ghost Iron Bolts
+                { 2, 127114 }, -- High-Explosive Gunpowder
+                { 3, 131563 }, -- Tinker's Kit
+                { 4, 139176 }, -- Jard's Peculiar Energy Source
             }
         },
         {
             name = ALIL["Explosives"],
             [NORMAL_DIFF] = {
-                { 1, 95707 },	-- Big Daddy
-                { 2, 84409 },	-- Volatile Seaforium Blastpack
+                { 1, 127127 }, -- G91 Landshark
+                { 2, 127124 }, -- Locksmith's Powderkeg
             }
         },
         {
             name = ALIL["Engineering"].." - "..AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 82175 },	-- Synapse Springs
-                { 2, 82177 },	-- Quickflip Deflection Plates
-                { 3, 82180 },	-- Tazik Shocker
-                { 4, 82200 },	-- Spinal Healing Injector
-                { 5, 82201 },	-- Z50 Mana Gulper
-                { 16, 84424 },	-- Invisibility Field
-                { 17, 84425 },	-- Cardboard Assassin
-                { 18, 84427 },	-- Grounded Plasma Shield
-                { 20, 84430 },	-- Heat-Treated Spinning Lure
+                { 1, 109077 }, -- Incendiary Fireworks Launcher
+                { 2, 126392 }, -- Goblin Glider
+                { 3, 126731 }, -- Synapse Springs
+                { 4, 108789 }, -- Phase Fingers
+                { 5, 109099 }, -- Watergliding Jets
             }
         },
         {
             name = AL["Misc"],
             [NORMAL_DIFF] = {
-                { 1, 84412 },   -- Personal World Destroyer
-                { 2, 84413 },	-- De-Weaponized Mechanical Companion
-                { 4, 95705 },	-- Gnomish Gravity Well
-                { 5, 84421 },	-- Loot-a-Rang
-                { 16, 84416 },	-- Elementium Toolbox
-                { 17, 84415 },	-- Lure Master Tackle Box\
-                { 19, 84429 },	-- Goblin Barbecue
-                { 21, 95703 },	-- Electrostatic Condenser
+                { 1, 127131 }, -- Thermal Anvil
+                { 2, 127128 }, -- "Goblin Dragon Gun, Mark II"
+                { 3, 127130 }, -- Mist-Piercing Goggles
+                { 16, 127132 }, -- Wormhole Generator: Pandaria
+                { 17, 139197 }, -- Advanced Refrigeration Unit
+                { 18, 127129 }, -- Blingtron 4000
+                { 6, 131256 }, -- Autumn Flower Firework
+                { 7, 128260 }, -- Celestial Firework
+                { 8, 128261 }, -- Grand Celebration Firework
+                { 9, 131258 }, -- Jade Blossom Firework
+                { 10, 128262 }, -- Serpent's Heart Firework
+                { 11, 131353 }, -- Pandaria Fireworks
             }
         },
     }
@@ -540,44 +619,22 @@ data["InscriptionMoP"] = {
     CorrespondingFields = private.INSCRIPTION_LINK,
     items = {
         {
-            name = ALIL["Armor"].." - "..ALIL["Off Hand"],
+            name = AL["Weapons"] .. " / " .. AL["Armor"],
             [NORMAL_DIFF] = {
-                { 1, 86640 }, -- Lord Rottington's Pressed Wisp Book
-                { 2, 86616 }, -- Book of Blood
-                { 16, 86643 }, -- Battle Tome
-                { 17, 86642 }, -- Divine Companion
-                { 18, 86641 }, -- Dungeoneering Guide
+                { 1, 111918 }, -- Inscribed Crane Staff
+                { 2, 111919 }, -- Inscribed Serpent Staff
+                { 3, 111921 }, -- Inscribed Tiger Staff
+                { 4, 111920 }, -- Ghost Iron Staff
+                { 5, 111917 }, -- Rain Poppy Staff
+                { 16, 111909 }, -- Inscribed Jade Fan
+                { 17, 111910 }, -- Inscribed Red Fan
+                { 18, 111908 }, -- Inscribed Fan
+                { 20, 146638 }, -- Crafted Malevolent Gladiator's Medallion of Tenacity
             }
         },
-        {
-            name = ALIL["Armor"].." - "..ALIL["Relic"],
-            [NORMAL_DIFF] = {
-                { 1, 86647 }, -- Etched Horn
-                { 2, 86648 }, -- Manual of the Planes
-                { 3, 86649 }, -- Runed Dragonscale
-                { 5, 99547 }, -- Vicious Charm of Triumph
-                { 6, 99548 }, -- Vicious Eyeball of Dominance
-                { 7, 99549 }, -- Vicious Jawbone of Conquest
-                { 16, 86650 }, -- Notched Jawbone
-                { 17, 86653 }, -- Silver Inlaid Leaf
-                { 18, 86652 }, -- Tattooed Eyeball
-            }
-        },
+        --[[
         {
             name = AL["Glyphs"].." - "..ALIL["DEATHKNIGHT"],
-            [PRIME_GLYPHS_DIFF] = {
-                { 1, 57214 }, -- Glyph of Death and Decay
-                { 2, 64266 }, -- Glyph of Death Coil
-                { 3, 59340 }, -- Glyph of Death Strike
-                { 4, 57216 }, -- Glyph of Frost Strike
-                { 5, 57219 }, -- Glyph of Icy Touch
-                { 6, 57208 }, -- Glyph of Heart Strike
-                { 16, 64300 }, -- Glyph of Howling Blast
-                { 17, 57220 }, -- Glyph of Obliterate
-                { 18, 57222 }, -- Glyph of Raise Dead
-                { 19, 57223 }, -- Glyph of Rune Strike
-                { 20, 57224 }, -- Glyph of Scourge Strike
-            },
             [MAJOR_GLYPHS_DIFF] = {
                 { 1, 57207 }, -- Glyph of Anti-Magic Shell
                 { 2, 59339 }, -- Glyph of Blood Boil
@@ -604,24 +661,6 @@ data["InscriptionMoP"] = {
         },
         {
             name = AL["Glyphs"].." - "..ALIL["DRUID"],
-            [PRIME_GLYPHS_DIFF] = {
-                { 1, 64268 }, -- Glyph of Berserk
-                { 2, 56957 }, -- Glyph of Bloodletting
-                { 3, 56948 }, -- Glyph of Insect Swarm
-                { 4, 94402 }, -- Glyph of Lacerate
-                { 5, 56949 }, -- Glyph of Lifebloom
-                { 6, 56950 }, -- Glyph of Mangle
-                { 7, 56951 }, -- Glyph of Moonfire
-                { 8, 56954 }, -- Glyph of Regrowth
-                { 16, 56955 }, -- Glyph of Rejuvenation
-                { 17, 56956 }, -- Glyph of Rip
-                { 18, 64307 }, -- Glyph of Savage Roar
-                { 19, 64313 }, -- Glyph of Starsurge
-                { 20, 56959 }, -- Glyph of Starfire
-                { 21, 56960 }, -- Glyph of Swiftmend
-                { 22, 94401 }, -- Glyph of Tiger's Fury
-                { 23, 56963 }, -- Glyph of Wrath
-            },
             [MAJOR_GLYPHS_DIFF] = {
                 { 1, 64256 }, -- Glyph of Barkskin
                 { 2, 48121 }, -- Glyph of Entangling Roots
@@ -654,18 +693,6 @@ data["InscriptionMoP"] = {
         },
         {
             name = AL["Glyphs"].." - "..ALIL["HUNTER"],
-            [PRIME_GLYPHS_DIFF] = {
-                { 1, 56994 }, -- Glyph of Aimed Shot
-                { 2, 56995 }, -- Glyph of Arcane Shot
-                { 3, 64271 }, -- Glyph of Chimera Shot
-                { 4, 64273 }, -- Glyph of Explosive Shot
-                { 5, 57012 }, -- Glyph of Kill Command
-                { 16, 64304 }, -- Glyph of Kill Shot
-                { 17, 57008 }, -- Glyph of Rapid Fire
-                { 18, 57009 }, -- Glyph of Serpent Sting
-                { 19, 57011 }, -- Glyph of Steady Shot
-                { 20, 57006 }, -- Glyph of the Dazzled Prey
-            },
             [MAJOR_GLYPHS_DIFF] = {
                 { 1, 56999 }, -- Glyph of Bestial Wrath
                 { 2, 56998 }, -- Glyph of Concussive Shot
@@ -694,21 +721,6 @@ data["InscriptionMoP"] = {
         },
         {
             name = AL["Glyphs"].." - "..ALIL["MAGE"],
-            [PRIME_GLYPHS_DIFF] = {
-                { 1, 64276 }, -- Glyph of Arcane Barrage
-                { 2, 56991 }, -- Glyph of Arcane Blast
-                { 3, 56971 }, -- Glyph of Arcane Missiles
-                { 4, 56988 }, -- Glyph of Cone of Cold
-                { 5, 64274 }, -- Glyph of Deep Freeze
-                { 6, 56975 }, -- Glyph of Fireball
-                { 7, 56977 }, -- Glyph of Frostbolt
-                { 16, 61677 }, -- Glyph of Frostfire
-                { 17, 56980 }, -- Glyph of Ice Lance
-                { 18, 94000 }, -- Glyph of Living Bomb
-                { 19, 56984 }, -- Glyph of Mage Armor
-                { 20, 56986 }, -- Glyph of Molten Armor
-                { 21, 56978 }, -- Glyph of Pyroblast
-            },
             [MAJOR_GLYPHS_DIFF] = {
                 { 1, 56972 }, -- Glyph of Arcane Power
                 { 2, 56990 }, -- Glyph of Blast Wave
@@ -737,19 +749,6 @@ data["InscriptionMoP"] = {
         },
         {
             name = AL["Glyphs"].." - "..ALIL["PALADIN"],
-            [PRIME_GLYPHS_DIFF] = {
-                { 1, 57024 }, -- Glyph of Crusader Strike
-                { 2, 57029 }, -- Glyph of Divine Favor
-                { 3, 57025 }, -- Glyph of Exorcism
-                { 4, 64278 }, -- Glyph of Hammer of the Righteous
-                { 5, 64254 }, -- Glyph of Holy Shock
-                { 6, 57030 }, -- Glyph of Judgement
-                { 16, 57034 }, -- Glyph of Seal of Insight
-                { 17, 59561 }, -- Glyph of Seal of Truth
-                { 18, 64308 }, -- Glyph of Shield of the Righteous
-                { 19, 64279 }, -- Glyph of Templar's Verdict
-                { 20, 57026 }, -- Glyph of Word of Glory
-            },
             [MAJOR_GLYPHS_DIFF] = {
                 { 1, 64277 }, -- Glyph of Beacon of Light
                 { 2, 57020 }, -- Glyph of Cleansing
@@ -781,20 +780,6 @@ data["InscriptionMoP"] = {
         },
         {
             name = AL["Glyphs"].." - "..ALIL["PRIEST"],
-            [PRIME_GLYPHS_DIFF] = {
-                { 1, 64280 }, -- Glyph of Dispersion
-                { 2, 57186 }, -- Glyph of Flash Heal
-                { 3, 64281 }, -- Glyph of Guardian Spirit
-                { 4, 57189 }, -- Glyph of Lightwell
-                { 5, 57200 }, -- Glyph of Mind Flay
-                { 6, 64282 }, -- Glyph of Penance
-                { 16, 57193 }, -- Glyph of Power Word: Barrier
-                { 17, 57194 }, -- Glyph of Power Word: Shield
-                { 18, 57195 }, -- Glyph of Prayer of Healing
-                { 19, 57197 }, -- Glyph of Renew
-                { 20, 57199 }, -- Glyph of Shadow Word: Death
-                { 21, 57192 }, -- Glyph of Shadow Word: Pain
-            },
             [MAJOR_GLYPHS_DIFF] = {
                 { 1, 57181 }, -- Glyph of Circle of Healing
                 { 2, 64259 }, -- Glyph of Desperation
@@ -824,20 +809,6 @@ data["InscriptionMoP"] = {
         },
         {
             name = AL["Glyphs"].." - "..ALIL["ROGUE"],
-            [PRIME_GLYPHS_DIFF] = {
-                { 1, 57112 }, -- Glyph of Adrenaline Rush
-                { 2, 57114 }, -- Glyph of Backstab
-                { 3, 57120 }, -- Glyph of Eviscerate
-                { 4, 57126 }, -- Glyph of Hemorrhage
-                { 5, 64285 }, -- Glyph of Killing Spree
-                { 6, 64260 }, -- Glyph of Mutilate
-                { 16, 57124 }, -- Glyph of Revealing Strike
-                { 17, 57128 }, -- Glyph of Rupture
-                { 18, 64286 }, -- Glyph of Shadow Dance
-                { 19, 57131 }, -- Glyph of Sinister Strike
-                { 20, 57132 }, -- Glyph of Slice and Dice
-                { 21, 64284 }, -- Glyph of Vendetta
-            },
             [MAJOR_GLYPHS_DIFF] = {
                 { 1, 57113 }, -- Glyph of Ambush
                 { 2, 57115 }, -- Glyph of Blade Flurry
@@ -869,23 +840,6 @@ data["InscriptionMoP"] = {
         },
         {
             name = AL["Glyphs"].." - "..ALIL["SHAMAN"],
-            [PRIME_GLYPHS_DIFF] = {
-                { 1, 64261 }, -- Glyph of Earth Shield
-                { 2, 57236 }, -- Glyph of Earthliving Weapon
-                { 3, 64288 }, -- Glyph of Feral Spirit
-                { 4, 57237 }, -- Glyph of Fire Elemental Totem
-                { 5, 57239 }, -- Glyph of Flame Shock
-                { 6, 57240 }, -- Glyph of Flametongue Weapon
-                { 7, 57234 }, -- Glyph of Lava Burst
-                { 8, 57249 }, -- Glyph of Lava Lash
-                { 16, 57245 }, -- Glyph of Lightning Bolt
-                { 17, 64289 }, -- Glyph of Riptide
-                { 18, 57235 }, -- Glyph of Shocking
-                { 19, 57248 }, -- Glyph of Stormstrike
-                { 20, 101057 }, -- Glyph of Unleashed Lightning
-                { 21, 57251 }, -- Glyph of Water Shield
-                { 22, 57252 }, -- Glyph of Windfury Weapon
-            },
             [MAJOR_GLYPHS_DIFF] = {
                 { 1, 57232 }, -- Glyph of Chain Heal
                 { 2, 57233 }, -- Glyph of Chain Lightning
@@ -914,21 +868,6 @@ data["InscriptionMoP"] = {
         },
         {
             name = AL["Glyphs"].." - "..ALIL["WARLOCK"],
-            [PRIME_GLYPHS_DIFF] = {
-                { 1, 57260 }, -- Glyph of Bane of Agony
-                { 2, 64294 }, -- Glyph of Chaos Bolt
-                { 3, 57258 }, -- Glyph of Conflagrate
-                { 4, 57259 }, -- Glyph of Corruption
-                { 5, 57263 }, -- Glyph of Felguard
-                { 6, 64291 }, -- Glyph of Haunt
-                { 7, 57268 }, -- Glyph of Immolate
-                { 16, 57269 }, -- Glyph of Imp
-                { 17, 57257 }, -- Glyph of Incinerate
-                { 18, 71102 }, -- Glyph of Lash of Pain
-                { 19, 64318 }, -- Glyph of Metamorphosis
-                { 20, 57272 }, -- Glyph of Shadowburn
-                { 21, 57276 }, -- Glyph of Unstable Affliction
-            },
             [MAJOR_GLYPHS_DIFF] = {
                 { 1, 57261 }, -- Glyph of Death Coil
                 { 2, 64317 }, -- Glyph of Demonic Circle
@@ -957,17 +896,6 @@ data["InscriptionMoP"] = {
         },
         {
             name = AL["Glyphs"].." - "..ALIL["WARRIOR"],
-            [PRIME_GLYPHS_DIFF] = {
-                { 1, 64295 }, -- Glyph of Bladestorm
-                { 2, 57156 }, -- Glyph of Bloodthirst
-                { 3, 57155 }, -- Glyph of Devastate
-                { 4, 57160 }, -- Glyph of Mortal Strike
-                { 5, 57161 }, -- Glyph of Overpower
-                { 16, 57172 }, -- Glyph of Raging Blow
-                { 17, 57165 }, -- Glyph of Revenge
-                { 18, 57152 }, -- Glyph of Shield Slam
-                { 19, 57163 }, -- Glyph of Slam
-            },
             [MAJOR_GLYPHS_DIFF] = {
                 { 1, 57154 }, -- Glyph of Cleaving
                 { 2, 89815 }, -- Glyph of Colossus Smash
@@ -998,51 +926,57 @@ data["InscriptionMoP"] = {
                 { 10, 58346 }, -- Glyph of Thunder Clap
             },
         },
+        --]]
         {
             name = AL["Cards"],
             [NORMAL_DIFF] = {
-                { 1, 86615 }, -- Darkmoon Card of Destruction
-                { 16, 86609 }, -- Mysterious Fortune Card
+                { 1, 111830 }, -- Darkmoon Card of Mists
+                { 2, 130407 }, -- Mystery of the Mists
             }
         },
         {
             name = AL["Ink"],
             [NORMAL_DIFF] = {
-                { 1, 86005 }, -- Inferno Ink
-                { 2, 86004 }, -- Blackfallow Ink
+                { 1, 111645 }, -- Ink of Dreams
+                { 2, 111646 }, -- Starlight Ink
             }
         },
         {
             name = AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 86403 }, -- Felfire Inscription
-                { 2, 86402 }, -- Inscription of the Earth Prince
-                { 3, 86401 }, -- Lionsmane Inscription
-                { 4, 86375 }, -- Swiftsteel Inscription
+                { 1, 127018 }, -- Crane Wing Inscription
+                { 2, 126995 }, -- Greater Crane Wing Inscription
+                { 3, 127023 }, -- Secret Crane Wing Inscription
+                { 5, 127019 }, -- Ox Horn Inscription
+                { 6, 127024 }, -- Secret Ox Horn Inscription
+                { 7, 126994 }, -- Greater Ox Horn Inscription
+                { 16, 127017 }, -- Tiger Claw Inscription
+                { 17, 127021 }, -- Secret Tiger Claw Inscription
+                { 18, 126996 }, -- Greater Tiger Claw Inscription
+                { 20, 127020 }, -- Secret Tiger Fang Inscription
+                { 21, 126997 }, -- Greater Tiger Fang Inscription
+                { 22, 127016 }, -- Tiger Fang Inscription
             },
         },
         {
             name = AL["Scrolls"],
             [NORMAL_DIFF] = {
-                { 1, 85785 }, -- Runescroll of Fortitude II
-                { 16, 89370 }, -- Scroll of Agility IX
-                { 17, 89369 }, -- Scroll of Strength IX
-                { 18, 89372 }, -- Scroll of Stamina IX
-                { 19, 89371 }, -- Scroll of Spirit IX
-                { 20, 89373 }, -- Scroll of Protection IX
-                { 21, 89368 }, -- Scroll of Intellect IX
+                { 1, 112045 }, -- Runescroll of Fortitude III
             }
         },
         {
             name = AL["Misc"],
             [NORMAL_DIFF] = {
-                { 1, 89367 }, -- Adventurer's Journal
-                { 3, 92027 }, -- Dust of Disappearance
-                { 4, 92026 }, -- Vanishing Powder
-                { 16, [ATLASLOOT_IT_ALLIANCE] = 89244, [ATLASLOOT_IT_HORDE] = 86654 }, -- Forged Documents
-                { 18, 86646 }, -- Origami Beetle
-                { 19, 86645 }, -- Origami Rock
-                { 20, 86644 }, -- Origami Slime
+                { 1, 112883 }, -- Tome of the Clear Mind
+                { 3, 127009 }, -- Chi-ji Kite
+                { 4, 127007 }, -- Yu'lon Kite
+                { 6, 126988 }, -- Origami Crane
+                { 7, 126989 }, -- Origami Frog
+                { 16, 112996 }, -- Scroll of Wisdom
+                { 18, 127378 }, -- Commissioned Painting
+                { 19, 127391 }, -- Engraved Jade Disk
+                { 20, 127481 }, -- Inscribed Monument
+                { 21, 128922 }, -- Portrait of Madam Goya
             }
         },
     }
@@ -1058,386 +992,284 @@ data["JewelcraftingMoP"] = {
         {
             name = ALIL["Jewelcrafting"].." - "..ALIL["Gems"],
             [NORMAL_DIFF] = {
-                { 1, 73396 }, -- Bold Chimera's Eye
-                { 2, 73399 }, -- Brilliant Chimera's Eye
-                { 3, 73397 }, -- Delicate Chimera's Eye
-                { 4, 73398 }, -- Flashing Chimera's Eye
-                { 5, 73400 }, -- Precise Chimera's Eye
-                { 7, 73409 }, -- Fractured Chimera's Eye
-                { 8, 73407 }, -- Mystic Chimera's Eye
-                { 9, 73408 }, -- Quick Chimera's Eye
-                { 10, 73406 }, -- Smooth Chimera's Eye
-                { 11, 73405 }, -- Subtle Chimera's Eye
-                { 16, 73404 }, -- Rigid Chimera's Eye
-                { 17, 73401 }, -- Solid Chimera's Eye
-                { 18, 73402 }, -- Sparkling Chimera's Eye
-                { 19, 73403 }, -- Stormy Chimera's Eye
+                { 1, 122676 }, -- Brilliant Serpent's Eye
+                { 2, 122675 }, -- Bold Serpent's Eye
+                { 3, 122674 }, -- Delicate Serpent's Eye
+                { 4, 122685 }, -- Flashing Serpent's Eye
+                { 5, 122683 }, -- Precise Serpent's Eye
+                { 7, 122684 }, -- Fractured Serpent's Eye
+                { 8, 122680 }, -- Smooth Serpent's Eye
+                { 9, 122679 }, -- Subtle Serpent's Eye
+                { 10, 122682 }, -- Quick Serpent's Eye
+                { 16, 122681 }, -- Rigid Serpent's Eye
+                { 17, 122677 }, -- Sparkling Serpent's Eye
+                { 18, 122678 }, -- Solid Serpent's Eye
+                { 20, 136270 }, -- Lucent Serpent's Eye
+                { 21, 136269 }, -- Resplendent Serpent's Eye
+                { 22, 136272 }, -- Willful Serpent's Eye
+                { 24, 136274 }, -- Assassin's Serpent's Eye
+                { 25, 136275 }, -- Mysterious Serpent's Eye
+                { 26, 136273 }, -- Tense Serpent's Eye
             }
         },
         {
             name = AL["Armor"].." - "..ALIL["Neck"],
             [NORMAL_DIFF] = {
-                { 1, 73521 }, -- Brazen Elementium Medallion
-                { 2, 73506 }, -- Elementium Guardian
-                { 3, 73504 }, -- Entwined Elementium Choker
-                { 4, 73505 }, -- Eye of Many Deaths
-                { 5, 99543 }, -- Vicious Amberjewel Pendant
-                { 6, 99544 }, -- Vicious Ruby Choker
-                { 7, 99542 }, -- Vicious Sapphire Necklace
-                { 8, 73497 }, -- Nightstone Choker
+                { 1, 122670 }, -- Golembreaker Amulet
+                { 2, 122669 }, -- Reflection of the Sea
+                { 3, 122672 }, -- Skymage Circle
+                { 4, 122673 }, -- Tiger Opal Pendant
+                { 5, 122671 }, -- Widow Chain
+                { 6, 122662 }, -- Shadowfire Necklace
             }
         },
         {
             name = AL["Armor"].." - "..AL["Ring"],
             [NORMAL_DIFF] = {
-                { 1, 73498 }, -- Band of Blades
-                { 2, 73520 }, -- Elementium Destroyer's Ring
-                { 3, 73503 }, -- Elementium Moebius Band
-                { 4, 98921 }, -- Punisher's Band
-                { 5, 73502 }, -- Ring of Warring Elements
-                { 6, 99540 }, -- Vicious Amberjewel Band
-                { 7, 99541 }, -- Vicious Ruby Signet
-                { 8, 99539 }, -- Vicious Sapphire Ring
-                { 9, 73495 }, -- Hessonite Band
-                { 10, 73494 }, -- Jasper Ring
-            }
-        },
-        {
-            name = AL["Armor"].." - "..ALIL["Trinket"],
-            [NORMAL_DIFF] = {
-                { 1, "i52199" }, -- Figurine - Demon Panther
-                { 2, "i52351" }, -- Figurine - King of Boars
-                { 3, "i52352" }, -- Figurine - Earthen Guardian
-                { 4, "i52353" }, -- Figurine - Jeweled Serpent
-                { 5, "i52354" }, -- Figurine - Dream Owl
+                { 1, 122668 }, -- Band of Blood
+                { 2, 122664 }, -- Heart of the Earth
+                { 3, 122667 }, -- Lionsfall Ring
+                { 4, 122666 }, -- Lord's Signet
+                { 5, 122665 }, -- Roguestone Shadowband
+                { 6, 122661 }, -- Ornate Band
             }
         },
         {
             name = format(GEM_FORMAT1, ALIL["Meta"]),
             [NORMAL_DIFF] = {
-                { 1, 96255 }, -- Agile Shadowspirit Diamond
-                { 2, 73468 }, -- Austere Shadowspirit Diamond
-                { 3, 73466 }, -- Bracing Shadowspirit Diamond
-                { 4, 96257 }, -- Burning Shadowspirit Diamond
-                { 5, 73465 }, -- Chaotic Shadowspirit Diamond
-                { 6, 73472 }, -- Destructive Shadowspirit Diamond
-                { 7, 73469 }, -- Efullgent Shadowspirit Diamond
-                { 8, 73470 }, -- Ember Shadowspirit Diamond
-                { 16, 73474 }, -- Enigmatic Shadowspirit Diamond
-                { 17, 73467 }, -- Eternal Shadowspirit Diamond
-                { 18, 73464 }, -- Fleet Shadowspirit Diamond
-                { 19, 73476 }, -- Forlorn Shadowspirit Diamond
-                { 20, 73475 }, -- Impassive Shadowspirit Diamond
-                { 21, 73473 }, -- Powerful Shadowspirit Diamond
-                { 22, 96256 }, -- Reverberating Shadowspirit Diamond
-                { 23, 73471 }, -- Revitalizing Shadowspirit Diamond
+                { 1, 107753 }, -- Agile Primal Diamond
+                { 2, 107754 }, -- Austere Primal Diamond
+                { 3, 107756 }, -- Burning Primal Diamond
+                { 4, 107757 }, -- Destructive Primal Diamond
+                { 5, 107758 }, -- Effulgent Primal Diamond
+                { 6, 107759 }, -- Ember Primal Diamond
+                { 7, 107760 }, -- Enigmatic Primal Diamond
+                { 16, 107762 }, -- Eternal Primal Diamond
+                { 17, 107763 }, -- Fleet Primal Diamond
+                { 18, 107764 }, -- Forlorn Primal Diamond
+                { 19, 107765 }, -- Impassive Primal Diamond
+                { 20, 107766 }, -- Powerful Primal Diamond
+                { 21, 107767 }, -- Reverberating Primal Diamond
+                { 22, 107768 }, -- Revitalizing Primal Diamond
             }
         },
         {
             name = format(GEM_FORMAT1, ALIL["Red"]),
             [NORMAL_DIFF] = {
-                -- Epic
-                { 1, 101799 }, -- Bold Queen's Garnet
-                { 2, 101797 }, -- Brilliant Queen's Garnet
-                { 3, 101795 }, -- Delicate Queen's Garnet
-                { 4, 101798 }, -- Flashing Queen's Garnet
-                { 5, 101796 }, -- Precise Queen's Garnet
-                -- Rare
-                { 7, 73335 }, -- Bold Inferno Ruby
-                { 8, 73338 }, -- Brilliant Inferno Ruby
-                { 9, 73336 }, -- Delicate Inferno Ruby
-                { 10, 73337 }, -- Flashing Inferno Ruby
-                { 11, 73339 }, -- Precise Inferno Ruby
-                -- Uncommon
-                { 16, 73222 }, -- Bold Carnelian
-                { 17, 73225 }, -- Brilliant Carnelian
-                { 18, 73223 }, -- Delicate Carnelian
-                { 19, 73224 }, -- Flashing Carnelian
-                { 20, 73226 }, -- Precise Carnelian
-                -- Perfect Uncommon
-                { 22, "i52176" }, -- Perfect Bold Carnelian
-                { 23, "i52173" }, -- Perfect Brilliant Carnelian
-                { 24, "i52175" }, -- Perfect Delicate Carnelian
-                { 25, "i52174" }, -- Perfect Flashing Carnelian
-                { 26, "i52172" }, -- Perfect Precise Carnelian
+                { 1, 107705 }, -- Bold Primordial Ruby
+                { 2, 107706 }, -- Brilliant Primordial Ruby
+                { 3, 107707 }, -- Delicate Primordial Ruby
+                { 4, 107708 }, -- Flashing Primordial Ruby
+                { 5, 107709 }, -- Precise Primordial Ruby
+                { 16, 107622 }, -- Bold Pandarian Garnet
+                { 17, 107623 }, -- Brilliant Pandarian Garnet
+                { 18, 107624 }, -- Delicate Pandarian Garnet
+                { 19, 107625 }, -- Flashing Pandarian Garnet
+                { 20, 107626 }, -- Precise Pandarian Garnet
             }
         },
         {
             name = format(GEM_FORMAT1, ALIL["Yellow"]),
             [NORMAL_DIFF] = {
-                -- Epic
-                { 1, 101803 }, -- Fractured Lightstone
-                { 2, 101804 },	-- Mystic Lightstone
-                { 3, 101802 },	-- Quick Lightstone
-                { 4, 101800 },	-- Smooth Lightstone
-                { 5, 101801 },	-- Subtle Lightstone
-                -- Rare
-                { 7, 73349 }, -- Fractured Amberjewel
-                { 8, 73347 }, -- Mystic Amberjewel
-                { 9, 73348 }, -- Quick Amberjewel
-                { 10, 73346 }, -- Smooth Amberjewel
-                { 11, 73345 }, -- Subtle Amberjewel
-                -- Uncommon
-                { 16, 73239 }, -- Fractured Alicite
-                { 17, 73233}, -- Mystic Alicite
-                { 18, 73234 }, -- Quick Alicite
-                { 19, 73232 }, -- Smooth Alicite
-                { 20, 73231 }, -- Subtle Alicite
-                -- Perfect Uncommon
-                { 22, "i52163" }, -- Perfect Fractured Alicite
-                { 23, "i52165" }, --  Perfect Mystic Alicite
-                { 24, "i52164" }, -- Perfect Quick Alicite
-                { 25, "i52166" }, -- Perfect Smooth Alicite
-                { 26, "i52167" }, -- Perfect Subtle Alicite
+                { 1, 107710 }, -- Fractured Sun's Radiance
+                { 2, 107711 }, -- Mystic Sun's Radiance
+                { 3, 107712 }, -- Quick Sun's Radiance
+                { 4, 107713 }, -- Smooth Sun's Radiance
+                { 5, 107714 }, -- Subtle Sun's Radiance
+                { 16, 107640 }, -- Fractured Sunstone
+                { 17, 107641 }, -- Mystic Sunstone
+                { 18, 107642 }, -- Quick Sunstone
+                { 19, 107643 }, -- Smooth Sunstone
+                { 20, 107644 }, -- Subtle Sunstone
             }
         },
         {
             name = format(GEM_FORMAT1, ALIL["Blue"]),
             [NORMAL_DIFF] = {
-                -- Epic
-                { 1, 101735 }, -- Rigid Deepholm Iolite
-                { 2, 101742 }, -- Solid Deepholm Iolite
-                { 3, 101741 }, -- Sparkling Deepholm Iolite
-                { 4, 101740 }, -- Stormy Deepholm Iolite
-                -- Rare
-                { 6, 73344 }, -- Rigid Ocean Sapphire
-                { 7, 73340 }, -- Solid Ocean Sapphire
-                { 8, 73341 }, -- Sparkling Ocean Sapphire
-                { 9, 73343 }, -- Stormy Ocean Sapphire
-                -- Uncommon
-                { 16, 73230 }, -- Rigid Zephyrite
-                { 17, 73227 }, -- Solid Zephyrite
-                { 18, 73228 }, -- Sparkling Zephyrite
-                { 19, 73229 }, -- Stormy Zephyrite
-                -- Perfect Uncommon
-                { 21, "i52168" }, -- Perfect Rigid Zephyrite
-                { 22, "i52171" }, -- Perfect Solid Zephyrite
-                { 23, "i52170" }, -- Perfect Sparkling Zephyrite
-                { 24, "i52169" }, -- Perfect Stormy Zephyrite
+                { 1, 106947 }, -- Rigid River's Heart
+                { 2, 106950 }, -- Solid River's Heart
+                { 3, 106949 }, -- Sparkling River's Heart
+                { 4, 106948 }, -- Stormy River's Heart
+                { 16, 107617 }, -- Rigid Lapis Lazuli
+                { 17, 107619 }, -- Solid Lapis Lazuli
+                { 18, 107620 }, -- Sparkling Lapis Lazuli
+                { 19, 107621 }, -- Stormy Lapis Lazuli
             }
         },
         {
             name = format(GEM_FORMAT1, ALIL["Orange"]),
             [NORMAL_DIFF] = {
-                -- Epic
-                { 1, 101773 }, -- Adept Lava Coral
-                { 2, 101775 }, -- Artful Lava Coral
-                { 3, 101761 }, -- Deadly Lava Coral
-                { 4, 101769 }, -- Deft Lava Coral
-                { 5, 101772 }, -- Fierce Lava Coral
-                { 6, 101776 }, -- Fine Lava Coral
-                { 7, 101764 }, -- Inscribed Lava Coral
-                { 8, 101774 }, -- Keen Lava Coral
-                { 9, 101765 }, -- Polished Lava Coral
-                { 10, 101763 }, -- Potent Lava Coral
-                { 11, 101771 }, -- Reckless Lava Coral
-                { 16, 101777 }, -- Skillful Lava Coral
-                { 17, 101766 }, -- Resolute Lava Coral
-                { 18, 101782 }, -- Resplendent Lava Coral!
-                { 19, 101780 }, -- Willful Lava Coral
-                { 20, 101778 }, -- Lucent Lava Coral
-                { 21, 101768 }, -- Champion's Lava Coral
-                { 22, 101762 }, -- Crafty Lava Coral
-                { 23, 101781 }, -- Splendid Lava Coral
-                { 24, 101767 }, -- Stalwart Lava Coral
-                { 25, 101779 }, -- Tenuous Lava Coral
-                { 26, 101770 }, -- Wicked Lava Coral
-                -- Rare
-                { 101, 73371 }, -- Adept Ember Topaz
-                { 102, 73373 }, -- Artful Ember Topaz
-                { 103, 73365 }, -- Deadly Ember Topaz
-                { 104, 73368 }, -- Deft Ember Topaz
-                { 105, 73367 }, -- Fierce Ember Topaz
-                { 106, 73372 }, -- Fine Ember Topaz
-                { 107, 73364 }, -- Inscribed Ember Topaz
-                { 108, 73374 }, -- Keen Ember Topaz
-                { 116, 73361 }, -- Polished Ember Topaz
-                { 117, 73366 }, -- Potent Ember Topaz
-                { 118, 73369 }, -- Reckless Ember Topaz
-                { 119, 73370 }, -- Skillful Ember Topaz
-                { 120, 73362 }, -- Resolute Ember Topaz
-                { 121, 95756 }, -- Resplendent Ember Topaz
-                { 122, 95754 }, -- Willful Ember Topaz
-                { 123, 95755 }, -- Lucent Ember Topaz
-                -- Uncommon
-                { 201, 73268 },	-- Adept Hessonite
-                { 202, 73270 },	-- Artful Hessonite
-                { 203, 73262 },	-- Deadly Hessonite
-                { 204, 73265 },	-- Deft Hessonite
-                { 205, 73264 },	-- Fierce Hessonite
-                { 206, 73269 },	-- Fine Hessonite
-                { 207, 73260 }, -- Inscribed Hessonite
-                { 208, 73271 }, -- Keen Hessonite
-                { 209, 73258 }, -- Polished Hessonite
-                { 210, 73263 }, -- Potent Hessonite
-                { 211, 73266 }, -- Reckless Hessonite
-                { 212, 73259 }, -- Resolute Hessonite
-                { 213, 73267 }, -- Skillful Hessonite
-                -- Perfect Uncommon
-                { 216, "i52142" },	-- Perfect Adept Hessonite
-                { 217, "i52140" },	-- Perfect Artful Hessonite
-                { 218, "i52148" },	-- Perfect Deadly Hessonite
-                { 219, "i52145" },	-- Perfect Deft Hessonite
-                { 220, "i52146" },	-- Perfect Fierce Hessonite
-                { 221, "i52141" },	-- Perfect Fine Hessonite
-                { 222, "i52149" }, -- Perfect Inscribed Hessonite
-                { 223, "i52139" }, -- Perfect Keen Hessonite
-                { 224, "i52151" }, -- Perfect Polished Hessonite
-                { 225, "i52147" }, -- Perfect Potent Hessonite
-                { 226, "i52144" }, -- Perfect Reckless Hessonite
-                { 227, "i52140" }, -- Perfect Resolute Hessonite
-                { 228, "i52143" }, -- Perfect Skillful Hessonite
+                { 1, 107715 }, -- Adept Vermilion Onyx
+                { 2, 107716 }, -- Artful Vermilion Onyx
+                { 3, 107717 }, -- Champion's Vermilion Onyx
+                { 4, 107718 }, -- Crafty Vermilion Onyx
+                { 5, 107719 }, -- Deadly Vermilion Onyx
+                { 6, 107720 }, -- Deft Vermilion Onyx
+                { 7, 107721 }, -- Fierce Vermilion Onyx
+                { 8, 107722 }, -- Fine Vermilion Onyx
+                { 9, 107723 }, -- Inscribed Vermilion Onyx
+                { 10, 107724 }, -- Keen Vermilion Onyx
+                { 11, 107725 }, -- Lucent Vermilion Onyx
+                { 16, 107726 }, -- Polished Vermilion Onyx
+                { 17, 107727 }, -- Potent Vermilion Onyx
+                { 18, 107728 }, -- Reckless Vermilion Onyx
+                { 19, 107729 }, -- Resolute Vermilion Onyx
+                { 20, 107730 }, -- Resplendent Vermilion Onyx
+                { 21, 107731 }, -- Skillful Vermilion Onyx
+                { 22, 107732 }, -- Splendid Vermilion Onyx
+                { 23, 107733 }, -- Stalwart Vermilion Onyx
+                { 24, 107734 }, -- Tenuous Vermilion Onyx
+                { 25, 107735 }, -- Wicked Vermilion Onyx
+                { 26, 107736 }, -- Willful Vermilion Onyx
+                { 101, 107645 }, -- Adept Tiger Opal
+                { 102, 107646 }, -- Artful Tiger Opal
+                { 103, 107647 }, -- Champion's Tiger Opal
+                { 104, 107648 }, -- Crafty Tiger Opal
+                { 105, 107649 }, -- Deadly Tiger Opal
+                { 106, 107650 }, -- Deft Tiger Opal
+                { 107, 107651 }, -- Fierce Tiger Opal
+                { 108, 107652 }, -- Fine Tiger Opal
+                { 109, 107653 }, -- Inscribed Tiger Opal
+                { 110, 107654 }, -- Keen Tiger Opal
+                { 111, 107655 }, -- Lucent Tiger Opal
+                { 116, 107656 }, -- Polished Tiger Opal
+                { 117, 107657 }, -- Potent Tiger Opal
+                { 118, 107658 }, -- Reckless Tiger Opal
+                { 119, 107659 }, -- Resolute Tiger Opal
+                { 120, 107660 }, -- Resplendent Tiger Opal
+                { 121, 107661 }, -- Skillful Tiger Opal
+                { 122, 107662 }, -- Splendid Tiger Opal
+                { 123, 107663 }, -- Stalwart Tiger Opal
+                { 124, 107665 }, -- Tenuous Tiger Opal
+                { 125, 107666 }, -- Wicked Tiger Opal
+                { 126, 107667 }, -- Willful Tiger Opal
             }
         },
         {
             name = format(GEM_FORMAT1, ALIL["Green"]),
             [NORMAL_DIFF] = {
-                -- Epic (move to top after P2)
-                { 1, 101757 }, -- Forceful Elven Peridot
-                { 2, 101755 }, -- Jagged Elven Peridot
-                { 3, 101745 }, -- Lightning Elven Peridot
-                { 4, 101758 }, -- Nimble Elven Peridot
-                { 5, 101744 }, -- Piercing Elven Peridot
-                { 6, 101759 }, -- Puissant Elven Peridot
-                { 7, 101756 }, -- Regal Elven Peridot
-                { 8, 101746 }, -- Sensei's Elven Peridot
-                { 9, 101760 }, -- Steady Elven Peridot
-                { 16, 101748 }, -- Zen Elven Peridot
-                { 17, 101750 }, -- Vivid Elven Peridot
-                { 18, 101749 }, -- Balanced Elven Peridot
-                { 19, 101754 }, -- Energized Elven Peridot
-                { 20, 101747 }, -- Infused Elven Peridot
-                { 21, 101743 }, -- Misty Elven Peridot
-                { 22, 101752 }, -- Radiant Elven Peridot
-                { 23, 101753 }, -- Shattered Elven Peridot
-                { 24, 101751 }, -- Turbid Elven Peridot
-                -- Rare
-                { 101, 73380 },	-- Forceful Dream Emerald
-                { 102, 73377 },	-- Jagged Dream Emerald
-                { 103, 73381 },	-- Lightning Dream Emerald
-                { 104, 73376 },	-- Nimble Dream Emerald
-                { 105, 73378 },	-- Piercing Dream Emerald
-                { 106, 73382 },	-- Puissant Dream Emerald
-                { 116, 73375 },	-- Regal Dream Emerald
-                { 117, 73384 },	-- Sensei's Dream Emerald
-                { 118, 73379 },	-- Steady Dream Emerald
-                { 119, 73383 },	-- Zen Dream Emerald
-                { 120, 96226 },	-- Vivid Dream Emerald
-                -- Uncommon
-                { 201, 73277 },	-- Forceful Jasper
-                { 202, 73274 },	-- Jagged Jasper
-                { 203, 73278 },	-- Lightning Jasper
-                { 204, 73273 },	-- Nimble Jasper
-                { 205, 73275 },	-- Piercing Jasper
-                { 206, 73279 },	-- Puissant Jasper
-                { 207, 73272 },	-- Regal Jasper
-                { 208, 73281 },	-- Sensei's Jasper
-                { 209, 73276 },	-- Steady Jasper
-                { 210, 73280 },	-- Zen Jasper
-                -- Perfect Uncommon
-                { 216, "i52133" },	-- Perfect Forceful Jasper
-                { 217, "i52136" },	-- Perfect Jagged Jasper
-                { 218, "i52132" },	-- Perfect Lightning Jasper
-                { 219, "i52137" },	-- Perfect Nimble Jasper
-                { 220, "i52135" },	-- Perfect Piercing Jasper
-                { 221, "i52131" },	-- Perfect Puissant Jasper
-                { 222, "i52138" },	-- Perfect Regal Jasper
-                { 223, "i52129" },	-- Perfect Sensei's Jasper
-                { 224, "i52134" },	-- Perfect Steady Jasper
-                { 225, "i52130" },	-- Perfect Zen Jasper
+                { 1, 106960 }, -- Balanced Wild Jade
+                { 2, 106957 }, -- Effulgent Wild Jade
+                { 3, 107737 }, -- Energized Wild Jade
+                { 4, 107738 }, -- Forceful Wild Jade
+                { 5, 107739 }, -- Jagged Wild Jade
+                { 6, 106955 }, -- Lightning Wild Jade
+                { 7, 106953 }, -- Misty Wild Jade
+                { 8, 107740 }, -- Nimble Wild Jade
+                { 9, 106954 }, -- Piercing Wild Jade
+                { 16, 107742 }, -- Puissant Wild Jade
+                { 17, 107743 }, -- Radiant Wild Jade
+                { 18, 107744 }, -- Regal Wild Jade
+                { 19, 106956 }, -- Sensei's Wild Jade
+                { 20, 107745 }, -- Shattered Wild Jade
+                { 21, 107746 }, -- Steady Wild Jade
+                { 22, 106962 }, -- Turbid Wild Jade
+                { 23, 106961 }, -- Vivid Wild Jade
+                { 24, 106958 }, -- Zen Wild Jade
+                { 101, 107598 }, -- Balanced Alexandrite
+                { 102, 107599 }, -- Effulgent Alexandrite
+                { 103, 107600 }, -- Energized Alexandrite
+                { 104, 107601 }, -- Forceful Alexandrite
+                { 105, 107602 }, -- Jagged Alexandrite
+                { 106, 107604 }, -- Lightning Alexandrite
+                { 107, 107605 }, -- Misty Alexandrite
+                { 108, 107606 }, -- Nimble Alexandrite
+                { 109, 107607 }, -- Piercing Alexandrite
+                { 116, 107608 }, -- Puissant Alexandrite
+                { 117, 107609 }, -- Radiant Alexandrite
+                { 118, 107610 }, -- Regal Alexandrite
+                { 119, 107611 }, -- Sensei's Alexandrite
+                { 120, 107612 }, -- Shattered Alexandrite
+                { 121, 107613 }, -- Steady Alexandrite
+                { 122, 107614 }, -- Turbid Alexandrite
+                { 123, 107615 }, -- Vivid Alexandrite
+                { 124, 107616 }, -- Zen Alexandrite
             }
         },
         {
             name = format(GEM_FORMAT1, ALIL["Purple"]),
             [NORMAL_DIFF] = {
-                -- Epic
-                { 1, 101784 }, -- Accurate Shadow Spinel
-                { 2, 101793 }, -- Defender's Shadow Spinel
-                { 3, 101787 }, -- Etched Shadow Spinel
-                { 4, 101783 }, -- Glinting Shadow Spinel
-                { 5, 101791 }, -- Guardian's Shadow Spinel
-                { 6, 101789 }, -- Purified Shadow Spinel
-                { 7, 101786 }, -- Retaliating Shadow Spinel
-                { 8, 101790 }, -- Shifting Shadow Spinel
-                { 9, 101794 }, -- Sovereign Shadow Spinel
-                { 10, 101792 }, -- Timeless Shadow Spinel
-                { 11, 101785 }, -- Veiled Shadow Spinel
-                { 12, 101788 }, -- Mysterious Shadow Spinel
-                -- Rare
-                { 16, 73360 }, -- Accurate Demonseye
-                { 17, 73352 }, -- Defender's Demonseye
-                { 18, 73356 }, -- Etched Demonseye
-                { 19, 73357 }, -- Glinting Demonseye
-                { 20, 73354 }, -- Guardian's Demonseye
-                { 21, 73355 }, -- Purified Demonseye
-                { 22, 73358 }, -- Retaliating Demonseye
-                { 23, 73351 }, -- Shifting Demonseye
-                { 24, 73350 }, -- Souvereign Demonseye
-                { 25, 73353 }, -- Timeless Demonseye
-                { 26, 73359 }, -- Veiled Demonseye
-                -- Uncommon
-                { 101, 73250 }, -- Accurate Nightstone
-                { 102, 73242 }, -- Defender's Nightstone
-                { 103, 73246 }, -- Etched Nightstone
-                { 104, 73247 }, -- Glinting Nightstone
-                { 105, 73244 }, -- Guardian's Nightstone
-                { 106, 73245 }, -- Purified Nightstone
-                { 107, 73248 }, -- Retaliating Nightstone
-                { 108, 73241 }, -- Shifting Nightstone
-                { 109, 73240 }, -- Souvereign Nightstone
-                { 110, 73243 }, -- Timeless Nightstone
-                { 111, 73249 }, -- Veiled Nightstone
-                -- Perfect Uncommon
-                { 116, "i52152" }, -- Perfect Accurate Nightstone
-                { 117, "i52160" }, -- Perfect Defender's Nightstone
-                { 118, "i52156" }, -- Perfect Etched Nightstone
-                { 119, "i52155" }, -- Perfect Glinting Nightstone
-                { 120, "i52158" }, -- Perfect Guardian's Nightstone
-                { 121, "i52157" }, -- Perfect Purified Nightstone
-                { 122, "i52154" }, -- Perfect Retaliating Nightstone
-                { 123, "i52161" }, -- Perfect Shifting Nightstone
-                { 124, "i52162" }, -- Perfect Souvereign Nightstone
-                { 125, "i52159" }, -- Perfect Timeless Nightstone
-                { 126, "i52153" }, -- Perfect Veiled Nightstone
+                { 1, 107693 }, -- Accurate Imperial Amethyst
+                { 2, 130657 }, -- Assassin's Imperial Amethyst
+                { 3, 107694 }, -- Defender's Imperial Amethyst
+                { 4, 107695 }, -- Etched Imperial Amethyst
+                { 5, 107696 }, -- Glinting Imperial Amethyst
+                { 6, 107697 }, -- Guardian's Imperial Amethyst
+                { 7, 107698 }, -- Mysterious Imperial Amethyst
+                { 8, 107699 }, -- Purified Imperial Amethyst
+                { 9, 107700 }, -- Retaliating Imperial Amethyst
+                { 10, 107701 }, -- Shifting Imperial Amethyst
+                { 11, 107702 }, -- Sovereign Imperial Amethyst
+                { 12, 130658 }, -- Tense Imperial Amethyst
+                { 13, 107703 }, -- Timeless Imperial Amethyst
+                { 14, 107704 }, -- Veiled Imperial Amethyst
+                { 16, 107627 }, -- Accurate Roguestone
+                { 17, 130656 }, -- Assassin's Roguestone
+                { 18, 107628 }, -- Defender's Roguestone
+                { 19, 107630 }, -- Etched Roguestone
+                { 20, 107631 }, -- Glinting Roguestone
+                { 21, 107632 }, -- Guardian's Roguestone
+                { 22, 107633 }, -- Mysterious Roguestone
+                { 23, 107634 }, -- Purified Roguestone
+                { 24, 107635 }, -- Retaliating Roguestone
+                { 25, 107636 }, -- Shifting Roguestone
+                { 26, 107637 }, -- Sovereign Roguestone
+                { 27, 130655 }, -- Tense Roguestone
+                { 28, 107638 }, -- Timeless Roguestone
+                { 29, 107639 }, -- Veiled Roguestone
             }
         },
         {
-            name = AL["Raw Gems"],
-            TableType = NORMAL_ITTYPE,
+            name = AL["Research"],
             [NORMAL_DIFF] = {
-                { 1, 52303 }, --  Shadowspirit Diamond
-                { 3, 71809 }, --  Shadow Spinel
-                { 4, 52194 }, --  Demonseye
-                { 5, 52180 }, --  Nightstone
-                { 7, 71810 }, --  Elven Peridot
-                { 8, 52192 }, --  Dream Emerald
-                { 9, 52182 }, --  Jasper
-                { 11, 71808 }, --  Lava Coral
-                { 12, 52193 }, --  Ember Topaz
-                { 13, 52181 }, --  Hessonite
-                { 16, "i52196" }, -- Chimera's Eye
-                { 18, 71807 }, --  Deepholm Iolite
-                { 19, 52191 }, -- Ocean Sapphire
-                { 20, 52178 }, --  Zephyrite
-                { 22, 71805 }, --  Queen's Garnet
-                { 23, 52190 }, --  Inferno Ruby
-                { 24, 52177 }, --  Carnelian
-                { 26, 71806 }, --  Lightstone
-                { 27, 52195 }, --  Amberjewel
-                { 28, 52179 }, --  Alicite
+                { 1, 131686 }, -- Primordial Ruby
+                { 2, 131695 }, -- Sun's Radiance
+                { 3, 131593 }, -- River's Heart
+                { 4, 131690 }, -- Vermilion Onyx
+                { 5, 131691 }, -- Imperial Amethyst
+                { 6, 131688 }, -- Wild Jade
+                { 16, 131759 }, -- Secrets of the Stone
+            }
+        },
+        {
+            name = AL["Mounts"].." / "..AL["Pets"],
+            [NORMAL_DIFF] = {
+                { 1, 120045 }, -- Jeweled Onyx Panther
+                { 2, 121844 }, -- Jade Panther
+                { 3, 121843 }, -- Sunstone Panther
+                { 4, 121841 }, -- Ruby Panther
+                { 5, 121842 }, -- Sapphire Panther
+                { 16, 131898 }, -- Sapphire Cub
+                { 17, 131897 }, -- Jade Owl
             }
         },
         {
             name = AL["Misc"],
             [NORMAL_DIFF] = {
-                { 1, 73478 }, -- Fire Prism
-                { 3, 73621 }, -- The Perforator
-                { 4, 73620 }, -- Carnelian Spikes
-                { 6, 73622 }, -- Stardust
-                { 16, 73623 }, -- Rhinestone Sunglasses
-                { 18, 73627 }, -- Jeweler's Amber Monocle
-                { 19, 73626 }, -- Jeweler's Sapphire Monocle
-                { 20, 73625 }, -- Jeweler's Ruby Monocle
+                { 1, 140050 }, -- Serpent's Heart
+                { 3, 122663 }, -- Scrying Roguestone
+                { 16, 140060 }, -- Primal Diamond
+            }
+        },
+                {
+            name = AL["Raw Gems"],
+            TableType = NORMAL_ITTYPE,
+            ExtraList = true,
+            [NORMAL_DIFF] = {
+                { 1, 76132 }, -- Primal Diamond
+                { 3, 76131 }, -- Primordial Ruby
+                { 4, 76142 }, -- Sun's Radiance
+                { 5, 76138 }, -- River's Heart
+                { 6, 76140 }, -- Vermilion Onyx
+                { 7, 76139 }, -- Wild Jade
+                { 8, 76141 }, -- Imperial Amethyst
+                { 16, 76734 }, -- Serpent's Eye
+                { 18, 76136 }, -- Pandarian Garnet
+                { 19, 76134 }, -- Sunstone
+                { 20, 76133 }, -- Lapis Lazuli
+                { 21, 76130 }, -- Tiger Opal
+                { 22, 76137 }, -- Alexandrite
+                { 23, 76135 }, -- Roguestone
             }
         },
     }
@@ -1453,175 +1285,184 @@ data["LeatherworkingMoP"] = {
         { -- Cloak
             name = AL["Armor"].." - "..ALIL["Cloak"],
             [NORMAL_DIFF] = {
-                { 1, 78475 },	-- Razor-Edged Cloak
-                { 2, 78476 },	-- Twilight Dragonscale Cloak
-                { 3, 99536 },   -- Vicious Fur Cloak
-                { 4, 99535 },	-- Vicious Hide Cloak
-                { 5, 78439 },	-- Cloak of War
-                { 6, 78438 },	-- Cloak of Beasts
-                { 7, 78405 },	-- Hardened Scale Cloak
-                { 8, 78380 },	-- Savage Cloak
+                { 1, 124637 }, -- Quick Strike Cloak
+                { 2, 124636 }, -- Stormscale Drape
+                { 3, 124635 }, -- Misthide Drape
             }
         },
         { -- Head
             name = AL["Armor"].." - "..ALIL["Head"],
             [LEATHER_DIFF] = {
-                { 1, 78480 },	-- Bloodied Wyrmhide Helm
-                { 2, 78469 },	-- Bloodied Leather Helm
-                { 3, 78424 },	-- Darkbrand Helm
+                { 1, 138590 }, -- Quilen Hide Helm
+                { 2, 138594 }, -- Spirit Keeper Helm
+                { 3, 124603 }, -- Contender's Leather Helm
+                { 4, 124587 }, -- Contender's Wyrmhide Helm
+                { 5, 124571 }, -- Misthide Helm
             },
             [MAIL_DIFF] = {
-                { 1, 78484 },	-- Bloodied Scale Helm
-                { 2, 78474 },	-- Bloodied Dragonscale Helm
-                { 3, 78432 },	-- Tsunami Helm
+                { 1, 138596 }, -- Cloud Serpent Helm
+                { 2, 138592 }, -- Dreadrunner Helm
+                { 3, 124611 }, -- Contender's Dragonscale Helm
+                { 4, 124595 }, -- Contender's Scale Helm
+                { 5, 124579 }, -- Stormscale Helm
             },
         },
         { -- Shoulder
             name = AL["Armor"].." - "..ALIL["Shoulder"],
             [LEATHER_DIFF] = {
-                { 1, 78464 },	-- Bloodied Wyrmhide Shoulders
-                { 2, 78455 },	-- Bloodied Leather Shoulders
-                { 3, 78411 },	-- Darkbrand Shoulders
+                { 1, 124604 }, -- Contender's Leather Shoulders
+                { 2, 124588 }, -- Contender's Wyrmhide Shoulders
+                { 3, 124572 }, -- Misthide Shoulders
             },
             [MAIL_DIFF] = {
-                { 1, 78470 },	-- Bloodied Scale Shoulders
-                { 2, 78451 },	-- Bloodied Dragonscale Shoulders
-                { 3, 78415 },	-- Tsunami Shoulders
+                { 1, 124612 }, -- Contender's Dragonscale Shoulders
+                { 2, 124596 }, -- Contender's Scale Shoulders
+                { 3, 124580 }, -- Stormscale Shoulders
             },
         },
         { -- Chest
             name = AL["Armor"].." - "..ALIL["Chest"],
             [LEATHER_DIFF] = {
-                { 1, 78487 },	-- Chestguard of Nature's Fury
-                { 2, 78488 },	-- Assassin's Chestplate
-                { 3, 78481 },	-- Bloodied Leather Chest
-                { 4, 78467 },	-- Bloodied Wyrmhide Chest
-                { 5, 78428 },	-- Darkbrand Chestguard
+                { 1, 124638 }, -- Chestguard of Nemeses
+                { 2, 124640 }, -- Nightfire Robe
+                { 3, 124619 }, -- Greyshadow Chestguard
+                { 4, 124621 }, -- Wildblood Vest
+                { 5, 124605 }, -- Contender's Leather Chestguard
+                { 6, 124589 }, -- Contender's Wyrmhide Chestguard
+                { 7, 124573 }, -- Misthide Chestguard
             },
             [MAIL_DIFF] = {
-                { 1, 78489 },	-- Twilight Scale Chestguard
-                { 2, 78490 },	-- Dragonkiller Tunic
-                { 3, 78486 },	-- Bloodied Dragonscale Chest
-                { 4, 78483 },	-- Bloodied Scale Chest
-                { 5, 78423 },	-- Tsunami Chestguard
+                { 1, 124644 }, -- Raiment of Blood and Bone
+                { 2, 124642 }, -- Stormbreaker Chestguard
+                { 3, 124625 }, -- Chestguard of Earthen Harmony
+                { 4, 124623 }, -- Lifekeeper's Robe
+                { 5, 124613 }, -- Contender's Dragonscale Chestguard
+                { 6, 124597 }, -- Contender's Scale Chestguard
+                { 7, 124581 }, -- Stormscale Chestguard
             },
         },
         { -- Wrist
             name = AL["Armor"].." - "..ALIL["Wrist"],
             [LEATHER_DIFF] = {
-                { 1, 101940 },	-- Bladeshadow Wristguards
-                { 2, 101937 },	-- Bracers of Flowing Serenity
-                { 3, 78444 },	-- Bloodied Wyrmhide Bracers
-                { 4, 78446 },	-- Bloodied Leather Bracers
-                { 5, 78398 },	-- Darkbrand Bracers
+                { 1, 124608 }, -- Contender's Leather Bracers
+                { 2, 124592 }, -- Contender's Wyrmhide Bracers
+                { 3, 124576 }, -- Misthide Bracers
             },
             [MAIL_DIFF] = {
-                { 1, 101939 },	-- Thundering Deathscale Wristguards
-                { 2, 101941 },	-- Bracers of the Hunter-Killer
-                { 3, 78448 },	-- Bloodied Scale Bracers
-                { 4, 78450 },	-- Bloodied Dragonscale Bracers
-                { 5, 78388 },	-- Tsunami Bracers
+                { 1, 124616 }, -- Contender's Dragonscale Bracers
+                { 2, 124600 }, -- Contender's Scale Bracers
+                { 3, 124584 }, -- Stormscale Bracers
             },
         },
         { -- Hand
             name = AL["Armor"].." - "..ALIL["Hand"],
             [LEATHER_DIFF] = {
-                { 1, 99446 },	-- Clutches of Evil
-                { 2, 99447 },	-- Heavenly Gloves of the Moon
-                { 3, 78452 },	-- Bloodied Wyrmhide Gloves
-                { 4, 78447 },	-- Bloodied Leather Gloves
-                { 5, 78399 },	-- Darkbrand Gloves
+                { 1, 124641 }, -- Liferuned Leather Gloves
+                { 2, 124639 }, -- Murderer's Gloves
+                { 3, 124620 }, -- Greyshadow Gloves
+                { 4, 124622 }, -- Wildblood Gloves
+                { 5, 124606 }, -- Contender's Leather Gloves
+                { 6, 124590 }, -- Contender's Wyrmhide Gloves
+                { 7, 124574 }, -- Misthide Gloves
             },
             [MAIL_DIFF] = {
-                { 1, 99445 },	-- Gloves of Unforgiving Flame
-                { 2, 99443 },	-- Dragonfire Gloves
-                { 3, 78459 },	-- Bloodied Dragonscale Gloves
-                { 4, 78449 },	-- Bloodied Scale Gloves
-                { 5, 78406 },	-- Tsunami Gloves
+                { 1, 124643 }, -- Fists of Lightning
+                { 2, 124645 }, -- Raven Lord's Gloves
+                { 3, 124626 }, -- Gloves of Earthen Harmony
+                { 4, 124624 }, -- Lifekeeper's Gloves
+                { 5, 124614 }, -- Contender's Dragonscale Gloves
+                { 6, 124598 }, -- Contender's Scale Gloves
+                { 7, 124582 }, -- Stormscale Gloves
             },
         },
         { -- Waist
             name = AL["Armor"].." - "..ALIL["Waist"],
             [LEATHER_DIFF] = {
-                { 1, 78460 },	-- Lightning Lash
-                { 2, 78461 },	-- Belt of Nefarious Whispers
-                { 3, 78468 },	-- Bloodied Leather Belt
-                { 4, 78445 },	-- Bloodied Wyrmhide Belt
-                { 5, 78416 },	-- Darkbrand Belt
+                { 1, 142961 }, -- Pennyroyal Belt
+                { 2, 142965 }, -- Snow Lily Belt
+                { 3, 124610 }, -- Contender's Leather Belt
+                { 4, 124594 }, -- Contender's Wyrmhide Belt
+                { 5, 124578 }, -- Misthide Belt
             },
             [MAIL_DIFF] = {
-                { 1, 78462 },	-- Stormleather Sash
-                { 2, 78463 },	-- Corded Viper Belt
-                { 3, 78473 },	-- Bloodied Dragonscale Belt
-                { 4, 78457 },	-- Bloodied Scale Belt
-                { 5, 78396 },	-- Tsunami Belt
+                { 1, 142966 }, -- Gorge Stalker Belt
+                { 2, 142962 }, -- Krasari Prowler Belt
+                { 3, 124618 }, -- Contender's Dragonscale Belt
+                { 4, 124602 }, -- Contender's Scale Belt
+                { 5, 124586 }, -- Stormscale Belt
             },
         },
         { -- Legs
             name = AL["Armor"].." - "..ALIL["Legs"],
             [LEATHER_DIFF] = {
-                { 1, 101933 },	-- Leggings of Nature's Champion
-                { 2, 101935 },	-- Bladeshadow Leggings
-                { 3, 78482 },	-- Bloodied Leather Legs
-                { 4, 78479 },	-- Bloodied Wyrmhide Legs
-                { 5, 78433 },	-- Darkbrand Leggings
+                { 1, 142952 }, -- Pennyroyal Leggings
+                { 2, 142956 }, -- Snow Lily Britches
+                { 3, 124607 }, -- Contender's Leather Leggings
+                { 4, 124591 }, -- Contender's Wyrmhide Leggings
+                { 5, 124575 }, -- Misthide Leggings
             },
             [MAIL_DIFF] = {
-                { 1, 101936 },	-- Rended Earth Leggings
-                { 2, 101934 },	-- Deathscale Leggings
-                { 3, 78485 },	-- Bloodied Dragonscale Legs
-                { 4, 78471 },	-- Bloodied Scale Legs
-                { 5, 78427 },	-- Tsunami Leggings
+                { 1, 142957 }, -- Gorge Stalker Legplates
+                { 2, 142953 }, -- Krasari Prowler Britches
+                { 3, 124615 }, -- Contender's Dragonscale Leggings
+                { 4, 124599 }, -- Contender's Scale Leggings
+                { 5, 124583 }, -- Stormscale Leggings
             },
         },
         { -- Feet
             name = AL["Armor"].." - "..ALIL["Feet"],
             [LEATHER_DIFF] = {
-                { 1, 99457 },	-- Treads of the Craft
-                { 2, 99458 },	-- Ethereal Footfalls
-                { 3, 78454 },	-- Bloodied Leather Boots
-                { 4, 78453 },	-- Bloodied Wyrmhide Boots
-                { 5, 78407 },	-- Darkbrand Boots
+                { 1, 138589 }, -- Quilen Hide Boots
+                { 2, 138593 }, -- Spirit Keeper Footguards
+                { 3, 124609 }, -- Contender's Leather Boots
+                { 4, 124593 }, -- Contender's Wyrmhide Boots
+                { 5, 124577 }, -- Misthide Boots
             },
             [MAIL_DIFF] = {
-                { 1, 99455 },	-- Earthen Scale Sabatons
-                { 2, 99456 },	-- Footwraps of Quenched Fire
-                { 3, 78456 },	-- Bloodied Scale Boots
-                { 4, 78458 },	-- Bloodied Dragonscale Boots
-                { 5, 78410 },	-- Tsunami Boots
+                { 1, 138595 }, -- Cloud Serpent Sabatons
+                { 2, 138591 }, -- Dreadrunner Sabatons
+                { 3, 124617 }, -- Contender's Dragonscale Boots
+                { 4, 124601 }, -- Contender's Scale Boots
+                { 5, 124585 }, -- Stormscale Boots
             },
         },
         {
             name = AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 85068 },	-- Charscale Leg Reinforcements
-                { 2, 78478 },	-- Charscale Leg Armor
-                { 3, 78420 },	-- Twilight Leg Armor
-                { 5, 85067 },	-- Dragonbone Leg Reinforcements
-                { 6, 78477 },	-- Dragonscale Leg Armor
-                { 7, 78419 },	-- Scorched Leg Armor
-                { 9, 101600 },	-- Drakehide Leg Reinforcements
-                { 10, 101599 },	-- Drakehide Leg Armor
-                { 16, 85007 },	-- Draconic Embossment - Stamina
-                { 17, 85008 },	-- Draconic Embossment - Agility
-                { 18, 85009 },	-- Draconic Embossment - Strength
-                { 19, 85010 },	-- Draconic Embossment - Intellect
-                { 21, 78437 },	-- Heavy Savage Armor Kit
-                { 22, 78379 },	-- Savage Armor Kit
+                { 1, 124561 }, -- Draconic Leg Reinforcements
+                { 2, 124127 }, -- Angerhide Leg Armor
+                { 3, 124126 }, -- Brutal Leg Armor
+                { 5, 124563 }, -- Heavy Leg Reinforcements
+                { 6, 124128 }, -- Ironscale Leg Armor
+                { 7, 124125 }, -- Toughened Leg Armor
+                { 9, 124559 }, -- Primal Leg Reinforcements
+                { 10, 124129 }, -- Shadowleather Leg Armor
+                { 11, 124124 }, -- Sha-Touched Leg Armor
+                { 16, 124551 }, -- Fur Lining - Agility
+                { 17, 124552 }, -- Fur Lining - Intellect
+                { 18, 124553 }, -- Fur Lining - Stamina
+                { 19, 124554 }, -- Fur Lining - Strength
+                { 20, 124549 }, -- Fur Lining - Strength
+                { 22, 124628 }, -- Sha Armor Kit
             },
         },
         {
             name = ALIL["Bag"],
             [NORMAL_DIFF] = {
-                { 1, 100583 },	-- Royal Scribe's Satchel
-                { 3, 100586 },	-- Triple-Reinforced Mining Bag
+                { 1, 140185 }, -- Magnificent Hide Pack
             },
         },
         {
             name = AL["Misc"],
             [NORMAL_DIFF] = {
-                { 1, 78436 },	-- Heavy Savage Leather
-                { 2, 84950 },	-- Savage Leather
+                { 1, 124627 }, -- Mist-Touched Leather
+                { 2, 102366 }, -- Mist-Touched Leather
+                { 4, 131865 }, -- Magnificent Hide
+                { 5, 140040 }, -- Magnificence of Leather
+                { 6, 140041 }, -- Magnificence of Scales
+                { 8, 142976 }, -- Hardened Magnificent Hide
+                { 9, 146923 }, -- Accelerated Hardened Magnificent Hide
+                { 16, 146613 }, -- Drums of Rage
             },
         },
         { -- Sets
@@ -1629,8 +1470,7 @@ data["LeatherworkingMoP"] = {
             ExtraList = true,
             TableType = SET_ITTYPE,
             [NORMAL_DIFF] = {
-                { 1, 949 }, -- The Dark Brand
-                { 2, 950 }, -- The Big Wave
+                { 1, 949 },
             },
         }
     }
@@ -1646,131 +1486,188 @@ data["TailoringMoP"] = {
         { -- Cloak
             name = AL["Armor"].." - "..ALIL["Cloak"],
             [NORMAL_DIFF] = {
-                { 1, 99537 },	-- Vicious Embersilk Cape
+                { 1, 137907 }, -- Crafted Dreadful Gladiator's Cape of Cruelty
+                { 2, 137908 }, -- Crafted Dreadful Gladiator's Cape of Prowess
+                { 3, 137936 }, -- Crafted Dreadful Gladiator's Cloak of Alacrity
+                { 4, 137937 }, -- Crafted Dreadful Gladiator's Cloak of Prowess
+                { 5, 137918 }, -- Crafted Dreadful Gladiator's Drape of Cruelty
+                { 6, 137920 }, -- Crafted Dreadful Gladiator's Drape of Meditation
+                { 7, 137919 }, -- Crafted Dreadful Gladiator's Drape of Prowess
+                { 16, 143053 }, -- Crafted Malevolent Gladiator's Cape of Cruelty
+                { 17, 143054 }, -- Crafted Malevolent Gladiator's Cape of Prowess
+                { 18, 143082 }, -- Crafted Malevolent Gladiator's Cloak of Alacrity
+                { 19, 143083 }, -- Crafted Malevolent Gladiator's Cloak of Prowess
+                { 20, 143064 }, -- Crafted Malevolent Gladiator's Drape of Cruelty
+                { 21, 143066 }, -- Crafted Malevolent Gladiator's Drape of Meditation
+                { 22, 143065 }, -- Crafted Malevolent Gladiator's Drape of Prowess
             }
         },
         { -- Head
             name = AL["Armor"].." - "..ALIL["Head"],
             [NORMAL_DIFF] = {
-                { 1, 75304 },	-- Fireweave Cowl
-                { 2, 75306 },	-- Embersilk Cowl
-                { 3, 75266 },	-- Spiritmend Cowl
-                { 4, 75256 },	-- Deathsilk Cowl
-                { 16, 75289 },	-- High Society Top Hat
+                { 1, 138598 }, -- Falling Blossom Cowl
+                { 2, 138600 }, -- Falling Blossom Hood
+                { 3, 125539 }, -- Contender's Satin Cowl
+                { 4, 125531 }, -- Contender's Silk Cowl
+                { 5, 125523 }, -- Windwool Hood
+                { 16, 137939 }, -- Crafted Dreadful Gladiator's Felweave Cowl
+                { 17, 137927 }, -- Crafted Dreadful Gladiator's Mooncloth Helm
+                { 18, 137932 }, -- Crafted Dreadful Gladiator's Satin Hood
+                { 19, 137922 }, -- Crafted Dreadful Gladiator's Silk Cowl
+                { 21, 143085 }, -- Crafted Malevolent Gladiator's Felweave Cowl
+                { 22, 143073 }, -- Crafted Malevolent Gladiator's Mooncloth Helm
+                { 23, 143078 }, -- Crafted Malevolent Gladiator's Satin Hood
+                { 24, 143068 }, -- Crafted Malevolent Gladiator's Silk Cowl
             }
         },
         { -- Shoulder
             name = AL["Armor"].." - "..ALIL["Shoulder"],
             [NORMAL_DIFF] = {
-                { 1, 75292 },	-- Fireweave Shoulders
-                { 2, 75291 },	-- Embersilk Shoulders
-                { 3, 75260 },	-- Spiritmend Shoulders
-                { 4, 75251 },	-- Deathsilk Shoulders
+                { 1, 125540 }, -- Contender's Satin Amice
+                { 2, 125532 }, -- Contender's Silk Amice
+                { 3, 125524 }, -- Windwool Shoulders
+                { 16, 137942 }, -- Crafted Dreadful Gladiator's Felweave Amice
+                { 17, 137930 }, -- Crafted Dreadful Gladiator's Mooncloth Mantle
+                { 18, 137935 }, -- Crafted Dreadful Gladiator's Satin Mantle
+                { 19, 137925 }, -- Crafted Dreadful Gladiator's Silk Amice
+                { 21, 143088 }, -- Crafted Malevolent Gladiator's Felweave Amice
+                { 22, 143076 }, -- Crafted Malevolent Gladiator's Mooncloth Mantle
+                { 23, 143081 }, -- Crafted Malevolent Gladiator's Satin Mantle
+                { 24, 143071 }, -- Crafted Malevolent Gladiator's Silk Amice
             }
         },
         { -- Chest
             name = AL["Armor"].." - "..ALIL["Chest"],
             [NORMAL_DIFF] = {
-                { 1, 75305 },	-- Embersilk Robe
-                { 2, 75303 },	-- Fireweave Robe
-                { 3, 75257 },	-- Deathsilk Robe
-                { 4, 75267 },	-- Spiritmend Robe
-                { 16, 75288 },	-- Black Embersilk Gown
-                { 18, 102171 },	-- Black Silk Vest
+                { 1, 125558 }, -- Robe of Eternal Rule
+                { 2, 125560 }, -- Legacy of the Emperor
+                { 3, 125549 }, -- Robes of Creation
+                { 4, 125547 }, -- Spelltwister's Grand Robe
+                { 5, 125541 }, -- Contender's Satin Raiment
+                { 6, 125533 }, -- Contender's Silk Raiment
+                { 7, 125525 }, -- Windwool Tunic
+                { 16, 137941 }, -- Crafted Dreadful Gladiator's Felweave Raiment
+                { 17, 137929 }, -- Crafted Dreadful Gladiator's Mooncloth Robe
+                { 18, 137934 }, -- Crafted Dreadful Gladiator's Satin Robe
+                { 19, 137924 }, -- Crafted Dreadful Gladiator's Silk Robe
+                { 21, 143087 }, -- Crafted Malevolent Gladiator's Felweave Raiment
+                { 22, 143075 }, -- Crafted Malevolent Gladiator's Mooncloth Robe
+                { 23, 143080 }, -- Crafted Malevolent Gladiator's Satin Robe
+                { 24, 143070 }, -- Crafted Malevolent Gladiator's Silk Robe
             }
         },
         { -- Wrist
             name = AL["Armor"].." - "..ALIL["Wrist"],
             [NORMAL_DIFF] = {
-                { 1, 101922 },	-- Dreamwraps of the Light
-                { 2, 101923 },	-- Bracers of Unconquered Power
-                { 3, 75270 },	-- Embersilk Bracers
-                { 4, 75290 },	-- Fireweave Bracers
-                { 5, 75259 },	-- Spiritmend Bracers
-                { 6, 75249 },	-- Deathsilk Bracers
+                { 1, 125544 }, -- Contender's Satin Cuffs
+                { 2, 125536 }, -- Contender's Silk Cuffs
+                { 3, 125528 }, -- Windwool Bracers
+                { 16, 137916 }, -- Crafted Dreadful Gladiator's Cuffs of Prowess
+                { 17, 137917 }, -- Crafted Dreadful Gladiator's Cuffs of Meditation
+                { 18, 137915 }, -- Crafted Dreadful Gladiator's Cuffs of Accuracy
+                { 20, 143062 }, -- Crafted Malevolent Gladiator's Cuffs of Prowess
+                { 21, 143063 }, -- Crafted Malevolent Gladiator's Cuffs of Meditation
+                { 22, 143061 }, -- Crafted Malevolent Gladiator's Cuffs of Accuracy
             }
         },
         { -- Hand
             name = AL["Armor"].." - "..ALIL["Hand"],
             [NORMAL_DIFF] = {
-                { 1, 99448 },	-- Grips of Altered Reality
-                { 2, 99449 },	-- Don Tayo's Inferno Mittens
-                { 3, 75296 },	-- Fireweave Gloves
-                { 4, 75295 },	-- Embersilk Gloves
-                { 5, 75253 },	-- Deathsilk Gloves
-                { 6, 75262 },	-- Spiritmend Gloves
+                { 1, 125559 }, -- Imperial Silk Gloves
+                { 2, 125561 }, -- Touch of the Light
+                { 3, 125550 }, -- Gloves of Creation
+                { 4, 125548 }, -- Spelltwister's Gloves
+                { 5, 125542 }, -- Contender's Satin Handwraps
+                { 6, 125534 }, -- Contender's Silk Handwraps
+                { 7, 125526 }, -- Windwool Gloves
+                { 16, 137938 }, -- Crafted Dreadful Gladiator's Felweave Handguards
+                { 17, 137926 }, -- Crafted Dreadful Gladiator's Mooncloth Gloves
+                { 18, 137931 }, -- Crafted Dreadful Gladiator's Satin Gloves
+                { 19, 137921 }, -- Crafted Dreadful Gladiator's Silk Handguards
+                { 21, 143084 }, -- Crafted Malevolent Gladiator's Felweave Handguards
+                { 22, 143072 }, -- Crafted Malevolent Gladiator's Mooncloth Gloves
+                { 23, 143077 }, -- Crafted Malevolent Gladiator's Satin Gloves
+                { 24, 143067 }, -- Crafted Malevolent Gladiator's Silk Handguards
             },
         },
         { -- Waist
             name = AL["Armor"].." - "..ALIL["Waist"],
             [NORMAL_DIFF] = {
-                { 1, 75298 },	-- Belt of the Depths
-                { 2, 75299 },	-- Dreamless Belt
-                { 3, 75269 },	-- Fireweave Belt
-                { 4, 75293 },	-- Embersilk Belt
-                { 5, 75258 },	-- Spiritmend Belt
-                { 6, 75248 },	-- Deathsilk Belt
+                { 1, 142964 }, -- Belt of the Night Sky
+                { 2, 142960 }, -- White Cloud Belt
+                { 3, 125546 }, -- Contender's Satin Belt
+                { 4, 125538 }, -- Contender's Silk Belt
+                { 5, 125530 }, -- Windwool Belt
+                { 16, 137911 }, -- Crafted Dreadful Gladiator's Cord of Meditation
+                { 17, 137909 }, -- Crafted Dreadful Gladiator's Cord of Cruelty
+                { 18, 137910 }, -- Crafted Dreadful Gladiator's Cord of Accuracy
+                { 20, 143057 }, -- Crafted Malevolent Gladiator's Cord of Meditation
+                { 21, 143055 }, -- Crafted Malevolent Gladiator's Cord of Cruelty
+                { 22, 143056 }, -- Crafted Malevolent Gladiator's Cord of Accuracy
             },
         },
         { -- Legs
             name = AL["Armor"].." - "..ALIL["Legs"],
             [NORMAL_DIFF] = {
-                { 1, 101920 },	-- World Mender's Pants
-                { 2, 101921 },	-- Lavaquake Legwraps
-                { 3, 75301 },	-- Flame-Ascended Pantaloons
-                { 4, 75300 },	-- Breeches of Mended Nightmares
-                { 5, 75302 },	-- Fireweave Pants
-                { 6, 75307 },	-- Embersilk Pants
-                { 7, 75263 },	-- Spiritmend Leggings
-                { 8, 75254 },	-- Deathsilk Leggings
+                { 1, 142955 }, -- Leggings of the Night Sky
+                { 2, 142951 }, -- White Cloud Leggings
+                { 3, 125543 }, -- Contender's Satin Pants
+                { 4, 125535 }, -- Contender's Silk Pants
+                { 5, 125527 }, -- Windwool Pants
+                { 16, 137940 }, -- Crafted Dreadful Gladiator's Felweave Trousers
+                { 17, 137928 }, -- Crafted Dreadful Gladiator's Mooncloth Leggings
+                { 18, 137933 }, -- Crafted Dreadful Gladiator's Satin Leggings
+                { 19, 137923 }, -- Crafted Dreadful Gladiator's Silk Trousers
+                { 21, 143086 }, -- Crafted Malevolent Gladiator's Felweave Trousers
+                { 22, 143074 }, -- Crafted Malevolent Gladiator's Mooncloth Leggings
+                { 23, 143079 }, -- Crafted Malevolent Gladiator's Satin Leggings
+                { 24, 143069 }, -- Crafted Malevolent Gladiator's Silk Trousers
             },
         },
         { -- Feet
             name = AL["Armor"].." - "..ALIL["Feet"],
             [NORMAL_DIFF] = {
-                { 1, 99459 },	-- Endless Dream Walkers
-                { 2, 99460 },	-- Boots of the Black Flame
-                { 3, 75297 },	-- Embersilk Boots
-                { 4, 75294 },	-- Fireweave Boots
-                { 5, 75261 },	-- Spiritmend Boots
-                { 6, 75252 },	-- Deathsilk Boots
+                { 1, 138599 }, -- Falling Blossom Sandals
+                { 2, 138597 }, -- Falling Blossom Treads
+                { 3, 125545 }, -- Contender's Satin Footwraps
+                { 4, 125537 }, -- Contender's Silk Footwraps
+                { 5, 125529 }, -- Windwool Boots
+                { 16, 137914 }, -- Crafted Dreadful Gladiator's Treads of Meditation
+                { 17, 137912 }, -- Crafted Dreadful Gladiator's Treads of Cruelty
+                { 18, 137913 }, -- Crafted Dreadful Gladiator's Treads of Alacrity
+                { 20, 143060 }, -- Crafted Malevolent Gladiator's Treads of Meditation
+                { 21, 143058 }, -- Crafted Malevolent Gladiator's Treads of Cruelty
+                { 22, 143059 }, -- Crafted Malevolent Gladiator's Treads of Alacrity
             },
         },
         {
             name = AL["Enhancements"],
             [NORMAL_DIFF] = {
-                { 1, 75154 },	-- Master's Spellthread
-                { 2, 75309 },	-- Powerful Enchanted Spellthread
-                { 3, 75250 },	-- Enchanted Spellthread
-                { 5, 75178 },	-- Swordguard Embroidery
-                { 6, 75172 },	-- Lightweave Embroidery
-                { 7, 75175 },	-- Darkglow Embroidery
-                { 16, 75155 },	-- Sanctified Spellthread
-                { 17, 75310 },	-- Powerful Ghostly Spellthread
-                { 18, 75255 },	-- Ghostly Spellthread
+                { 1, 125496 }, -- Master's Spellthread
+                { 2, 125555 }, -- Greater Cerulean Spellthread
+                { 3, 125553 }, -- Cerulean Spellthread
+                { 5, 125482 }, -- Darkglow Embroidery
+                { 6, 125481 }, -- Lightweave Embroidery
+                { 7, 125483 }, -- Swordguard Embroidery
+                { 16, 125497 }, -- Sanctified Spellthread
+                { 17, 125554 }, -- Greater Pearlescent Spellthread
+                { 18, 125552 }, -- Pearlescent Spellthread
             },
         },
         {
             name = ALIL["Bag"],
             [NORMAL_DIFF] = {
-                { 1, 75308 },	-- Illusionary Bag
-                { 2, 75264 },	-- Embersilk Bag
-                { 16, 100585 },	-- Luxurious Silk Gem Bag
-                { 18, 75268 },	-- Hyjal Expedition Bag
-                { 20, 75265 },	-- Otherworldly Bag
+                { 1, 125556 }, -- Royal Satchel
             },
         },
         {
             name = AL["Misc"],
             [NORMAL_DIFF] = {
-                { 1, 75247 },	-- Embersilk Net
-                { 3, 74964 },	-- Bolt of Embersilk Cloth
-                { 16, 94743 },	-- Dream of Destruction
-                { 17, 75141 },	-- Dream of Skywall
-                { 18, 75145 },	-- Dream of Ragnaros
-                { 19, 75142 },	-- Dream of Deepholm
-                { 20, 75144 },	-- Dream of Hyjal
-                { 21, 75146 },	-- Dream of Azshara
+                { 1, 125557 }, -- Imperial Silk
+                { 2, 130325 }, -- Song of Harmony
+                { 4, 125551 }, -- Bolt of Windwool Cloth
+                { 16, 143011 }, -- Celestial Cloth
+                { 17, 146925 }, -- Accelerated Celestial Cloth
             },
         },
         { -- Sets
@@ -1778,8 +1675,15 @@ data["TailoringMoP"] = {
             ExtraList = true,
             TableType = SET_ITTYPE,
             [NORMAL_DIFF] = {
-                { 1, 944 }, -- Spiritmender
-                { 2, 945 }, -- Deathspeaker
+                { 1, 1121 },
+                { 16, 50001117 },
+                { 17, 50001112 },
+                { 18, 50001146 },
+                { 19, 50001109 },
+                { 21, 50011117 },
+                { 22, 50011112 },
+                { 23, 50011146 },
+                { 24, 50011109 },
             },
         }
     }
@@ -1855,98 +1759,25 @@ data["ArchaeologyMoP"] = {
     CorrespondingFields = private.ARCHAEOLOGY_LINK,
     items = {
         {
-            name = AL["Endgame Gear"],
+            name = AL["Mantid"],
             [NORMAL_DIFF] = {
-                { 1, "TRADE_ARCHAEOLOGY_TROLL_TABLET", nil, ALIL["Troll"] },
-                { 2, 90608 }, -- Zin'rokh, Destroyer of Worlds
-                { 4, "TRADE_ARCHAEOLOGY_HIGHBORNE_SCROLL", nil, ALIL["Night Elf"] },
-                { 5, 91757 }, -- Tyrande's Favorite Doll
-                { 7, "TRADE_ARCHAEOLOGY_AQIR_ARTIFACTFRAGMENT", nil, ALIL["Tol'vir"] },
-                { 8, 92163 }, -- Scimitar of the Sirocco
-                { 9, 92139 }, -- Staff of Ammunae
-                { 10, 92168 }, -- Ring of the Boy Emperor
-                { 16, "TRADE_ARCHAEOLOGY_DWARF_RUNESTONE", nil, ALIL["Dwarf"] },
-                { 17, 91227 }, -- Staff of Sorcerer-Thane Thaurissan
-                { 19, "TRADE_ARCHAEOLOGY_FOSSIL_SNAILSHELL", nil, ALIL["Fossil"] },
-                { 20, 98533 }, -- Extinct Turtle Shell
+                { 1, 139786 }, -- Mantid Sky Reaver
+                { 2, 139787 }, -- Sonic Pulse Generator
             },
         },
         {
-            name = AL["Leveling Gear"],
+            name = AL["Mogu"],
             [NORMAL_DIFF] = {
-                { 1, "TRADE_ARCHAEOLOGY_VRYKUL_RUNESTICK", nil, ALIL["Vrykul"] },
-                { 2, 90997 }, -- Nifflevar Bearded Axe
-                { 4, "TRADE_ARCHAEOLOGY_ORC_BLOODTEXT", nil, ALIL["Orc"] },
-                { 5, 90843 }, -- Headdress of the First Shaman
-                { 16, "TRADE_ARCHAEOLOGY_HIGHBORNE_SCROLL", nil, ALIL["Night Elf"] },
-                { 17, 90616 }, -- Queen Azshara's Dressing Gown
+                { 1, 113993 }, -- Anatomical Dummy
+                { 2, 113992 }, -- Quilen Statuette
             },
         },
         {
-            name = AL["Toys"],
+            name = AL["Pandaren"],
             [NORMAL_DIFF] = {
-                { 1, "TRADE_ARCHAEOLOGY_HIGHBORNE_SCROLL", nil, ALIL["Night Elf"] },
-                { 2, 91761 }, -- Bones of Transformation
-                { 3, 91773 }, -- Wisp Amulet
-                { 4, 90464 }, -- Highborne Soul Mirror
-                { 5, 90614 }, -- Kaldorei Wind Chimes
-                { 6, 90493 }, -- Druid and Priest Statue Set
-                { 8, "TRADE_ARCHAEOLOGY_TROLL_TABLET", nil, ALIL["Troll"] },
-                { 9, 98556 }, -- Haunted War Drum
-                { 11, "TRADE_ARCHAEOLOGY_VRYKUL_RUNESTICK", nil, ALIL["Vrykul"] },
-                { 12, 98569 }, -- Vrykul Drinking Horn
-                { 14, "TRADE_ARCHAEOLOGY_FOSSIL_SNAILSHELL", nil, ALIL["Fossil"] },
-                { 15, 98560 }, -- Ancient Amber
-                { 16, "TRADE_ARCHAEOLOGY_AQIR_ARTIFACTFRAGMENT", nil, ALIL["Tol'vir"] },
-                { 17, 92145 }, -- Pendant of the Scarab Storm
-                { 19, "TRADE_ARCHAEOLOGY_NERUBIAN_OBELISK", nil, ALIL["Nerubian"] },
-                { 20, 91214 }, -- Blessing of the Old God
-                { 21, 91215 }, -- Puzzle Box of Yogg-Saron
-                { 23, "TRADE_ARCHAEOLOGY_DRAENEI_TOME", nil, ALIL["Draenei"] },
-                { 24, 90984 }, -- The Last Relic of Argus
-                { 25, 90983 }, -- Arrival of the Naaru
-                { 27, "TRADE_ARCHAEOLOGY_DWARF_RUNESTONE", nil, ALIL["Dwarf"] },
-                { 28, 91226 }, -- The Innkeeper's Daughter
-                { 29, 90553 }, -- Chalice of the Mountain Kings
+                { 1, 113980 }, -- Umbrella of Chi-Ji
+                { 2, 113981 }, -- Spear of Xuen
             },
-        },
-        {
-            name = AL["Mounts"],
-            [NORMAL_DIFF] = {
-                { 1, "TRADE_ARCHAEOLOGY_AQIR_ARTIFACTFRAGMENT", nil, ALIL["Tol'vir"] },
-                { 2, 92148 }, -- Scepter of Azj'Aqir
-                { 16, "TRADE_ARCHAEOLOGY_FOSSIL_SNAILSHELL", nil, ALIL["Fossil"] },
-                { 17, 90619 }, -- Fossilized Raptor
-            },
-        },
-        {
-            name = AL["Pets"],
-            [NORMAL_DIFF] = {
-                { 1, "TRADE_ARCHAEOLOGY_AQIR_ARTIFACTFRAGMENT", nil, ALIL["Tol'vir"] },
-                { 2, 92137 }, -- Crawling Claw
-                { 4, "TRADE_ARCHAEOLOGY_TROLL_TABLET", nil, ALIL["Troll"] },
-                { 5, 98588 }, -- Voodoo Figurine
-                { 16, "TRADE_ARCHAEOLOGY_DWARF_RUNESTONE", nil, ALIL["Dwarf"] },
-                { 17, 90521 }, -- Clockwork Gnome
-                { 19, "TRADE_ARCHAEOLOGY_FOSSIL_SNAILSHELL", nil, ALIL["Fossil"] },
-                { 20, 98582 }, -- Pterrordax Hatchling
-                { 21, 89693 }, -- Fossilized Hatchling
-            },
-        },
-        {
-            name = AL["Misc"],
-            [NORMAL_DIFF] = {
-                { 1, "TRADE_ARCHAEOLOGY_AQIR_ARTIFACTFRAGMENT", nil, ALIL["Tol'vir"] },
-                { 2, 91790 }, -- Canopic Jar
-                { 16, "i52843" }, -- Dwarf Rune Stone
-                { 17, "i63127" }, -- Highborne Scroll
-                { 18, "i63128" }, -- Troll Tablet
-                { 19, "i64392" }, -- Orc Blood Text
-                { 20, "i64394" }, -- Draenei Tome
-                { 21, "i64395" }, -- Vrykul Rune Stick
-                { 22, "i64396" }, -- Nerubian Obelisk
-                { 23, "i64397" }, -- Tol'vir Hieroglyphic
-            }
         },
     }
 }
@@ -1961,111 +1792,129 @@ data["CookingMoP"] = {
         {
             name = ALIL["Feast"],
             [NORMAL_DIFF] = {
-                { 1, 88036 }, -- Seafood Magnifique Feast
-                { 2, 88011 }, -- Broiled Dragon Feast
+                { 1, 105190 }, -- Pandaren Banquet
+                { 2, 105194 }, -- Great Pandaren Banquet
+                { 4, 125602 }, -- Banquet of the Brew
+                { 5, 125603 }, -- Great Banquet of the Brew
+                { 6, 125141 }, -- Banquet of the Grill
+                { 7, 125142 }, -- Great Banquet of the Grill
+                { 8, 125600 }, -- Banquet of the Oven
+                { 9, 125601 }, -- Great Banquet of the Oven
+                { 10, 125596 }, -- Banquet of the Pot
+                { 11, 125597 }, -- Great Banquet of the Pot
+                { 12, 125598 }, -- Banquet of the Steamer
+                { 13, 125599 }, -- Great Banquet of the Steamer
+                { 14, 125594 }, -- Banquet of the Wok
+                { 15, 125595 }, -- Great Banquet of the Wok
+                { 16, 145038 }, -- Noodle Cart Kit
+                { 17, 145167 }, -- Grand Noodle Cart Kit
+                { 18, 145061 }, -- Deluxe Noodle Cart Kit
+                { 19, 145170 }, -- Grand Deluxe Noodle Cart Kit
+                { 20, 145062 }, -- Pandaren Treasure Noodle Cart Kit
+                { 21, 145197 }, -- Grand Pandaren Treasure Noodle Cart Kit
             },
         },
         {
-            name = AL["Useful Stat"],
+            name = ALIL["Way of the Brew"],
             [NORMAL_DIFF] = {
-                { 1, 88019 }, -- Fortune Cookie
+                { 1, 124052 }, -- Ginseng Tea
+                { 2, 124053 }, -- Jade Witch Brew
+                { 3, 124054 }, -- Mad Brewer's Breakfast
+                { 4, 126655 }, -- Banana Infused Rum
+                { 5, 126654 }, -- Four Senses Brew
+                { 16, 125602 }, -- Banquet of the Brew
+                { 17, 125603 }, -- Great Banquet of the Brew
             },
         },
         {
-            name = ALIL["Strength"],
+            name = ALIL["Way of the Grill"],
             [NORMAL_DIFF] = {
-                { 1, 88005 }, -- Beer-Basted Crocolisk
-                { 2, 88021 }, -- Hearty Seafood Soup
+                { 1, 104298 }, -- Charbroiled Tiger Steak
+                { 2, 104299 }, -- Eternal Blossom Fish
+                { 3, 104300 }, -- Black Pepper Ribs and Shrimp
+                { 4, 145311 }, -- Fluffy Silkfeather Omelet
+                { 16, 125141 }, -- Banquet of the Grill
+                { 17, 125142 }, -- Great Banquet of the Grill
             },
         },
         {
-            name = ALIL["Agility"],
+            name = ALIL["Way of the Oven"],
             [NORMAL_DIFF] = {
-                { 1, 88042 }, -- Skewered Eel
-                { 2, 88046 }, -- Tender Baked Turtle
+                { 1, 104310 }, -- Wildfowl Roast
+                { 2, 104311 }, -- Twin Fish Platter
+                { 3, 104312 }, -- Chun Tian Spring Rolls
+                { 4, 145310 }, -- Stuffed Lushrooms
+                { 16, 125600 }, -- Banquet of the Oven
+                { 17, 125601 }, -- Great Banquet of the Oven
             },
         },
         {
-            name = ALIL["Intellect"],
+            name = ALIL["Way of the Pot"],
             [NORMAL_DIFF] = {
-                { 1, 88039 }, -- Severed Sagefish Head
-                { 2, 88033 }, -- Pickled Guppy
+                { 1, 104304 }, -- Swirling Mist Soup
+                { 2, 104305 }, -- Braised Turtle
+                { 3, 104306 }, -- Mogu Fish Stew
+                { 4, 145307 }, -- Spiced Blossom Soup
+                { 16, 125596 }, -- Banquet of the Pot
+                { 17, 125597 }, -- Great Banquet of the Pot
             },
         },
         {
-            name = ALIL["Spirit"],
+            name = ALIL["Way of the Steamer"],
             [NORMAL_DIFF] = {
-                { 1, 88016 }, -- Delicious Sagefish Tail
-                { 2, 88047 }, -- Whitecrest Gumbo
+                { 1, 104307 }, -- Shrimp Dumplings
+                { 2, 104308 }, -- Fire Spirit Salmon
+                { 3, 104309 }, -- Steamed Crab Surprise
+                { 4, 145309 }, -- Farmer's Delight
+                { 16, 125598 }, -- Banquet of the Steamer
+                { 17, 125599 }, -- Great Banquet of the Steamer
             },
         },
         {
-            name = ALIL["Mastery"],
+            name = ALIL["Way of the Wok"],
             [NORMAL_DIFF] = {
-                { 1, 88025 }, -- Lavascale Minestrone
-                { 2, 88035 }, -- Salted Eye
+                { 1, 104301 }, -- Sauteed Carrots
+                { 2, 104302 }, -- Valley Stir Fry
+                { 3, 104303 }, -- Sea Mist Rice Noodles
+                { 4, 145305 }, -- Seasoned Pomfruit Slices
+                { 16, 125594 }, -- Banquet of the Wok
+                { 17, 125595 }, -- Great Banquet of the Wok
             },
         },
         {
-            name = ALIL["Critical Strike"],
+            name = AL["Low Level Recipes"],
             [NORMAL_DIFF] = {
-                { 1, 88003 }, -- Baked Rockfish
-                { 2, 88028 }, -- Lightly Fried Lurker
-            },
-        },
-        {
-            name = ALIL["Haste"],
-            [NORMAL_DIFF] = {
-                { 1, 88004 }, -- Basilisk Liverdog
-                { 2, 88012 }, -- Broiled Mountain Trout
-            },
-        },
-        {
-            name = ALIL["Hit"],
-            [NORMAL_DIFF] = {
-                { 1, 88020 }, -- Grilled Dragon
-                { 2, 88037 }, -- Seasoned Crab
-            },
-        },
-        {
-            name = ALIL["Expertise"],
-            [NORMAL_DIFF] = {
-                { 1, 88014 }, -- Crocolisk Au Gratin
-                { 2, 88024 }, -- Lavascale Fillet
-            },
-        },
-        {
-            name = ALIL["Dodge"],
-            [NORMAL_DIFF] = {
-                { 1, 88031 }, -- Mushroom Sauce Mudfish
-                { 2, 88030 }, -- Lurker Lunch
-            },
-        },
-        {
-            name = ALIL["Parry"],
-            [NORMAL_DIFF] = {
-                { 1, 88034 }, -- Blackbelly Sushi
+                { 1, 125117 }, -- Sliced Peaches
+                { 2, 125067 }, -- Perfectly Cooked Instant Noodles
+                { 3, 124225 }, -- Toasted Fish Jerky
+                { 4, 124227 }, -- Dried Needle Mushrooms
+                { 5, 124223 }, -- Pounded Rice Cake
+                { 6, 124224 }, -- Yak Cheese Curds
+                { 7, 124226 }, -- Dried Peaches
+                { 8, 124228 }, -- Boiled Silkworm Pupa
+                { 9, 125078 }, -- Roasted Barley Tea
+                { 16, 104237 }, -- Golden Carp Consomme
+                { 17, 104297 }, -- Fish Cake
+                { 18, 124233 }, -- Blanched Needle Mushrooms
+                { 19, 124229 }, -- Red Bean Bun
+                { 20, 124234 }, -- Skewered Peanut Chicken
+                { 21, 124231 }, -- Green Curry Fish
+                { 22, 124232 }, -- Peach Pie
+                { 23, 124230 }, -- Tangy Yogurt
             },
         },
         {
             name = ALIL["Food"],
             [NORMAL_DIFF] = {
-                { 1, 96133 }, -- Scalding Murglesnout
-                { 2, 88018 }, -- Fish Fry
-                { 3, 88006 }, -- Blackened Surprise
-                { 5, 93741 }, -- Venison Jerky
-                { 16, 88044 }, -- South Island Iced Tea
-                { 17, 88045 }, -- Starfire Espresso
-            },
-        },
-        {
-            name = AL["Special"],
-            [NORMAL_DIFF] = {
-                { 1, 88013 }, -- Chocolate Cookie
-                { 3, 88017 }, -- Feathered Lure
-                { 16, 88022 }, -- Highland Spirits
-                { 17, 88015 }, -- Darkbrew Lager
-            },
+                { 1, 125120 }, -- Spicy Salmon
+                { 2, 125123 }, -- Spicy Vegetable Chips
+                { 3, 125080 }, -- Pearl Milk Tea
+                { 4, 125121 }, -- Wildfowl Ginseng Soup
+                { 5, 124029 }, -- Viseclaw Soup
+                { 6, 124032 }, -- Krasarang Fritters
+                { 7, 125122 }, -- Rice Pudding
+                { 8, 145308 }, -- Mango Ice
+            }
         },
     }
 }

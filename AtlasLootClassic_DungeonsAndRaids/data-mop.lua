@@ -18,10 +18,13 @@ local data = AtlasLoot.ItemDB:Add(addonname, 1, AtlasLoot.MOP_VERSION_NUM)
 
 local AL = AtlasLoot.Locales
 local ALIL = AtlasLoot.IngameLocales
+local CELESTIAL_DIFF = data:AddDifficulty("CELESTIAL", nil, nil, nil, true)
+local FLEX_DIFF = data:AddDifficulty("FLEXIBLE", nil, nil, nil, true)
 local NORMAL_DIFF = data:AddDifficulty("NORMAL", nil, nil, nil, true)
 local HEROIC_DIFF = data:AddDifficulty("HEROIC", nil, nil, nil, true)
-local CELESTIAL_DIFF = data:AddDifficulty(AL["Celestial"], nil, nil, nil, true)
 local VENDOR_DIFF = data:AddDifficulty(AL["Vendor"], "vendor", 0)
+--- For SoO and WoD classic (lol) pre-patch
+--local MYTHIC_DIFF = data:AddDifficulty(AL["Mythic"], nil, nil, nil, true)
 
 local NORMAL_ITTYPE = data:AddItemTableType("Item", "Item")
 local SET_ITTYPE = data:AddItemTableType("Set", "Item")
@@ -53,35 +56,270 @@ local T14_SET = {
     TableType = SET_ITTYPE,
     IgnoreAsSource = true,
     [CELESTIAL_DIFF] = {
-        {1, 50001123 }, -- Death Knight DPS
-        {2, 50001124 }, -- Death Knight Tank
-        {4, 50001125 }, -- Druid Resto
-        {5, 50001126 }, -- Druid Balance
-        {6, 50001127 }, -- Druid Feral
-        {7, 50001128 }, -- Druid Guardian
-        {9, 50001129 }, -- Hunter
-        {11, 50001130 }, -- Mage
-        {13, 50001131 }, -- Monk Mistweaver
-        {14, 50001132 }, -- Monk Windwalker
-        {15, 50001133 }, -- Monk Brewmaster
-        {16, 50001134 }, -- Paladin Holy
-        {17, 50001135 }, -- Paladin DPS
-        {18, 50001136 }, -- Paladin Prot
-        {20, 50001137 }, -- Priest Holy
-        {21, 50001138 }, -- Priest Shadow
-        {23, 50001139 }, -- Rogue
-        {25, 50001140 }, -- Shaman Elemental
-        {26, 50001141 }, -- Shaman Resto
-        {27, 50001142 }, -- Shaman Enhance
-        {29, 50001143 }, -- Warlock
-        {31, 50001144 }, -- Warrior Dps
-        {32, 50001145 }, -- Warrior Tank
-        },
+        {1, 50001143 }, -- Warlock
+        {3, 50001137 }, -- Priest Holy
+        {4, 50001138 }, -- Priest Shadow
+        {6, 50001139 }, -- Rogue
+        {8, 50001129 }, -- Hunter
+        {10, 50001145 }, -- Warrior Tank
+        {11, 50001144 }, -- Warrior Dps
+        {13, 50001124 }, -- Death Knight Tank
+        {14, 50001123 }, -- Death Knight DPS
+        {16, 50001130 }, -- Mage
+        {18, 50001125 }, -- Druid Resto
+        {19, 50001126 }, -- Druid Balance
+        {20, 50001127 }, -- Druid Feral
+        {21, 50001128 }, -- Druid Guardian
+        {23, 50001141 }, -- Shaman Resto
+        {24, 50001140 }, -- Shaman Elemental
+        {25, 50001142 }, -- Shaman Enhance
+        {27, 50001134 }, -- Paladin Holy
+        {28, 50001136 }, -- Paladin Prot
+        {29, 50001135 }, -- Paladin DPS
+        {101, 50001131 }, -- Monk Mistweaver
+        {102, 50001133 }, -- Monk Brewmaster
+        {103, 50001132 }, -- Monk Windwalker
+     },
     [NORMAL_DIFF] = {
-
-        },
+        {1, 50011143 }, -- Warlock
+        {3, 50011137 }, -- Priest Holy
+        {4, 50011138 }, -- Priest Shadow
+        {6, 50011139 }, -- Rogue
+        {8, 50011129 }, -- Hunter
+        {10, 50011145 }, -- Warrior Tank
+        {11, 50011144 }, -- Warrior Dps
+        {13, 50011124 }, -- Death Knight Tan
+        {14, 50011123 }, -- Death Knight DPS
+        {16, 50011130 }, -- Mage
+        {18, 50011125 }, -- Druid Resto
+        {19, 50011126 }, -- Druid Balance
+        {20, 50011127 }, -- Druid Feral
+        {21, 50011128 }, -- Druid Guardian
+        {23, 50011141 }, -- Shaman Resto
+        {24, 50011140 }, -- Shaman Elemental
+        {25, 50011142 }, -- Shaman Enhance
+        {27, 50011134 }, -- Paladin Holy
+        {28, 50011136 }, -- Paladin Prot
+        {29, 50011135 }, -- Paladin DPS
+        {101, 50011131 }, -- Monk Mistweaver
+        {102, 50011133 }, -- Monk Brewmaster
+        {103, 50011132 }, -- Monk Windwalker
+    },
     [HEROIC_DIFF] = {
+        {1, 50021143 }, -- Warlock
+        {3, 50021137 }, -- Priest Holy
+        {4, 50021138 }, -- Priest Shadow
+        {6, 50021139 }, -- Rogue
+        {8, 50021129 }, -- Hunter
+        {10, 50021145 }, -- Warrior Tank
+        {11, 50021144 }, -- Warrior Dps
+        {13, 50021124 }, -- Death Knight Tan
+        {14, 50021123 }, -- Death Knight DPS
+        {16, 50021130 }, -- Mage
+        {18, 50021125 }, -- Druid Resto
+        {19, 50021126 }, -- Druid Balance
+        {20, 50021127 }, -- Druid Feral
+        {21, 50021128 }, -- Druid Guardian
+        {23, 50021141 }, -- Shaman Resto
+        {24, 50021140 }, -- Shaman Elemental
+        {25, 50021142 }, -- Shaman Enhance
+        {27, 50021134 }, -- Paladin Holy
+        {28, 50021136 }, -- Paladin Prot
+        {29, 50021135 }, -- Paladin DPS
+        {101, 50021131 }, -- Monk Mistweaver
+        {102, 50021133 }, -- Monk Brewmaster
+        {103, 50021132 }, -- Monk Windwalker
+    },
+}
 
+local T15_SET = {
+    name = format(AL["Tier %s Sets"], "15"),
+    ExtraList = true,
+    TableType = SET_ITTYPE,
+    IgnoreAsSource = true,
+    ContentPhaseMoP = 3,
+    [CELESTIAL_DIFF] = {
+        { 1, 50001171 }, -- Warlock
+        { 3, 50001165 }, -- Priest Holy
+        { 4, 50001166 }, -- Priest Shadow
+        { 6, 50001167 }, -- Rogue
+        { 8, 50001157 }, -- Hunter
+        { 10, 50001173 }, -- Warrior Tank
+        { 11, 50001172 }, -- Warrior Dps
+        { 13, 50001151 }, -- Death Knight Tank
+        { 14, 50001152 }, -- Death Knight DPS
+        { 16, 50001158 }, -- Mage
+        { 18, 50001154 }, -- Druid Resto
+        { 19, 50001156 }, -- Druid Guardian
+        { 20, 50001155 }, -- Druid Balance
+        { 21, 50001153 }, -- Druid Feral
+        { 23, 50001168 }, -- Shaman Resto
+        { 24, 50001170 }, -- Shaman Elemental
+        { 25, 50001169 }, -- Shaman Enhance
+        { 27, 50001163 }, -- Paladin Holy
+        { 28, 50001164 }, -- Paladin Prot
+        { 29, 50001162 }, -- Paladin DPS
+        { 101, 50001160 }, -- Monk Mistweaver
+        { 102, 50001161 }, -- Monk Brewmaster
+        { 103, 50001159 }, -- Monk Windwalker
+    },
+    [NORMAL_DIFF] = {
+        { 1, 50011171 }, -- Warlock
+        { 3, 50011165 }, -- Priest Holy
+        { 4, 50011166 }, -- Priest Shadow
+        { 6, 50011167 }, -- Rogue
+        { 8, 50011157 }, -- Hunter
+        { 10, 50011173 }, -- Warrior Tank
+        { 11, 50011172 }, -- Warrior Dps
+        { 13, 50011151 }, -- Death Knight Tank
+        { 14, 50011152 }, -- Death Knight DPS
+        { 16, 50011158 }, -- Mage
+        { 18, 50011154 }, -- Druid Resto
+        { 19, 50011156 }, -- Druid Guardian
+        { 20, 50011155 }, -- Druid Balance
+        { 21, 50011153 }, -- Druid Feral
+        { 23, 50011168 }, -- Shaman Resto
+        { 24, 50011170 }, -- Shaman Elemental
+        { 25, 50011169 }, -- Shaman Enhance
+        { 27, 50011163 }, -- Paladin Holy
+        { 28, 50011164 }, -- Paladin Prot
+        { 29, 50011162 }, -- Paladin DPS
+        { 101, 50011160 }, -- Monk Mistweaver
+        { 102, 50011161 }, -- Monk Brewmaster
+        { 103, 50011159 }, -- Monk Windwalker
+    },
+    [HEROIC_DIFF] = {
+        { 1, 50021171 }, -- Warlock
+        { 3, 50021165 }, -- Priest Holy
+        { 4, 50021166 }, -- Priest Shadow
+        { 6, 50021167 }, -- Rogue
+        { 8, 50021157 }, -- Hunter
+        { 10, 50021173 }, -- Warrior Tank
+        { 11, 50021172 }, -- Warrior Dps
+        { 13, 50021151 }, -- Death Knight Tank
+        { 14, 50021152 }, -- Death Knight DPS
+        { 16, 50021158 }, -- Mage
+        { 18, 50021154 }, -- Druid Resto
+        { 19, 50021156 }, -- Druid Guardian
+        { 20, 50021155 }, -- Druid Balance
+        { 21, 50021153 }, -- Druid Feral
+        { 23, 50021168 }, -- Shaman Resto
+        { 24, 50021170 }, -- Shaman Elemental
+        { 25, 50021169 }, -- Shaman Enhance
+        { 27, 50021163 }, -- Paladin Holy
+        { 28, 50021164 }, -- Paladin Prot
+        { 29, 50021162 }, -- Paladin DPS
+        { 101, 50021160 }, -- Monk Mistweaver
+        { 102, 50021161 }, -- Monk Brewmaster
+        { 103, 50021159 }, -- Monk Windwalker
+    },
+}
+
+local T16_SET = {
+    name = format(AL["Tier %s Sets"], "16"),
+    ExtraList = true,
+    TableType = SET_ITTYPE,
+    IgnoreAsSource = true,
+    ContentPhaseMoP = 5,
+    [CELESTIAL_DIFF] = {
+        { 1, 50001181 }, -- Warlock
+        { 3, 50001187 }, -- Priest Holy
+        { 4, 50001186 }, -- Priest Shadow
+        { 6, 50001185 }, -- Rogue
+        { 8, 50001195 }, -- Hunter
+        { 10, 50001179 }, -- Warrior Tank
+        { 11, 50001180 }, -- Warrior Dps
+        { 13, 50001201 }, -- Death Knight Tank
+        { 14, 50001200 }, -- Death Knight DPS
+        { 16, 50001194 }, -- Mage
+        { 18, 50001198 }, -- Druid Resto
+        { 19, 50001196 }, -- Druid Guardian
+        { 20, 50001197 }, -- Druid Balance
+        { 21, 50001199 }, -- Druid Feral
+        { 23, 50001184 }, -- Shaman Resto
+        { 24, 50001182 }, -- Shaman Elemental
+        { 25, 50001183 }, -- Shaman Enhance
+        { 27, 50001189 }, -- Paladin Holy
+        { 28, 50001188 }, -- Paladin Prot
+        { 29, 50001190 }, -- Paladin DPS
+        { 101, 50001192 }, -- Monk Mistweaver
+        { 102, 50001191 }, -- Monk Brewmaster
+        { 103, 50001193 }, -- Monk Windwalker
+    },
+    [FLEX_DIFF] = {
+        { 1, 50011181 }, -- Warlock
+        { 3, 50011187 }, -- Priest Holy
+        { 4, 50011186 }, -- Priest Shadow
+        { 6, 50011185 }, -- Rogue
+        { 8, 50011195 }, -- Hunter
+        { 10, 50011179 }, -- Warrior Tank
+        { 11, 50011180 }, -- Warrior Dps
+        { 13, 50011201 }, -- Death Knight Tank
+        { 14, 50011200 }, -- Death Knight DPS
+        { 16, 50011194 }, -- Mage
+        { 18, 50011198 }, -- Druid Resto
+        { 19, 50011196 }, -- Druid Guardian
+        { 20, 50011197 }, -- Druid Balance
+        { 21, 50011199 }, -- Druid Feral
+        { 23, 50011184 }, -- Shaman Resto
+        { 24, 50011182 }, -- Shaman Elemental
+        { 25, 50011183 }, -- Shaman Enhance
+        { 27, 50011189 }, -- Paladin Holy
+        { 28, 50011188 }, -- Paladin Prot
+        { 29, 50011190 }, -- Paladin DPS
+        { 101, 50011192 }, -- Monk Mistweaver
+        { 102, 50011191 }, -- Monk Brewmaster
+        { 103, 50011193 }, -- Monk Windwalker
+    },
+    [NORMAL_DIFF] = {
+        { 1, 50021181 }, -- Warlock
+        { 3, 50021187 }, -- Priest Holy
+        { 4, 50021186 }, -- Priest Shadow
+        { 6, 50021185 }, -- Rogue
+        { 8, 50021195 }, -- Hunter
+        { 10, 50021179 }, -- Warrior Tank
+        { 11, 50021180 }, -- Warrior Dps
+        { 13, 50021201 }, -- Death Knight Tank
+        { 14, 50021200 }, -- Death Knight DPS
+        { 16, 50021194 }, -- Mage
+        { 18, 50021198 }, -- Druid Resto
+        { 19, 50021196 }, -- Druid Guardian
+        { 20, 50021197 }, -- Druid Balance
+        { 21, 50021199 }, -- Druid Feral
+        { 23, 50021184 }, -- Shaman Resto
+        { 24, 50021182 }, -- Shaman Elemental
+        { 25, 50021183 }, -- Shaman Enhance
+        { 27, 50021189 }, -- Paladin Holy
+        { 28, 50021188 }, -- Paladin Prot
+        { 29, 50021190 }, -- Paladin DPS
+        { 101, 50021192 }, -- Monk Mistweaver
+        { 102, 50021191 }, -- Monk Brewmaster
+        { 103, 50021193 }, -- Monk Windwalker
+    },
+    [HEROIC_DIFF] = {
+        { 1, 50031181 }, -- Warlock
+        { 3, 50031187 }, -- Priest Holy
+        { 4, 50031186 }, -- Priest Shadow
+        { 6, 50031185 }, -- Rogue
+        { 8, 50031195 }, -- Hunter
+        { 10, 50031179 }, -- Warrior Tank
+        { 11, 50031180 }, -- Warrior Dps
+        { 13, 50031201 }, -- Death Knight Tank
+        { 14, 50031200 }, -- Death Knight DPS
+        { 16, 50031194 }, -- Mage
+        { 18, 50031198 }, -- Druid Resto
+        { 19, 50031196 }, -- Druid Guardian
+        { 20, 50031197 }, -- Druid Balance
+        { 21, 50031199 }, -- Druid Feral
+        { 23, 50031184 }, -- Shaman Resto
+        { 24, 50031182 }, -- Shaman Elemental
+        { 25, 50031183 }, -- Shaman Enhance
+        { 27, 50031189 }, -- Paladin Holy
+        { 28, 50031188 }, -- Paladin Prot
+        { 29, 50031190 }, -- Paladin DPS
+        { 101, 50031192 }, -- Monk Mistweaver
+        { 102, 50031191 }, -- Monk Brewmaster
+        { 103, 50031193 }, -- Monk Windwalker
     },
 }
 
@@ -157,6 +395,7 @@ local MOP_RAID2_AC_TABLE = {	-- Glory of the Thundering Raider
     name = select(2, GetAchievementInfo(8124)),
     TableType = AC_ITTYPE,
     ExtraList = true,
+    ContentPhaseMoP = 3,
     CoinTexture = "Achievement",
     [NORMAL_DIFF] = {
         { 1, 8124 },
@@ -744,7 +983,8 @@ data["ScarletHallsMoP"] = {
                 { 9, 82816 },	-- Melted Hypnotic Blade
                 { 10, 82813 },	-- Koegler's Ritual Knife
                 { 11, 82814 },	-- Mograine's Immaculate Might
-                { 13, 87268, [ATLASLOOT_IT_FILTERIGNORE] = true },	-- Codex of the Crusade
+                { 13, 87268, [ATLASLOOT_IT_FILTERIGNORE] = true }, -- Codex of the Crusade
+                { 15, 82470 }, -- Ancient Tome of Portal: Dalaran
                 { 16, "ac6760" },
             },
         },
@@ -804,7 +1044,7 @@ data["ScarletMonasteryMoP"] = {
             },
         },
         -- {	--HallowsEndHeadlessHorseman
-        -- 	name = AL["Headless Horseman"].." ("..AL["Hallow's End"]..")",
+        -- 	name = AL["Headless Horseman"] .. "(" .. AL["Hallow's End"] .. ")",
         -- 	ExtraList = true,
         -- 	-- [NORMAL_DIFF] = "AtlasLoot_Collections:HallowsEnd:1",
         -- },
@@ -960,13 +1200,13 @@ data["WorldBossesMoP"] = {
                 { 317, 84831 },	-- Malevolent Gladiator's Ornamented Gloves
                 { 320, "ICON_Spell_Holy_AuraOfLight", nil, ALIL["PALADIN"], ALIL["Retribution"] },
                 { 321, 84834 },	-- Malevolent Gladiator's Scaled Gauntlets
-                { 401, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"].." / "..ALIL["Holy"] },
+                { 401, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"] .. " / " .. ALIL["Holy"] },
                 { 402, 85363 },	-- Guardian Serpent Handwraps
                 { 403, 85361 },	-- Guardian Serpent Legwraps
                 { 405, "ICON_spell_shadow_shadowwordpain", nil, ALIL["PRIEST"], ALIL["Shadow"] },
                 { 406, 85364 },	-- Guardian Serpent Gloves
                 { 407, 85366 },	-- Guardian Serpent Leggings
-                { 416, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"].." / "..ALIL["Holy"] },
+                { 416, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"] .. " / " .. ALIL["Holy"] },
                 { 417, 84846 },	-- Malevolent Gladiator's Mooncloth Gloves
                 { 420, "ICON_spell_shadow_shadowwordpain", nil, ALIL["PRIEST"], ALIL["Shadow"] },
                 { 421, 84838 },	-- Malevolent Gladiator's Satin Gloves
@@ -985,13 +1225,13 @@ data["WorldBossesMoP"] = {
                 { 521, 84844 },	-- Malevolent Gladiator's Linked Gauntlets
                 { 524, "ICON_spell_nature_magicimmunity", nil, ALIL["SHAMAN"], ALIL["Restoration"] },
                 { 525, 84847 },	-- Malevolent Gladiator's Ringmail Gauntlets
-                { 601, "ICON_spell_deathknight_frostpresence", nil, ALIL["DEATHKNIGHT"], ALIL["Frost"].." / "..ALIL["Unholy"] },
+                { 601, "ICON_spell_deathknight_frostpresence", nil, ALIL["DEATHKNIGHT"], ALIL["Frost"] .. " / " .. ALIL["Unholy"] },
                 { 602, 85337 },	-- Gauntlets of the Lost Catacomb
                 { 603, 85335 },	-- Greaves of the Lost Catacomb
                 { 605, "ICON_spell_deathknight_bloodpresence", nil, ALIL["DEATHKNIGHT"], ALIL["Blood"] },
                 { 606, 85317 },	-- Handguards of the Lost Catacomb
                 { 607, 85315 },	-- Legguards of the Lost Catacomb
-                { 609, "ICON_ability_warrior_innerrage", nil, ALIL["WARRIOR"], ALIL["Arms"].." / "..ALIL["Fury"] },
+                { 609, "ICON_ability_warrior_innerrage", nil, ALIL["WARRIOR"], ALIL["Arms"] .. " / " .. ALIL["Fury"] },
                 { 610, 85331 },	-- Gauntlets of Resounding Rings
                 { 611, 85330 },	-- Legplates of Resounding Rings
                 { 613, "ICON_ability_warrior_defensivestance", nil, ALIL["WARRIOR"], ALIL["Protection"] },
@@ -1138,6 +1378,7 @@ data["WorldBossesMoP"] = {
         },
         {	--Nalak
             EncounterJournalID = 814,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, "ICON_spell_nature_starfall", nil, ALIL["DRUID"], ALIL["Balance"] },
                 { 2, 95245 },	-- Gloves of the Haunted Forest
@@ -1214,13 +1455,13 @@ data["WorldBossesMoP"] = {
                 { 320, "ICON_Spell_Holy_AuraOfLight", nil, ALIL["PALADIN"], ALIL["Retribution"] },
                 { 321, [ATLASLOOT_IT_ALLIANCE] = 91269, [ATLASLOOT_IT_HORDE] = 94343 },	-- Tyrannical Gladiator's Scaled Gauntlets
                 { 322, [ATLASLOOT_IT_ALLIANCE] = 91273, [ATLASLOOT_IT_HORDE] = 94496 },	-- Tyrannical Gladiator's Scaled Legguards
-                { 401, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"].." / "..ALIL["Holy"] },
+                { 401, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"] .. " / " .. ALIL["Holy"] },
                 { 402, 95295 },	-- Handwraps of the Exorcist
                 { 403, 95297 },	-- Legwraps of the Exorcist
                 { 405, "ICON_spell_shadow_shadowwordpain", nil, ALIL["PRIEST"], ALIL["Shadow"] },
                 { 406, 95300 },	-- Gloves of the Exorcist
                 { 407, 95302 },	-- Leggings of the Exorcist
-                { 416, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"].." / "..ALIL["Holy"] },
+                { 416, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"] .. " / " .. ALIL["Holy"] },
                 { 417, [ATLASLOOT_IT_ALLIANCE] = 91309, [ATLASLOOT_IT_HORDE] = 94328 },	-- Tyrannical Gladiator's Mooncloth Gloves
                 { 418, [ATLASLOOT_IT_ALLIANCE] = 91313, [ATLASLOOT_IT_HORDE] = 94420 },	-- Tyrannical Gladiator's Mooncloth Leggings
                 { 420, "ICON_spell_shadow_shadowwordpain", nil, ALIL["PRIEST"], ALIL["Shadow"] },
@@ -1244,13 +1485,13 @@ data["WorldBossesMoP"] = {
                 { 524, "ICON_spell_nature_magicimmunity", nil, ALIL["SHAMAN"], ALIL["Restoration"] },
                 { 525, [ATLASLOOT_IT_ALLIANCE] = 91360, [ATLASLOOT_IT_HORDE] = 94490 },	-- Tyrannical Gladiator's Ringmail Gauntlets
                 { 526, [ATLASLOOT_IT_ALLIANCE] = 91364, [ATLASLOOT_IT_HORDE] = 94435 },	-- Tyrannical Gladiator's Ringmail Leggings
-                { 601, "ICON_spell_deathknight_frostpresence", nil, ALIL["DEATHKNIGHT"], ALIL["Frost"].." / "..ALIL["Unholy"] },
+                { 601, "ICON_spell_deathknight_frostpresence", nil, ALIL["DEATHKNIGHT"], ALIL["Frost"] .. " / " .. ALIL["Unholy"] },
                 { 602, 95226 },	-- Gauntlets of the All-Consuming Maw
                 { 603, 95228 },	-- Greaves of the All-Consuming Maw
                 { 605, "ICON_spell_deathknight_bloodpresence", nil, ALIL["DEATHKNIGHT"], ALIL["Blood"] },
                 { 606, 95231 },	-- Handguards of the All-Consuming Maw
                 { 607, 95233 },	-- Legguards of the All-Consuming Maw
-                { 609, "ICON_ability_warrior_innerrage", nil, ALIL["WARRIOR"], ALIL["Arms"].." / "..ALIL["Fury"] },
+                { 609, "ICON_ability_warrior_innerrage", nil, ALIL["WARRIOR"], ALIL["Arms"] .. " / " .. ALIL["Fury"] },
                 { 610, 95332 },	-- Gauntlets of the Last Mogu
                 { 611, 95333 },	-- Legplates of the Last Mogu
                 { 613, "ICON_ability_warrior_defensivestance", nil, ALIL["WARRIOR"], ALIL["Protection"] },
@@ -1335,6 +1576,7 @@ data["WorldBossesMoP"] = {
         },
         {	--Oondasta
             EncounterJournalID = 826,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 95182 },	-- Robes of Zalmoxes
                 { 2, 95183 },	-- Waistband of Elder Falcarius
@@ -1382,6 +1624,7 @@ data["WorldBossesMoP"] = {
         },
         {	--Ordos
             EncounterJournalID = 861,
+            ContentPhaseMoP = 5,
             [NORMAL_DIFF] = {
                 { 1, 105810 },	-- Buc-Zakai Burning Hood
                 { 2, 105808 },	-- Damien's Ice-Vein Mask
@@ -1447,6 +1690,7 @@ data["WorldBossesMoP"] = {
         },
         {	--TheAugustCelestials
             EncounterJournalID = 857,
+            ContentPhaseMoP = 5,
             name = ALIL["The August Celestials"],
             [NORMAL_DIFF] = {
                 { 1, "ICON_spell_nature_starfall", nil, ALIL["DRUID"], ALIL["Balance"] },
@@ -1524,13 +1768,13 @@ data["WorldBossesMoP"] = {
                 { 320, "ICON_Spell_Holy_AuraOfLight", nil, ALIL["PALADIN"], ALIL["Retribution"] },
                 { 321, [ATLASLOOT_IT_ALLIANCE] = 102630, [ATLASLOOT_IT_HORDE] = 103440 },	-- Prideful Gladiator's Scaled Gauntlets
                 { 322, [ATLASLOOT_IT_ALLIANCE] = 102780, [ATLASLOOT_IT_HORDE] = 103442 },	-- Prideful Gladiator's Scaled Legguards
-                { 401, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"].." / "..ALIL["Holy"] },
+                { 401, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"] .. " / " .. ALIL["Holy"] },
                 { 402, 99131 },	-- Handwraps of the Ternion Glory
                 { 403, 99118 },	-- Legwraps of the Ternion Glory
                 { 405, "ICON_spell_shadow_shadowwordpain", nil, ALIL["PRIEST"], ALIL["Shadow"] },
                 { 406, 99121 },	-- Gloves of the Ternion Glory
                 { 407, 99123 },	-- Leggings of the Ternion Glory
-                { 416, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"].." / "..ALIL["Holy"] },
+                { 416, "ICON_spell_holy_guardianspirit", nil, ALIL["PRIEST"], ALIL["Discipline"] .. " / " .. ALIL["Holy"] },
                 { 417, [ATLASLOOT_IT_ALLIANCE] = 102615, [ATLASLOOT_IT_HORDE] = 103462 },	-- Prideful Gladiator's Mooncloth Gloves
                 { 418, [ATLASLOOT_IT_ALLIANCE] = 102704, [ATLASLOOT_IT_HORDE] = 103464 },	-- Prideful Gladiator's Mooncloth Leggings
                 { 420, "ICON_spell_shadow_shadowwordpain", nil, ALIL["PRIEST"], ALIL["Shadow"] },
@@ -1554,13 +1798,13 @@ data["WorldBossesMoP"] = {
                 { 524, "ICON_spell_nature_magicimmunity", nil, ALIL["SHAMAN"], ALIL["Restoration"] },
                 { 525, [ATLASLOOT_IT_ALLIANCE] = 102774, [ATLASLOOT_IT_HORDE] = 103486 },	-- Prideful Gladiator's Ringmail Gauntlets
                 { 526, [ATLASLOOT_IT_ALLIANCE] = 102719, [ATLASLOOT_IT_HORDE] = 103488 },	-- Prideful Gladiator's Ringmail Leggings
-                { 601, "ICON_spell_deathknight_frostpresence", nil, ALIL["DEATHKNIGHT"], ALIL["Frost"].." / "..ALIL["Unholy"] },
+                { 601, "ICON_spell_deathknight_frostpresence", nil, ALIL["DEATHKNIGHT"], ALIL["Frost"] .. " / " .. ALIL["Unholy"] },
                 { 602, 99193 },	-- Gauntlets of Cyclopean Dread
                 { 603, 99186 },	-- Greaves of Cyclopean Dread
                 { 605, "ICON_spell_deathknight_bloodpresence", nil, ALIL["DEATHKNIGHT"], ALIL["Blood"] },
                 { 606, 99189 },	-- Handguards of Cyclopean Dread
                 { 607, 99191 },	-- Legguards of Cyclopean Dread
-                { 609, "ICON_ability_warrior_innerrage", nil, ALIL["WARRIOR"], ALIL["Arms"].." / "..ALIL["Fury"] },
+                { 609, "ICON_ability_warrior_innerrage", nil, ALIL["WARRIOR"], ALIL["Arms"] .. " / " .. ALIL["Fury"] },
                 { 610, 99198 },	-- Gauntlets of the Prehistoric Marauder
                 { 611, 99199 },	-- Legplates of the Prehistoric Marauder
                 { 613, "ICON_ability_warrior_defensivestance", nil, ALIL["WARRIOR"], ALIL["Protection"] },
@@ -2323,9 +2567,11 @@ data["ThroneofThunder"] = {
     EncounterJournalID = 362,
     MapID = 6738,
     ContentType = RAID_CONTENT,
+    ContentPhaseMoP = 3,
     items = {
         {	--ToTJinrokh
             EncounterJournalID = 827,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94735, 96011 },	-- Drape of Booming Nights
                 { 2, 94733, 96008 },	-- Fissure-Split Shoulderwraps
@@ -2376,6 +2622,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTHorridon
             EncounterJournalID = 819,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94745, 96025 },	-- Horn-Rimmed Doomcloak
                 { 2, 94748, 96017 },	-- Wastewalker's Sandblasted Drape
@@ -2430,6 +2677,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTCouncil
             EncounterJournalID = 816,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94761, 96040 },	-- Zandalari Robes of the Final Rite
                 { 2, 94762, 96039 },	-- Mar'li's Bloodstained Sandals
@@ -2472,6 +2720,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTTortos
             EncounterJournalID = 825,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94774, 96059 },	-- Beakbreaker Greatcloak
                 { 2, 94785, 96063 },	-- Shimmershell Cape
@@ -2522,6 +2771,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTMegaera
             EncounterJournalID = 821,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94801, 96079 },	-- Gleaming-Eye Shoulderpads
                 { 2, 94804, 96080 },	-- Frostborn Wristwraps
@@ -2570,6 +2820,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTJiKun
             EncounterJournalID = 828,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94812, 96089 },	-- Pinionfeather Greatcloak
                 { 2, 94806, 96091 },	-- Robe of Midnight Down
@@ -2612,6 +2863,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTDurumu
             EncounterJournalID = 818,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94929, 96113 },	-- Deadly Glare Cape
                 { 2, 94822, 96108 },	-- Reinforced Mirror-Sheen Cloak
@@ -2662,6 +2914,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTPrimordius
             EncounterJournalID = 820,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94942, 96127 },	-- Hydra-Scale Bloodcloak
                 { 2, 94951, 96131 },	-- Robes of Mutagenic Blood
@@ -2716,6 +2969,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTDarkAnimus
             EncounterJournalID = 824,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94960, 96145 },	-- Constantly Accelerating Cloak
                 { 2, 94959, 96143 },	-- Hood of the Crimson Wake
@@ -2756,6 +3010,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTIronQon
             EncounterJournalID = 817,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94970, 96154 },	-- Quet'zal's Crackling Cord
                 { 2, 94966, 96155 },	-- Saddle-Scarred Leggings
@@ -2794,6 +3049,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTTwinConsorts
             EncounterJournalID = 829,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94977, 96164 },	-- Robes of the Moon Lotus
                 { 2, 94979, 96168 },	-- Bracers of the Midnight Comet
@@ -2832,6 +3088,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTLeiShen
             EncounterJournalID = 832,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 94993, 96185 },	-- Gloves of the Maimed Vizier
                 { 2, 94990, 96184 },	-- Legwraps of Cardinality
@@ -2884,6 +3141,7 @@ data["ThroneofThunder"] = {
         },
         {	--ToTRaden
             EncounterJournalID = 831,
+            ContentPhaseMoP = 3,
             [HEROIC_DIFF] = {
                 { 1, 95013 },	-- Black Night Thundercloak
                 { 2, 95015 },	-- Grey Wind Mistcloak
@@ -2937,6 +3195,7 @@ data["ThroneofThunder"] = {
         {	--ToTShared
             name = AL["Shared Boss Loot"],
             ExtraList = true,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 95061, 96235 },	-- Lost Shoulders of Fire
                 { 2, 95067, 96237 },	-- Lost Shoulders of Fluidity
@@ -2989,6 +3248,7 @@ data["ThroneofThunder"] = {
         {	--ToTTrash
             name = AL["Trash Mobs"],
             ExtraList = true,
+            ContentPhaseMoP = 3,
             [NORMAL_DIFF] = {
                 { 1, 95207, 96333 },	-- Abandoned Zandalari Firecord
                 { 2, 95208, 96334 },	-- Abandoned Zandalari Shadowgirdle
@@ -3016,15 +3276,7 @@ data["ThroneofThunder"] = {
                 { 26, 94125 },	-- Living Sandling
             },
         },
-        {	--Tier 15 Sets
-            name = format(AL["Tier %d Sets"], 15),
-            ExtraList = true,
-            [NORMAL_DIFF] = {
-                { 1, 94125 },
-            },
-            --[NORMAL_DIFF] = "AtlasLoot_Collections:TIERSETS:15:n",
-            --[HEROIC_DIFF] = "AtlasLoot_Collections:TIERSETS:15:h",
-        },
+        T15_SET,
         MOP_RAID2_AC_TABLE,
     }
 }
@@ -3038,7 +3290,7 @@ data["SiegeofOrgrimmar"] = {
         {	--SoOImmerseus
             EncounterJournalID = 852,
             npcId = 71543,
-            [NORMAL_DIFF] = {
+            [FLEX] = {
                 { 1, 112425 },	-- Cloak of Misguided Power
                 { 2, 112424 },	-- Hood of Swirling Senses
                 { 3, 112423 },	-- Ichor-Dripping Shoulderpads
@@ -3714,21 +3966,14 @@ data["SiegeofOrgrimmar"] = {
             [HEROIC_SOO_DIFF] = NORMAL_DIFF,
             [MYTHIC_SOO_DIFF] = NORMAL_DIFF,
         },
-        {	--Tier 16 Sets
-            name = format(AL["Tier %d Sets"], 16),
-            ExtraList = true,
-            [RF_SOO_DIFF] = "AtlasLoot_Collections:TIERSETS:16:rf",
-            [NORMAL_DIFF] = "AtlasLoot_Collections:TIERSETS:16:n",
-            [HEROIC_SOO_DIFF] = "AtlasLoot_Collections:TIERSETS:16:h",
-            [MYTHIC_SOO_DIFF] = "AtlasLoot_Collections:TIERSETS:16:m",
-        },
+        T16_SET,
         {	--ACPage
             name = AL["Achievements"],
             TableType = AC_ITTYPE,
             ExtraList = true,
             CoinTexture = "Achievement",
             [NORMAL_DIFF] = {
-                { 1, 8454, "mount148392" },
+                { 1, 8454 },
                 { 2, 8536 },
                 { 3, 8532 },
                 { 4, 8530 },
@@ -3748,7 +3993,7 @@ data["SiegeofOrgrimmar"] = {
                 { 11, 8461 },
                 { 26, 8462 },
             },
-            [MYTHIC_SOO_DIFF] = {
+            [HEROIC_DIFF] = {
                 { 1, 8463 },
                 { 2, 8465 },
                 { 3, 8466 },
@@ -3767,5 +4012,4 @@ data["SiegeofOrgrimmar"] = {
         },
     },
 }
-
 --]]
