@@ -5,7 +5,7 @@ Author: Massiner of Nathrezim
 Contributor: xfsbill
 Past Contributors: DT85, DandierSphinx
 
-Version: 1.0.26
+Version: 1.0.27
 
 Description: Graphically create as many Action Bars and Buttons in the game as you choose
 
@@ -23,6 +23,8 @@ Restrictions:
 
 
 History:
+
+21-Jul-2025   v1.0.27  - Fix for Spells sometimes appearing usable when they are not
 
 05-Jul-2025   v1.0.26  - Fix for self.MountSpellName nil error at button.lua 843
  

@@ -183,4 +183,48 @@ to:
 
 C_PetJournal.SummonPetByGUID(C_PetJournal.GetSummonedPetGUID())  -- changed for Mists 05/16/2025
 
+
+---------------
+
+changed_from:
+
+function Button:DisplayActive(TexCoords)
+	local Icon = self.WIcon;
+	
+	Icon:SetTexture(self.Texture);
+	--self.Widget:SetNormalTexture("Interface/Buttons/UI-Quickslot2");
+	if (TexCoords) then
+		Icon:SetTexCoord(unpack(TexCoords));
+	else
+		Icon:SetTexCoord(0, 1, 0, 1);
+	end
+	Icon:SetVertexColor(1.0, 1.0, 1.0, 1.0);
+	if (Util.LBFMasterGroup) then
+		Util.LBFMasterGroup:ReSkin(self.Widget);
+	end
+	Icon:Show();
+ 
+end
+
+
+to:
+
+function Button:DisplayActive(TexCoords)
+	local Icon = self.WIcon;
+	
+	Icon:SetTexture(self.Texture);
+	--self.Widget:SetNormalTexture("Interface/Buttons/UI-Quickslot2");
+	if (TexCoords) then
+		Icon:SetTexCoord(unpack(TexCoords));
+	else
+		Icon:SetTexCoord(0, 1, 0, 1);
+	end
+	Icon:SetVertexColor(1.0, 1.0, 1.0, 1.0);
+	if (Util.LBFMasterGroup) then
+		Util.LBFMasterGroup:ReSkin(self.Widget);
+	end
+	Icon:Show();
+	self:UpdateUsable();  -- Fix Spells sometimes appearing usable when they are not, Modified for Mists 5.5.0 07/21/2025
+end
+
 ---------------------------------------------------------------------------------------------------------

@@ -1,6 +1,6 @@
 ## Interface: 50500
 ## Title: Button Forge |cff69ccf0(Classic-Mists)|r
-## Version: 1.0.25-classic-Mists
+## Version: 1.0.27-classic-Mists
 ## Author: Massiner of Nathrezim, Albirew, Sunnova
 ## SavedVariables: ButtonForgeGlobalSettings, ButtonForgeGlobalProfiles, ButtonForgeGlobalBackup
 ## SavedVariablesPerCharacter: ButtonForgeSave, BFSave

@@ -1458,7 +1458,7 @@ function Button:DisplayActive(TexCoords)
 		Util.LBFMasterGroup:ReSkin(self.Widget);
 	end
 	Icon:Show();
-	
+	self:UpdateUsable();  -- Fix Spells sometimes appearing usable when they are not, Modified for Mists 5.5.0 07/21/2025
 end
 function Button:DisplayMissing()
 	local Icon = self.WIcon;
