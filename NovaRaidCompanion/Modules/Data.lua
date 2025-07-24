@@ -960,7 +960,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 		myTalentsChanged = true;
 		NRC:checkMyTalents();
 		NRC.checkMyGlyphs();
-		NRC:throddleEventByFunc("CHARACTER_POINTS_CHANGED", 1, "sendTalents");
+		NRC:throddleEventByFunc("CHARACTER_POINTS_CHANGED", 2, "sendTalents");
 		NRC:throddleEventByFunc("GLYPH_UPDATED", 1, "sendGlyphs");
 	elseif (event == "CHARACTER_POINTS_CHANGED" or event == "PLAYER_TALENT_UPDATE") then
 		myTalentsChanged = true;
@@ -1181,6 +1181,25 @@ function NRC:sendTalents()
 	NRC:sendGroupComm("tal " .. NRC.version .. " " .. data);
 	if (myTalentsChanged and IsInGroup()) then
 		myTalentsChanged = nil;
+		if (not NRC.groupCache[me]) then
+			--If we tried to send too early after logon/reload/joining group maybe?
+			--Seen this error rarely but it does happen, not sure why.
+			--Construct a rough groupCache type table.
+			local _, race = UnitRace("player");
+			local _, class = UnitRace("player");
+			local t = {
+				class = class,
+				--zone = zone,
+				online = true,
+				realm = NRC.realm,
+				--subGroup = subGroup,
+				level = UnitLevel("player"),
+				guid = UnitGUID("player"),
+				race = race,
+				unit = "player",
+			};
+			NRC:loadRaidCooldownChar(me, t);
+		end
 		NRC:loadRaidCooldownChar(me, NRC.groupCache[me]);
 	end
 end

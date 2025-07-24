@@ -10181,6 +10181,9 @@ NRC.healingPotions = {
 	[78989] = {
 		name = "Mythical Healing Potion",
 		icon = 463548,
+		desc = "Restores 25000 health.",
+		itemID = 57191,
+		quality = 1,
 	},
 	[78778] = {
 		name = "Mysterious Potion",

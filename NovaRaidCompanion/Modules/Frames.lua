@@ -1472,6 +1472,138 @@ function NRC:createSimpleScrollFrame(name, width, height, x, y, notSpecialFrames
 end
 
 --Simple frame, just using fontstrings and not seperate frames for each line, no hover over tooltips etc.
+--Used for lockouts frame atm.
+function NRC:createSimpleScrollFrame2(name, width, height, x, y, borderSpacing, notSpecialFrames)
+	local frame = CreateFrame("Frame", name, UIParent, "BackdropTemplate");
+	frame.scrollFrame = CreateFrame("ScrollFrame", "$parentScrollFrame", frame, "UIPanelScrollFrameTemplate");
+	--frame.scrollFrame:SetAllPoints();
+	frame.scrollChild = CreateFrame("Frame", "$parentScrollChild", frame.scrollFrame);
+	frame.scrollFrame:SetScrollChild(frame.scrollChild);
+	--frame.scrollChild:SetWidth(frame:GetWidth() - 30);
+	frame.scrollChild:SetAllPoints();
+	frame.scrollChild:SetPoint("RIGHT", -40, 0);
+	frame.scrollChild:SetPoint("TOP", 0, -20);
+	frame.scrollChild:SetHeight(1);
+	frame.scrollChild:SetScript("OnSizeChanged", function(self,event)
+		frame.scrollChild:SetWidth(self:GetWidth())
+	end)
+	frame.scrollFrame:SetPoint("TOPLEFT", frame, "TOPLEFT", 0, -8);
+	frame.scrollFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", 0, 8);
+	
+	frame:SetBackdrop({
+		bgFile = "Interface\\Buttons\\WHITE8x8",
+		insets = {top = 4, left = 4, bottom = 4, right = 4},
+		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+		tileEdge = true,
+		edgeSize = 16,
+	});
+	frame:SetBackdropColor(0, 0, 0, 0.9);
+	frame:SetBackdropBorderColor(1, 1, 1, 0.7);
+	frame.scrollFrame.ScrollBar:ClearAllPoints();
+	--frame.scrollFrame.ScrollBar:SetPoint("TOPRIGHT", -5, -(frame.scrollFrame.ScrollBar.ScrollDownButton:GetHeight()) + 1);
+	frame.scrollFrame.ScrollBar:SetPoint("TOPRIGHT", -5, -(frame.scrollFrame.ScrollBar.ScrollDownButton:GetHeight()) - 15);
+	frame.scrollFrame.ScrollBar:SetPoint("BOTTOMRIGHT", -5, frame.scrollFrame.ScrollBar.ScrollUpButton:GetHeight());
+	frame:SetToplevel(true);
+	frame:SetMovable(true);
+	frame:EnableMouse(true);
+	if (not notSpecialFrames) then
+		tinsert(UISpecialFrames, frame);
+		frame:SetUserPlaced(false);
+	end
+	frame:SetPoint("CENTER", UIParent, x, y);
+	frame:SetSize(width, height);
+	frame:SetFrameStrata("HIGH");
+	frame:SetFrameLevel(140);
+	frame.lastUpdate = 0;
+	frame:SetScript("OnUpdate", function(self)
+		--Update throddle.
+		if (GetTime() - frame.lastUpdate > 1) then
+			frame.lastUpdate = GetTime();
+			if (frame.onUpdateFunction) then
+				--If we declare an update function for this frame to run when shown.
+				NRC[frame.onUpdateFunction]();
+			end
+		end
+	end)
+	frame:SetScript("OnMouseDown", function(self, button)
+		if (button == "LeftButton" and not self.isMoving) then
+			self:StartMoving();
+			self.isMoving = true;
+			if (notSpecialFrames) then
+				self:SetUserPlaced(false);
+			end
+		end
+	end)
+	frame:SetScript("OnMouseUp", function(self, button)
+		if (button == "LeftButton" and self.isMoving) then
+			self:StopMovingOrSizing();
+			self.isMoving = false;
+		end
+	end)
+	frame:SetScript("OnHide", function(self)
+		if (self.isMoving) then
+			self:StopMovingOrSizing();
+			self.isMoving = false;
+		end
+	end)
+	
+	frame.scrollChild:SetScript("OnMouseDown", function(self, button)
+		if (button == "LeftButton" and not self:GetParent():GetParent().isMoving) then
+			self:GetParent():GetParent():StartMoving();
+			self:GetParent():GetParent().isMoving = true;
+			if (notSpecialFrames) then
+				self:GetParent():GetParent():SetUserPlaced(false);
+			end
+		end
+	end)
+	frame.scrollChild:SetScript("OnMouseUp", function(self, button)
+		if (button == "LeftButton" and self:GetParent():GetParent().isMoving) then
+			self:GetParent():GetParent():StopMovingOrSizing();
+			self:GetParent():GetParent().isMoving = false;
+		end
+	end)
+	frame.scrollChild:SetScript("OnHide", function(self)
+		if (self:GetParent():GetParent().isMoving) then
+			self:GetParent():GetParent():StopMovingOrSizing();
+			self:GetParent():GetParent().isMoving = false;
+		end
+	end)
+	
+	frame.scrollChild:EnableMouse(true);
+	frame.scrollChild:SetHyperlinksEnabled(true);
+	frame.scrollChild:SetScript("OnHyperlinkClick", ChatFrame_OnHyperlinkShow);
+	--Set all fonts in the module using the frame.
+	--Header string.
+	frame.scrollChild.fs = frame.scrollChild:CreateFontString(name .. "FS", "ARTWORK");
+	frame.scrollChild.fs:SetPoint("TOP", 0, -0);
+	frame.scrollChild.fs:SetFont(NIT.regionFont, 14);
+	--The main display string.
+	frame.scrollChild.fs2 = frame.scrollChild:CreateFontString(name .. "FS2", "ARTWORK");
+	frame.scrollChild.fs2:SetPoint("TOPLEFT", 10, -24);
+	frame.scrollChild.fs2:SetJustifyH("LEFT");
+	frame.scrollChild.fs2:SetFont(NIT.regionFont, 14);
+	--Bottom string.
+	frame.scrollChild.fs3 = frame.scrollChild:CreateFontString(name .. "FS3", "ARTWORK");
+	frame.scrollChild.fs3:SetPoint("BOTTOM", 0, -20);
+	--frame.scrollChild.fs3:SetFont(NRC.regionFont, 14);
+	--Top right X close button.
+	frame.close = CreateFrame("Button", name .. "Close", frame, "UIPanelCloseButton");
+	--frame.close:SetPoint("TOPRIGHT", -22, -4);
+	frame.close:SetPoint("TOPRIGHT", -3.45, -3.2);
+	frame.close:SetWidth(20);
+	frame.close:SetHeight(20);
+	frame.close:SetScript("OnClick", function(self, arg)
+		frame:Hide();
+	end)
+	frame.close:GetNormalTexture():SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125);
+	frame.close:GetHighlightTexture():SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125);
+	frame.close:GetPushedTexture():SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125);
+	frame.close:GetDisabledTexture():SetTexCoord(0.1875, 0.8125, 0.1875, 0.8125);
+	frame:Hide();
+	return frame;
+end
+
+--Simple frame, just using fontstrings and not seperate frames for each line, no hover over tooltips etc.
 function NRC:createSimpleInputScrollFrame(name, width, height, x, y, notSpecialFrames)
 	local frame = CreateFrame("ScrollFrame", name, UIParent, "BackdropTemplate,NRC_InputScrollFrameTemplate");
 	--[[frame:SetBackdrop({

@@ -562,8 +562,10 @@ function NRC:updateHealerCache(func)
 end
 
 function NRC:isHealer(name)
-	if (NRC.healerCache[name]) then
-		return true;
+	for k, v in pairs(NRC.healerCache) do
+		if (v.name == name) then
+			return true;
+		end
 	end
 end
 

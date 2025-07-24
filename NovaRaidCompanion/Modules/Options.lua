@@ -91,7 +91,7 @@ NRC.options = {
 	args = {
 		titleText = {
 			type = "description",
-			name = "        " .. NRC.prefixColor .. L["NovaRaidCompanion "] .. " (v" .. NRC.version .. ")",
+			name = "        " .. NRC.prefixColor .. L["NovaRaidCompanion "] .." (v" .. string.format("%.2f", NRC.version) .. ")",
 			fontSize = "large",
 			order = 1,
 		},
@@ -2271,7 +2271,7 @@ NRC.options = {
 					type = "toggle",
 					name = L["raidStatusDuraTitle"],
 					desc = L["raidStatusDuraDesc"],
-					order = 36,
+					order = 44,
 					get = "getRaidStatusDura",
 					set = "setRaidStatusDura",
 				},
@@ -2279,26 +2279,26 @@ NRC.options = {
 					type = "toggle",
 					name = L["raidStatusTalentsTitle"],
 					desc = L["raidStatusTalentsDesc"],
-					order = 37,
+					order = 45,
 					get = "getRaidStatusTalents",
 					set = "setRaidStatusTalents",
 				},
 				raidStatusExpandHeader = {
 					type = "header",
 					name = L["raidStatusExpandHeaderDesc"],
-					order = 40,
+					order = 50,
 				},
 				raidStatusExpandText = {
 					type = "description",
 					name = "|cFF9CD6DE" .. L["raidStatusExpandTextDesc"],
 					fontSize = "medium",
-					order = 41,
+					order = 51,
 				},
 				raidStatusShadowRes = {
 					type = "toggle", --0, 1.0, 0.453125, 0.56640625 first 2 args multipled by width, 2nd 2 multiplied by height?
 					name = "|TInterface\\PaperDollInfoFrame\\UI-Character-ResistanceIcons:22:26:0:0:32:256:0:32:116:145|t " .. L["raidStatusShadowResTitle"],
 					desc = L["raidStatusShadowResDesc"],
-					order = 42,
+					order = 52,
 					get = "getRaidStatusShadowRes",
 					set = "setRaidStatusShadowRes",
 				},
@@ -2306,7 +2306,7 @@ NRC.options = {
 					type = "toggle",
 					name = "|TInterface\\PaperDollInfoFrame\\UI-Character-ResistanceIcons:22:26:0:0:32:256:0:32:0:29|t " .. L["raidStatusFireResTitle"],
 					desc = L["raidStatusFireResDesc"],
-					order = 43,
+					order = 53,
 					get = "getRaidStatusFireRes",
 					set = "setRaidStatusFireRes",
 				},
@@ -2314,7 +2314,7 @@ NRC.options = {
 					type = "toggle",
 					name = "|TInterface\\PaperDollInfoFrame\\UI-Character-ResistanceIcons:22:26:0:0:32:256:0:32:29:58|t " .. L["raidStatusNatureResTitle"],
 					desc = L["raidStatusNatureResDesc"],
-					order = 44,
+					order = 54,
 					get = "getRaidStatusNatureRes",
 					set = "setRaidStatusNatureRes",
 				},
@@ -2322,7 +2322,7 @@ NRC.options = {
 					type = "toggle",
 					name = "|TInterface\\PaperDollInfoFrame\\UI-Character-ResistanceIcons:22:26:0:0:32:256:0:32:87:116|t " .. L["raidStatusFrostResTitle"],
 					desc = L["raidStatusFrostResDesc"],
-					order = 45,
+					order = 55,
 					get = "getRaidStatusFrostRes",
 					set = "setRaidStatusFrostRes",
 				},
@@ -2330,7 +2330,7 @@ NRC.options = {
 					type = "toggle",
 					name = "|TInterface\\PaperDollInfoFrame\\UI-Character-ResistanceIcons:22:26:0:0:32:256:0:32:58:87|t " .. L["raidStatusArcaneResTitle"],
 					desc = L["raidStatusArcaneResDesc"],
-					order = 46,
+					order = 56,
 					get = "getRaidStatusArcaneRes",
 					set = "setRaidStatusArcaneRes",
 				},
@@ -2338,7 +2338,7 @@ NRC.options = {
 					type = "toggle",
 					name = L["raidStatusWeaponEnchantsTitle"],
 					desc = L["raidStatusWeaponEnchantsDesc"],
-					order = 47,
+					order = 57,
 					get = "getRaidStatusWeaponEnchants",
 					set = "setRaidStatusWeaponEnchants",
 				},
@@ -2346,7 +2346,7 @@ NRC.options = {
 					type = "toggle",
 					name = L["raidStatusExpandAlwaysTitle"],
 					desc = L["raidStatusExpandAlwaysDesc"],
-					order = 49,
+					order = 549,
 					get = "getRaidStatusExpandAlways",
 					set = "setRaidStatusExpandAlways",
 				},
@@ -2673,7 +2673,7 @@ NRC.options = {
 					type = "toggle",
 					name = "|cFFF48CBA" .. L["Paladin"],
 					desc = L["raidManaPaladinDesc"],
-					order = 48,
+					order = 49,
 					get = "getRaidManaPaladin",
 					set = "setRaidManaPaladin",
 				},
@@ -2681,7 +2681,7 @@ NRC.options = {
 					type = "toggle",
 					name = "|cFFFFFFFF" .. L["Priest"],
 					desc = L["raidManaPriestDesc"],
-					order = 49,
+					order = 50,
 					get = "getRaidManaPriest",
 					set = "setRaidManaPriest",
 				},
@@ -2689,7 +2689,7 @@ NRC.options = {
 					type = "toggle",
 					name = "|cFF0070DD" .. L["Shaman"],
 					desc = L["raidManaShamanDesc"],
-					order = 50,
+					order = 51,
 					get = "getRaidManaShaman",
 					set = "setRaidManaShaman",
 				},
@@ -4778,7 +4778,8 @@ function NRC:loadExtraOptions()
 			set = "setRaidStatusSanc",
 		};
 	end
-	if (NRC.expansionNum < 4) then
+	if (not NRC.isCata) then
+		--Load for classic to wrath for spirit buff, and MoP onwards for crit buff.
 		NRC.options.args.raidStatus.args.raidStatusSpirit = {
 			type = "toggle",
 			name = L["raidStatusSpiritTitle"],
@@ -4806,6 +4807,16 @@ function NRC:loadExtraOptions()
 			order = 34,
 			get = "getRaidCooldownsBresCountPosition",
 			set = "setRaidCooldownsBresCountPosition",
+		};
+	end
+	if (NRC.expansionNum > 4) then
+		NRC.options.args.raidMana.args.raidManaMonk = {
+			type = "toggle",
+			name = "|cFF00FF98Monks",
+			desc = L["raidManaMonkDesc"],
+			order = 47,
+			get = "getRaidManaMonk",
+			set = "setRaidManaMonk",
 		};
 	end
 end
@@ -5116,6 +5127,7 @@ NRC.optionDefaults = {
 		raidManaDruid = false,
 		raidManaHunter = false,
 		raidManaMage = false,
+		raidManaMonk = false,
 		raidManaPaladin = false,
 		raidManaPriest = false,
 		raidManaShaman = false,
@@ -5467,6 +5479,75 @@ if (NRC.isClassic) then
 	NRC.optionDefaults.profile.raidStatusWorldBuffs = true;
 end
 
+---In MoP raid buffs changed a lot, I'm using the same tab names here so things work but they're mapped not displaying what they're named after.
+--Key:
+--int -> spell power +10%
+--fort -> stam +10%
+--spirit -> crit +5%
+--shadow -> mastery +3000
+--motw -> stats +10%
+--pal -> auras
+if (NRC.expansionNum > 4) then
+	--Chnage some defaults for MoP.
+	NRC.optionDefaults.profile.raidStatusSpirit = true;
+	NRC.optionDefaults.profile.raidStatusShadow = true;
+	NRC.optionDefaults.profile.raidStatusScroll = false;
+	NRC.optionDefaults.profile.raidStatusPal = false;
+	
+	NRC.optionDefaults.profile.raidStatusExtraSlot1 = true;
+	NRC.optionDefaults.profile.raidStatusExtraSlot2 = true;
+	NRC.optionDefaults.profile.raidStatusExtraSlot3 = true;
+	
+	NRC.options.args.raidStatus.args.raidStatusPal = nil;
+	
+	NRC.options.args.raidStatus.args.raidStatusExtraSlot1 = {
+		type = "toggle",
+		name = L["raidStatusAttackPowerTitle"],
+		desc = L["raidStatusAttackPowerDesc"],
+		order = 37,
+		get = "getRaidStatusExtraSlot1",
+		set = "setRaidStatusExtraSlot1",
+	};
+	NRC.options.args.raidStatus.args.raidStatusExtraSlot2 = {
+		type = "toggle",
+		name = L["raidStatusHasteTitle"],
+		desc = L["raidStatusHasteDesc"],
+		order = 38,
+		get = "getRaidStatusExtraSlot2",
+		set = "setRaidStatusExtraSlot2",
+	};
+	NRC.options.args.raidStatus.args.raidStatusExtraSlot3 = {
+		type = "toggle",
+		name = L["raidStatusSpeedTitle"],
+		desc = L["raidStatusSpeedDesc"],
+		order = 39,
+		get = "getRaidStatusExtraSlot3",
+		set = "setRaidStatusExtraSlot3",
+	};
+end
+
+--Things that need to be set after other stuff has loaded at init().
+function NRC:loadOptionsDelayed()
+	--Rename some raid status columns for MoP.
+	NRC.options.args.raidStatus.args.raidStatusInt.name = L["raidStatusSpellPowerTitle"];
+	NRC.options.args.raidStatus.args.raidStatusInt.desc = L["raidStatusSpellPowerDesc"];
+	
+	NRC.options.args.raidStatus.args.raidStatusFort.name = L["raidStatusStamTitle"];
+	NRC.options.args.raidStatus.args.raidStatusFort.desc = L["raidStatusStamDesc"];
+	
+	NRC.options.args.raidStatus.args.raidStatusSpirit.name = L["raidStatusCritTitle"];
+	NRC.options.args.raidStatus.args.raidStatusSpirit.desc = L["raidStatusCritDesc"];
+	
+	NRC.options.args.raidStatus.args.raidStatusShadow.name = L["raidStatusMasteryTitle"];
+	NRC.options.args.raidStatus.args.raidStatusShadow.desc = L["raidStatusMasteryDesc"];
+	
+	NRC.options.args.raidStatus.args.raidStatusMotw.name = L["raidStatusStatsTitle"];
+	NRC.options.args.raidStatus.args.raidStatusMotw.desc = L["raidStatusStatsDesc"];
+	
+	--NRC.options.args.raidStatus.args.raidStatusPal.name = L["raidStatusAurasTitle"];
+	--NRC.options.args.raidStatus.args.raidStatusPal.desc = L["raidStatusAurasDesc"];
+end
+
 function NRC:resetMinimapPosition()
 	NRC.db.global.minimapIcon = NRC.optionDefaults.global.minimapIcon;
 end
@@ -5481,7 +5562,7 @@ local function loadAllCooldownOptions()
 			tinsert(cooldowns, v);
 		end
 	end
-	if (NRC.castDetectCooldowns) then
+	--[[if (NRC.castDetectCooldowns) then
 		for k, v in pairs(NRC.castDetectCooldowns) do
 			if (v.class ~= "ALL") then
 				v.cooldownName = k;
@@ -5489,7 +5570,7 @@ local function loadAllCooldownOptions()
 				tinsert(cooldowns, v);
 			end
 		end
-	end
+	end]]
 	table.sort(cooldowns, function(a, b)
 		return a.class < b.class
 			or a.class == b.class and strcmputf8i(a.cooldownName, b.cooldownName) < 0;
@@ -5501,7 +5582,7 @@ local function loadAllCooldownOptions()
 			tinsert(cooldowns, v);
 		end
 	end
-	if (NRC.castDetectCooldowns) then
+	--[[if (NRC.castDetectCooldowns) then
 		for k, v in pairs(NRC.castDetectCooldowns) do
 			if (v.class == "ALL") then
 				v.cooldownName = k;
@@ -5509,7 +5590,7 @@ local function loadAllCooldownOptions()
 				tinsert(cooldowns, v);
 			end
 		end
-	end
+	end]]
 	--Order range starts at 200 for cooldown list.
 	local order = 200;
 	for k, v in pairs(cooldowns) do
@@ -5524,8 +5605,10 @@ local function loadAllCooldownOptions()
 			end
 		end
 		local desc = string.format(L["raidCooldownUniversalDesc"], L[v.cooldownName]);
-		if (v.castDetect) then
+		if (v.castDetect and NRC.isSOD) then
 			desc = string.format(L["raidCooldownUniversalCastDetectDesc"], L[v.cooldownName]);
+		elseif (v.talentOnly or v.specOnly or v.castDetectOnly) then
+			desc = string.format(L["raidCooldownUniversalTalentOnlyDesc"], L[v.cooldownName]);
 		end
 		if (v.isRune) then
 			desc = "|cFFFFFF00(Rune)|r " .. desc;
@@ -5755,17 +5838,25 @@ local function loadNewVersionFrame(version, notes, title, icon, x, y)
 end
 
 function NRC:checkNewVersion()
-	--.db.global.versions = {};
-	local newVersionNotes = 1.70;
+	--NRC.db.global.versions = {};
+	local newVersionNotes = 1.71;
 	if (NRC.version and NRC.version == newVersionNotes) then
 		if (not NRC.db.global.versions[NRC.version]) then
-			--if (NRC.isClassic) then
+			if (NRC.isMOP) then
 				local notes = {
 					--"|cFF00FF00[General]|r",
-					"Fixed raid cooldowns showing a long cooldown number if someone else with the addon installed used a cooldown in raid.",
+					"Changed raid status columns to show mop raid buffs stam/crit/mastery/stats/spell power/attack power/spell haste/attack speed.",
+					"Added a bunch of new MoP cooldowns.",
+					"Removed helm enchant check in MoP (helm enchants were moved from game).",
+					"Added missing major glyphs to \"issues\" display on raid status frame for whole raid.",
+					"Fixed raid status frame displaying missing equipped ranged slot in mop.",
+					"Cooldowns that require a specialization will now only show up once someone with that spec casts it the first time (next update these should be added to spec detection like talents).",
+					"Removed max rank flag for all cata consumes now that mop is launching.",
+					"The lockouts frames now shows raids in alphabetical order for better readability across alts.",
+					"There may be some bugs that I can't see until MoP raiding starts, let me know of any issues",
 				};
 				loadNewVersionFrame(NRC.version, notes, "Nova Raid Companion", "Interface\\AddOns\\NovaRaidCompanion\\Media\\nrc_icon2", 0, 300);
-			--end
+			end
 			--NRC:setLockAllFrames(nil, false);
 			--Wipe old data.
 			NRC.db.global.versions = {};
@@ -7060,6 +7151,36 @@ function NRC:getRaidStatusWorldBuffs(info)
 	return self.config.raidStatusWorldBuffs;
 end
 
+--Raid status extra slot 1.
+function NRC:setRaidStatusExtraSlot1(info, value)
+	self.config.raidStatusExtraSlot1 = value;
+	NRC:reloadRaidStatusFrames();
+end
+
+function NRC:getRaidStatusExtraSlot1(info)
+	return self.config.raidStatusExtraSlot1;
+end
+
+--Raid status extra slot 2.
+function NRC:setRaidStatusExtraSlot2(info, value)
+	self.config.raidStatusExtraSlot2 = value;
+	NRC:reloadRaidStatusFrames();
+end
+
+function NRC:getRaidStatusExtraSlot2(info)
+	return self.config.raidStatusExtraSlot2;
+end
+
+--Raid status extra slot 13.
+function NRC:setRaidStatusExtraSlot3(info, value)
+	self.config.raidStatusExtraSlot3 = value;
+	NRC:reloadRaidStatusFrames();
+end
+
+function NRC:getRaidStatusExtraSlot3(info)
+	return self.config.raidStatusExtraSlot3;
+end
+
 --Raid status shadow.
 function NRC:setRaidStatusShadowRes(info, value)
 	self.config.raidStatusShadowRes = value;
@@ -8225,6 +8346,16 @@ end
 
 function NRC:getRaidManaMage(info)
 	return self.config.raidManaMage;
+end
+
+--Raid mana show monks.
+function NRC:setRaidManaMonk(info, value)
+	self.config.raidManaMonk = value;
+	NRC:updateRaidManaFramesLayout();
+end
+
+function NRC:getRaidManaMonk(info)
+	return self.config.raidManaMonk;
 end
 
 --Raid mana show paladins.

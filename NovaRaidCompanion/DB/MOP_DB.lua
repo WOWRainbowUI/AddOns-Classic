@@ -3036,55 +3036,46 @@ NRC.flasks = {
 		name = "Flask of the Draconic Mind",
 		icon = 463930,
 		desc = "+300 Intellect",
-		maxRank = true,
 	},
 	[79471] = {
 		name = "Flask of the Winds",
 		icon = 463927,
 		desc = "+300 Agility",
-		maxRank = true,
 	},
 	[79472] = {
 		name = "Flask of Titanic Strength",
 		icon = 463931,
 		desc = "+300 Strength",
-		maxRank = true,
 	},
 	[79469] = {
 		name = "Flask of Steelskin",
 		icon = 463926,
 		desc = "+450 Stamina",
-		maxRank = true,
 	},
 	[94160] = {
 		name = "Flask of Flowing Water",
 		icon = 463929,
 		desc = "+300 Spirit",
-		maxRank = true,
 	},
 	[92730] = { --Couldrons flasks from Flask of Battle.
 		name = "Flask of the Draconic Mind",
 		icon = 463930,
 		desc = "+300 Intellect",
-		maxRank = true,
 	},
 	[92725] = {
 		name = "Flask of the Winds",
 		icon = 463927,
 		desc = "+300 Agility",
-		maxRank = true,
 	},
 	[92731] = {
 		name = "Flask of Titanic Strength",
 		icon = 463931,
 		desc = "+300 Strength",
-		maxRank = true,
 	},
 	[92729] = {
 		name = "Flask of Steelskin",
 		icon = 463926,
 		desc = "+450 Stamina",
-		maxRank = true,
 	},
 	--MoP.
 	[105689] = {
@@ -3181,67 +3172,56 @@ NRC.foods = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Mastery, +90 Stamina",
-		maxRank = true,
 	},
 	[87545] = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Strength, +90 Stamina",
-		maxRank = true,
 	},
 	[87552] = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Haste, +90 Stamina",
-		maxRank = true,
 	},
 	[87551] = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Crit, +90 Stamina",
-		maxRank = true,
 	},
 	[87595] = { --Why are there duplicate +hit well fed buffs with diff ids?
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Hit, +90 Stamina",
-		maxRank = true,
 	},
 	[87548] = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Spirit, +90 Stamina",
-		maxRank = true,
 	},
 	[87637] = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Expertise, +90 Stamina",
-		maxRank = true,
 	},
 	[87555] = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Parry, +90 Stamina",
-		maxRank = true,
 	},
 	[87554] = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Dodge, +90 Stamina",
-		maxRank = true,
 	},
 	[87587] = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Int, +90 Stamina",
-		maxRank = true,
 	},
 	[87586] = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Agility, +90 Stamina",
-		maxRank = true,
 	},
 	[87634] = {
 		name = "Well Fed",
@@ -3252,7 +3232,6 @@ NRC.foods = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Expertise, +90 Stamina",
-		maxRank = true,
 	},
 	[87559] = {
 		name = "Well Fed",
@@ -3303,19 +3282,16 @@ NRC.foods = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Agility, +90 Stamina",
-		maxRank = true,
 	},
 	[87547] = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Int, +90 Stamina",
-		maxRank = true,
 	},
 	[87550] = {
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+90 Hit, +90 Stamina",
-		maxRank = true,
 	},
 	--MoP.
 	[104277] = { --Mogu Fish Stew.
@@ -3351,127 +3327,13 @@ NRC.foods = {
 	[125113] = { --Spicy Salmon.
 		name = "Well Fed",
 		icon = 136000,
-		desc = "+Hit",
+		desc = "+300 Hit",
 		maxRank = true,
 	},
 	[125115] = { --Spicy Vegetable Chips.
 		name = "Well Fed",
 		icon = 136000,
-		desc = "+Expertise",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
-		maxRank = true,
-	},
-	[0] = {
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+300 ",
+		desc = "+300 Expertise",
 		maxRank = true,
 	},
 };
@@ -3556,288 +3418,12 @@ NRC.scrolls = {
 
 --Spell cast IDs not item IDs.
 NRC.trackedConsumes = {
-	[22792] = {
-		name = "Thornling Seed",
-		icon = 132877,
-		desc = "Plants a Thornling which attracts nearby enemies.",
-		itemID = 18297,
-		quality = 1,
-	},
-	--Engi.
-	[44389] = {
-		name = "Field Repair Bot 110G",
-		icon = 133859,
-		desc = "Unfolds into a Field Repair Bot that sells reagents and can repair damaged items.  After 10 minutes its internal motor fails.",
-		itemID = 34113,
-		quality = 1,
-	},
 	--Healthstones.
 	[6262] = {
 		name = "Healthstone",
 		icon = 135230,
 		desc = "Instantly restores 45% health.",
 		itemID = 5512,
-		quality = 1,
-	},
-	--Potions.
-	[17531] = {
-		name = "Major Mana Potion",
-		icon = 134856,
-		desc = "Restores 1350 to 2250 mana.",
-		itemID = 13444,
-		quality = 1,
-	},
-	[28499] = {
-		name = "Super Mana Potion",
-		icon = 134762,
-		desc = "Restores 1800 to 3000 mana.",
-		itemID = 22832,
-		quality = 1,
-	},
-	[28495] = {
-		name = "Super Healing Potion",
-		icon = 134756,
-		desc = "Restores 1500 to 2500 health.",
-		itemID = 22829,
-		quality = 1,
-	},
-	[28508] = {
-		name = "Destruction Potion",
-		icon = 134729,
-		desc = "Increases spell critical chance by 2% and spell damage by 120 for 15 sec.",
-		itemID = 22839,
-		quality = 1,
-	},
-	[28507] = {
-		name = "Haste Potion",
-		icon = 134730,
-		desc = "Increases haste rating by 400 for 15 sec.",
-		itemID = 22838,
-		quality = 1,
-	},
-	[28517] = {
-		name = "Super Rejuvenation Potion",
-		icon = 134759,
-		desc = "Restores 1650 to 2750 mana and health.",
-		itemID = 22850,
-		quality = 1,
-	},
-	[45051] = {
-		name = "Mad Alchemist's Potion",
-		icon = 134808,
-		desc = "Restores 1650 to 2750 mana and health. Sometimes has side effects.",
-		itemID = 34440,
-		quality = 1,
-	},
-	[28515] = {
-		name = "Ironshield Potion",
-		icon = 134758,
-		desc = "Increases armor by 2500 for 2 min.",
-		itemID = 22849,
-		quality = 1,
-	},
-	[38929] = {
-		name = "Fel Mana Potion",
-		icon = 134763,
-		desc = "Restores 3200 mana over 24 sec, but at a cost. Also reduces spell damage by 25 and healing done by 50 for 15 min.",
-		itemID = 31677,
-		quality = 1,
-	},
-	[28536] = {
-		name = "Major Arcane Protection Potion",
-		icon = 134752,
-		desc = "Absorbs 2800 to 4000 arcane damage. Lasts 2 min.",
-		itemID = 22845,
-		quality = 1,
-	},
-	[28511] = {
-		name = "Major Fire Protection Potion",
-		icon = 134748,
-		desc = "Absorbs 2800 to 4000 fire damage. Lasts 2 min.",
-		itemID = 22841,
-		quality = 1,
-	},
-	[28512] = {
-		name = "Major Frost Protection Potion",
-		icon = 134750,
-		desc = "Absorbs 2800 to 4000 frost damage. Lasts 2 min.",
-		itemID = 22841,
-		quality = 1,
-	},
-	[28538] = {
-		name = "Major Holy Protection Potion",
-		icon = 134749,
-		desc = "Absorbs 2800 to 4000 holy damage. Lasts 2 min.",
-		itemID = 22847,
-		quality = 1,
-	},
-	[28513] = {
-		name = "Major Nature Protection Potion",
-		icon = 134751,
-		desc = "Absorbs 2800 to 4000 nature damage. Lasts 2 min.",
-		itemID = 22844,
-		quality = 1,
-	},
-	[22846] = {
-		name = "Major Shadow Protection Potion",
-		icon = 134747,
-		desc = "Absorbs 2800 to 4000 shadow damage.  Lasts 2 min.",
-		itemID = 22846,
-		quality = 1,
-	},
-	[28548] = {
-		name = "Shrouding Potion",
-		icon = 134770,
-		desc = "Shrouds you from nearby enemies so you seem less threatening to them.",
-		itemID = 22871,
-		quality = 1,
-	},
-	[28504] = {
-		name = "Major Dreamless Sleep Potion",
-		icon = 134764,
-		desc = "Puts the imbiber in a dreamless sleep for 12 sec. During that time the imbiber heals 3600 health and 3600 mana.",
-		itemID = 22836,
-		quality = 1,
-	},
-	[38908] = {
-		name = "Fel Regeneration Potion",
-		icon = 134766,
-		desc = "Restores 3200 health over 24 sec, but at a cost. All stats are reduced by 15 for 15 min.",
-		itemID = 31676,
-		quality = 1,
-	},
-	[28506] = {
-		name = "Heroic Potion",
-		icon = 134728,
-		desc = "Increases Strength by 70 and temporarily increases health by 700 for 15 sec.",
-		itemID = 22837,
-		quality = 1,
-	},
-	[28494] = {
-		name = "Insane Strength Potion",
-		icon = 134731,
-		desc = "Increases your Strength by 120 and decreases your defense rating by 75 for 15 sec.",
-		itemID = 22828,
-		quality = 1,
-	},
-	[28492] = {
-		name = "Sneaking Potion",
-		icon = 134733,
-		desc = "Increases Stealth a great deal for 1 min.",
-		itemID = 22826,
-		quality = 1,
-	},
-	[11392] = {
-		name = "Invisibility Potion",
-		icon = 134805,
-		desc = "Gives the imbiber invisibility for 18 sec. (10 Min Cooldown)",
-		itemID = 9172,
-		quality = 1,
-	},
-	[3680] = {
-		name = "Lesser Invisibility Potion",
-		icon = 134798,
-		desc = "Gives the imbiber lesser invisibility for 15 sec. (10 Min Cooldown)",
-		itemID = 3823,
-		quality = 1,
-	},
-	[16666] = {
-		name = "Demonic Rune",
-		icon = 134417,
-		desc = "Restores 900 to 1500 mana at the cost of 600 to 1000 life.",
-		itemID = 12662,
-		quality = 2,
-	},
-	[27869] = {
-		name = "Dark Rune",
-		icon = 136192,
-		desc = "Restores 900 to 1500 mana at the cost of 600 to 1000 life.",
-		itemID = 20520,
-		quality = 2,
-	},
-	[28726] = {
-		name = "Nightmare Seed",
-		icon = 134217,
-		desc = "Increases your health by 2000 for 30 sec",
-		itemID = 22797,
-		quality = 1,
-	},
-	[28714] = {
-		name = "Flame Cap",
-		icon = 134209,
-		desc = "Chance to strike a ranged or melee target for 40 fire damage. Increases fire spell power by 80.",
-		itemID = 22788,
-		quality = 1,
-	},
-	[351359] = {
-		name = "Greater Drums of Speed",
-		icon = 133844,
-		desc = "Increases movement speed of party members within 40 yards by 15%. Lasts 30 sec.",
-		itemID = 185851,
-		quality = 3,
-	},
-	--Wrath.
-	[53908] = {
-		name = "Potion of Speed",
-		icon = 236871,
-		desc = "Increases haste rating by 500 for 15 sec.",
-		itemID = 40211,
-		quality = 1,
-	},
-	[53909] = {
-		name = "Potion of Wild Magic",
-		icon = 236868,
-		desc = "Increases critical rating by 200 and spell power by 200 for 15 sec.",
-		itemID = 40212,
-		quality = 1,
-	},
-	[53762] = {
-		name = "Indestructible Potion",
-		icon = 236874,
-		desc = "Increases armor by 3500 for 2 min.",
-		itemID = 40093,
-		quality = 1,
-	},
-	[43186] = {
-		name = "Runic Mana Potion",
-		icon = 236869,
-		desc = "Restores 4200 to 4400 mana.",
-		itemID = 33448,
-		quality = 1,
-	},
-	[43185] = {
-		name = "Runic Healing Potion",
-		icon = 236872,
-		desc = "Restores 2700 to 4500 health.",
-		itemID = 33447,
-		quality = 1,
-	},
-	[67490] = {
-		name = "Runic Mana Potion",
-		icon = 237032,
-		desc = "Restores 4200 to 4400 mana. Increased effect for engineers!",
-		itemID = 42545,
-		quality = 1,
-	},
-	[67489] = {
-		name = "Runic Healing Potion",
-		icon = 237031,
-		desc = "Restores 2700 to 4500 health. Increased effect for engineers!",
-		itemID = 41166,
-		quality = 1,
-	},
-	[28488] = {
-		name = "Scourgebane Infusion",
-		icon = 134799,
-		desc = "ncreases spell damage by up to 15 against undead.",
-		itemID = 22778,
-		quality = 1,
-	},
-	[28486] = {
-		name = "Scourgebane Draught",
-		icon = 134754,
-		desc = "Increases attack power against undead by 30.",
-		itemID = 22779,
 		quality = 1,
 	},
 	--Cata.
@@ -3926,6 +3512,69 @@ NRC.trackedConsumes = {
 		desc = "Increases melee, ranged, and spell haste by 25% for all party and raid members. Lasts 40 sec.",
 		itemID = 102351,
 		quality = 2,
+	},
+	[105702] = {
+		name = "Potion of the Jade Serpent",
+		itemID = 76093,
+		icon = 609895,
+		desc = "Increases your Intellect by 4000 for 25 sec.",
+		quality = 1,
+	},
+	[105706] = {
+		name = "Potion of Mogu Power",
+		itemID = 76095,
+		icon = 609896,
+		desc = "Increases your Strength by 4000 for 25 sec.",
+		quality = 1,
+	},
+	[105697] = {
+		name = "Virmen's Bite",
+		itemID = 76089,
+		icon = 609897,
+		desc = "Increases your Agility by 4000 for 25 sec.",
+		quality = 1,
+	},
+	[105698] = {
+		name = "Potion of the Mountains",
+		itemID = 76090,
+		icon = 609892,
+		desc = "Increases armor by 12000 for 25 sec.",
+		quality = 1,
+	},
+	[105707] = {
+		name = "Darkwater Potion",
+		itemID = 76096,
+		icon = 609891,
+		desc = "Transforms you into a Jinyu assassin, increasing movement speed by 70% and swim speed by 200%. Lasts 15 sec.",
+		quality = 1,
+	},
+	[133024] = {
+		name = "Snap Root Tuber",
+		itemID = 91803,
+		icon = 134011,
+		desc = "Increases haste by 4000 for 25 sec.",
+		quality = 1,
+	},
+	[11392] = {
+		name = "Invisibility Potion",
+		itemID = 11464,
+		icon = 134805,
+		desc = "Gives the imbiber invisibility for 18 sec.",
+		quality = 1,
+	},
+	[105708] = {
+		name = "Master Healing Potion",
+		itemID = 76097,
+		icon = 650638,
+		desc = "Restores 120000 health.",
+		quality = 1,
+	},
+	[105709] = {
+		name = "Master Mana Potion",
+		itemID = 76098,
+		icon = 650641,
+		desc = "Restores 30000 mana.",
+		quality = 1,
 	},
 }
 
@@ -9475,6 +9124,7 @@ NRC.battleResSpells = {
 	[20484] = "Rebirth",
 	[61999] = "Raise Ally",
 	[20707] = "Soulstone",
+	[126393] = "Eternal Guardian", --Hunter pet battle res (Quilen).
 };
 
 NRC.magePortals = {
@@ -9561,50 +9211,6 @@ NRC.healthstones = {
 };
 		
 NRC.dpsPotions = {
-	[28508] = {
-		name = "Destruction Potion",
-		icon = 134729,
-	},
-	[28507] = {
-		name = "Haste Potion",
-		icon = 134730,
-	},
-	[28515] = {
-		name = "Ironshield Potion",
-		icon = 134758,
-	},
-	[28506] = {
-		name = "Heroic Potion",
-		icon = 134728,
-	},
-	[28494] = {
-		name = "Insane Strength Potion",
-		icon = 134731,
-	},
-	[28492] = {
-		name = "Sneaking Potion",
-		icon = 134733,
-	},
-	[11392] = {
-		name = "Invisibility Potion",
-		icon = 134805,
-	},
-	[3680] = {
-		name = "Lesser Invisibility Potion",
-		icon = 134798,
-	},
-	[53908] = {
-		name = "Potion of Speed",
-		icon = 236871,
-	},
-	[53909] = {
-		name = "Potion of Wild Magic",
-		icon = 236868,
-	},
-	[53762] = {
-		name = "Indestructible Potion",
-		icon = 236874,
-	},
 	--Cata.
 	[79476] = {
 		name = "Volcanic Potion",
@@ -9685,6 +9291,9 @@ NRC.healingPotions = {
 	[78989] = {
 		name = "Mythical Healing Potion",
 		icon = 463548,
+		desc = "Restores 25000 health.",
+		itemID = 57191,
+		quality = 1,
 	},
 	[78778] = {
 		name = "Mysterious Potion",
@@ -9759,8 +9368,16 @@ NRC.healingSpecs = {
 ---These buff tables below are wiped after being loaded locally in RaidStatus.
 ---They are just loaded here first for expansion seperation reasons.
 
----In cata the abilities are not the same as the buff ids like they were in previous expansions.
+---In MoP raid buffs changed a lot, I'm using the same tab names here so things work but they're mapped not displaying what they're named after.
+--Key:
+--int -> spell power +10%
+--fort -> stam +10%
+--spirit -> crit +5%
+--shadow -> mastery +3000
+--motw -> stats +10%
+--pal -> auras
 NRC.int = {
+	--This is now a spell power column in MoP.
 	--3 spell names with Arcane Brilliance.
 	--79058 Seems to be the buff players are getting at lvl 80.
 	--79057 is possibly the buff lower levels get? Same stats though.
@@ -9769,48 +9386,64 @@ NRC.int = {
 	[1459] = {
 		name = "Arcane Brilliance",
 		icon = 135932,
-		desc = "+6% Spell Power, +Mana",
+		desc = "+10% Spell Power, +5% Crit",
 		rank = 1,
 		maxRank = true,
 	},
 	[79057] = {
 		name = "Arcane Brilliance",
 		icon = 135932,
-		desc = "+6% Spell Power, +Mana",
+		desc = "+10% Spell Power, +5% Crit",
 		rank = 1,
 		maxRank = true,
 	},
 	[79058] = {
 		name = "Arcane Brilliance",
 		icon = 135932,
-		desc = "+6% Spell Power, +Mana",
+		desc = "+10% Spell Power, +5% Crit",
 		rank = 1,
 		maxRank = true,
 	},
 	[79038] = { --Dalaran version.
 		name = "Arcane Brilliance",
 		icon = 135932,
-		desc = "+6% Spell Power, +Mana",
+		desc = "+10% Spell Power, +5% Crit",
 		rank = 1,
 		maxRank = true,
 	},
 	[79039] = { --Dalaran version.
 		name = "Arcane Brilliance",
 		icon = 135932,
-		desc = "+6% Spell Power, +Mana",
+		desc = "+10% Spell Power, +5% Crit",
 		rank = 1,
 		maxRank = true,
 	},
-	--Runescroll.
-	[69994] = {
-		name = "Runescroll of Brilliance",
-		icon = 135932,
-		desc = "+48 Int",
+	--MoP.
+	[126309] = {
+		name = "Still Water",
+		icon = 132844,
+		desc = "+10% Spell Power, +5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
+	[77747] = {
+		name = "Burning Wrath",
+		icon = 135829,
+		desc = "+10% Stam",
+		rank = 1,
+		maxRank = true,
+	},
+	[109773] = {
+		name = "Dark Intent",
+		icon = 463285,
+		desc = "+10% Spell Power, +10% Stam",
+		rank = 1,
 		maxRank = true,
 	},
 };
 
 NRC.fort = {
+	--This is now a stamina column in MoP.
 	[21562] = {
 		name = "Power Word: Fortitude",
 		icon = 135987,
@@ -9832,133 +9465,112 @@ NRC.fort = {
 		rank = 1,
 		maxRank = true,
 	},
-	--Runescroll.
-	[69377] = { --These are meant to be % but wowhead shows flat numbers?
-		name = "Runescroll of Fortitude",
-		icon = 237449,
-		desc = "+6% Stam",
-		maxRank = true,
-	},
-	[86507] = { --There's 2 versions of this?
-		name = "Runescroll of Fortitude II",
-		icon = 237449,
-		desc = "+7% Stam",
-		maxRank = true,
-	},
-	[96175] = {
-		name = "Runescroll of Fortitude II",
-		icon = 237449,
-		desc = "+7% Stam",
-		maxRank = true,
-	},
 	--MoP.
 	[111922] = {
 		name = "Runescroll of Fortitude III",
 		icon = 237052,
 		desc = "+8% Stam",
+		rank = 1,
+	},
+	[90364] = {
+		name = "Qiraji Fortitude",
+		icon = 236195,
+		desc = "+10% Stam",
+		rank = 1,
+		maxRank = true,
+	},
+	[109773] = {
+		name = "Dark Intent",
+		icon = 463285,
+		desc = "+10% Spell Power, +10% Stam",
+		rank = 1,
+		maxRank = true,
+	},
+	[469] = {
+		name = "Commanding Shout",
+		icon = 132351,
+		desc = "+10% Stam",
+		rank = 1,
 		maxRank = true,
 	},
 };
 
 NRC.spirit = {
-	--No spirit buff in MoP.
+	--This is now a crit column in MoP.
+	[126309] = {
+		name = "Still Water",
+		icon = 132844,
+		desc = "+10% Spell Power, +5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
+	[24932] = {
+		name = "Leader of the Pack",
+		icon = 136112,
+		desc = "+5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
+	[90309] = {
+		name = "Terrifying Roar",
+		icon = 236192,
+		desc = "+5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
+	[24604] = {
+		name = "Furious Howl",
+		icon = 132203,
+		desc = "+5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
+	[1459] = {
+		name = "Arcane Brilliance",
+		icon = 135932,
+		desc = "+10% Spell Power, +5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
+	[79057] = {
+		name = "Arcane Brilliance",
+		icon = 135932,
+		desc = "+10% Spell Power, +5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
+	[79058] = {
+		name = "Arcane Brilliance",
+		icon = 135932,
+		desc = "+10% Spell Power, +5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
+	[79038] = { --Dalaran version.
+		name = "Arcane Brilliance",
+		icon = 135932,
+		desc = "+10% Spell Power, +5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
+	[79039] = { --Dalaran version.
+		name = "Arcane Brilliance",
+		icon = 135932,
+		desc = "+10% Spell Power, +5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
+	[116781] = {
+		name = "Legacy of the White Tiger",
+		icon = 606548,
+		desc = "+5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
 };
 
 NRC.shadow = {
-	--No shadow prot in MoP.
-};
-
-NRC.motw = {
-	[1126] = { --Same as pally buff in cata? Maybe change Motw/Pally colums to just kings/might colums.
-		name = "Mark of the Wild",
-		icon = 136078,
-		desc = "+5% stats, +97 Resistances",
-		rank = 1,
-		maxRank = true,
-	},
-	[79060] = {
-		name = "Mark of the Wild",
-		icon = 136078,
-		desc = "+5% stats, +97 Resistances",
-		rank = 1,
-		maxRank = true,
-	},
-	[79061] = {
-		name = "Mark of the Wild",
-		icon = 136078,
-		desc = "+5% stats, +97 Resistances",
-		rank = 1,
-		maxRank = true,
-	},
-	--[[[102046] = { --What is this high spellID that doesn't give resistances?
-		name = "Mark of the Wild",
-		icon = 136078,
-		desc = "+5% stats, +97 Resistances",
-		rank = 1,
-		maxRank = true,
-	},]]
-	--Drums.
-	--[[[72588] = { --No more in cata? Replaced by Drums of Forgotten Kings?
-		name = "Drums of the Wild",
-		icon = 136078,
-		desc = "Gives the Gift of the Wild to all party and raid members",
-		maxRank = true,
-	},]]
-	--Kings.
-	[20217] = { --Move kings to the motw colum now they're shared.
-		name = "Blessing of Kings",
-		icon = 135993,
-		desc = "+5% Stats, +42 Resistances",
-		maxRank = true,
-		order = 2,
-	},
-	[79062] = {
-		name = "Blessing of Kings",
-		icon = 135993,
-		desc = "+5% Stats, +42 Resistances",
-		maxRank = true,
-		order = 2,
-	},
-	[79063] = {
-		name = "Blessing of Kings",
-		icon = 135993,
-		desc = "+5% Stats, +42 Resistances",
-		maxRank = true,
-		order = 2,
-	},
-};
-
-NRC.pal = {
-	--Kings.
-	--[[[20217] = {
-		name = "Blessing of Kings",
-		icon = 135995,
-		desc = "+5% Stats, +42 Resistances",
-		maxRank = true,
-		order = 2,
-	},
-	[79062] = {
-		name = "Blessing of Kings",
-		icon = 135995,
-		desc = "+5% Stats, +42 Resistances",
-		maxRank = true,
-		order = 2,
-	},
-	[79063] = {
-		name = "Blessing of Kings",
-		icon = 135995,
-		desc = "+5% Stats, +42 Resistances",
-		maxRank = true,
-		order = 2,
-	},
-	[72586] = { --Drums.
-		name = "Drums of Forgotten Kings",
-		icon = 133843,
-		desc = "+4% Stats, +52 Resistances",
-		order = 2,
-		maxRank = true,
-	},]]
-	--Might.
+	--This is now a mastery column in MoP.
 	[19740] = {
 		name = "Blessing of Might",
 		icon = 135908,
@@ -9986,9 +9598,206 @@ NRC.pal = {
 	[93744] = {
 		name = "Runescroll of Might",
 		icon = 237448,
-		desc = "+16% AP (8% Ranged AP), +MP5",
+		desc = "+833 Mastery",
 		rank = 1,
 		order = 3,
+	},
+	[93435] = {
+		name = "Roar of Courage",
+		icon = 132167,
+		desc = "+10% Stam",
+		rank = 1,
+		maxRank = true,
+	},
+	[128997] = {
+		name = "Spirit Beast Blessing",
+		icon = 368365,
+		desc = "+10% Stam",
+		rank = 1,
+		maxRank = true,
+	},
+	[116956] = {
+		name = "Grace of Air",
+		icon = 136046,
+		desc = "+10% Stam",
+		rank = 1,
+		maxRank = true,
+	},
+};
+
+NRC.motw = {
+	--This is now a stats column in MoP.
+	[1126] = { --Same as pally buff in cata? Maybe change Motw/Pally colums to just kings/might colums.
+		name = "Mark of the Wild",
+		icon = 136078,
+		desc = "+5% stats",
+		rank = 1,
+		maxRank = true,
+	},
+	[79060] = {
+		name = "Mark of the Wild",
+		icon = 136078,
+		desc = "+5% stats",
+		rank = 1,
+		maxRank = true,
+	},
+	[79061] = {
+		name = "Mark of the Wild",
+		icon = 136078,
+		desc = "+5% stats",
+		rank = 1,
+		maxRank = true,
+	},
+	--[[[102046] = { --What is this high spellID that doesn't give resistances?
+		name = "Mark of the Wild",
+		icon = 136078,
+		desc = "+5% stats, +97 Resistances",
+		rank = 1,
+		maxRank = true,
+	},]]
+	--Kings.
+	[20217] = { --Move kings to the motw colum now they're shared.
+		name = "Blessing of Kings",
+		icon = 135993,
+		desc = "+5% Stats",
+		maxRank = true,
+		order = 2,
+	},
+	[79062] = {
+		name = "Blessing of Kings",
+		icon = 135993,
+		desc = "+5% Stats",
+		maxRank = true,
+		order = 2,
+	},
+	[79063] = {
+		name = "Blessing of Kings",
+		icon = 135993,
+		desc = "+5% Stats",
+		maxRank = true,
+		order = 2,
+	},
+	[90363] = {
+		name = "Embrace of the Shale Spider",
+		icon = 132196,
+		desc = "+5% stats",
+		rank = 1,
+		maxRank = true,
+	},
+	[115921] = {
+		name = "Legacy of the Emperor",
+		icon = 606547,
+		desc = "+5% stats",
+		rank = 1,
+		maxRank = true,
+	},
+	[117666] = {
+		name = "Legacy of the Emperor",
+		icon = 606547,
+		desc = "+5% stats",
+		rank = 1,
+		maxRank = true,
+	},
+};
+
+NRC.pal = {
+	--This is now a auras column in MoP.
+	--Consolidate auras in a single column like +10% AP etc.
+	--Not used now, decided to go with seperate columns below instead.
+};
+
+NRC.extraSlot1Data = {
+	--+10% AP
+	[19506] = {
+		name = "Trueshot Aura",
+		icon = 132329,
+		desc = "+10% Attack Power",
+		rank = 1,
+		maxRank = true,
+	},
+	[57330] = {
+		name = "Horn of Winter",
+		icon = 134228,
+		desc = "+10% Attack Power",
+		rank = 1,
+		maxRank = true,
+	},
+	[6673] = {
+		name = "Battle Shout",
+		icon = 132333,
+		desc = "+10% Attack Power",
+		rank = 1,
+		maxRank = true,
+	},
+};
+
+NRC.extraSlot2Data = {
+	--+5% Haste
+	[24907] = {
+		name = "Moonkin Aura",
+		icon = 136057,
+		desc = "+5% Spell Haste",
+		rank = 1,
+		maxRank = true,
+	},
+	[49868] = {
+		name = "Mind Quickening",
+		icon = 136215,
+		desc = "+5% Spell Haste",
+		rank = 1,
+		maxRank = true,
+	},
+	[15473] = {
+		name = "Shadowform",
+		icon = 136200,
+		desc = "+5% Spell Haste",
+		rank = 1,
+		maxRank = true,
+	},
+	[51470] = {
+		name = "Elemental Oath",
+		icon = 237576,
+		desc = "+5% Spell Haste",
+		rank = 1,
+		maxRank = true,
+	},
+};
+
+NRC.extraSlot3Data = {
+	--+10% Attack Speed
+	[55610] = {
+		name = "Unholy Aura",
+		icon = 133076,
+		desc = "+10% Attack Speed",
+		rank = 1,
+		maxRank = true,
+	},
+	[128432] = {
+		name = "Cackling Howl",
+		icon = 132190,
+		desc = "+10% Attack Speed",
+		rank = 1,
+		maxRank = true,
+	},
+	[128433] = {
+		name = "Serpent's Swiftness",
+		icon = 132209,
+		desc = "+10% Attack Speed",
+		rank = 1,
+		maxRank = true,
+	},
+	[113742] = {
+		name = "Swiftblade's Cunning",
+		icon = 132287,
+		desc = "+10% Attack Speed",
+		rank = 1,
+		maxRank = true,
+	},
+	[30809] = {
+		name = "Unleashed Rage",
+		icon = 136110,
+		desc = "+10% Attack Speed",
+		rank = 1,
 		maxRank = true,
 	},
 };

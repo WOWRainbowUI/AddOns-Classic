@@ -5554,16 +5554,21 @@ local lockoutsFrame;
 local lockoutsFrameWidth = 100;
 function NRC:openLockoutsFrame()
 	if (not lockoutsFrame) then
-		--lockoutsFrame = NRC:createSimpleInputScrollFrame("NRCLockoutsFrame", 200, 400, 0, 100);
-		lockoutsFrame = NRC:createSimpleTextFrame("NRCLockoutsFrame", lockoutsFrameWidth, 100, 0, 330, 3)
+		--lockoutsFrame = NRC:createSimpleTextFrame("NRCLockoutsFrame", lockoutsFrameWidth, 100, 0, 330, 3)
+		lockoutsFrame = NRC:createSimpleScrollFrame2("NRCLockoutsFrame", lockoutsFrameWidth, 100, 0, 330, 3);
 		lockoutsFrame.onUpdateFunction = "recalcLockoutsFrame";
-		lockoutsFrame.fs:SetText("|cFFFFFF00" .. L["Raid Lockouts (Including Alts)"] .. "|r");
-		lockoutsFrame.closeButton:SetPoint("TOPRIGHT", 3.45, 3.2);
-		lockoutsFrame.closeButton:SetWidth(28);
-		lockoutsFrame.closeButton:SetHeight(28);
+		lockoutsFrame.scrollChild.fs:SetText("|cFFFFFF00" .. L["Raid Lockouts (Including Alts)"] .. "|r");
+		lockoutsFrame:SetClampedToScreen(true);
+		lockoutsFrame:ClearAllPoints();
+		lockoutsFrame:SetPoint("TOP", UIParent, "CENTER", 0, 270);
+		lockoutsFrame.scrollFrame.ScrollBar:Hide();
 	end
 	if (not lockoutsFrame:IsShown()) then
 		lockoutsFrame:Show();
+		C_Timer.After(0.001, function()
+			--A delay is required to calc scrollbar hide/show stuff properly, not sure why.
+			NRC:recalcLockoutsFrame();
+		end)
 	else
 		lockoutsFrame:Hide();
 	end
@@ -5613,7 +5618,12 @@ function NRC:recalcLockoutsFrame()
 		local _, _, _, classColorHex = NRC.getClassColor(v.class);
 		local text2 = "\n|c" .. classColorHex .. v.char .. "|r";
 		if (v.savedInstances) then
-			for instance, instanceData in pairs(v.savedInstances) do
+			local lockouts = {};
+			for instance, v in pairs(v.savedInstances) do
+				tinsert(lockouts, v);
+			end
+			table.sort(lockouts, function(a, b) return a.name < b.name end);
+			for instance, instanceData in ipairs(lockouts) do
 				if (instanceData.locked and instanceData.resetTime and instanceData.resetTime > GetServerTime()) then
 					local timeString = "(" .. NRC:getTimeString(instanceData.resetTime - GetServerTime(), true, NRC.db.global.timeStringType) .. ")";
 					local name = instanceData.name;
@@ -5694,16 +5704,25 @@ function NRC:recalcLockoutsFrame()
 		text = text .. "\n|cFF00C800Weekly reset:|r |cFF9CD6DE" .. NRC:getTimeString(weeklyReset - GetServerTime(), true, "medium")
 				.. weeklyDateString .. "|r";
 	end
-	lockoutsFrame.fs2:SetText(text);
-	local width = lockoutsFrame.fs2:GetStringWidth();
+	lockoutsFrame.scrollChild.fs2:SetText(text);
+	local width = lockoutsFrame.scrollChild.fs2:GetStringWidth();
 	if (width < 200) then
 		width = 200;
 	end
 	if (width > lockoutsFrameWidth) then
 		lockoutsFrameWidth = width;
-		lockoutsFrame:SetWidth(width + 18);
+		lockoutsFrame:SetWidth(width + 40);
 	end
-	lockoutsFrame:SetHeight(lockoutsFrame.fs2:GetStringHeight() + 40);
+	local height = lockoutsFrame.scrollChild.fs2:GetStringHeight() + 50;
+	if (height > 800) then
+		height = 800;
+		if (not lockoutsFrame.scrollFrame.ScrollBar:IsShown()) then
+			lockoutsFrame.scrollFrame.ScrollBar:Show();
+		end
+	else
+		lockoutsFrame.scrollFrame.ScrollBar:Hide();
+	end
+	lockoutsFrame:SetHeight(height);
 end
 
 local function getLowestDurabilityItem()

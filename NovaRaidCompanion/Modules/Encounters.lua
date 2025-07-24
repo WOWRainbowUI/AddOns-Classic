@@ -18,6 +18,7 @@ local GetItemInfoInstant = GetItemInfoInstant or C_Item.GetItemInfoInstant;
 local GetItemGem = GetItemGem or C_Item.GetItemGem;
 local GetItemCount = GetItemCount or C_Item.GetItemCount;
 local GetSpellLink = GetSpellLink or C_Spell.GetSpellLink;
+local GetNumGossipOptions = GetNumGossipOptions or C_GossipInfo.GetNumOptions;
 local staticPopupFrame = NRC:createStaticPopupAttachment("NRCStaticPopupFrame", 320, 38, 0, 0);
 --staticPopupFrame:SetFrameStrata("DIALOG");
 --staticPopupFrame:SetFrameLevel(999);
@@ -756,7 +757,7 @@ local function gossipShow()
 			for i = 1, GetNumGossipOptions() do
 				--Select last option
 				if (i == GetNumGossipOptions()) then
-					SelectGossipOption(i);
+					NRC:selectGossipOption(i);
 					if (GetTime() - lastGossipMsg > 1) then
 						lastGossipMsg = GetTime();
 						NRC:print(L["Taking Sunwell teleport."]);

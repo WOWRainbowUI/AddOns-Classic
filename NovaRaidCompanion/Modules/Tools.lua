@@ -1004,14 +1004,19 @@ function NRC.getClassColor(class)
 end
 
 function NRC:selectGossipOption(id)
-	local SelectGossipOption = C_GossipInfo and C_GossipInfo.SelectOptionByIndex or SelectGossipOption;
-	--A fix so the addon "Immersion" doesn't clash with gossip automation.
-	--SelectGossipOption seems to require the Blizzard dialog open.
-	--C_GossipInfo.SelectOptionByIndex seems to remember the last opened and works after it's closed?
-	if (ImmersionAPI and C_GossipInfo and C_GossipInfo.SelectOptionByIndex) then
+	local SelectGossipOption = SelectGossipOption;
+	if (C_GossipInfo and C_GossipInfo.SelectOptionByIndex) then
+		SelectGossipOption = C_GossipInfo.SelectOptionByIndex;
 		--C_GossipInfo.SelectOptionByIndex index starts at 0 so we need to minus 1.
-		SelectGossipOption(id - 1)
-	else
-		SelectGossipOption(id);
+		id = id - 1;
 	end
+	--A fix so the addon "Immersion" doesn't clash with gossip automation.
+	--Original SelectGossipOption seemed to require the Blizzard dialog open which Immersion.
+	--Now all versions of the game have C_GossipInfo.SelectOptionByIndex so no need for specific Immersion addon compatibility.
+	--if (ImmersionAPI and C_GossipInfo and C_GossipInfo.SelectOptionByIndex) then
+		--C_GossipInfo.SelectOptionByIndex index starts at 0 so we need to minus 1.
+	--	SelectGossipOption(id - 1)
+	--else
+		SelectGossipOption(id);
+	--end
 end

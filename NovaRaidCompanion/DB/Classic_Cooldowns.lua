@@ -418,161 +418,179 @@ NRC.cooldowns["Shadowfiend"] = {
 	},
 };
 	
---Add spells for SoD where maybe it doesn't matter if they have the rune and we only show the cooldown if we've seen them cast it.
-NRC.castDetectCooldowns = {
-	--Priest.
-	["Pain Suppression"] = {
-		class = "PRIEST",
-		icon = "Interface\\Icons\\spell_holy_painsupression",
-		cooldown = 180,
-		minLevel = 1,
-		name = "Pain Sup",
-		isRune = true,
-		spellIDs = {
-			[402004] = "Pain Suppression", --Rune.
-		},
-	},
-	--Druid.
-	["Berserk"] = {
-		class = "DRUID",
-		icon = "Interface\\Icons\\ability_druid_berserk",
-		cooldown = 180,
-		minLevel = 1,
-		isRune = true,
-		spellIDs = {
-			[417141] = "Berserk", --Rune.
-		},
-	},
-	["Survival Instincts"] = {
-		class = "DRUID",
-		icon = "Interface\\Icons\\ability_mount_whitedirewolf",
-		cooldown = 180,
-		minLevel = 1,
-		name = "Surv Ins",
-		isRune = true,
-		spellIDs = {
-			[408024] = "Survival Instincts", --Rune.
-		},
-	},
-	--Mage.
-	["Icy Veins"] = {
-		class = "MAGE",
-		icon = "Interface\\Icons\\spell_frost_coldhearted",
-		cooldown =180,
-		minLevel = 1,
-		isRune = true,
-		spellIDs = {
-			[425121] = "Icy Veins", --Rune.
-		},
-	},
-	["Arcane Surge"] = {
-		class = "MAGE",
-		icon = "Interface\\Icons\\spell_arcane_arcanetorrent",
-		cooldown = 120,
-		minLevel = 1,
-		isRune = true,
-		spellIDs = {
-			[425124] = "Arcane Surge", --Rune.
-		},
-	},
-	--Paladin.
-	["Divine Sacrifice"] = {
-		class = "PALADIN",
-		icon = "Interface\\Icons\\spell_holy_powerwordbarrier",
-		cooldown = 120,
-		minLevel = 1,
-		name = "Div Sac",
-		isRune = true,
-		spellIDs = {
-			[407804] = "Divine Sacrifice", --Rune.
-		},
-	},
-	--Priest.
-	["Power Word: Barrier"] = {
-		class = "PRIEST",
-		icon = "Interface\\Icons\\spell_holy_powerwordbarrier",
-		cooldown = 180,
-		minLevel = 1,
-		name = "PW: Barrier",
-		isRune = true,
-		spellIDs = {
-			[425207] = "Power Word: Barrier", --Rune.
-		},
-	},
-	--Rogue.
-	["Shadowstep"] = {
-		class = "ROGUE",
-		icon = "Interface\\Icons\\ability_rogue_shadowstep",
-		cooldown = 30,
-		minLevel = 1,
-		isRune = true,
-		spellIDs = {
-			[400029] = "Shadowstep", --Rune.
-		},
-	},
-	--Shaman.
-	["Shamanistic Rage"] = {
-		class = "SHAMAN",
-		icon = "Interface\\Icons\\spell_nature_shamanrage",
-		cooldown = 60,
-		minLevel = 1,
-		isRune = true,
-		name = "Sham Rage",
-		spellIDs = {
-			[425336] = "Shamanistic Rage", --Rune.
-		},
-	},
-	["Ancestral Guidance"] = {
-		class = "SHAMAN",
-		icon = "Interface\\Icons\\ability_druid_lunarguidance",
-		cooldown = 60,
-		minLevel = 1,
-		isRune = true,
-		name = "Anc Guidance",
-		spellIDs = {
-			[409324] = "Ancestral Guidance", --Rune.
-		},
-	},
-	--Warlock.
-	["Infernal Armor"] = {
-		class = "WARLOCK",
-		icon = "Interface\\Icons\\achievement_boss_kiljaedan",
-		cooldown = 60,
-		minLevel = 1,
-		isRune = true,
-		spellIDs = {
-			[440882] = "Infernal Armor", --Rune.
-		},
-	},
-	["Vengeance"] = {
-		class = "WARLOCK",
-		icon = "Interface\\Icons\\ability_warlock_improveddemonictactics",
-		cooldown = 180,
-		minLevel = 1,
-		isRune = true,
-		spellIDs = {
-			[426469] = "Vengeance", --Rune.
-		},
-	},
-	["Demonic Howl"] = {
-		class = "WARLOCK",
-		icon = "Interface\\Icons\\ability_bullrush",
-		cooldown = 600,
-		minLevel = 1,
-		isRune = true,
-		spellIDs = {
-			[412789] = "Demonic Howl", --Rune.
-		},
-	},
-	--Warrior.
-	["Rallying Cry"] = {
-		class = "WARRIOR",
-		icon = "Interface\\Icons\\ability_warrior_rallyingcry",
-		cooldown = 180,
-		minLevel = 1,
-		isRune = true,
-		spellIDs = {
-			[426490] = "Rallying Cry", --Rune.
-		},
+--Add spells with castDetect flag for SoD where maybe it doesn't matter if they have the rune and we only show the cooldown if we've seen them cast it.
+--Priest.
+NRC.cooldowns["Pain Suppression"] = {
+	class = "PRIEST",
+	icon = "Interface\\Icons\\spell_holy_painsupression",
+	cooldown = 180,
+	minLevel = 1,
+	title = "Pain Supp",
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[402004] = "Pain Suppression", --Rune.
 	},
 };
+--Druid.
+NRC.cooldowns["Berserk"] = {
+	class = "DRUID",
+	icon = "Interface\\Icons\\ability_druid_berserk",
+	cooldown = 180,
+	minLevel = 1,
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[417141] = "Berserk", --Rune.
+	},
+};
+NRC.cooldowns["Survival Instincts"] = {
+	class = "DRUID",
+	icon = "Interface\\Icons\\ability_mount_whitedirewolf",
+	cooldown = 180,
+	minLevel = 1,
+	title = "Surv Ins",
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[408024] = "Survival Instincts", --Rune.
+	},
+};
+--Mage.
+NRC.cooldowns["Icy Veins"] = {
+	class = "MAGE",
+	icon = "Interface\\Icons\\spell_frost_coldhearted",
+	cooldown =180,
+	minLevel = 1,
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[425121] = "Icy Veins", --Rune.
+	},
+};
+NRC.cooldowns["Arcane Surge"] = {
+	class = "MAGE",
+	icon = "Interface\\Icons\\spell_arcane_arcanetorrent",
+	cooldown = 120,
+	minLevel = 1,
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[425124] = "Arcane Surge", --Rune.
+	},
+};
+--Paladin.
+NRC.cooldowns["Divine Sacrifice"] = {
+	class = "PALADIN",
+	icon = "Interface\\Icons\\spell_holy_powerwordbarrier",
+	cooldown = 120,
+	minLevel = 1,
+	title = "Div Sac",
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[407804] = "Divine Sacrifice", --Rune.
+	},
+};
+--Priest.
+NRC.cooldowns["Power Word: Barrier"] = {
+	class = "PRIEST",
+	icon = "Interface\\Icons\\spell_holy_powerwordbarrier",
+	cooldown = 180,
+	minLevel = 1,
+	title = "PW: Barrier",
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[425207] = "Power Word: Barrier", --Rune.
+	},
+};
+--Rogue.
+NRC.cooldowns["Shadowstep"] = {
+	class = "ROGUE",
+	icon = "Interface\\Icons\\ability_rogue_shadowstep",
+	cooldown = 30,
+	minLevel = 1,
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[400029] = "Shadowstep", --Rune.
+	},
+};
+--Shaman.
+NRC.cooldowns["Shamanistic Rage"] = {
+	class = "SHAMAN",
+	icon = "Interface\\Icons\\spell_nature_shamanrage",
+	cooldown = 60,
+	minLevel = 1,
+	isRune = true,
+	castDetect = true,
+	title = "Sham Rage",
+	spellIDs = {
+		[425336] = "Shamanistic Rage", --Rune.
+	},
+};
+NRC.cooldowns["Ancestral Guidance"] = {
+	class = "SHAMAN",
+	icon = "Interface\\Icons\\ability_druid_lunarguidance",
+	cooldown = 60,
+	minLevel = 1,
+	isRune = true,
+	castDetect = true,
+	title = "Anc Guidance",
+	spellIDs = {
+		[409324] = "Ancestral Guidance", --Rune.
+	},
+};
+--Warlock.
+NRC.cooldowns["Infernal Armor"] = {
+	class = "WARLOCK",
+	icon = "Interface\\Icons\\achievement_boss_kiljaedan",
+	cooldown = 60,
+	minLevel = 1,
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[440882] = "Infernal Armor", --Rune.
+	},
+};
+NRC.cooldowns["Vengeance"] = {
+	class = "WARLOCK",
+	icon = "Interface\\Icons\\ability_warlock_improveddemonictactics",
+	cooldown = 180,
+	minLevel = 1,
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[426469] = "Vengeance", --Rune.
+	},
+};
+NRC.cooldowns["Demonic Howl"] = {
+	class = "WARLOCK",
+	icon = "Interface\\Icons\\ability_bullrush",
+	cooldown = 600,
+	minLevel = 1,
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[412789] = "Demonic Howl", --Rune.
+	},
+};
+--Warrior.
+NRC.cooldowns["Rallying Cry"] = {
+	class = "WARRIOR",
+	icon = "Interface\\Icons\\ability_warrior_rallyingcry",
+	cooldown = 180,
+	minLevel = 1,
+	isRune = true,
+	castDetect = true,
+	spellIDs = {
+		[426490] = "Rallying Cry", --Rune.
+	},
+};
+
+for k, v in pairs(NRC.cooldowns) do
+	if (v.talentOnly) then
+		v.castDetect = true;
+	end
+end

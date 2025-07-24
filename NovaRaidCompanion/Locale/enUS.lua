@@ -904,6 +904,7 @@ L["raidManaHealersDesc"] = "Show mana for all healers in this raid, this uses NR
 L["raidManaDruidDesc"] = "Show mana for all druids in the raid?";
 L["raidManaHunterDesc"] = "Show mana for all hunters in the raid?";
 L["raidManaMageDesc"] = "Show mana for all mages in the raid?";
+L["raidManaMonkDesc"] = "Show mana for all monks in the raid? Note: Only healer monks actually have mana.";
 L["raidManaPaladinDesc"] = "Show mana for all paladins in the raid?";
 
 L["Start Frames Test"] = "Start Frames Test";
@@ -1241,6 +1242,7 @@ L["raidStatusLowDurationTimeDesc"] = "When buffs are below this duration in seco
 
 L["raidCooldownUniversalDesc"] = "Show %s raid cooldowns?";
 L["raidCooldownUniversalCastDetectDesc"] = "Show %s raid cooldowns? (This cooldown only shows up when a player is seen to have cast it atleast once)";
+L["raidCooldownUniversalTalentOnlyDesc"] = "Show %s raid cooldowns? (This cooldown requires a talent or specialization and only shows when talents are detected or the spell is seen cast once)";
 
 L["raidStatusWorldBuffsTitle"]= "World Buffs";
 L["raidStatusWorldBuffsDesc"]= "Display a World Buffs column on the Raid Status tracker? This can be much wider than other columns to fit world buffs.";
@@ -1307,3 +1309,40 @@ L["raidStatusIlvlDesc"] = "Display a average item level of gear equipped column 
 
 L["raidStatusEquipTitle"] = "Equipment";
 L["raidStatusEquipDesc"] = "Display a column you can click on any player to view their gear and enchants column on the Raid Status tracker?";
+
+L["raidStatusSpellPowerTitle"] = "Spell Power";
+L["raidStatusSpellPowerDesc"] = "Display a Spell Power column on the Raid Status tracker?";
+	
+L["raidStatusStamTitle"] = "Stamina";
+L["raidStatusStamDesc"] = "Display a Stamina column on the Raid Status tracker?";
+	
+L["raidStatusCritTitle"] = "Crit";
+L["raidStatusCritDesc"] = "Display a Critical Strike column on the Raid Status tracker?";
+	
+L["raidStatusStatsTitle"] = "Stats";
+L["raidStatusStatsDesc"] = "Display a Stats column on the Raid Status tracker?";
+	
+L["raidStatusMasteryTitle"] = "Mastery";
+L["raidStatusMasteryDesc"] = "Display a Mastery column on the Raid Status tracker?";
+	
+L["raidStatusAurasTitle"] = "Auras";
+L["raidStatusAurasDesc"] = "Display a Auras column on the Raid Status tracker? This will show raid buffs that are auras when a player is near and not an actual castable buff (like +10% AP etc)";
+
+L["raidStatusAttackPowerTitle"] = "Attack Power";
+L["raidStatusAttackPowerDesc"] = "Display a Attack Power column on the Raid Status tracker?";
+
+L["raidStatusHasteTitle"] = "Haste";
+L["raidStatusHasteDesc"] = "Display a Haste column on the Raid Status tracker?";
+
+L["raidStatusSpeedTitle"] = "Attack Speed";
+L["raidStatusSpeedDesc"] = "Display a Attack Speed column on the Raid Status tracker?";
+
+--MoP raid status headers, they must be a short word.
+L["Stam"] = "Stam";
+L["Crit"] = "Crit";
+L["Mast"] = "Mastery";
+L["Stats"] = "Stats";
+L["SP"] = "SP";
+L["AP"] = "AP";
+L["Haste"] = "Haste";
+L["Speed"] = "Speed";

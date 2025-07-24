@@ -51,6 +51,7 @@ local inspectSlots = {
 if (expansionNum > 4) then
 	--Ranged slot removed in MoP.
 	inspectSlots[18] = nil;
+	--Any changes here need to be changed in updateIssuesCache() also.
 end
 for k, v in pairs(inspectSlots) do
 	--Ignore shirt and trinket they're often empty.
@@ -73,6 +74,9 @@ local enchantSlots = {
 };
 if (NRC.isSOD) then
 	enchantSlots[17] = true; --Off hand.
+end
+if (expansionNum > 4) then
+	enchantSlots[1] = nil; --Helm enchant removed in MoP.
 end
 if (expansionNum > 5) then
 	enchantSlots[11] = true; --Rings in wod+? (wrath+ for enchanters but we ignoire that).
@@ -643,6 +647,24 @@ function NRC:getEnchantsData(guid)
 	end
 end
 
+function NRC:getGlyphsData(name)
+	local data = NRC.glyphs[name];
+	if (data) then
+		data = NRC:createGlyphDataFromString(data);
+		local missingMajorCount, missingMinorCount = 0, 0;
+		for i = 1, 6 do
+			if (data[i] == 0) then
+				if (i < 4) then
+					missingMajorCount = missingMajorCount + 1;
+				else
+					missingMinorCount = missingMinorCount + 1;
+				end
+			end
+		end
+		return missingMajorCount, missingMinorCount;
+	end
+end
+
 
 local pvpTrinkets = NRC.pvpTrinkets or {};
 function NRC:updateIssuesCache(guid)
@@ -669,7 +691,7 @@ function NRC:updateIssuesCache(guid)
 		};
 		if (expansionNum > 4) then
 			--Ranged slot removed in MoP.
-			inspectSlots[18] = nil;
+			slots[18] = nil;
 		end
 		local numSlots = 0;
 		local data = NRC.gearCache[guid];
@@ -681,7 +703,7 @@ function NRC:updateIssuesCache(guid)
 			end
 		end
 		local data = NRC.gearCache[guid];
-		local totalIssues, enchantIssues, gearMissingIssues, talentsMissing = 0, 0, 0, 0;
+		local totalIssues, enchantIssues, glyphIssues, gearMissingIssues, talentsMissing = 0, 0, 0, 0, 0;
 		for k, v in pairs(slots) do
 			if (not data[k]) then
 				gearMissingIssues = gearMissingIssues + 1;
@@ -696,6 +718,13 @@ function NRC:updateIssuesCache(guid)
 			end
 		end
 		local name, level = NRC:getNameFromGUID(guid), NRC:getLevelFromGUID(guid);
+		if (NRC.glyphs[name]) then
+			local missingMajorCount, missingMinorCount = NRC:getGlyphsData(name);
+			if (missingMajorCount > 0) then
+				glyphIssues = missingMajorCount;
+				totalIssues = totalIssues + 1;
+			end
+		end
 		local tSpent, tMissing = NRC:getTotalTalentCount(NRC.talents[name], level);
 		if (tMissing and tMissing > 0) then
 			talentsMissing = tMissing;
@@ -728,6 +757,7 @@ function NRC:updateIssuesCache(guid)
 		local t = {
 			totalIssues = totalIssues,
 			enchantIssues = enchantIssues,
+			glyphIssues = glyphIssues,
 			gearMissingIssues = gearMissingIssues,
 			talentsMissing = talentsMissing,
 			otherIssues = otherIssues,
@@ -752,6 +782,13 @@ function NRC:getIssuesString(guid)
 				text = text .. "\n|cFF9CD6DE" .. issues.enchantIssues .. " missing enchant";
 			else
 				text = text .. "\n|cFF9CD6DE" .. issues.enchantIssues .. " missing enchants";
+			end
+		end
+		if (issues.glyphIssues and issues.glyphIssues > 0) then
+			if (issues.glyphIssues == 1) then
+				text = text .. "\n|cFF9CD6DE" .. issues.glyphIssues .. " missing major glyph";
+			else
+				text = text .. "\n|cFF9CD6DE" .. issues.glyphIssues .. " missing major glyphs";
 			end
 		end
 		if (issues.talentsMissing and issues.talentsMissing > 0) then
@@ -1231,6 +1268,8 @@ f:SetScript('OnEvent', function(self, event, ...)
 			NRC:throddleEventByFunc(event, 3, "loadInspectQueue", ...);
 		end
 	elseif (event == "INSPECT_READY") then
+		--print(C_SpecializationInfo.GetActiveSpecGroup(true), GetActiveTalentGroup(true))
+		--print(C_SpecializationInfo.GetSpecialization(true, nil, 1), C_SpecializationInfo.GetSpecialization(true, nil, 2))
 		local guid = ...;
 		NRC:receivedInspect(guid);
 	end
@@ -1486,7 +1525,19 @@ function NRC:createTalentStringFromInspect(guid, isInspect)
 		local _, _, classID = UnitClass(unit);
 		talentString = tostring(classID) .. "-";
 		talentString2 = tostring(classID) .. "-";
-		local activeSpec = C_SpecializationInfo.GetActiveSpecGroup(isInspect);
+		
+		
+		--It seems like C_SpecializationInfo.GetActiveSpecGroup and GetActiveTalentGroup are both broken for inspect in MoP.
+		--Both return 1 no matter what, sometimes they start working after an inspect unit changes a talent or somehting to update it.
+		--Inspect stills shows the corrent talents for inspected unit current active spec, it just always show primary talents are active even if it's really secondary.
+		--I guess that's why looking up C_SpecializationInfo.GetSpecialization is also broken.
+		--Very hacky work around for getting the correct specialization below.
+
+	
+		--local activeSpec = C_SpecializationInfo.GetActiveSpecGroup(isInspect);
+		--print(C_SpecializationInfo.GetActiveSpecGroup(true), GetActiveTalentGroup(true));
+		local activeSpec = GetActiveTalentGroup(isInspect);
+		--print(UnitName(unit), activeSpec, isInspect, GetInspectSpecialization(unit))
 		local offSpec = (activeSpec == 1 and 2 or 1);
 		for row = 1, MAX_NUM_TALENT_TIERS do
 			--GetTalentTierInfo() didn't seem to work with inspect, atleast on the beta for now.
@@ -1507,7 +1558,37 @@ function NRC:createTalentStringFromInspect(guid, isInspect)
 			end
 			talentString = talentString .. selectedTalentColumn;
 		end
-		local specID = C_SpecializationInfo.GetSpecialization(isInspect, nil, activeSpec);
+		local specID;
+		if (isInspect) then
+			local specsByClassID = {
+				[0] = {74, 81, 79},
+			    [1] = {71, 72, 73, 1446},
+			    [2] = {65, 66, 70, 1451},
+			    [3] = {253, 254, 255, 1448},
+			    [4] = {259, 260, 261, 1453},
+			    [5] = {256, 257, 258, 1452},
+			    [6] = {250, 251, 252, 1455},
+			    [7] = {262, 263, 264, 1444},
+			    [8] = {62, 63, 64, 1449},
+			    [9] = {265, 266, 267, 1454},
+			    [10] = {268, 270, 269, 1450},
+			    [11] = {102, 103, 104, 105, 1447},
+			};
+			local spec = GetInspectSpecialization(unit);
+			for k, v in pairs(specsByClassID[classID]) do
+				if (v == spec) then
+					specID = k;
+				end
+			end
+			if (not specID) then
+				--Fallback just to avoid errors for now, this won't be accurate though until they fix the func fir inspect...
+				--specID = C_SpecializationInfo.GetSpecialization(isInspect, nil, activeSpec);
+			end
+			--specID = specsByClassID[classID][GetInspectSpecialization(unit)];
+			--print(UnitName(unit), specID, classID, GetInspectSpecialization(unit))
+		else
+			specID = C_SpecializationInfo.GetSpecialization(isInspect, nil, activeSpec);
+		end
 		talentString = talentString .. "-" .. specID;
 		for row = 1, talentRowCount do
 			local selectedTalentColumn = 0;

@@ -103,6 +103,7 @@ end
 local function init()
     NRC:loadDatabase();
     NRC:loadExtraOptions();
+    NRC:loadOptionsDelayed();
 	NRC.chatColor = "|cff" .. NRC:RGBToHex(NRC.db.global.chatColorR, NRC.db.global.chatColorG, NRC.db.global.chatColorB);
 	NRC.prefixColor = "|cff" .. NRC:RGBToHex(NRC.db.global.prefixColorR, NRC.db.global.prefixColorG, NRC.db.global.prefixColorB);
 	NRC.mmColor = "|cff" .. NRC:RGBToHex(NRC.db.global.mmColorR, NRC.db.global.mmColorG, NRC.db.global.mmColorB);

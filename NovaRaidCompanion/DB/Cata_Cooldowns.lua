@@ -329,7 +329,7 @@ NRC.cooldowns = {
 		icon = "Interface\\Icons\\spell_holy_painsupression",
 		cooldown = 180,
 		minLevel = 47,
-		name = "Pain Sup",
+		title = "Pain Supp",
 		talentOnly = {
 			tabIndex = 1,
 			talentIndex = 17,
@@ -793,4 +793,10 @@ else
 			[2825] = "Bloodlust", --Rank 1.
 		},
 	};
+end
+
+for k, v in pairs(NRC.cooldowns) do
+	if (v.talentOnly) then
+		v.castDetect = true;
+	end
 end

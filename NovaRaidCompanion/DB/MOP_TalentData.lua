@@ -202,19 +202,19 @@ local specData = {
 		icon = 136830,
 		iconPath = "Interface\\Icons\\ClassIcon_Monk",
 		[1] = {
-			name = "Windwalker",
-			icon = 608953,
-			iconPath = "Interface\\Icons\\Spell_Monk_WindWalker_Spec",
-		},
-		[2] = {
 			name = "Brewmaster",
 			icon = 608951,
 			iconPath = "Interface\\Icons\\Spell_Monk_Brewmaster_Spec",
 		},
-		[3] = {
+		[2] = {
 			name = "Mistweaver",
 			icon = 608952,
 			iconPath = "Interface\\Icons\\Spell_Monk_MistWeaver_Spec",
+		},
+		[3] = {
+			name = "Windwalker",
+			icon = 608953,
+			iconPath = "Interface\\Icons\\Spell_Monk_WindWalker_Spec",
 		},
 	},
 	[11] = {

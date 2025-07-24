@@ -33,6 +33,7 @@ local GetPlayerInfoByGUID = GetPlayerInfoByGUID;
 local GetTalentInfo = GetTalentInfo;
 local GetSpellLink = GetSpellLink or C_Spell.GetSpellLink;
 local GetSpellInfo = NRC.GetSpellInfo;
+NRC.castDetectCooldowns = {};
 local soulstoneDuration = 1800;
 local showDead;
 if (NRC.expansionNum > 2) then
@@ -484,7 +485,7 @@ function NRC:buildCooldownData()
 		localizeNames = true;
 	end
 	--Spells that are being detect via cast (can't inspect like sod runes etc).
-	if (NRC.castDetectCooldowns) then
+	--[[if (NRC.castDetectCooldowns) then
 		for k, v in pairs(NRC.castDetectCooldowns) do
 			if (v.spellIDs and next(v.spellIDs)) then
 				for id, spellName in pairs(v.spellIDs) do
@@ -502,7 +503,7 @@ function NRC:buildCooldownData()
 				end
 			end
 		end
-	end
+	end]]
 	for k, v in pairs(NRC.cooldowns) do
 		if (v.spellIDs and next(v.spellIDs)) then
 			for id, spellName in pairs(v.spellIDs) do
@@ -520,8 +521,14 @@ function NRC:buildCooldownData()
 							v.localizedName = name;
 						end
 					end
-					--Add spell to cache for scanning combat log.
-					trackedSpellsCache[id] = spellName;
+					if (not v.castDetectOnly) then
+						--Add spell to cache for scanning combat log.
+						trackedSpellsCache[id] = spellName;
+					end
+					if (v.castDetect or v.castDetectOnly) then
+						castDetectSpells[id] = spellName;
+						NRC.castDetectCooldowns[k] = v;
+					end
 				end
 				if (k == "Rebirth") then
 					--Add multiple rebirth ids to our res spell cache.

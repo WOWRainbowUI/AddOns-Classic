@@ -317,6 +317,7 @@ function NRC:loadTrackedManaChars(func)
 				if (not isCharTracked(k) and ((config.raidManaDruid and v.class == "DRUID")
 						or (config.raidManaHunter and v.class == "HUNTER")
 						or (config.raidManaMage and v.class == "MAGE")
+						or (config.raidManaMonk and v.class == "MONK")
 						or (config.raidManaPaladin and v.class == "PALADIN")
 						or (config.raidManaPriest and v.class == "PRIEST")
 						or (config.raidManaShaman and v.class == "SHAMAN")
@@ -605,8 +606,9 @@ function NRC:loadGroupMana()
 	end
 	for i = 1, GetNumGroupMembers() do
 		local unit = unitType .. i;
-		if (UnitPowerType(unit) == 0) then
-			local name = UnitName(unit);
+		local _, class = UnitClass(unit);
+		local name = UnitName(unit);
+		if (UnitPowerType(unit, 1) == 0) then
 			local mana = UnitPower(unit, 0);
 			local maxMana = UnitPowerMax(unit, 0);
 			if (mana and name) then
@@ -615,16 +617,32 @@ function NRC:loadGroupMana()
 					maxMana = maxMana,
 				};
 			end
+		elseif (NRC:isHealer(name) and not manaCache[name]) then
+			--If a monk/druid joins group now in a mana stance they sill need to be added to showand they're a healer theys till need to be shown until a mana event from them triggers.
+			manaCache[name] = {
+				mana = 0,
+				maxMana = 1,
+			};
 		end
 	end
-	if (UnitPowerType("player") == 0) then
+	local name = UnitName("player");
+	if (UnitPowerType("player") == 0 or (NRC:isHealer(name) and not manaCache[name])) then
+		local _, class = UnitClass("player");
 		local name = UnitName("player");
-		local mana = UnitPower("player", 0);
-		local maxMana = UnitPowerMax("player", 0);
-		if (mana and name) then
+		if (UnitPowerType("player", 1) == 0) then
+			local mana = UnitPower("player", 0);
+			local maxMana = UnitPowerMax("player", 0);
+			if (mana and name) then
+				manaCache[name] = {
+					mana = mana,
+					maxMana = maxMana,
+				};
+			end
+		elseif (NRC:isHealer(name) and not manaCache[name]) then
+			--If a monk/druid joins group now in a mana stance they sill need to be added to showand they're a healer theys till need to be shown until a mana event from them triggers.
 			manaCache[name] = {
-				mana = mana,
-				maxMana = maxMana,
+				mana = 0,
+				maxMana = 1,
 			};
 		end
 	end
@@ -633,20 +651,24 @@ end
 local f = CreateFrame("Frame", "NRCRaidMana");
 f:RegisterEvent("UNIT_POWER_UPDATE");
 --f:RegisterEvent("UNIT_POWER_FREQUENT");
+f:RegisterEvent("UNIT_DISPLAYPOWER");
 f:RegisterEvent("PLAYER_ENTERING_WORLD");
 f:RegisterEvent("GROUP_FORMED");
 f:RegisterEvent("GROUP_JOINED");
 f:RegisterEvent("GROUP_LEFT");
 f:SetScript('OnEvent', function(self, event, ...)
-	if (event == "UNIT_POWER_UPDATE") then
+	if (event == "UNIT_POWER_UPDATE" or event == "UNIT_DISPLAYPOWER") then
 		local unit, type = ...;
-		--We can't get mana from other players in cat/bear form so check what form they're in.
-		if (type == "MANA" and UnitPowerType(unit) == 0) then
-			if (units[unit]) then
-				manaCache[UnitName(unit)] = {
-					mana = UnitPower(unit, 0),
-					maxMana = UnitPowerMax(unit, 0),
-				};
+		--We can't get mana from other players in cat/bear form or non-mana monk stances.
+		--The way this works is just to pause the update frame during that time.
+		if (type == "MANA" or event == "UNIT_DISPLAYPOWER") then
+			if (UnitPowerType(unit, 1) == 0) then
+				if (units[unit]) then
+					manaCache[UnitName(unit)] = {
+						mana = UnitPower(unit, 0),
+						maxMana = UnitPowerMax(unit, 0),
+					};
+				end
 			end
 		end
 	elseif (event == "PLAYER_ENTERING_WORLD") then

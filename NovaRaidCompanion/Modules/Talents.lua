@@ -347,8 +347,9 @@ function NRC:updateGlyphGraphicalFrame(data, frame, name, glyphString)
 end
 
 function NRC:updateGlyphFrame(data, frame, name, glyphString)
-	if (not frame or NRC.isCata or NRC.expansionNum < 3) then
-		--Works for wrath and expansions mop+.
+	if (not frame or NRC.expansionNum < 5) then
+		--Works for wrath and expansions MoP+.
+		--Changed to now only work in MoP+.
 		return;
 	end
 	for i = 1, 6 do
@@ -604,10 +605,11 @@ function NRC:getSpecFromTalentString(talentString)
 					};
 					local specID = specsByClassID[classID][specIndex];
 					if (not specID) then
-						--Likely rying to view a raid's talents that happened during previous expansion.
+						--Likely trying to view a raid's talents that happened during previous expansion.
 						return;
 					end
 				    local _, specName, _, specIcon = GetSpecializationInfoByID(specID);
+				    --print(specIndex, talentCount, specName, specIcon, nil, nil, className)
 					return specIndex, talentCount, specName, specIcon, nil, nil, className;
 				end
 			end
@@ -820,8 +822,24 @@ local function getMaxTalentPoints(level)
 				else
 					max = count - (85 - level);
 				end
-			elseif (NRC.expansionNum > 4) then
+			elseif (NRC.expansionNum == 5) then
 				--MoP and onwards just return max for now, a table needs creating for lower levels since they don't just get 1 per level.
+				--Not accurate for dk's for a few levels in starter zone but that's fine.
+				if (level < 30) then
+					max = 1;
+				elseif (level < 45) then
+					max = 2;
+				elseif (level < 60) then
+					max = 3;
+				elseif (level < 75) then
+					max = 4;
+				elseif (level < 90) then
+					max = 5;
+				else
+					max = count;
+				end
+			elseif (NRC.expansionNum > 5) then
+				--WoD and onwards just return max for now.
 				max = count;
 			else
 				--Classic/TBC/Wrath.

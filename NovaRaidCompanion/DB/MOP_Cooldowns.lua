@@ -23,9 +23,12 @@ local L = LibStub("AceLocale-3.0"):GetLocale("NovaRaidCompanion");
 	watchForAura = true, --If this cooldown requires watching for an aura to be applied instead of a spell cast (like Cheat Death/Purgatory).
 	resetBySpellID = 11958, --If this cooldown can be reset by another spell like Cold Snap.
 	talentOnly = { --Only show the cooldown if they have this talent trained.
-		tabIndex = 4,
-		talentIndex = 2,
+		tabIndex = 4, (column in mop)
+		talentIndex = 2, (row in mop)
 	},
+	specOnly = "SPECNAME", --Not yet working, coming soon.
+	castDetect = true, --If this is cast by a player then show it (goes along as a backup to talent only spells incase we can't inspect them to show it for some reason).
+	castDetectOnly = true, --Only show this cooldown once someone is seen casting it, this cooldown never loads unless seen cast, there is no talent detection etc.
 	cooldownAdjust = { --Adjust cooldowns based on talents trained.
 		tabIndex = 3,
 		talentIndex = 2,
@@ -87,6 +90,7 @@ NRC.cooldowns = {
 		icon = "Interface\\Icons\\spell_shadow_unholyfrenzy",
 		cooldown = 180,
 		minLevel = 40,
+		specOnly = "UNHOLY",
 		spellIDs = {
 			[49016] = "Unholy Frenzy", --Rank 1.
 		},
@@ -95,11 +99,8 @@ NRC.cooldowns = {
 		class = "DEATHKNIGHT",
 		icon = "Interface\\Icons\\spell_shadow_lifedrain",
 		cooldown = 60,
-		minLevel = 56,
-		talentOnly = {
-			tabIndex = 1,
-			talentIndex = 17,
-		},
+		minLevel = 76,
+		specOnly = "BLOOD",
 		spellIDs = {
 			[55233] = "Vampiric Blood", --Rank 1.
 		},
@@ -233,6 +234,7 @@ NRC.cooldowns = {
 		icon = "Interface\\Icons\\ability_druid_tigersroar",
 		cooldown = 180,
 		minLevel = 56,
+		specOnly = "GUARDIAN",
 		glyphCooldownAdjust = {
 			[114223] = 60, --Glyph of Survival Instincts.
 		},
@@ -245,6 +247,7 @@ NRC.cooldowns = {
 		icon = "Interface\\Icons\\ability_druid_starfall",
 		cooldown = 90,
 		minLevel = 76,
+		specOnly = "BALANCE",
 		glyphCooldownAdjust = {
 			[54828] = 30, --Glyph of Starfall.
 		},
@@ -374,6 +377,16 @@ NRC.cooldowns = {
 			[124974] = "Nature's Vigil",
 		},
 	},
+	["Ironbark"] = {
+		class = "DRUID",
+		icon = 572025,
+		cooldown = 60,
+		minLevel = 64,
+		specOnly = "RESTORATION",
+		spellIDs = {
+			[102342] = "Ironbark", --Rank 1.
+		},
+	},
 	--Hunter.
 	--[[["Misdirection"] = { --Only triggers if damage is done, needs custom code added to track when the cooldown starts, probably not worth the trouble to track track a 30 seconds cooldown.
 		class = "HUNTER",
@@ -421,7 +434,7 @@ NRC.cooldowns = {
 			[12051] = "Evocation", --Rank 1.
 		},
 	},
-	["Ice Block"] = { --Casting cold snap needs to reset this cooldown, fix later.
+	["Ice Block"] = { --Casting cold snap needs to reset this cooldown.
 		class = "MAGE",
 		icon = "Interface\\Icons\\spell_frost_frost",
 		cooldown = 300,
@@ -493,6 +506,36 @@ NRC.cooldowns = {
 			[] = "",
 		},
 	},]]
+	["Avert Harm"] = {
+		class = "MONK",
+		icon = 627605,
+		cooldown = 180,
+		minLevel = 48,
+		specOnly = "BREWMASTER",
+		spellIDs = {
+			[115213] = "Avert Harm",
+		},
+	},
+	["Life Cocoon"] = {
+		class = "MONK",
+		icon = 627485,
+		cooldown = 120,
+		minLevel = 50,
+		specOnly = "MISTWEAVER",
+		spellIDs = {
+			[116849] = "Life Cocoon",
+		},
+	},
+	["Revival"] = {
+		class = "MONK",
+		icon = 237573,
+		cooldown = 180,
+		minLevel = 78,
+		specOnly = "MISTWEAVER",
+		spellIDs = {
+			[115310] = "Revival",
+		},
+	},
 	--Paladin.
 	["Divine Shield"] = {
 		class = "PALADIN",
@@ -608,6 +651,18 @@ NRC.cooldowns = {
 			[114039] = "Hand of Purity",
 		},
 	},
+	["Devotion Aura"] = {
+		class = "PALADIN",
+		icon = 135872,
+		cooldown = 180,
+		minLevel = 60,
+		glyphCooldownAdjust = {
+			[146955] = 60, --Glyph of Devotion Aura.
+		},
+		spellIDs = {
+			[31821] = "Devotion Aura",
+		},
+	},
 	--Priest.
 	["Fear Ward"] = {
 		class = "PRIEST",
@@ -661,7 +716,8 @@ NRC.cooldowns = {
 		icon = "Interface\\Icons\\spell_holy_painsupression",
 		cooldown = 180,
 		minLevel = 58,
-		name = "Pain Sup",
+		title = "Pain Supp",
+		--specOnly = "DISCIPLINE",
 		spellIDs = {
 			[33206] = "Pain Suppression", --Rank 1.
 		},
@@ -671,6 +727,7 @@ NRC.cooldowns = {
 		icon = "Interface\\Icons\\spell_holy_divinehymn",
 		cooldown = 180,
 		minLevel = 78,
+		specOnly = "HOLY",
 		spellIDs = {
 			[64843] = "Divine Hymn", --Rank 1.
 		},
@@ -689,6 +746,7 @@ NRC.cooldowns = {
 		icon = "Interface\\Icons\\spell_holy_guardianspirit",
 		cooldown = 180,
 		minLevel = 70,
+		specOnly = "HOLY",
 		spellIDs = {
 			[47788] = "Guardian Spirit", --Rank 1.
 		},
@@ -708,6 +766,7 @@ NRC.cooldowns = {
 		cooldown = 180,
 		minLevel = 70,
 		title = "PW: Barrier",
+		specOnly = "DISCIPLINE",
 		spellIDs = {
 			[62618] = "Power Word: Barrier", --Rank 1.
 		},
@@ -736,6 +795,16 @@ NRC.cooldowns = {
 		},
 		spellIDs = {
 			[108921] = "Psyfiend",
+		},
+	},
+	["Spirit Shell"] = {
+		class = "PRIEST",
+		icon = 538565,
+		cooldown = 60,
+		minLevel = 28,
+		specOnly = "DISCIPLINE",
+		spellIDs = {
+			[109964] = "Spirit Shell",
 		},
 	},
 	--Rogue.
@@ -855,6 +924,7 @@ NRC.cooldowns = {
 		icon = "Interface\\Icons\\spell_frost_summonwaterelemental",
 		cooldown = 180,
 		minLevel = 56,
+		specOnly = "RESTORATION",
 		spellIDs = {
 			[16190] = "Mana Tide", --Rank 1.
 		},
@@ -873,6 +943,7 @@ NRC.cooldowns = {
 		icon = "Interface\\Icons\\spell_shaman_spiritlink",
 		cooldown = 180,
 		minLevel = 70,
+		specOnly = "RESTORATION",
 		spellIDs = { --Call of the Elements talent doesn't effect this cooldown, has to be below 3mins and not exactly 3mins.
 			[98008] = "Spirit Link", --Rank 1.
 		},
@@ -927,6 +998,19 @@ NRC.cooldowns = {
 		},
 		spellIDs = {
 			[108281] = "Ancestral Guidance",
+		},
+	},
+	["Stormlash Totem"] = {
+		class = "SHAMAN",
+		icon = 538575,
+		cooldown = 300,
+		minLevel = 78,
+		talentOnly = {
+			tabIndex = 5,
+			talentIndex = 2,
+		},
+		spellIDs = {
+			[120668] = "Stormlash Totem",
 		},
 	},
 	--Warlock.
@@ -987,7 +1071,7 @@ NRC.cooldowns = {
 		icon = "Interface\\Icons\\demoralizing_banner",
 		cooldown = 180,
 		minLevel = 87,
-		name = "Demo Banner",
+		title = "Demo Banner",
 		spellIDs = {
 			[114203] = "Demoralizing Banner", --Rank 1.
 		},
@@ -1110,6 +1194,19 @@ NRC.cooldowns = {
 			[107570] = "Storm Bolt",
 		},
 	},
+	["Vigilance"] = {
+		class = "WARRIOR",
+		icon = 236318,
+		cooldown = 120,
+		minLevel = 75,
+		talentOnly = {
+			tabIndex = 3,
+			talentIndex = 5,
+		},
+		spellIDs = {
+			[114030] = "Vigilance",
+		},
+	},
 	--[[["Shockwave"] = { --Don't track shockwave, hitting 3 targets lowers the CD, it could be tracked and adjusted but not really worth it for such a short cooldown ability.
 		class = "WARRIOR",
 		icon = 236312,
@@ -1160,6 +1257,12 @@ NRC.resetBySpellID = {};
 for k, v in pairs(NRC.cooldowns) do
 	if (v.resetBySpellID) then
 		NRC.resetBySpellID[k] = v;
+	end
+	if (v.talentOnly or v.specOnly) then
+		v.castDetect = true;
+	end
+	if (v.specOnly) then
+		v.castDetectOnly = true; --Temp fix unless I add proper spec detection, only show spec spcific spells when seen cast.
 	end
 end
 

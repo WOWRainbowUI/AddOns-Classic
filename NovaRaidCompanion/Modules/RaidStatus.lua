@@ -9,6 +9,7 @@ local L = LibStub("AceLocale-3.0"):GetLocale("NovaRaidCompanion");
 local raidStatusFrame;
 local specialSlot, specialSlot2, specialSlot3, specialSlot4, flaskSlot, foodSlot, scrollSlot, intSlot, fortSlot, spiritSlot, shadowSlot, motwSlot, palSlot, duraSlot, worldBuffsSlot;
 local armorSlot, holyResSlot, fireResSlot, natureResSlot, frostResSlot, shadowResSlot, arcaneResSlot, weaponEnchantsSlot, talentsSlot;
+local extraDataTable = {};
 local slotCount, lastRaidRequest, columCount = 0, 0, 0;
 local readyCheckStatus, readyCheckRunning, readyCheckEndedTimer, readyCheckEndedTimer2 = {};
 local fadeOutTimer;
@@ -17,10 +18,12 @@ local InCombatLockdown = InCombatLockdown;
 local lowDurationTime = 300;
 local lastOpened = 0;
 local numWorldBuffs = 0; --Counted further down when loading db.
-local firstUpdate = true;
+NRC.firstRaidStatusUpdate = true;
 local getClassColor = NRC.getClassColor;
 local isClassic = NRC.isClassic;
 local isSOD = NRC.isSOD;
+--local isMOP = NRC.isMOP;
+local expansionNum = NRC.expansionNum;
 local pairs, ipairs = pairs, ipairs;
 local gsub = gsub;
 --local tinsert = tinsert;
@@ -494,6 +497,27 @@ local int, fort, spirit, shadow, motw, pal, weaponEnchants, worldBuffs = {}, {},
 local aurasToTableCopy = {
 	[349981] = true,
 };
+if (NRC.extraSlot1Data) then
+	extraDataTable.extraSlot1Data = {};
+	for k, v in pairs(NRC.extraSlot1Data) do
+		extraDataTable.extraSlot1Data[k] = v;
+		aurasToTableCopy[k] = v;
+	end
+end
+if (NRC.extraSlot2Data) then
+	extraDataTable.extraSlot2Data = {};
+	for k, v in pairs(NRC.extraSlot2Data) do
+		extraDataTable.extraSlot2Data[k] = v;
+		aurasToTableCopy[k] = v;
+	end
+end
+if (NRC.extraSlot3Data) then
+	extraDataTable.extraSlot3Data = {};
+	for k, v in pairs(NRC.extraSlot3Data) do
+		extraDataTable.extraSlot3Data[k] = v;
+		aurasToTableCopy[k] = v;
+	end
+end
 for k, v in pairs(NRC.int) do
 	int[k] = v;
 	aurasToTableCopy[k] = v;
@@ -621,9 +645,9 @@ function NRC:openRaidStatusFrame(showOnly, fromLog, buttonID)
 		NRC:loadRaidStatusFrames();
 	end
 	--Delay used to split first load in to different frames if in combat.
-	--if (firstUpdate and InCombatLockdown()) then
+	--if (NRC.firstRaidStatusUpdate and InCombatLockdown()) then
 	--Just do every first load for now.
-	if (firstUpdate) then
+	if (NRC.firstRaidStatusUpdate) then
 		C_Timer.After(0.01, function()
 			if (not raidStatusFrame:IsShown() or fromLog) then
 				if (buttonID and buttonID == raidStatusFrame.lastbuttonID) then
@@ -788,20 +812,27 @@ local function updateGridTooltip(frame, localBuffData, buffData)
 		tooltipText = tooltipText .. " |cFFA0A0A0(Rank " .. localBuffData.rank .. ")|r";
 	end
 	if (not NRC.raidStatusCache) then
+		local hasDuration;
 		if (buffData.endTime and buffData.endTime > GetServerTime()) then
 			local remaining = buffData.endTime - GetServerTime();
 			tooltipText = tooltipText .. "\n|cFF9CD6DE" .. NRC:getShortTime(remaining) .. "|r";
 			if (remaining < lowDurationTime) then
 				tooltipText = tooltipText .. " |cFFFFFF00Low Duration|r";
 			end
+			hasDuration = true;
 		elseif (buffData.duration == 0) then
 			--An aura, no duration.
-			tooltipText = tooltipText .. "\n|cFF9CD6DENo duration|r";
+			--tooltipText = tooltipText .. "\n|cFF9CD6DENo duration|r";
 		else
 			tooltipText = tooltipText .. "\n|cFF9CD6DEDuration unknown (out of range?)|r";
+			hasDuration = true;
 		end
 		if (buffData.source) then
-			tooltipText = tooltipText .. "  |cFFFFFFFFCast by " .. buffData.source .. "|r";
+			if (hasDuration) then
+				tooltipText = tooltipText .. "  |cFFFFFFFFCast by " .. buffData.source .. "|r";
+			else
+				tooltipText = tooltipText .. "\n|cFFFFFFFFCast by " .. buffData.source .. "|r";
+			end
 		end
 	else
 		if (buffData.source) then
@@ -828,23 +859,30 @@ local function getMultipleIconsTooltip(buffData, hideSource)
 		tooltipText = tooltipText .. " |cFFA0A0A0(Rank " .. buffData.rank .. ")|r";
 	end
 	if (not NRC.raidStatusCache) then
+		local hasDuration;
 		if (buffData.endTime and buffData.endTime > GetServerTime()) then
 			local remaining = buffData.endTime - GetServerTime();
 			tooltipText = tooltipText .. "\n|cFF9CD6DE" .. NRC:getShortTime(remaining) .. "|r";
 			if (remaining < lowDurationTime) then
 				tooltipText = tooltipText .. " |cFFFFFF00Low Duration|r";
 			end
+			hasDuration = true;
 		elseif (buffData.duration == 0) then
 			--An aura, no duration.
-			tooltipText = tooltipText .. "\n|cFF9CD6DENo duration|r";
+			--tooltipText = tooltipText .. "\n|cFF9CD6DENo duration|r";
 		else
 			tooltipText = tooltipText .. "\n|cFF9CD6DEDuration unknown (out of range?)|r";
+			hasDuration = true;
 		end
 		--if (buffData.endTime) then
 		--	tooltipText = tooltipText .. "\n" .. NRC:getShortTime(buffData.endTime - GetServerTime()) .. "|r";
 		--end
 		if (buffData.source and not hideSource) then
-			tooltipText = tooltipText .. "  |cFFFFFFFFCast by " .. buffData.source .. "|r";
+			if (hasDuration) then
+				tooltipText = tooltipText .. "  |cFFFFFFFFCast by " .. buffData.source .. "|r";
+			else
+				tooltipText = tooltipText .. "\n|cFFFFFFFFCast by " .. buffData.source .. "|r";
+			end
 		end
 	else
 		if (buffData.source and not hideSource) then
@@ -1146,7 +1184,7 @@ local function getMaxNumGroupWorldBuffs()
 	return maxBuffs;
 end
 
-local function checkWorldBuffCountChanged()
+function NRC.checkWorldBuffCountChanged()
 	local worldBuffCount = getMaxNumGroupWorldBuffs();
 	if (worldBuffCount ~= currentMaxWorldbuffs) then
 		currentMaxWorldbuffs = worldBuffCount;
@@ -1161,11 +1199,14 @@ local armorTypes = {
 	["WARRIOR"] = 132739, ["PALADIN"] = 132739, ["DEATHKNIGHT"] = 132739, --inv_chest_plate04
 };
 
-local function updateBackgroundColor(frame, notMaxRank, lowDuration)
+local function updateBackgroundColor(frame, notMaxRank, lowDuration, maxDuration)
 	if (frame:IsMouseOver() and not frame.red) then
 		frame:SetBackdropColor(0, 1, 0, 0.15);
 		frame:SetBackdropBorderColor(1, 1, 1, 0.5);
 		return;
+	end
+	if (maxDuration and maxDuration < 630) then
+		lowDuration = false;
 	end
 	if (notMaxRank) then
 		frame:SetBackdropColor(1, 0, 0, 0.25);
@@ -1192,7 +1233,7 @@ function NRC:updateRaidStatusFrames(updateLayout)
 	if (updateLayout ~= false and NRC.isClassic and NRC.config.raidStatusWorldBuffs and not raidStatusFrame.isMoving) then
 		--Don't override updateLayout with false if we opened the frame with updateLayout true.
 		--But we still need to run checkWorldBuffCountChanged anyway to set out local variable of max buff count shown atm.
-		local buffsChanged = checkWorldBuffCountChanged();
+		local buffsChanged = NRC.checkWorldBuffCountChanged();
 		if (not updateLayout) then
 			--Allow frame to grow/shrink while open if we're showing world buffs in classic and the max shown has changed.
 			updateLayout = buffsChanged;
@@ -1227,8 +1268,8 @@ function NRC:updateRaidStatusFrames(updateLayout)
 			raidStatusFrame.groupFrames[i]:Hide();
 		end
 		columCount = #data.columns;
-		if (firstUpdate) then
-			firstUpdate = nil;
+		if (NRC.firstRaidStatusUpdate) then
+			NRC.firstRaidStatusUpdate = nil;
 			--On first open if the player is in combat and on a super slow pc it can exceed the 0.25 second script ran too long threshold.
 			--So split up the creation of the frames and the calc to seperate frames.
 			C_Timer.After(0.01, function()
@@ -1323,7 +1364,7 @@ function NRC:updateRaidStatusFrames(updateLayout)
 					end
 				end
 				local hasFlask, hasBattle, hasGuardian, hasScroll, hasFood, hasInt, hasFort, hasSpirit, hasShadow, hasMotw, hasPal, hasWorldBuffs, hasChronoboon;
-				local hasWeaponEnchant, hasTalents, auras;
+				local hasWeaponEnchant, hasTalents, auras, hasExtraSlot1, hasExtraSlot2, hasExtraSlot3;
 				if (NRC.raidStatusCache) then
 					auras = NRC.raidStatusCache.auraCache[v.guid];
 				else
@@ -1475,7 +1516,7 @@ function NRC:updateRaidStatusFrames(updateLayout)
 							frame.texture:SetSize(15, 15);
 							hasInt = true;
 							updateGridTooltip(frame, int[buffID], buffData);
-							updateBackgroundColor(frame, not int[buffID].maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0);
+							updateBackgroundColor(frame, not int[buffID].maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0, buffData.duration);
 							if (not InCombatLockdown()) then
 								frame:SetAttribute("macrotext", "/target " .. name);
 							end
@@ -1488,7 +1529,7 @@ function NRC:updateRaidStatusFrames(updateLayout)
 							frame.texture:SetSize(16, 16);
 							hasFort = true;
 							updateGridTooltip(frame, fort[buffID], buffData);
-							updateBackgroundColor(frame, not fort[buffID].maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0);
+							updateBackgroundColor(frame, not fort[buffID].maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0, buffData.duration);
 							if (not InCombatLockdown()) then
 								frame:SetAttribute("macrotext", "/target " .. name);
 							end
@@ -1501,7 +1542,7 @@ function NRC:updateRaidStatusFrames(updateLayout)
 							frame.texture:SetSize(16, 16);
 							hasSpirit = true;
 							updateGridTooltip(frame, spirit[buffID], buffData);
-							updateBackgroundColor(frame, not spirit[buffID].maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0);
+							updateBackgroundColor(frame, not spirit[buffID].maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0, buffData.duration);
 							if (not InCombatLockdown()) then
 								frame:SetAttribute("macrotext", "/target " .. name);
 							end
@@ -1514,7 +1555,7 @@ function NRC:updateRaidStatusFrames(updateLayout)
 							frame.texture:SetSize(16, 16);
 							hasShadow = true;
 							updateGridTooltip(frame, shadow[buffID], buffData);
-							updateBackgroundColor(frame, not shadow[buffID].maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0);
+							updateBackgroundColor(frame, not shadow[buffID].maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0, buffData.duration);
 							if (not InCombatLockdown()) then
 								frame:SetAttribute("macrotext", "/target " .. name);
 							end
@@ -1527,11 +1568,58 @@ function NRC:updateRaidStatusFrames(updateLayout)
 							frame.texture:SetSize(16, 16);
 							hasMotw = true;
 							updateGridTooltip(frame, motw[buffID], buffData);
-							updateBackgroundColor(frame, not motw[buffID].maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0);
+							updateBackgroundColor(frame, not motw[buffID].maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0, buffData.duration);
 							if (not InCombatLockdown()) then
 								frame:SetAttribute("macrotext", "/target " .. name);
 							end
 							updateCooldownSwipe(frame.texture, buffData.endTime, buffData.duration);
+						end
+						if (expansionNum > 4) then
+							if (extraDataTable.extraSlot1 and NRC.extraSlot1Data[buffID]) then
+								--Ran our of upvalues to have to use a extraDataTable table until I clean this func up...
+								local frame = raidStatusFrame.subFrames[rowName .. extraDataTable.extraSlot1];
+								local extraSlotBuff = extraDataTable.extraSlot1Data[buffID];
+								frame.fs:SetText("");
+								frame.texture:SetTexture(extraSlotBuff.icon);
+								frame.texture:SetSize(16, 16);
+								hasExtraSlot1 = true;
+								updateGridTooltip(frame, extraSlotBuff, buffData);
+								updateBackgroundColor(frame, not extraSlotBuff.maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0, buffData.duration);
+								if (not InCombatLockdown()) then
+									frame:SetAttribute("macrotext", "/target " .. name);
+								end
+								updateCooldownSwipe(frame.texture, buffData.endTime, buffData.duration);
+							end
+							if (extraDataTable.extraSlot2 and NRC.extraSlot2Data[buffID]) then
+								--Ran our of upvalues to have to use a extraDataTable table until I clean this func up...
+								local frame = raidStatusFrame.subFrames[rowName .. extraDataTable.extraSlot2];
+								local extraSlotBuff = extraDataTable.extraSlot2Data[buffID];
+								frame.fs:SetText("");
+								frame.texture:SetTexture(extraSlotBuff.icon);
+								frame.texture:SetSize(16, 16);
+								hasExtraSlot2 = true;
+								updateGridTooltip(frame, extraSlotBuff, buffData);
+								updateBackgroundColor(frame, not extraSlotBuff.maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0, buffData.duration);
+								if (not InCombatLockdown()) then
+									frame:SetAttribute("macrotext", "/target " .. name);
+								end
+								updateCooldownSwipe(frame.texture, buffData.endTime, buffData.duration);
+							end
+							if (extraDataTable.extraSlot3 and NRC.extraSlot3Data[buffID]) then
+								--Ran our of upvalues to have to use a extraDataTable table until I clean this func up...
+								local frame = raidStatusFrame.subFrames[rowName .. extraDataTable.extraSlot3];
+								local extraSlotBuff = extraDataTable.extraSlot3Data[buffID];
+								frame.fs:SetText("");
+								frame.texture:SetTexture(extraSlotBuff.icon);
+								frame.texture:SetSize(16, 16);
+								hasExtraSlot3 = true;
+								updateGridTooltip(frame, extraSlotBuff, buffData);
+								updateBackgroundColor(frame, not extraSlotBuff.maxRank, buffData.endTime and buffData.endTime - GetServerTime() < lowDurationTime and not usingCache and buffData.duration ~= 0, buffData.duration);
+								if (not InCombatLockdown()) then
+									frame:SetAttribute("macrotext", "/target " .. name);
+								end
+								updateCooldownSwipe(frame.texture, buffData.endTime, buffData.duration);
+							end
 						end
 						if (palSlot and pal[buffID]) then
 							tinsert(pallyBuffs, buffData);
@@ -2029,7 +2117,7 @@ function NRC:updateRaidStatusFrames(updateLayout)
 						frame.texture2:Hide();
 						--frame.texture2:Show();
 						--frame.texture:SetTexture(626008);
-						frame.texture:SetTexture("Interface\\AddOns\\NovaRaidCompanion\\Media\\redsword.png");
+						--frame.texture:SetTexture("Interface\\AddOns\\NovaRaidCompanion\\Media\\redsword.png");
 						local tooltipString = "";
 						if (issues and issues.totalIssues > 0) then
 							local totalIssues = issues.totalIssues;
@@ -2045,6 +2133,13 @@ function NRC:updateRaidStatusFrames(updateLayout)
 								frame.texture2:SetPoint("CENTER", 16.5, 0);
 								frame.texture2:SetSize(16, 16);
 								frame.texture2:SetTexture(132222);
+								frame.texture2:Show();
+							elseif (issues.glyphIssues and issues.glyphIssues > 0) then
+								frame.texture2:SetPoint("CENTER", 16.5, 0);
+								frame.texture2:SetSize(16, 16);
+								--frame.texture2:SetTexture(254290); --Green.
+								--frame.texture2:SetTexture(254295); --Blue.
+								frame.texture2:SetTexture(254288); --Red.
 								frame.texture2:Show();
 							end
 							for k, v in ipairs(issues.otherIssues) do
@@ -2459,6 +2554,41 @@ function NRC:updateRaidStatusFrames(updateLayout)
 					end
 					stopCooldownSwipe(frame.texture);
 				end
+				if (expansionNum > 4) then
+					if (extraDataTable.extraSlot1 and not hasExtraSlot1) then
+						local frame = raidStatusFrame.subFrames[rowName .. extraDataTable.extraSlot1];
+						frame.texture:SetTexture();
+						frame.fs:SetText("|cFFFF0000X|r");
+						frame.updateTooltip();
+						updateBackgroundColor(frame);
+						if (not InCombatLockdown()) then
+							frame:SetAttribute("macrotext", "/target " .. name);
+						end
+						stopCooldownSwipe(frame.texture);
+					end
+					if (extraDataTable.extraSlot2 and not hasExtraSlot2) then
+						local frame = raidStatusFrame.subFrames[rowName .. extraDataTable.extraSlot2];
+						frame.texture:SetTexture();
+						frame.fs:SetText("|cFFFF0000X|r");
+						frame.updateTooltip();
+						updateBackgroundColor(frame);
+						if (not InCombatLockdown()) then
+							frame:SetAttribute("macrotext", "/target " .. name);
+						end
+						stopCooldownSwipe(frame.texture);
+					end
+					if (extraDataTable.extraSlot3 and not hasExtraSlot3) then
+						local frame = raidStatusFrame.subFrames[rowName .. extraDataTable.extraSlot3];
+						frame.texture:SetTexture();
+						frame.fs:SetText("|cFFFF0000X|r");
+						frame.updateTooltip();
+						updateBackgroundColor(frame);
+						if (not InCombatLockdown()) then
+							frame:SetAttribute("macrotext", "/target " .. name);
+						end
+						stopCooldownSwipe(frame.texture);
+					end
+				end
 				if (palSlot and not hasPal) then
 					local frame = raidStatusFrame.subFrames[rowName .. palSlot];
 					frame.texture:SetTexture();
@@ -2634,7 +2764,9 @@ function NRC:raidStatusSortMultipleIcons(frame, spellData, maxPossible, checkMax
 				missingMaxRank = true;
 			end
 			if (v.endTime and v.endTime - GetServerTime() < (customLowDuration or lowDurationTime) and v.duration ~= 0) then
-				lowDurationFound = true;
+				if (not v.duration or v.duration and v.duration > 630) then
+					lowDurationFound = true;
+				end
 			end
 			texture:ClearAllPoints();
 			texture:SetTexture(v.icon);
@@ -2717,7 +2849,9 @@ function NRC:raidStatusSortMultipleIconsPally(frame, spellData, maxPossible, che
 			missingMaxRank = true;
 		end
 		if (spellData[1].endTime and spellData[1].endTime - GetServerTime() < (customLowDuration or lowDurationTime) and spellData[1].duration ~= 0) then
-			lowDurationFound = true;
+			if (not spellData[1].duration or spellData[1].duration and spellData[1].duration > 630) then
+				lowDurationFound = true;
+			end
 		end
 	end
 	if (spellData[2]) then
@@ -2732,7 +2866,9 @@ function NRC:raidStatusSortMultipleIconsPally(frame, spellData, maxPossible, che
 			missingMaxRank = true;
 		end
 		if (spellData[2].endTime and spellData[2].endTime - GetServerTime() < (customLowDuration or lowDurationTime) and spellData[2].duration ~= 0) then
-			lowDurationFound = true;
+			if (not spellData[2].duration or spellData[2].duration and spellData[2].duration > 630) then
+				lowDurationFound = true;
+			end
 		end
 	end
 	if (spellData[3]) then
@@ -2747,7 +2883,9 @@ function NRC:raidStatusSortMultipleIconsPally(frame, spellData, maxPossible, che
 			missingMaxRank = true;
 		end
 		if (spellData[3].endTime and spellData[3].endTime - GetServerTime() < (customLowDuration or lowDurationTime) and spellData[3].duration ~= 0) then
-			lowDurationFound = true;
+			if (not spellData[3].duration or spellData[3].duration and spellData[3].duration > 630) then
+				lowDurationFound = true;
+			end
 		end
 	end
 	if (spellData[4]) then
@@ -2762,7 +2900,9 @@ function NRC:raidStatusSortMultipleIconsPally(frame, spellData, maxPossible, che
 			missingMaxRank = true;
 		end
 		if (spellData[4].endTime and spellData[4].endTime - GetServerTime() < (customLowDuration or lowDurationTime) and spellData[4].duration ~= 0) then
-			lowDurationFound = true;
+			if (not spellData[4].duration or spellData[4].duration and spellData[4].duration > 630) then
+				lowDurationFound = true;
+			end
 		end
 	end
 	updateBackgroundColor(frame, checkMaxRank and missingMaxRank, checkDuration and lowDurationFound and not NRC.raidStatusCache);
@@ -3588,10 +3728,10 @@ function NRC:createRaidStatusData(updateLayout)
 			local slot = #data.columns + 1;
 			if (isClassic) then
 				data.columns[slot] = {
-				name = L["Flask / Potions"],
-				width = 100,
-				textureCount = 8,
-			};
+					name = L["Flask / Potions"],
+					width = 100,
+					textureCount = 8,
+				};
 			else
 				data.columns[slot] = {
 					name = L["Flask"],
@@ -3616,53 +3756,136 @@ function NRC:createRaidStatusData(updateLayout)
 			scrollSlot = slot;
 			slotCount = slotCount + 1;
 		end
-		if (config.raidStatusInt) then
-			local slot = #data.columns + 1;
-			data.columns[slot] = {
-				name = L["Int"],
-			};
-			intSlot = slot;
-			slotCount = slotCount + 1;
+		if (expansionNum < 5) then
+			if (config.raidStatusInt) then
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["Int"],
+				};
+				intSlot = slot;
+				slotCount = slotCount + 1;
+			end
 		end
 		if (config.raidStatusFort) then
 			local slot = #data.columns + 1;
-			data.columns[slot] = {
-				name = L["Fort"],
-			};
+			if (expansionNum > 4) then
+				data.columns[slot] = {
+					name = L["Stam"],
+				};
+			else
+				data.columns[slot] = {
+					name = L["Fort"],
+				};
+			end
 			fortSlot = slot;
 			slotCount = slotCount + 1;
 		end
-		if (config.raidStatusSpirit) then
-			local slot = #data.columns + 1;
-			data.columns[slot] = {
-				name = L["Spirit"],
-			};
-			spiritSlot = slot;
-			slotCount = slotCount + 1;
+		if (config.raidStatusSpirit) then --Removed in cata.
+			if (expansionNum > 4) then
+				--Repurpose the spirit column in MoP.
+				--We'll simply rename the options and enable them by default in MoP.
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["Crit"],
+				};
+				spiritSlot = slot;
+				slotCount = slotCount + 1;
+			elseif (expansionNum < 4) then	--Removed in cata.
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["Spirit"],
+				};
+				spiritSlot = slot;
+				slotCount = slotCount + 1;
+			end
 		end
-		if (config.raidStatusShadow and NRC.expansionNum < 4) then --No spirit buff in cata.
-			local slot = #data.columns + 1;
-			data.columns[slot] = {
-				name = L["Shadow"],
-			};
-			shadowSlot = slot;
-			slotCount = slotCount + 1;
+		if (config.raidStatusShadow) then
+			if (expansionNum > 4) then
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["Mast"],
+				};
+				shadowSlot = slot;
+				slotCount = slotCount + 1;
+			elseif (expansionNum < 5) then	--Removed in MoP.
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["Shadow"],
+				};
+				shadowSlot = slot;
+				slotCount = slotCount + 1;
+			end
 		end
 		if (config.raidStatusMotw) then
-			local slot = #data.columns + 1;
-			data.columns[slot] = {
-				name = L["Motw"],
-			};
-			motwSlot = slot;
-			slotCount = slotCount + 1;
+			if (expansionNum > 4) then
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["Stats"],
+				};
+				motwSlot = slot;
+				slotCount = slotCount + 1;
+			else
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["Motw"],
+				};
+				motwSlot = slot;
+				slotCount = slotCount + 1;
+			end
 		end
-		if (config.raidStatusPal) then
-			local slot = #data.columns + 1;
-			data.columns[slot] = {
-				name = L["Pal"],
-			};
-			palSlot = slot;
-			slotCount = slotCount + 1;
+		if (expansionNum > 4) then
+			--Move this culn further right on th display for MoP+ so it sits beside attack power.
+			if (config.raidStatusInt) then
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["SP"],
+				};
+				intSlot = slot;
+				slotCount = slotCount + 1;
+			end
+		end
+		if (expansionNum > 4) then
+			if (config.raidStatusExtraSlot1) then
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["AP"],
+					};
+				extraDataTable.extraSlot1 = slot;
+				slotCount = slotCount + 1;
+			end
+			if (config.raidStatusExtraSlot2) then
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["Haste"],
+					};
+				extraDataTable.extraSlot2 = slot;
+				slotCount = slotCount + 1;
+			end
+			if (config.raidStatusExtraSlot3) then
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["Speed"],
+					};
+				extraDataTable.extraSlot3 = slot;
+				slotCount = slotCount + 1;
+			end
+		end
+		if (config.raidStatusPal and expansionNum < 5) then
+			--[[if (expansionNum > 4) then
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["Auras"],
+				};
+				palSlot = slot;
+				slotCount = slotCount + 1;
+			else]]
+				local slot = #data.columns + 1;
+				data.columns[slot] = {
+					name = L["Pal"],
+				};
+				palSlot = slot;
+				slotCount = slotCount + 1;
+			--end
 		end
 		if (NRC.raidStatusCache) then
 			--Last column is shared between durability and snapshot text.
