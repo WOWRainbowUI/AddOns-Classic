@@ -1,28 +1,48 @@
-tag 091019240fa245cfb1afcc767321c640f1b7f246 v2.0.4
+tag e3c67a343a016d2665def148cf0dca47dcf8dc61 v2.0.6
 Author:	skyler-code <skylerh15@github.com>
-Date:	Thu Jul 10 00:43:00 2025 -0500
+Date:	Fri Jul 25 21:49:15 2025 -0500
 
-commit 087d5073ed4cb327f3ccb1ecf5cc4a368f618d92
+commit d5a796e35d423f79abc055a893e24deb4df03f84
 Author: skyler-code <skylerh15@github.com>
-Date:   Wed Jul 9 15:23:28 2025 -0500
+Date:   Fri Jul 25 21:49:04 2025 -0500
 
-    mistweaver weight correction
+    Updated Cat weights
 
-commit 6fb6c9ad81786fc61076b305d1aef9a7661cab2a
+commit 4a2adb0a80da7613bdfcc517f8f74f41a43eb5e9
 Author: skyler-code <skylerh15@github.com>
-Date:   Wed Jul 9 15:18:26 2025 -0500
+Date:   Fri Jul 25 21:32:36 2025 -0500
 
-    removing whitespace
+    Workaround for Exp->Spell Hit
+    
+    Closes #41
 
-commit c6188834048dfd97836e91edcf69cb77e29ddc7f
+commit 8f0899bd377a46336fd31c96d579394540e3f092
 Author: skyler-code <skylerh15@github.com>
-Date:   Wed Jul 9 10:28:28 2025 -0500
+Date:   Fri Jul 25 21:27:07 2025 -0500
 
-    more hit rating fixes
+    no magic numbers
 
-commit 246264d85567494b3263152c4b4537638d836d69
+commit 4dc85f40d8778afb75fe03bc667237d55244bb2f
 Author: skyler-code <skylerh15@github.com>
-Date:   Wed Jul 9 03:37:28 2025 -0500
+Date:   Fri Jul 25 19:55:44 2025 -0500
 
-    utilize SetFormattedText functions
+    small cleanup
+
+commit 0e3795ffbb78221fe94360d901921ca7533cb538
+Author: skyler-code <skylerh15@github.com>
+Date:   Fri Jul 25 19:55:26 2025 -0500
+
+    Updated Bear weights
+
+commit a7be7989c2345179d736ec34aa97b015bcc95074
+Author: skyler-code <skylerh15@github.com>
+Date:   Sat Jul 12 03:31:42 2025 -0500
+
+    small cleanup cause we dont need to clear onleave just to set it back to the same thing
+
+commit 02d90cb3d807637d3e811d4a08b780c92843e403
+Author: skyler-code <skylerh15@github.com>
+Date:   Sat Jul 12 03:31:12 2025 -0500
+
+    Fixed issue where help button was showing over method window
 

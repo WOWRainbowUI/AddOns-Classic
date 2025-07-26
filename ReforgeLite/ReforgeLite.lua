@@ -195,12 +195,27 @@ ReforgeLite.itemStats = {
         return spirit
       end,
       mgetter = function (method, orig)
-        return (orig and method.orig_stats and method.orig_stats[1]) or method.stats[1]
+        return (orig and method.orig_stats and method.orig_stats[statIds.SPIRIT]) or method.stats[statIds.SPIRIT]
       end
     },
     RatingStat (statIds.DODGE,   "ITEM_MOD_DODGE_RATING",         STAT_DODGE,     STAT_DODGE,           CR_DODGE),
     RatingStat (statIds.PARRY,   "ITEM_MOD_PARRY_RATING",         STAT_PARRY,     STAT_PARRY,           CR_PARRY),
-    RatingStat (statIds.HIT,     "ITEM_MOD_HIT_RATING",           HIT,            HIT,                  CR_HIT),
+    --RatingStat (statIds.HIT,     "ITEM_MOD_HIT_RATING",           HIT,            HIT,                  CR_HIT),
+    {
+      name = "ITEM_MOD_HIT_RATING",
+      tip = HIT,
+      long = HIT,
+      getter = function()
+        local hit = GetCombatRating(CR_HIT)
+        if (ReforgeLite.conversion[statIds.EXP] or {})[statIds.HIT] then
+          hit = hit + (GetCombatRating(CR_EXPERTISE) * ReforgeLite.conversion[statIds.EXP][statIds.HIT])
+        end
+        return hit
+      end,
+      mgetter = function (method, orig)
+        return (orig and method.orig_stats and method.orig_stats[statIds.HIT]) or method.stats[statIds.HIT]
+      end
+    },
     RatingStat (statIds.CRIT,    "ITEM_MOD_CRIT_RATING",          CRIT_ABBR,      STAT_CRITICAL_STRIKE, CR_CRIT),
     RatingStat (statIds.HASTE,   "ITEM_MOD_HASTE_RATING",         STAT_HASTE,     STAT_HASTE,           CR_HASTE),
     RatingStat (statIds.EXP,     "ITEM_MOD_EXPERTISE_RATING",     EXPERTISE_ABBR, STAT_EXPERTISE,       CR_EXPERTISE),
@@ -320,17 +335,16 @@ function ReforgeLite:ParsePawnString(values)
     raw[k] = Round(v * factor)
   end
 
-  local weights = {}
-  weights[statIds.SPIRIT] = raw["Spirit"] or 0
-  weights[statIds.DODGE] = raw["DodgeRating"] or 0
-  weights[statIds.PARRY] = raw["ParryRating"] or 0
-  weights[statIds.HIT] = raw["HitRating"] or 0
-  weights[statIds.CRIT] = raw["CritRating"] or 0
-  weights[statIds.HASTE] = raw["HasteRating"] or 0
-  weights[statIds.EXP] = raw["ExpertiseRating"] or 0
-  weights[statIds.MASTERY] = raw["MasteryRating"] or 0
-
-  self:SetStatWeights (weights)
+  self:SetStatWeights ({
+    raw["Spirit"] or 0,
+    raw["DodgeRating"] or 0,
+    raw["ParryRating"] or 0,
+    raw["HitRating"] or 0,
+    raw["CritRating"] or 0,
+    raw["HasteRating"] or 0,
+    raw["ExpertiseRating"] or 0,
+    raw["MasteryRating"] or 0
+  })
 end
 
 local orderIds = {}
@@ -694,6 +708,7 @@ function ReforgeLite:CreateItemTable ()
     self.playerTalents[tier]:SetPoint("TOPLEFT", self.playerTalents[tier-1] or self.playerSpecTexture, "TOPRIGHT", 4, 0)
     self.playerTalents[tier]:SetSize(18, 18)
     self.playerTalents[tier]:SetTexCoord(0.0825, 0.0825, 0.0825, 0.9175, 0.9175, 0.0825, 0.9175, 0.9175)
+    self.playerTalents[tier]:SetScript("OnLeave", function() GameTooltip:Hide() end)
   end
 
   self:UpdatePlayerSpecInfo()
@@ -707,7 +722,8 @@ function ReforgeLite:CreateItemTable ()
   ReforgeLite.itemLevel:SetPoint ("BOTTOMRIGHT", ReforgeLite.itemTable, "TOPRIGHT", 0, 8)
   self.itemLevel:SetTextColor (1, 1, 0.8)
 
-  self.itemLockHelpButton = CreateFrame("Button",nil, self ,"MainHelpPlateButton")
+  self.itemLockHelpButton = CreateFrame("Button",nil, self,"MainHelpPlateButton")
+  self.itemLockHelpButton:SetFrameLevel(self.itemLockHelpButton:GetParent():GetFrameLevel() + 1)
   self.itemLockHelpButton:SetScale(0.5)
   GUI:SetTooltip(self.itemLockHelpButton, L["The current state of your equipment.\nClicking an item icon will lock it. ReforgeLite will ignore the item(s) in future calculations."])
 
@@ -1526,11 +1542,9 @@ function ReforgeLite:UpdatePlayerSpecInfo()
           GameTooltip:SetTalent(talentInfo.talentID, false, false, activeSpecGroup)
           GameTooltip:Show()
         end)
-        self.playerTalents[tier]:SetScript("OnLeave", function() GameTooltip:Hide() end)
       else
         self.playerTalents[tier]:SetTexture(132222)
         self.playerTalents[tier]:SetScript("OnEnter", nil)
-        self.playerTalents[tier]:SetScript("OnLeave", nil)
       end
     else
       self.playerTalents[tier]:Hide()

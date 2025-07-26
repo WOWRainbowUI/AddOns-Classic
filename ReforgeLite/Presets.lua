@@ -159,11 +159,7 @@ ReforgeLite.capPresets = {
     value = CAPS.SpellHitCap,
     name = L["Spell hit cap"],
     getter = function ()
-      local result = ReforgeLite:RatingPerPoint (addonTable.statIds.SPELLHIT) * (ReforgeLite:GetNeededSpellHit () - ReforgeLite:GetSpellHitBonus ())
-      if ReforgeLite.conversion[StatExp] and ReforgeLite.conversion[StatExp][StatHit] then
-        result = result + floor(GetCombatRating(CR_EXPERTISE) * ReforgeLite.conversion[StatExp][StatHit])
-      end
-      return result
+      return ReforgeLite:RatingPerPoint (addonTable.statIds.SPELLHIT) * (ReforgeLite:GetNeededSpellHit () - ReforgeLite:GetSpellHitBonus ())
     end,
     category = StatHit
   },
@@ -293,55 +289,22 @@ do
 end
 ----------------------------------------- WEIGHT PRESETS ------------------------------
 
-local HitCap = {
-  stat = StatHit,
-  points = {
-    {
-      method = AtLeast,
-      preset = CAPS.MeleeHitCap
-    }
-  }
+local HitCap = { stat = StatHit, points = { { method = AtLeast, preset = CAPS.MeleeHitCap } } }
+
+local HitCapSpell = { stat = StatHit, points = { { method = AtLeast, preset = CAPS.SpellHitCap } } }
+
+local SoftExpCap = { stat = StatExp, points = { { method = AtLeast, preset = CAPS.ExpSoftCap } } }
+
+local HardExpCap = { stat = StatExp, points = { { method = AtLeast, preset = CAPS.ExpHardCap } } }
+
+local MeleeCaps = { HitCap, SoftExpCap }
+
+local AtMostMeleeCaps = {
+  { stat = StatHit, points = { { method = AtMost, preset = CAPS.MeleeHitCap } } },
+  { stat = StatExp, points = { { method = AtMost, preset = CAPS.ExpSoftCap } } }
 }
 
-local HitCapSpell = {
-  stat = StatHit,
-  points = {
-    {
-      method = AtLeast,
-      preset = CAPS.SpellHitCap,
-    }
-  }
-}
-
-local SoftExpCap = {
-  stat = StatExp,
-  points = {
-    {
-      method = AtLeast,
-      preset = CAPS.ExpSoftCap
-    }
-  }
-}
-
-local HardExpCap = {
-  stat = StatExp,
-  points = {
-    {
-      method = AtLeast,
-      preset = CAPS.ExpHardCap
-    }
-  }
-}
-
-local MeleeCaps = {
-  HitCap,
-  SoftExpCap
-}
-
-local TankCaps = {
-  HitCap,
-  HardExpCap
-}
+local TankCaps = { HitCap, HardExpCap }
 
 local CasterCaps = { HitCapSpell }
 
@@ -374,29 +337,10 @@ do
     ["DEATHKNIGHT"] = {
       [specs.deathknight.blood] = {
         [PET_DEFENSIVE] = {
-          caps = {
-            {
-              stat = StatHit,
-              points = {
-                {
-                  method = AtMost,
-                  preset = CAPS.MeleeHitCap,
-                }
-              }
-            },
-            {
-              stat = StatExp,
-              points = {
-                {
-                  method = AtMost,
-                  preset = CAPS.ExpSoftCap,
-                }
-              }
-            }
-          },
           weights = {
             0, 140, 150, 100, 50, 75, 95, 200
           },
+          caps = AtMostMeleeCaps,
         },
         [BALANCE] = {
           weights = {
@@ -455,13 +399,13 @@ do
       },
       [specs.druid.feralcombat] = {
           weights = {
-            0, 0, 0, 127, 60, 40, 127, 80
+            0, 0, 0, 330, 320, 220, 330, 380
           },
-          caps = MeleeCaps,
+          caps = AtMostMeleeCaps,
       },
       [specs.druid.guardian] = {
           weights = {
-            0, 0, 0, 127, 80, 60, 127, 40
+            0, 53, 0, 116, 105, 37, 116, 73
           },
           caps = TankCaps,
       },
