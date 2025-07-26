@@ -2106,12 +2106,10 @@ end
 
 function VUHDO_getSpecialization()
 
-	if C_SpecializationInfo and C_SpecializationInfo.GetSpecialization then
-		return C_SpecializationInfo.GetSpecialization();
-	elseif GetSpecialization then
-		return GetSpecialization();
-	else
+	if not GetSpecialization then
 		return 1;
+	else
+		return GetSpecialization();
 	end
 
 end
@@ -2120,12 +2118,10 @@ end
 
 function VUHDO_getSpecializationInfo(aSpecNum, ...)
 
-	if C_SpecializationInfo and C_SpecializationInfo.GetSpecializationInfo then
-		return C_SpecializationInfo.GetSpecializationInfo(aSpecNum, ...);
-	elseif GetSpecializationInfo then
-		return GetSpecializationInfo(aSpecNum, ...);
-	else
+	if not GetSpecializationInfo then
 		return 1, "Unknown", _, _, _, "NONE";
+	else
+		return GetSpecializationInfo(aSpecNum, ...);
 	end
 
 end
