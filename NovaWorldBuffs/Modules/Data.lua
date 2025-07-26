@@ -232,15 +232,28 @@ function NWB:OnCommReceived(commPrefix, string, distribution, sender)
 			NWB:sendLayerBuffs();
 		end
 	end
-	if (tonumber(remoteVersion) < 2.75) then
-		if (cmd == "requestData" and distribution == "GUILD") then
-			if (not NWB:getGuildDataStatus()) then
-				NWB:sendSettings("GUILD");
-			else
-				NWB:sendData("GUILD");
+	if (NWB.isMOP) then
+		if (tonumber(remoteVersion) < 3.10) then
+			if (cmd == "requestData" and distribution == "GUILD") then
+				if (not NWB:getGuildDataStatus()) then
+					NWB:sendSettings("GUILD");
+				else
+					NWB:sendData("GUILD");
+				end
 			end
+			return;
 		end
-		return;
+	else
+		if (tonumber(remoteVersion) < 2.75) then
+			if (cmd == "requestData" and distribution == "GUILD") then
+				if (not NWB:getGuildDataStatus()) then
+					NWB:sendSettings("GUILD");
+				else
+					NWB:sendData("GUILD");
+				end
+			end
+			return;
+		end
 	end
 	if (cmd == "data" or cmd == "settings") then
 		NWB:receivedData(data, sender, distribution, elapsed);

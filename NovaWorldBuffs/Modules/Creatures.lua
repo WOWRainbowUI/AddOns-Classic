@@ -522,17 +522,21 @@ NWB.dalaranCreatures = {
 };
 
 --Have a couple npcs ready to go incase layering start point is pandaria.
---[[NWB.pandariaCreatures = {
-	[62996] = "Madam Vee Luo",
-	[64041] = "Mifan",
-	[64044] = "Warpweaver Shafiee",
-	[64045] = "Thaumaturge Anjool",
-	[64149] = "Matron Vi Vinh",
-	[64076] = "Bonni Chang",
-	[64573] = "Warpweaver Ramahesh",
-	[64045] = "Thaumaturge Faraket",
+NWB.pandariaCreatures = {
+	--Horde.
+	--[62996] = "Madam Vee Luo",
+	--[64041] = "Mifan",
+	--[64044] = "Warpweaver Shafiee",
+	--[64045] = "Thaumaturge Anjool",
+	[67130] = "D.E.N.T", --Trying just the AH npc for now to work out the ghost layer issue.
 	
-};]]
+	--Alliance.
+	--[64149] = "Matron Vi Vinh",
+	--[64076] = "Bonni Chang",
+	--[64573] = "Warpweaver Ramahesh",
+	--[64045] = "Thaumaturge Faraket",
+	[65599] = "H.A.R.V.E.Y.",
+};
 
 NWB.companionCreatures = {
 	--Classic.
@@ -871,12 +875,12 @@ if (NWB.isWrath) then
 	for k, v in pairs(NWB.dalaranCreatures) do
 		NWB.npcs[k] = v;
 	end
---elseif (NWB.isMOP) then
---	NWB.map = 390;
---	NWB.mapName = L["Vale of Eternal Blossoms"];
---	for k, v in pairs(NWB.pandariaCreatures) do
---		NWB.npcs[k] = v;
---	end
+elseif (NWB.isMOP) then
+	NWB.map = 390;
+	NWB.mapName = L["Vale of Eternal Blossoms"];
+	for k, v in pairs(NWB.pandariaCreatures) do
+		NWB.npcs[k] = v;
+	end
 else
 	if (NWB.faction == "Horde") then
 		if (NWB.expansionNum > 4) then

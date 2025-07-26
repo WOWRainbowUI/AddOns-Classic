@@ -16,7 +16,7 @@ NWB.options = {
 	args = {
 		titleText = {
 			type = "description",
-			name = "        " .. NWB.prefixColor .. L["Nova World Buffs"] .." (v" .. NWB.version .. ")",
+			name = "        " .. NWB.prefixColor .. L["Nova World Buffs"] .." (v" .. string.format("%.2f", NWB.version) .. ")",
 			fontSize = "large",
 			order = 1,
 		},
@@ -2003,7 +2003,7 @@ NWB.optionDefaults = {
 		dmfAutoRes = false,
 		dmfAutoResTime = 3,
 		dmfChatCountdown = true,
-		resetLayers14 = true, --Reset layers one time (sometimes needed when upgrading from old version.
+		resetLayers16 = true, --Reset layers one time (sometimes needed when upgrading from old version.
 		resetDailyData = true;
 		resetSongflowers = true, --Reset songflowers one time.
 		beta = false, --Enable features being tested on occasion.
@@ -2308,21 +2308,18 @@ end
 
 function NWB:checkNewVersion()
 	--NWB.db.global.versions = {};
-	local newVersionNotes = 3.08;
+	local newVersionNotes = 3.10;
 	if (NWB.version and NWB.version == newVersionNotes) then
 		if (not NWB.db.global.versions[NWB.version]) then
-			--if (NWB.isClassic) then
+			if (NWB.isMOP) then
 				--if (NWB:GetCurrentRegion() == 1 and not string.match(NWB.realm, "(AU)")) then
 					local notes = {
-						"Fixed capital city map icons not auto adjusting rend timers from the rend log data.",
-						"Fixed the layer map display not loading all layers properly sometimes.",
-						"Fixed some comptibility issues with some addons that change how NPC gossip options look.",
-						"The \"Disable Layer\" button on the main window is now hidden as it's not really needed anymore, it can be turned back on in options if wanted.",
-						"Removed Naxx dungeon portal map marker from showing in later expansions when the raid doesn't exist.",
+						"Fixed layer detection in MoP, Pandaria layers are seperate than Azeroth now so the addon creates it's layers from the shrine capitals in Vale of Eternal blossoms, the old zones in Azeroth are likely just a permanent single layer (the same as Northrend worked separately in in Wrath).",
+						"There may multiple updates to get the MoP system working correctly with these same patch notes."
 					};
 					loadNewVersionFrame(NWB.version, notes, "Nova World Buffs", "Interface\\Icons\\inv_misc_head_dragon_01", -50, 350);
 				--end
-			--end
+			end
 			--Wipe old data.
 			NWB.db.global.versions = {};
 			--Set this version has been loaded before.

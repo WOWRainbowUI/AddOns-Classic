@@ -1099,4 +1099,22 @@ L["showDisableLayerButtonsTitle"] = "Show Disable Layer Button"
 L["showDisableLayerButtonsDesc"] = "Show disable layer button on the timers/layers frame.";
 
 L["Show Quest Handins Only"] = "Show Quest Handins Only";
-L["showQuestHandinsTooltip"] = "Only display log entries of rend quest being handed in."
+L["showQuestHandinsTooltip"] = "Only display log entries of rend quest being handed in.";
+
+L["Molten Core"] = "Molten Core";
+L["Onyxia's Lair"] = "Onyxia's Lair";
+L["Blackwing Lair"] = "Blackwing Lair";
+L["Naxxramas"] = "Naxxramas";
+L["Karazhan"] = "Karazhan";
+L["The Shattered Halls"] = "The Shattered Halls";
+L["Serpentshrine Cavern"] = "Serpentshrine Cavern";
+L["The Arcatraz"] = "The Arcatraz";
+L["Black Morass"] = "Black Morass";
+L["Battle of Mount Hyjal"] = "Battle of Mount Hyjal";
+L["Black Temple"] = "Black Temple";
+L["Hellfire Citadel"] = "Hellfire Citadel";
+L["Coilfang Reservoir"] = "Coilfang Reservoir";
+L["Shadow Labyrinth"] = "Shadow Labyrinth";
+L["Auchindoun"] = "Auchindoun";
+L["Tempest Keep"] = "Tempest Keep";
+L["Caverns of Time"] = "Caverns of Time";

@@ -217,15 +217,20 @@ end
 
 function NWB:GetPlayerZonePosition()
 	local x, y, zone = NWB.dragonLib:GetPlayerZonePosition();
+	local realZone = zone;
 	--Merge both tol barad zone maps for lookup purposes, they are the same zone with the same zoneID.
 	if (zone == 244) then
 		zone = 245;
+	end
+	--Merge valley of the four winds and karasang wilds in cata, they share an zoneID in MoP.
+	if (zone == 418) then
+		zone = 376;
 	end
 	--Merge valley of the four winds with horde and alliance shrines, they are the same zone with the same zoneID.
 	if (zone == 391 or zone == 394) then
 		zone = 390;
 	end
-	return x, y, zone;
+	return x, y, zone, realZone;
 end
 
 function NWB:selectGossipOption(id)
@@ -9761,7 +9766,7 @@ function NWB:setCurrentLayerText(unit)
 	if (not NWB.isLayered or not unit) then
 		return;
 	end
-	local _, _, zone = NWB:GetPlayerZonePosition();
+	local _, _, zone, realZone = NWB:GetPlayerZonePosition();
 	local GUID = UnitGUID(unit);
 	local unitType, zoneID, npcID, spawnUID;
 	if (GUID) then
@@ -9850,10 +9855,16 @@ function NWB:setCurrentLayerText(unit)
 						-- This only occurs if the epoch has rolled over since a unit has spawned.
 						spawnTime = spawnTime - ((2^23) - 1);
 					end
-					if (not v.spawn or spawnTime < v.spawn) then
+					--print(spawnUID, spawnTime, v.spawn)
+					if (not v.spawn or spawnTime < v.spawn or v.spawn == 0) then
 						v.spawn = spawnTime;
 					end
 				end
+			elseif (zone == NWB.map and NWB.data.layers[tonumber(zoneID)] and (GetServerTime() - NWB.lastJoinedGroup) > 600
+					and (GetServerTime() - NWB.lastZoneChange) > 30) then
+				--Backup system so we can keep mapping zones even if it's not a layer start npc we targeted, but it is in the right zone with the right zoneID for a capital.
+				--Added this for MoP where we're using very few NPC's that can start a layer, and people in the entire vale can map zones.
+				NWB.lastKnownLayerMapID_Mapping = tonumber(zoneID);
 			end
 			return;
 		end
@@ -9866,9 +9877,15 @@ function NWB:setCurrentLayerText(unit)
 	--if (((NWB.faction == "Alliance" and zone == 1453 and NWB.stormwindCreatures[tonumber(npcID)])
 	--		or (NWB.faction == "Horde" and zone == 1454 and NWB.orgrimmarCreatures[tonumber(npcID)]))
 	--		and tonumber(zoneID)) then
-	if (zone == NWB.map and NWB.npcs[tonumber(npcID)] and tonumber(zoneID)) then
+	if (zone == NWB.map and tonumber(zoneID) and NWB.npcs[tonumber(npcID)]) then
 		if (not NWB.data.layers[tonumber(zoneID)]) then
-			NWB:createNewLayer(tonumber(zoneID), GUID, true);
+			if (NWB.isMOP) then
+				if (realZone == 391 or realZone == 394) then
+					NWB:createNewLayer(tonumber(zoneID), GUID, true);
+				end
+			else
+				NWB:createNewLayer(tonumber(zoneID), GUID, true);
+			end
 		end
 		--This can only be set while in a capital and is used for mapping zones with timers like terokkar.
 		NWB.lastKnownLayerMapID_Mapping = tonumber(zoneID);
@@ -10071,7 +10088,7 @@ if (NWB.isMOP) then
 	NWB.layerMapWhitelist[390] = "Vale of Eternal Blossoms";
 	NWB.layerMapWhitelist[418] = "Krasarang Wilds";
 	NWB.layerMapWhitelist[422] = "Dread Wastes";
-	NWB.layerMapWhitelist[433] = "The Veiled Stair";
+	--NWB.layerMapWhitelist[433] = "The Veiled Stair";
 	NWB.layerMapWhitelist[554] = "Isle of Thunder";
 	NWB.layerMapWhitelist[554] = "Timeless Isle";
 end
@@ -10555,11 +10572,11 @@ function NWB:resetLayerData()
 		NWB.data.tbcPDT = nil;
 		NWB.db.global.resetDailyData = false;
 	end
-	if (NWB.db.global.resetLayers14) then
+	if (NWB.db.global.resetLayers16) then
 		NWB:debug("resetting layer data");
 		NWB.data.layers = {};
 		NWB.data.layerMapBackups = {};
-		NWB.db.global.resetLayers14 = false;
+		NWB.db.global.resetLayers16 = false;
 	end
 end
 

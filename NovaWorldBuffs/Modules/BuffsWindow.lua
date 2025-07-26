@@ -1003,71 +1003,71 @@ function NWB:recalcBuffsLineFramesTooltip(obj)
 				local attunements = "\n\n|cFFFFFF00" .. L["attunements"] .. "|r";
 				local foundAttune;
 				if (data.mcAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Molten Core|r";
+					attunements = attunements .. "\n  " .. color1 .. L["Molten Core"] .. "|r";
 					foundAttune = true;
 				end
 				if (data.onyAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Onyxia's Lair|r";
+					attunements = attunements .. "\n  " .. color1 .. L["Onyxia's Lair"] .. "|r";
 					foundAttune = true;
 				end
 				if (data.bwlAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Blackwing Lair|r";
+					attunements = attunements .. "\n  " .. color1 .. L["Blackwing Lair"] .. "|r";
 					foundAttune = true;
 				end
 				if (data.naxxAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Naxxramas|r";
+					attunements = attunements .. "\n  " .. color1 .. L["Naxxramas"] .. "|r";
 					foundAttune = true;
 				end
 				if (data.karaAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Karazhan|r";
+					attunements = attunements .. "\n  " .. color1 .. L["Karazhan"] .. "|r";
 					foundAttune = true;
 				end
 				if (data.shatteredHallsAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "The Shattered Halls|r"; --Key.
+					attunements = attunements .. "\n  " .. color1 .. L["The Shattered Halls"] .. "|r"; --Key.
 					foundAttune = true;
 				end
 				if (data.serpentshrineAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Serpentshrine Cavern|r";
+					attunements = attunements .. "\n  " .. color1 .. L["Serpentshrine Cavern"] .. "|r";
 					foundAttune = true;
 				end
 				if (data.arcatrazAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "The Arcatraz|r"; --Key.
+					attunements = attunements .. "\n  " .. color1 .. L["The Arcatraz"] .. "|r"; --Key.
 					foundAttune = true;
 				end
 				if (data.blackMorassAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Black Morass|r";
+					attunements = attunements .. "\n  " .. color1 .. L["Black Morass"] .. "|r";
 					foundAttune = true;
 				end
 				if (data.hyjalAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Battle of Mount Hyjal|r";
+					attunements = attunements .. "\n  " .. color1 .. L["Battle of Mount Hyjal"] .. "|r";
 					foundAttune = true;
 				end
 				if (data.blackTempleAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Black Temple|r";
+					attunements = attunements .. "\n  " .. color1 .. L["Black Temple"] .. "|r";
 					foundAttune = true;
 				end
 				if (data.hellfireCitadelAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Hellfire Citadel|r"; --Key.
+					attunements = attunements .. "\n  " .. color1 .. L["Hellfire Citadel"] .. "|r"; --Key.
 					foundAttune = true;
 				end
 				if (data.coilfangAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Coilfang Reservoir|r"; --Key.
+					attunements = attunements .. "\n  " .. color1 .. L["Coilfang Reservoir"] .. "|r"; --Key.
 					foundAttune = true;
 				end
 				if (data.shadowLabAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Shadow Labyrinth|r"; --Key.
+					attunements = attunements .. "\n  " .. color1 .. L["Shadow Labyrinth"] .. "|r"; --Key.
 					foundAttune = true;
 				end
 				if (data.auchindounAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Auchindoun|r"; --Key.
+					attunements = attunements .. "\n  " .. color1 .. L["Auchindoun"] .. "|r"; --Key.
 					foundAttune = true;
 				end
 				if (data.tempestKeepAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Tempest Keep|r"; --Key
+					attunements = attunements .. "\n  " .. color1 .. L["Tempest Keep"] .. "|r"; --Key
 					foundAttune = true;
 				end
 				if (data.cavernAttune) then
-					attunements = attunements .. "\n  " .. color1 .. "Caverns of Time|r"; --Key.
+					attunements = attunements .. "\n  " .. color1 .. L["Caverns of Time"] .. "|r"; --Key.
 					foundAttune = true;
 				end
 				if (foundAttune) then

@@ -1062,7 +1062,7 @@ function NWB:setRendBuff(source, sender, zoneID, GUID, isAllianceAndLayered)
 					return;
 				end
 			else
-				if (GUID) then
+				if (GUID and NWB.isClassic) then
 					if (not NWB.data.layers[zoneID]) then
 						NWB:createNewLayer(zoneID, GUID);
 					end
@@ -1185,7 +1185,7 @@ function NWB:setOnyBuff(source, sender, zoneID, GUID, isSapped)
 			count = count + 1;
 		end
 		if (count <= NWB.limitLayerCount) then
-			if (not NWB.data.layers[zoneID]) then
+			if (zoneID and not NWB.data.layers[zoneID] and NWB.isClassic) then
 				NWB:createNewLayer(zoneID, GUID);
 			end
 			if (NWB.data.layers[zoneID]) then
@@ -1276,7 +1276,7 @@ function NWB:setNefBuff(source, sender, zoneID, GUID)
 			count = count + 1;
 		end
 		if (count <= NWB.limitLayerCount) then
-			if (not NWB.data.layers[zoneID]) then
+			if (zoneID and not NWB.data.layers[zoneID] and NWB.isClassic) then
 				NWB:createNewLayer(zoneID, GUID);
 			end
 			if (NWB.data.layers[zoneID]) then
