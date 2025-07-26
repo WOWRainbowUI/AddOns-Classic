@@ -1,6 +1,6 @@
 ## Interface: 50500
 ## Author: Snowflame0
-## Version: v5.0.0
+## Version: v5.0.2
 ## SavedVariables: AtlasLootClassicDB
 ## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, LibDBIcon-1.0, LibDataBroker-1.1
 ## DefaultState: Enabled
@@ -9,16 +9,16 @@
 ## Title: AtlasLootClassic |cFF33FFBDMoP|r |cFF22B14C[Core]|r
 ## Notes: Displays loot tables from various aspects of the game
 
-## Title-deDE: AtlasLootClassic |cFFFF5733Cata|r |cFF22B14C[Kern]|r
-## Title-esES: AtlasLootClassic |cFFFF5733Cata|r |cFF22B14C[Núcleo]|r
-## Title-esMX: AtlasLootClassic |cFFFF5733Cata|r |cFF22B14C[Núcleo]|r
-## Title-frFR: AtlasLoot Classic |cFFFF5733Cata|r |cFF22B14C[Noyau]|r
-## Title-itIT: AtlasLoot Classic |cFFFF5733Cata|r |cFF22B14C[Core]|r
-## Title-koKR: AtlasLoot Classic |cFFFF5733Cata|r |cFF22B14C[Core]|r
-## Title-ptBR: AtlasLoot Classic |cFFFF5733Cata|r |cFF22B14C[Núcleo]|r
-## Title-ruRU: AtlasLoot Classic |cFFFF5733Cata|r |cFF22B14C[Core]|r
-## Title-zhCN: AtlasLoot Classic |cFFFF5733Cata|r |cFF22B14C[Core]|r
-## Title-zhTW: AtlasLoot Classic |cFFFF5733Cata|r |cFF22B14C[Core]|r
+## Title-deDE: AtlasLootClassic |cFFFF5733MoP|r |cFF22B14C[Kern]|r
+## Title-esES: AtlasLoot Classic |cFFFF5733MoP|r |cFF22B14C[Núcleo]|r
+## Title-esMX: AtlasLoot Classic |cFFFF5733MoP|r |cFF22B14C[Núcleo]|r
+## Title-frFR: AtlasLoot Classic |cFFFF5733MoP|r |cFF22B14C[Noyau]|r
+## Title-itIT: AtlasLoot Classic |cFFFF5733MoP|r |cFF22B14C[Core]|r
+## Title-koKR: AtlasLoot Classic |cFFFF5733MoP|r |cFF22B14C[Core]|r
+## Title-ptBR: AtlasLoot Classic |cFFFF5733MoP|r |cFF22B14C[Núcleo]|r
+## Title-ruRU: AtlasLoot Classic |cFFFF5733MoP|r |cFF22B14C[Core]|r
+## Title-zhCN: AtlasLoot Classic |cFFFF5733MoP|r |cFF22B14C[Core]|r
+## Title-zhTW: AtlasLoot Classic |cFFFF5733MoP|r |cFF22B14C[Core]|r
 ## Notes-deDE: Zeigt die mögliche Boss-Beute.
 ## Notes-esES: Muestra botines posibles de jefes
 ## Notes-esMX: Muestra botines posibles de jefes

@@ -1,22 +1,22 @@
 ## Interface: 50500
 ## Author: Snowflame0
-## Version: v5.0.0
+## Version: v5.0.2
 ## Dependencies: AtlasLootClassic
 ## LoadOnDemand: 1
 
 ## Title: AtlasLootClassic |cFF33FFBDMoP|r |cFF0099FF[PvP]|r
 ## Notes: AtlasLoot PvP loot tables
 
-## Title-deDE: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[PvP]|r
-## Title-esES: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[JcJ]|r
-## Title-esMX: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[JcJ]|r
-## Title-frFR: AtlasLoot Classic |cFFFF5733Cata|r |cFF0099FF[JcJ]|r
-## Title-itIT: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[PvP]|r
-## Title-koKR: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[PvP]|r
-## Title-ptBR: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[JxJ]|r
-## Title-ruRU: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[PvP]|r
-## Title-zhCN: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[PvP]|r
-## Title-zhTW: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[PvP]|r
+## Title-deDE: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[PvP]|r
+## Title-esES: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[JcJ]|r
+## Title-esMX: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[JcJ]|r
+## Title-frFR: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[JcJ]|r
+## Title-itIT: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[PvP]|r
+## Title-koKR: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[PvP]|r
+## Title-ptBR: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[JxJ]|r
+## Title-ruRU: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[PvP]|r
+## Title-zhCN: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[PvP]|r
+## Title-zhTW: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[PvP]|r
 ## Notes-deDE: AtlasLoot Beuteverzeichnis für PvP
 ## Notes-esES: AtlasLoot tablas de botín de JcJ
 ## Notes-esMX: AtlasLoot tablas de botín de JcJ

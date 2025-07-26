@@ -8,18 +8,21 @@ local Updates = Addons:RegisterNewAddon("News")
 
 local LibSharedMedia = LibStub("LibSharedMedia-3.0")
 
+local IMAGE_PATH = ALPrivate.IMAGE_PATH
 ---
 --- NOTE:
---- Update Text for version 5.0.0
+--- Update Text
 ---
-local update_version = 5.00
+local update_version = 5.02
 local update_text = {
-    "Welcome to the Initial release of AtlasLootClassic |cFF33FFBDMoP|r! Lots of things are still underworks. Thanks for your patience and support :)",
-    "|cFF33FFBDFactions|r, |cFF33FFBDCollections|r, and |cFF33FFBDCrafting|r modules are mostly complete",
-    "|cFF33FFBDDungeons and Raids|r module missing SoO and Celestial dungeons",
-    "|cFF33FFBDPvP|r module only displays sets right now",
-    "Missing information will be added when I have time and I'm not busy leveling",
-    "If you encounter any serious bugs, please open an issue on the GitHub (|cFF3366CCgithub.com/snowflame0/AtlasLootClassic_MoP|r) page for best chances of me seeing it",
+    "Welcome to the first week of AtlasLootClassic |cFF33FFBDMoP|r! Thanks for your patience and support!\nNew Changes:",
+    "Added/Updated |cFF33FFBDMoP|r and |cFFFF8000Classic|r Dungeons and Raids + Crafting item |cFF00CCFFSource Info (Tooltip)|r",
+    "Added |cFF33FFBDMoP|r Tier Token data, (Click on |cFFA335EETokens|r)",
+    "Added Phase data for items released in later phases, items will have a |T"..IMAGE_PATH.."P3:24:24:0:12|t on top of them indicating in which phase they are relevant",
+    "Fix issue where |cFF33FFBDDungeons and Raids|r weren't automatically selected when inside an instance",
+    "MoP factions data re-organized for visibility",
+    "Small fixes and cleanup as usual",
+    "|cFFFF8000HELP|r: If you think some things could be better organized or find any issues, let me know or better yet, contribute on GitHub (|cFF3366CCgithub.com/snowflame0/AtlasLootClassic_MoP/issues|r)",
     "Finally, if you appreciate all of the hard work, feel free to donate at the link below (click, CTRL+A, and CTRL+C to copy)"
 }
 local donation_link = "buymeacoffee.com/snowflame0"

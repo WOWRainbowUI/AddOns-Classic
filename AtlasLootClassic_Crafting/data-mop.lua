@@ -932,6 +932,10 @@ data["InscriptionMoP"] = {
             [NORMAL_DIFF] = {
                 { 1, 111830 }, -- Darkmoon Card of Mists
                 { 2, 130407 }, -- Mystery of the Mists
+                { 16, "i79325" }, -- Crane Deck
+                { 17, "i79324" }, -- Ox Deck
+                { 18, "i79326" }, -- Serpent Deck
+                { 19, "i79323" }, -- Tiger Deck
             }
         },
         {
@@ -1721,12 +1725,15 @@ data["HerbalismMoP"] = {
         {
             name = AL["Zen Master"],
             [NORMAL_DIFF] = {
-                { 1,  72234 }, -- Green Tea Leaf
-                { 2,  72237 }, -- Rain Poppy
-                { 3,  72235 }, -- Silkweed
-                { 4,  79010 }, -- Snow Lily
-                { 5,  79011 }, -- Fool's Cap
-                { 7,  72238 }, -- Golden Lotus
+                { 1, 79011 }, -- Fool's Cap
+                { 2, 79010 }, -- Snow Lily
+                { 3, 72235 }, -- Silkweed
+                { 4, 72237 }, -- Rain Poppy
+                { 5, 72234 }, -- Green Tea Leaf
+                { 16, 72238 }, -- Golden Lotus
+                { 17, 89639 }, -- Descrated Herb
+                { 19, 89640 }, -- Life Spirit
+                { 20, 89641 }, -- Water Spirit
             }
         },
     }

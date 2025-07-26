@@ -1,22 +1,22 @@
 ## Interface: 50500
 ## Author: Snowflame0
-## Version: v5.0.0
+## Version: v5.0.2
 ## Dependencies: AtlasLootClassic
 ## LoadOnDemand: 1
 
 ## Title: AtlasLootClassic |cFF33FFBDMoP|r |cFF0099FF[Factions]|r
 ## Notes: AtlasLoot Faction loot tables
 
-## Title-deDE: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Fraktionen]|r
-## Title-esES: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Facciones]|r
-## Title-esMX: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Facciones]|r
-## Title-frFR: AtlasLoot Classic |cFFFF5733Cata|r |cFF0099FF[Factions]|r
-## Title-itIT: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Factions]|r
-## Title-koKR: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Factions]|r
-## Title-ptBR: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Facções]|r
-## Title-ruRU: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Factions]|r
-## Title-zhCN: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Factions]|r
-## Title-zhTW: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Factions]|r
+## Title-deDE: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[Fraktionen]|r
+## Title-esES: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[Facciones]|r
+## Title-esMX: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[Facciones]|r
+## Title-frFR: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[Factions]|r
+## Title-itIT: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[Factions]|r
+## Title-koKR: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[Factions]|r
+## Title-ptBR: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[Facções]|r
+## Title-ruRU: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[Factions]|r
+## Title-zhCN: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[Factions]|r
+## Title-zhTW: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[Factions]|r
 ## Notes-deDE: AtlasLoot Beuteverzeichnis der Fraktionen
 ## Notes-esES: AtlasLoot tablas de botín de Facciones
 ## Notes-esMX: AtlasLoot tablas de botín de Facciones

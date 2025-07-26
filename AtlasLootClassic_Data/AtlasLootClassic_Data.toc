@@ -1,22 +1,22 @@
 ## Interface: 50500
 ## Author: Snowflame0
-## Version: v5.0.0
+## Version: v5.0.2
 ## Dependencies: AtlasLootClassic
 ## LoadOnDemand: 1
 
 ## Title: AtlasLootClassic |cFF33FFBDMoP|r |cFFFF0000[Data]|r
 ## Notes: AtlasLoot Data module
 
-## Title-deDE: AtlasLootClassic |cFFFF5733Cata|r |cFFFF0000[Daten]|r
-## Title-esES: AtlasLootClassic |cFFFF5733Cata|r |cFFFF0000[Datos]|r
-## Title-esMX: AtlasLootClassic |cFFFF5733Cata|r |cFFFF0000[Datos]|r
-## Title-frFR: AtlasLoot Classic |cFFFF5733Cata|r |cFFFF0000[Données]|r
-## Title-itIT: AtlasLootClassic |cFFFF5733Cata|r |cFFFF0000[Data]|r
-## Title-koKR: AtlasLootClassic |cFFFF5733Cata|r |cFFFF0000[Data]|r
-## Title-ptBR: AtlasLootClassic |cFFFF5733Cata|r |cFFFF0000[Dada]|r
-## Title-ruRU: AtlasLootClassic |cFFFF5733Cata|r |cFFFF0000[Data]|r
-## Title-zhCN: AtlasLootClassic |cFFFF5733Cata|r |cFFFF0000[Data]|r
-## Title-zhTW: AtlasLootClassic |cFFFF5733Cata|r |cFFFF0000[Data]|r
+## Title-deDE: AtlasLootClassic |cFFFF5733MoP|r |cFFFF0000[Daten]|r
+## Title-esES: AtlasLoot Classic |cFFFF5733MoP|r |cFFFF0000[Datos]|r
+## Title-esMX: AtlasLoot Classic |cFFFF5733MoP|r |cFFFF0000[Datos]|r
+## Title-frFR: AtlasLoot Classic |cFFFF5733MoP|r |cFFFF0000[Données]|r
+## Title-itIT: AtlasLootClassic |cFFFF5733MoP|r |cFFFF0000[Data]|r
+## Title-koKR: AtlasLoot Classic |cFFFF5733MoP|r |cFFFF0000[Data]|r
+## Title-ptBR: AtlasLoot Classic |cFFFF5733MoP|r |cFFFF0000[Dada]|r
+## Title-ruRU: AtlasLootClassic |cFFFF5733MoP|r |cFFFF0000[Data]|r
+## Title-zhCN: AtlasLootClassic |cFFFF5733MoP|r |cFFFF0000[Data]|r
+## Title-zhTW: AtlasLootClassic |cFFFF5733MoP|r |cFFFF0000[Data]|r
 ## Notes-deDE: AtlasLoot Datenmodul
 ## Notes-esES: AtlasLoot módulo de datos
 ## Notes-esMX: AtlasLoot módulo de datos

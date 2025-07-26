@@ -1,22 +1,22 @@
 ## Interface: 50500
 ## Author: Snowflame0
-## Version: v5.0.0
+## Version: v5.0.2
 ## Dependencies: AtlasLootClassic
 ## LoadOnDemand: 1
 
 ## Title: AtlasLootClassic |cFF33FFBDMoP|r |cFF0099FF[Dungeons and Raids]|r
 ## Notes: AtlasLoot Dungeons and Raids loot tables
 
-## Title-deDE: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Instanzen und Raids]|r
-## Title-esES: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Mazmorras y Bandas]|r
-## Title-esMX: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Mazmorras y Bandas]|r
-## Title-frFR: AtlasLoot Classic |cFFFF5733Cata|r |cFF0099FF[Donjons et Raids]|r
-## Title-itIT: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Dungeons and Raids]|r
-## Title-koKR: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Dungeons and Raids]|r
-## Title-ptBR: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Masmorras e Raides]|r
-## Title-ruRU: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Dungeons and Raids]|r
-## Title-zhCN: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Dungeons and Raids]|r
-## Title-zhTW: AtlasLootClassic |cFFFF5733Cata|r |cFF0099FF[Dungeons and Raids]|r
+## Title-deDE: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[Instanzen und Raids]|r
+## Title-esES: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[Mazmorras y Bandas]|r
+## Title-esMX: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[Mazmorras y Bandas]|r
+## Title-frFR: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[Donjons et Raids]|r
+## Title-itIT: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[Dungeons and Raids]|r
+## Title-koKR: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[Dungeons and Raids]|r
+## Title-ptBR: AtlasLoot Classic |cFFFF5733MoP|r |cFF0099FF[Masmorras e Raides]|r
+## Title-ruRU: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[Dungeons and Raids]|r
+## Title-zhCN: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[Dungeons and Raids]|r
+## Title-zhTW: AtlasLootClassic |cFFFF5733MoP|r |cFF0099FF[Dungeons and Raids]|r
 ## Notes-deDE: AtlasLoot Beuteverzeichnis der Instanzen und Raids
 ## Notes-esES: AtlasLoot tablas de botín de Mazmorras y Bandas
 ## Notes-esMX: AtlasLoot tablas de botín de Calabozos y Bandas
