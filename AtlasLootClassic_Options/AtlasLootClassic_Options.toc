@@ -1,4 +1,4 @@
-## Interface: 50500
+## Interface: 11507, 50500
 ## Author: Snowflame0
 ## Version: v5.0.2
 ## Dependencies: AtlasLootClassic
