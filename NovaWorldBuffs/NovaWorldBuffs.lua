@@ -227,7 +227,7 @@ function NWB:GetPlayerZonePosition()
 		zone = 376;
 	end
 	--Merge valley of the four winds with horde and alliance shrines, they are the same zone with the same zoneID.
-	if (zone == 391 or zone == 394) then
+	if (zone == 391 or zone == 393) then
 		zone = 390;
 	end
 	return x, y, zone, realZone;
@@ -8427,11 +8427,14 @@ function NWB:createNewLayer(zoneID, GUID, isFromNpc)
 			--Delete layermap on the off chance we get the same city id 2 weeks in a row.
 			--NWB.data.layerMapBackups[zoneID] = nil;
 		--end
-		if (isFromNpc and NWB.data.layersDisabled[zoneID]) then
-			NWB.data.layersDisabled[zoneID] = nil;
-			NWB:recalclayerFrame();
-			NWB:refreshWorldbuffMarkers();
-			NWB:print("Detected valid layer that you have disabled, re-enabling layer ID " .. zoneID .. "。");
+		if (isFromNpc) then
+			NWB.data.layers[zoneID].lastSeenNPC = GetServerTime();
+			if (NWB.data.layersDisabled[zoneID]) then
+				NWB.data.layersDisabled[zoneID] = nil;
+				NWB:recalclayerFrame();
+				NWB:refreshWorldbuffMarkers();
+				NWB:print("Detected valid layer that you have disabled, re-enabling layer ID " .. zoneID .. "。");
+			end
 		end
 		NWB:debug("created new layer", zoneID);
 		NWB:createWorldbuffMarkers();
@@ -9856,7 +9859,7 @@ function NWB:setCurrentLayerText(unit)
 						spawnTime = spawnTime - ((2^23) - 1);
 					end
 					--print(spawnUID, spawnTime, v.spawn)
-					if (not v.spawn or spawnTime < v.spawn or v.spawn == 0) then
+					if (spawnTime ~= 0 and (not v.spawn or spawnTime < v.spawn or v.spawn == 0)) then
 						v.spawn = spawnTime;
 					end
 				end
@@ -9880,7 +9883,7 @@ function NWB:setCurrentLayerText(unit)
 	if (zone == NWB.map and tonumber(zoneID) and NWB.npcs[tonumber(npcID)]) then
 		if (not NWB.data.layers[tonumber(zoneID)]) then
 			if (NWB.isMOP) then
-				if (realZone == 391 or realZone == 394) then
+				if (realZone == 391 or realZone == 393) then
 					NWB:createNewLayer(tonumber(zoneID), GUID, true);
 				end
 			else
@@ -10243,6 +10246,7 @@ function NWB:mapCurrentLayer(unit)
 							else
 								NWB:debug("zoneid already known for this layer");
 							end
+							NWB.lastKnownLayerMapID = 0;
 							NWB:recalcMinimapLayerFrame();
 							return;
 						end
