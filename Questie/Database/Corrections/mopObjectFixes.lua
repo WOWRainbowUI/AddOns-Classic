@@ -146,8 +146,8 @@ function MopObjectFixes.Load()
             [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
         },
         [210931] = { -- Dak Dak's Altar
-            [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{49.56,39.54}}},
-            [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
+            [objectKeys.spawns] = {[zoneIDs.THE_DEEPER] = {{49.56,39.54}}},
+            [objectKeys.zoneID] = zoneIDs.THE_DEEPER,
         },
         [210933] = { -- Yaungol Banner
             [objectKeys.name] = 'Yaungol Banner',
@@ -163,6 +163,16 @@ function MopObjectFixes.Load()
             [objectKeys.name] = 'Mandori Village Gate',
             [objectKeys.spawns] = {[zoneIDs.THE_WANDERING_ISLE] = {{51.59,61.29}}},
             [objectKeys.zoneID] = zoneIDs.THE_WANDERING_ISLE,
+        },
+        [211020] = { -- Yoon's Apples
+            [objectKeys.name] = 'Yoon\'s Apples',
+            [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{52.63,47.8}}},
+            [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
+        },
+        [211022] = { -- Yoon's Craneberries
+            [objectKeys.name] = 'Yoon\'s Craneberries',
+            [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{52.82,47.84}}},
+            [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
         },
         [211112] = { -- Mysterious Whirlpool
             [objectKeys.name] = 'Mysterious Whirlpool',
@@ -187,7 +197,7 @@ function MopObjectFixes.Load()
             [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
         },
         [211306] = { -- Revelite Crystal
-            [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{23.62,30.67}}},
+            [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{23.15,30.87},{23.49,33.25},{26.96,32.85},{27.65,29.00},{26.07,28.38},{26.33,25.12},{24.14,27.42},{21.59,28.46},{20.39,30.60},{22.37,30.78},{21.57,31.41},{23.16,30.73},{23.18,26.58},{22.11,27.19}}},
             [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
         },
         [211312] = { -- Items for Barrels of Fun
@@ -279,6 +289,10 @@ function MopObjectFixes.Load()
         [212003] = { -- Yaungol Oil Barrel
             [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{26.2, 59.9}, {26.3, 59.1}, {26.6, 59.4}, {27.2, 60.2}, {27.4, 60.8}, {27.7, 61}, {28.4, 61.5}, {28.5, 61.1}, {28.5, 61.5}}},
             [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
+        },
+        [212131] = { -- Niuzao Food Supply
+            [objectKeys.spawns] = {[zoneIDs.TOWNLONG_STEPPES] = {{41.58,61.5},{42.34,62.04},{39.82,63.39},{38.99,64.1},{38.3,63.61},{37.61,64.03},{37.57,63.98},{40.13,56.89},{40.32,58.7},{42.66,58.73},{41.35,62.11},{39.28,61.58},{39.27,61.6},{37.74,62.45},{37.85,61.03},{39.65,57.7},{42.44,57.99},{41.79,61.62},{43.26,58.19},{41.4,63.08},{40.94,63.59},{40.32,64.19},{39.72,64.67},{39.81,60.92},{38.69,60.97},{38.62,61.45},{39.01,60.13}}},
+            [objectKeys.zoneID] = zoneIDs.TOWNLONG_STEPPES,
         },
         [212294] = { -- Ocean-Worn Rocks
             [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{43.3,63.49}}},
@@ -425,6 +439,15 @@ function MopObjectFixes.Load()
             },
             [objectKeys.zoneID] = zoneIDs.SCARLET_MONASTERY,
         },
+        [214543] = { -- Dreadspore Bulb
+            [objectKeys.name] = "Dreadspore Bulb",
+            [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{33.2,85.93}}}, -- there are like 100 more spawns, used one so we can have tooltips
+            [objectKeys.zoneID] = zoneIDs.DREAD_WASTES,
+        },
+        [214824] = { -- Ancient Mogu Chest
+            [objectKeys.spawns] = {[zoneIDs.MOGUSHAN_PALACE_VAULTS_OF_KINGS_PAST] = {{60.12,82.45},{38.92,88.24},{37.39,64.61},{42.97,59.72}}},
+            [objectKeys.zoneID] = zoneIDs.MOGUSHAN_PALACE_VAULTS_OF_KINGS_PAST,
+        },
         [214873] = { -- Vacant Destroyer
             [objectKeys.spawns] = {[zoneIDs.THE_JADE_FOREST] = {{47.81,18.73},{47.75,18.26},{47.13,16.98},{47.82,16.4},{46.72,16.75},{46.91,16.16},{46.99,15.68},{46.29,15.78},{45.23,16.22},{48.55,16.22},{48.72,19.74},{48.97,20.27},{48.54,20.75},{48.11,20.25},{48.61,19.37},{48.32,18.78},{48.8,18.06},{48.8,17.7}}},
         },
@@ -497,6 +520,9 @@ function MopObjectFixes.Load()
             [objectKeys.zoneID] = zoneIDs.DREAD_WASTES,
         },
         [440004] = {
+            [objectKeys.name] = "Lesser Charm of Good Fortune",
+        },
+        [440005] = {
             [objectKeys.name] = "Elder Charm of Good Fortune",
         },
     }

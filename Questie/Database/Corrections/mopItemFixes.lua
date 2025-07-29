@@ -210,8 +210,14 @@ function MopItemFixes.Load()
         [78958] = { -- Pillaged Jinyu Loot
             [itemKeys.npcDrops] = {58273,58274},
         },
+        [78959] = { -- Serpent Egg
+            [itemKeys.objectDrops] = {210238,210239,210240},
+        },
         [79030] = { -- Honeycomb
             [itemKeys.npcDrops] = {58363},
+        },
+        [79049] = { -- Serpentrider Relic
+            [itemKeys.npcDrops] = {},
         },
         [79058] = { -- Darkhide's Head
             [itemKeys.npcDrops] = {58435},
@@ -233,6 +239,15 @@ function MopItemFixes.Load()
         },
         [79238] = { -- Enormous Crocolisk Tail
             [itemKeys.startQuest] = 30275,
+        },
+        [79244] = { -- Fairlands Gazelle Meat
+            [itemKeys.npcDrops] = {58454},
+        },
+        [79246] = { -- Delicate Blossom Petals
+            [itemKeys.objectDrops] = {210537,210538,210539},
+        },
+        [79250] = { -- Fresh Pomfruit
+            [itemKeys.npcDrops] = {58767},
         },
         [79252] = { -- Mogu Poisoned Blade
             [itemKeys.npcDrops] = {58377,65598},
@@ -262,7 +277,7 @@ function MopItemFixes.Load()
             [itemKeys.npcDrops] = {56233},
         },
         [79824] = { -- Stolen Vegetable
-            [itemKeys.objectDrops] = {210763},
+            [itemKeys.objectDrops] = {210763,210764,210765,210766,210767,210768,210769},
         },
         [79827] = { -- Authentic Valley Stir Fry
             [itemKeys.npcDrops] = {59124},
@@ -270,17 +285,26 @@ function MopItemFixes.Load()
         [79828] = { -- Yak Statuette
             [itemKeys.npcDrops] = {59124},
         },
+        [79833] = { -- Shadelight Truffle
+            [itemKeys.objectDrops] = {210810,210811,210812},
+        },
         [79867] = { -- Fatty Goatsteak
             [itemKeys.npcDrops] = {59139},
         },
         [79870] = { -- Yu-Ping Soup
             [itemKeys.objectDrops] = {210873},
         },
+        [79871] = { -- Spicy Shrimp Dumplings
+            [itemKeys.npcDrops] = {59119,59120,59121,59122,59123,59124,59125,59126,59127,59128,59129,59130,59131,59132,59133,59134,59135},
+        },
         [79875] = { -- Song of the Vale
             [itemKeys.objectDrops] = {209582},
         },
         [79884] = { -- Bucket of Slicky Water
             [itemKeys.objectDrops] = {209974},
+        },
+        [79894] = { -- Mushan Tail Stew
+            [itemKeys.objectDrops] = {214463},
         },
         [79952] = { -- Pungent Sprite Needles
             [itemKeys.npcDrops] = {55593},
@@ -323,6 +347,15 @@ function MopItemFixes.Load()
         },
         [80230] = {  -- Cast Iron Pot
             [itemKeys.objectDrops] = {211023},
+        },
+        [80234] = {  -- Yoon's Apple
+            [itemKeys.objectDrops] = {211020},
+        },
+        [80235] = {  -- Yoon's Craneberry
+            [itemKeys.objectDrops] = {211022},
+        },
+        [80236] = {  -- Apple-Berry Hooch
+            [itemKeys.vendors] = {58717},
         },
         [80241] = { -- Muskpaw's Keepsake
             [itemKeys.startQuest] = 30582,
@@ -369,6 +402,9 @@ function MopItemFixes.Load()
         [80430] = { -- Corpse of Tak Tak
             [itemKeys.npcDrops] = {59958},
         },
+        [80437] = { -- Armored Carp
+            [itemKeys.npcDrops] = {59936},
+        },
         [80511] = { -- Revelite Crystal
             [itemKeys.objectDrops] = {211306},
         },
@@ -406,6 +442,9 @@ function MopItemFixes.Load()
         },
         [81054] = { -- Kafa'kota Berry
             [itemKeys.objectDrops] = {211454,211480},
+        },
+        [81116] = { -- Suncrawler
+            [itemKeys.objectDrops] = {211474},
         },
         [81174] = { -- Dark Pitch
             [itemKeys.objectDrops] = {211506,211507},
@@ -447,6 +486,9 @@ function MopItemFixes.Load()
         [82342] = { -- Violet Citron
             [itemKeys.objectDrops] = {211719,211721},
         },
+        [82353] = { -- Sra'thik Weapon
+            [itemKeys.objectDrops] = {211765,211766},
+        },
         [82389] = { -- Mao-Willow
             [itemKeys.objectDrops] = {211779},
         },
@@ -478,6 +520,9 @@ function MopItemFixes.Load()
         [82867] = { -- Mantid Relic
             [itemKeys.objectDrops] = {212078,212079},
         },
+        [82869] = { -- Meaty Turtle Haunch
+            [itemKeys.npcDrops] = {62160},
+        },
         [82870] = { -- Strange Relic
             [itemKeys.startQuest] = 31023,
             [itemKeys.npcDrops] = {61970,63176},
@@ -488,14 +533,38 @@ function MopItemFixes.Load()
         [83075] = { -- Sapfly Bits
             [itemKeys.npcDrops] = {62386},
         },
+        [83076] = { -- Between a Saurok and a Hard Place
+            [itemKeys.startQuest] = 31055,
+        },
+        [83129] = { -- Cloudrunner Egg
+            [itemKeys.objectDrops] = {212230,214479,214480,214481},
+        },
         [83135] = { -- Amber Blade
             [itemKeys.npcDrops] = {62563,62749,65995},
+        },
+        [83769] = { -- Between a Saurok and a Hard Place
+            [itemKeys.startQuest] = 31055,
+        },
+        [83770] = { -- Hozen in the Mist
+            [itemKeys.startQuest] = 31093,
         },
         [83771] = { -- Fish Tales
             [itemKeys.startQuest] = 31094,
         },
+        [83772] = { -- The Dark Heart of the Mogu
+            [itemKeys.startQuest] = 31095,
+        },
+        [83773] = { -- Heart of the Mantid Swarm
+            [itemKeys.startQuest] = 31097,
+        },
+        [83774] = { -- What is Worth Fighting For
+            [itemKeys.startQuest] = 31096,
+        },
         [83777] = { -- The Song of the Yaungol
             [itemKeys.startQuest] = 31100,
+        },
+        [83779] = { -- The Seven Burdens of Shaohao
+            [itemKeys.startQuest] = 31102,
         },
         [83780] = { -- The Ballad of Liu Lang
             [itemKeys.startQuest] = 31103,
@@ -515,6 +584,9 @@ function MopItemFixes.Load()
         [84240] = { -- Fresh Whitepetal Worm
             [itemKeys.objectDrops] = {212742},
         },
+        [84241] = { -- Whitepetal Reed
+            [itemKeys.objectDrops] = {212744},
+        },
         [84656] = { -- Stunned Whitepetal Carp
             [itemKeys.npcDrops] = {62984},
         },
@@ -526,6 +598,9 @@ function MopItemFixes.Load()
         },
         [85230] = { -- Sea Monarch Chunks
             [itemKeys.class] = itemClasses.QUEST,
+        },
+        [85282] = { -- Tiger Flank
+            [itemKeys.npcDrops] = {63537,63538,65612,67085},
         },
         [85782] = { -- Mistfall Water Bucket
             [itemKeys.objectDrops] = {213369},
@@ -564,6 +639,15 @@ function MopItemFixes.Load()
         [86489] = { -- Succulent Turtle Filet
             [itemKeys.npcDrops] = {63981},
         },
+        [86542] = { -- Flying Tiger Gourami
+            [itemKeys.startQuest] = 31442,
+        },
+        [86544] = { -- Spinefish Alpha
+            [itemKeys.startQuest] = 31444,
+        },
+        [86545] = { -- Mimic Octopus
+            [itemKeys.startQuest] = 31446,
+        },
         [86598] = { -- Vor'thik Eggs
             [itemKeys.objectDrops] = {214170},
         },
@@ -582,17 +666,37 @@ function MopItemFixes.Load()
         [87813] = { -- Zan'thik Shackles
             [itemKeys.npcDrops] = {64970},
         },
+        [87871] = { -- Massive Kyparite Core
+            [itemKeys.npcDrops] = {65229},
+        },
         [87874] = { -- Kyparite Shards
             [itemKeys.npcDrops] = {65231},
         },
         [88538] = { -- Sha-Haunted Crystal
             [itemKeys.startQuest] = 31661,
         },
+        [89054] = { -- Stolen Boots
+            [itemKeys.objectDrops] = {214865,214866,214867,214868},
+        },
         [89163] = { -- Requisitioned Firework Launcher
             [itemKeys.class] = itemClasses.QUEST,
         },
         [89603] = { -- Encoded Captain's Log
             [itemKeys.npcDrops] = {66148},
+        },
+        [89812] = { -- "Jinyu Princess" Irrigation System
+            [itemKeys.startQuest] = 31936,
+        },
+        [89813] = { -- "Thunder King" Pest Repellers
+            [itemKeys.startQuest] = 31937,
+        },
+        [89814] = { -- "Earth-Slasher" Master Plow
+            [itemKeys.startQuest] = 31938,
+        },
+        [244172] = { -- Eternal Blossom
+            [itemKeys.name] = "Eternal Blossom",
+            [itemKeys.class] = itemClasses.QUEST,
+            [itemKeys.objectDrops] = {210537,210538,210539},
         },
     }
 end
