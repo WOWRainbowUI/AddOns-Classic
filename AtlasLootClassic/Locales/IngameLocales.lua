@@ -58,7 +58,8 @@ local function GetLocRepStanding(id)
 end
 
 local function GetCurrencyName(currencyID)
-	return GetCurrencyInfo(currencyID)['name']
+	local name = GetCurrencyInfo(currencyID) -- 暫時修正
+	return name
 end
 
 local IngameLocales = {
