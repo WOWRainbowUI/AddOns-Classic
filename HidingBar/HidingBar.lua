@@ -586,7 +586,7 @@ function hb:addToIgnoreFrameList(name)
 	if frame then
 		ignoreFrameList[frame] = true
 	else
-		print(addon..":", name, "not found")
+		-- print(addon..":", name, "not found")
 	end
 end
 
