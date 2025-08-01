@@ -25,22 +25,28 @@ function MopItemFixes.Load()
             [itemKeys.npcDrops] = {54930},
             [itemKeys.objectDrops] = {209436},
         },
+        [72985] = { -- Windwool Bandage
+            [itemKeys.class] = itemClasses.QUEST,
+        },
+        [72986] = { -- Heavy Windwool Bandage
+            [itemKeys.class] = itemClasses.QUEST,
+        },
         [73193] = { -- Blushleaf Extrac
             [itemKeys.objectDrops] = {209550},
         },
         [74033] = { -- Ancient Hozen Skull
             [itemKeys.objectDrops] = {209595},
         },
-        [74160] = { -- Zin\'Jun\'s Rifle
+        [74160] = { -- Zin'Jun's Rifle
             [itemKeys.npcDrops] = {55470,66917},
         },
-        [74161] = { -- Zin\'Jun\'s Left Eye
+        [74161] = { -- Zin'Jun's Left Eye
             [itemKeys.npcDrops] = {55470,66917},
         },
-        [74162] = { -- Zin\'Jun\'s Right Eye
+        [74162] = { -- Zin'Jun's Right Eye
             [itemKeys.npcDrops] = {55470,66917},
         },
-        [74163] = { -- Snuff\'s Corpse
+        [74163] = { -- Snuff's Corpse
             [itemKeys.npcDrops] = {55470,66917},
         },
         [74258] = { -- Staff of Pei-Zhi
@@ -213,6 +219,12 @@ function MopItemFixes.Load()
         [78959] = { -- Serpent Egg
             [itemKeys.objectDrops] = {210238,210239,210240},
         },
+        [79025] = { -- Slitherscale Harpoon
+            [itemKeys.objectDrops] = {210277},
+        },
+        [79028] = { -- Saltback Meat Scrap
+            [itemKeys.npcDrops] = {58218,58219},
+        },
         [79030] = { -- Honeycomb
             [itemKeys.npcDrops] = {58363},
         },
@@ -224,6 +236,10 @@ function MopItemFixes.Load()
         },
         [79059] = { -- Intact Tortoise Shell
             [itemKeys.npcDrops] = {58431},
+        },
+        [79067] = { -- Stolen Egg
+            [itemKeys.npcDrops] = {63532},
+            [itemKeys.objectDrops] = {210238,210239,210240},
         },
         [79104] = { -- Rusty Watering Can
             [itemKeys.class] = itemClasses.QUEST,
@@ -281,6 +297,7 @@ function MopItemFixes.Load()
         },
         [79827] = { -- Authentic Valley Stir Fry
             [itemKeys.npcDrops] = {59124},
+            [itemKeys.objectDrops] = {210803},
         },
         [79828] = { -- Yak Statuette
             [itemKeys.npcDrops] = {59124},
@@ -324,20 +341,32 @@ function MopItemFixes.Load()
         [80074] = { -- Celestial Jade
             [itemKeys.objectDrops] = {210921},
         },
+        [80116] = { -- Partially Chewed Carrot
+            [itemKeys.objectDrops] = {210938,210942},
+        },
         [80122] = { -- Spideroot
             [itemKeys.objectDrops] = {210945,211117},
         },
-        [80213] = { -- Spicemaster Jin Jao\'s Payment
+        [80133] = { -- Preserved Vegetables
+            [itemKeys.objectDrops] = {210956,210957},
+        },
+        [80134] = { -- Uncut Chrysoberyl
+            [itemKeys.objectDrops] = {210958,210959,210960},
+        },
+        [80213] = { -- Spicemaster Jin Jao's Payment
             [itemKeys.npcDrops] = {59581},
         },
-        [80214] = { -- Trader Jambeezi\'s Payment
+        [80214] = { -- Trader Jambeezi's Payment
             [itemKeys.npcDrops] = {59583},
         },
-        [80215] = { -- Innkeeper Lei Lan\'s Payment
+        [80215] = { -- Innkeeper Lei Lan's Payment
             [itemKeys.npcDrops] = {59582},
         },
-        [80216] = { -- Lolo Lio\'s Payment
+        [80216] = { -- Lolo Lio's Payment
             [itemKeys.npcDrops] = {59585},
+        },
+        [80223] = { -- Old Hillpaw's Prize Chicken
+            [itemKeys.npcDrops] = {58918},
         },
         [80227] = { -- Root Vegetable
             [itemKeys.objectDrops] = {211017,211018,211019},
@@ -384,7 +413,7 @@ function MopItemFixes.Load()
         [80315] = { -- Stolen Supplies
             [itemKeys.objectDrops] = {211266,211268,211269,211270},
         },
-        [80316] = { -- Lucky Virmen\'s Foot
+        [80316] = { -- Lucky Virmen's Foot
             [itemKeys.npcDrops] = {59693,59967},
         },
         [80317] = { -- Lucky Yak Shoe
@@ -415,6 +444,9 @@ function MopItemFixes.Load()
             [itemKeys.vendors] = {58718},
             [itemKeys.class] = itemClasses.QUEST,
         },
+        [80600] = { -- Stinger
+            [itemKeys.npcDrops] = {60278},
+        },
         [80677] = { -- Emerald Tailfeather
             [itemKeys.npcDrops] = {60200},
         },
@@ -436,6 +468,12 @@ function MopItemFixes.Load()
         [80827] = { -- Confusing Treasure Map
             [itemKeys.npcDrops] = {60299,60357},
             [itemKeys.startQuest] = 30675;
+        },
+        [80830] = { -- Rusty Shipwreck Debris
+            [itemKeys.objectDrops] = {214547},
+        },
+        [80832] = { -- Viseclaw Fisher Eye
+            [itemKeys.npcDrops] = {58880,58881,61090},
         },
         [80907] = { -- Opalescent Blue Crab Shell
             [itemKeys.npcDrops] = {60437,63722},
@@ -508,11 +546,14 @@ function MopItemFixes.Load()
             [itemKeys.npcDrops] = {61302,61811},
             [itemKeys.objectDrops] = {211871,211872,211873},
         },
-        [82764] = { -- Bottom Fragment of Lei Shen\'s Tablet
+        [82764] = { -- Bottom Fragment of Lei Shen's Tablet
             [itemKeys.objectDrops] = {211967},
         },
         [82799] = { -- Yaungol Oil Barrel
             [itemKeys.objectDrops] = {212003},
+        },
+        [82808] = { -- Call of the Lorewalkers
+            [itemKeys.startQuest] = 31016,
         },
         [82864] = { -- Living Amber
             [itemKeys.objectDrops] = {212009,212012},
@@ -537,6 +578,7 @@ function MopItemFixes.Load()
             [itemKeys.startQuest] = 31055,
         },
         [83129] = { -- Cloudrunner Egg
+            [itemKeys.npcDrops] = {62268},
             [itemKeys.objectDrops] = {212230,214479,214480,214481},
         },
         [83135] = { -- Amber Blade
@@ -587,6 +629,9 @@ function MopItemFixes.Load()
         [84241] = { -- Whitepetal Reed
             [itemKeys.objectDrops] = {212744},
         },
+        [84646] = { -- Ruby Eye
+            [itemKeys.objectDrops] = {212759,212760,212761},
+        },
         [84656] = { -- Stunned Whitepetal Carp
             [itemKeys.npcDrops] = {62984},
         },
@@ -596,11 +641,20 @@ function MopItemFixes.Load()
         [85159] = { -- Amber-Filled Jar
             [itemKeys.objectDrops] = {212923},
         },
+        [85161] = { -- Soul-Gatherer's Beads
+            [itemKeys.npcDrops] = {246246},
+        },
         [85230] = { -- Sea Monarch Chunks
             [itemKeys.class] = itemClasses.QUEST,
         },
         [85282] = { -- Tiger Flank
             [itemKeys.npcDrops] = {63537,63538,65612,67085},
+        },
+        [85681] = { -- Lushroom
+            [itemKeys.objectDrops] = {213350,213352,213353},
+        },
+        [85778] = { -- Stolen Mistfall Keg
+            [itemKeys.objectDrops] = {213365},
         },
         [85782] = { -- Mistfall Water Bucket
             [itemKeys.objectDrops] = {213369},
@@ -621,6 +675,9 @@ function MopItemFixes.Load()
         [85886] = { -- Sealed Charter Tube
             [itemKeys.objectDrops] = {213454},
         },
+        [85950] = { -- Mistfall Water Bucket
+            [itemKeys.objectDrops] = {213369},
+        },
         [85955] = { -- Dog's Whistle
             [itemKeys.class] = itemClasses.QUEST,
         },
@@ -630,17 +687,23 @@ function MopItemFixes.Load()
         [85998] = { -- Thresher Jaw
             [itemKeys.npcDrops] = {63944},
         },
+        [86099] = { -- Wu Kao Scouting Report
+            [itemKeys.objectDrops] = {213640},
+        },
         [86404] = { -- Old Map
             [itemKeys.npcDrops] = {59639},
         },
         [86431] = { -- Stormstout Secrets
             [itemKeys.objectDrops] = {213795},
         },
+        [86446] = { -- Sheepie
+            [itemKeys.npcDrops] = {64386},
+        },
         [86489] = { -- Succulent Turtle Filet
             [itemKeys.npcDrops] = {63981},
         },
         [86542] = { -- Flying Tiger Gourami
-            [itemKeys.startQuest] = 31442,
+            [itemKeys.startQuest] = 31443,
         },
         [86544] = { -- Spinefish Alpha
             [itemKeys.startQuest] = 31444,
@@ -663,6 +726,18 @@ function MopItemFixes.Load()
         [87401] = { -- Needler Wings
             [itemKeys.npcDrops] = {64714},
         },
+        [87553] = { -- Red Radish
+            [itemKeys.npcDrops] = {57298},
+        },
+        [87554] = { -- Sweet Lakemelon
+            [itemKeys.npcDrops] = {57402},
+        },
+        [87555] = { -- Fuzzy Peach
+            [itemKeys.npcDrops] = {58706},
+        },
+        [87556] = { -- Black Cherrie
+            [itemKeys.npcDrops] = {58705},
+        },
         [87813] = { -- Zan'thik Shackles
             [itemKeys.npcDrops] = {64970},
         },
@@ -671,6 +746,9 @@ function MopItemFixes.Load()
         },
         [87874] = { -- Kyparite Shards
             [itemKeys.npcDrops] = {65231},
+        },
+        [87878] = { -- Enormous Kunchong Mandibles
+            [itemKeys.startQuest] = 31599,
         },
         [88538] = { -- Sha-Haunted Crystal
             [itemKeys.startQuest] = 31661,
