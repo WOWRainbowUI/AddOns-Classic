@@ -4985,7 +4985,7 @@ local modelFrame;
 		--Model_SetDefaultRotation(frame, 0.61);
 		modelFrame = frame;
 	end
-	--Data taken from retail EJ_GetCreatureInfo(), he files are in TBC client though.
+	--Data taken from retail EJ_GetCreatureInfo(), the files are in TBC client though.
 	--Tall NPC.
 	local id, name, description, displayInfo, iconImage, uiModelSceneID = "3782", "Maiden of Virtue", "", 16198, 1378997, 67;
 	--Normal size NPC.
@@ -5158,7 +5158,7 @@ end]]
 		frame.fs:SetPoint("TOPLEFT", 20, -30);
 		modelFrame = frame;
 	end
-	--Data taken from retail EJ_GetCreatureInfo(), he files are in TBC client though.
+	--Data taken from retail EJ_GetCreatureInfo(), the files are in TBC client though.
 	--Tall NPC.
 	local id, name, description, displayInfo, iconImage, uiModelSceneID = "3782", "Maiden of Virtue", "", 16198, 1378997, 67;
 	--Normal size NPC.

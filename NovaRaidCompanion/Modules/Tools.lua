@@ -628,13 +628,15 @@ function NRC:sendWarning(msg)
 	NRC:sendRaidNotice("[NRC] " .. msg, nil, 7);
 end
 
-function NRC:sendReminder(msg, bright) --/run NRC:sendReminder("Your Shadow Resistance neck is still equipped.", true)
+function NRC:sendReminder(msg, once) --/run NRC:sendReminder("Your Shadow Resistance neck is still equipped.", true)
 	msg = "|cFF00C800" .. L["Reminder"] .. ":|r ".. msg;
 	NRC:print(msg);
 	NRC:sendRaidNotice("[NRC] " .. msg, nil, 7);
-	C_Timer.After(1, function()
-		NRC:sendRaidNotice("[NRC] " .. msg, nil, 7);
-	end)
+	if (not once) then
+		C_Timer.After(1, function()
+			NRC:sendRaidNotice("[NRC] " .. msg, nil, 7);
+		end)
+	end
 	--C_Timer.After(2, function()
 	--	NRC:sendRaidNotice("[NRC] " .. msg, nil, 7);
 	--end)

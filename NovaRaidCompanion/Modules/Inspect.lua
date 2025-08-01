@@ -8,6 +8,9 @@ local sanctifiedString = L["Sanctified"];
 local uniformString = L["Scarlet Uniform"];
 local tonumber = tonumber;
 local GetItemInfo = GetItemInfo or C_Item.GetItemInfo;
+local GetItemGem = GetItemGem or C_Item.GetItemGem;
+local GetItemNumSockets = C_Item.GetItemNumSockets;
+local GetItemNumAddedSockets = C_Item.GetItemNumAddedSockets;
 local isSOD = NRC.isSOD;
 local isMOP = NRC.isMOP;
 local expansionNum = NRC.expansionNum;
@@ -26,6 +29,8 @@ local inspectAgainQueue = {};
 local currentInspectGUID;
 local cachingIssues = {};
 local inspectSlotCount = 0;
+local checkBeltBuckle = expansionNum > 2 and expansionNum < 6;
+local checkGems = GetItemGem and GetItemNumSockets;
 
 local inspectSlots = {
 	[1] = "HeadSlot",
@@ -263,14 +268,14 @@ function NRC:getAverageItemLevel(guid, decimal)
 		};
 		if (expansionNum > 4) then
 			--Ranged slot removed in MoP.
-			inspectSlots[18] = nil;
+			slots[18] = nil;
 		end
 		local numSlots = 0;
 		local data = NRC.gearCache[guid];
 		if (data) then
 			if (data[16]) then
 				local _, _, _, _, _, _, _, _, equipLoc = C_Item.GetItemInfo(data[16].itemLink);
-				if (equipLoc == "INVTYPE_2HWEAPON" or (equipLoc == "INVTYPE_RANGED" and expansionNum > 4)) then
+				if (equipLoc == "INVTYPE_2HWEAPON" or ((equipLoc == "INVTYPE_RANGEDRIGHT" or equipLoc == "INVTYPE_RANGED") and expansionNum > 4)) then
 					--If two hander equipped we ignore offhand.
 					slots[17] = nil;
 				end
@@ -312,7 +317,8 @@ local function fallbackUpdate(guid, unit)
 						--end
 						NRC.gearCache[guid][k] = {
 							itemLink = itemLink,
-							skipEnchantCheck = true, --Don't check for nchant if we only have a generic itemLink and not the actual equipped itemLink.
+							skipEnchantCheck = true, --Don't check for enchant if we only have a generic itemLink and not the actual equipped itemLink.
+							skipGemCheck = true,
 						};
 						NRC.gearCache[guid].updated = GetServerTime();
 					--else
@@ -392,6 +398,57 @@ function NRC:buildInventoryFromInspect(guid, unit, secondTry)
 				gear[k] = {
 					itemLink = itemLink;
 				};
+				if (GetItemGem and GetItemNumSockets) then
+					local gemCount = GetItemNumSockets(itemLink);
+					--if (k == 6) then
+					--	print(1, UnitName(unit), gemCount)
+					--end
+					--if (gemCount and gemCount > 0) then
+					if (gemCount) then
+						gear[k].gems = {
+							sockets = gemCount,
+						};
+						local equipped = 0;
+						if (k == 6 and checkBeltBuckle) then
+							--GetItemNumSockets() does not include a belt buckle socket so we can use this to check if a buckle is on the gear.
+							for slot = 1, gemCount do
+								local _, gemLink = GetItemGem(itemLink, slot);
+								if (gemLink) then
+									local _, _, _, _, _, _, color = C_Item.GetItemInfo(gemLink)
+									local t = {
+										itemLink = gemLink;
+										color = color,
+									};
+									tinsert(gear[k].gems, t);
+									equipped = equipped + 1;
+									--print(C_Item.GetItemInfo(gemLink))
+								end
+							end
+							--Check extra slot for belt buckle.
+							local _, gemLink = GetItemGem(itemLink, gemCount + 1);
+							--print(UnitName(unit), gemCount, gemLink)
+							if (gemLink) then
+								gear[k].hasBeltBuckle = true;
+							else
+								--If no gemLink is found we need to add tooltip scaning here to check for the empty gem socket texture.
+							end
+						else
+							for slot = 1, gemCount do
+								local _, gemLink = GetItemGem(itemLink, slot);
+								if (gemLink) then
+									local _, _, _, _, _, _, color = C_Item.GetItemInfo(gemLink)
+									local t = {
+										itemLink = gemLink;
+										color = color,
+									};
+									tinsert(gear[k].gems, t);
+									equipped = equipped + 1;
+								end
+							end
+						end
+						gear[k].gems.equipped = equipped;
+					end
+				end
 				--equipCount = equipCount + 1;
 				updated = true;
 			end
@@ -647,6 +704,21 @@ function NRC:getEnchantsData(guid)
 	end
 end
 
+function NRC:getGemsData(guid)
+	if (NRC.gearCache[guid]) then
+		local sockets, equipped = 0, 0;
+		local data = NRC.gearCache[guid];
+		local gearData = NRC.gearCache[guid];
+		for slot, slotData in pairs(gearData) do
+			if (type(slotData) == "table" and slotData.gems) then
+				equipped = equipped + slotData.gems.equipped
+				sockets = sockets + slotData.gems.sockets;
+			end
+		end
+		return sockets, sockets - equipped;
+	end
+end
+
 function NRC:getGlyphsData(name)
 	local data = NRC.glyphs[name];
 	if (data) then
@@ -694,16 +766,25 @@ function NRC:updateIssuesCache(guid)
 			slots[18] = nil;
 		end
 		local numSlots = 0;
+		local totalIssues, enchantIssues, glyphIssues, gearMissingIssues, talentsMissing, fishingIssues, gemIssues, beltBuckleIssues = 0, 0, 0, 0, 0, 0, 0, 0;
 		local data = NRC.gearCache[guid];
 		if (data[16]) then
 			local _, _, _, _, _, _, _, _, equipLoc = C_Item.GetItemInfo(data[16].itemLink);
-			if (equipLoc == "INVTYPE_2HWEAPON" or (equipLoc == "INVTYPE_RANGED" and expansionNum > 4)) then
+			if (equipLoc == "INVTYPE_2HWEAPON" or ((equipLoc == "INVTYPE_RANGEDRIGHT" or equipLoc == "INVTYPE_RANGED") and expansionNum > 4)) then
 				--If two hander equipped we ignore offhand.
 				slots[17] = nil;
 			end
+			if (NRC.fishingGear) then
+				local _, itemID = strsplit(":", data[16].itemLink);
+				if (itemID) then
+					itemID = tonumber(itemID);
+					if (NRC.fishingGear[itemID]) then
+						fishingIssues = fishingIssues + 1;
+						totalIssues = totalIssues + 1;
+					end
+				end
+			end
 		end
-		local data = NRC.gearCache[guid];
-		local totalIssues, enchantIssues, glyphIssues, gearMissingIssues, talentsMissing = 0, 0, 0, 0, 0;
 		for k, v in pairs(slots) do
 			if (not data[k]) then
 				gearMissingIssues = gearMissingIssues + 1;
@@ -716,6 +797,25 @@ function NRC:updateIssuesCache(guid)
 				enchantIssues = #missingEnchants;
 				totalIssues = totalIssues + enchantIssues;
 			end
+		end
+		if (checkGems) then
+			local _, missingGems = NRC:getGemsData(guid);
+			if (missingGems and missingGems > 0) then
+				gemIssues = missingGems;
+				totalIssues = totalIssues + gemIssues;
+			end
+		end
+		--[[if (checkBeltBuckle and data[6] and NRC:isMaxLevel(guid)) then
+			local hasBeltBuckle = GetItemNumAddedSockets(data[6].itemLink); --This func seems not to work.
+			--print(1, hasBeltBuckle)
+			if (hasBeltBuckle == 0) then
+				beltBuckleIssues = 1;
+				totalIssues = totalIssues + 1;
+			end
+		end]]
+		if (checkBeltBuckle and data[6] and not data[6].hasBeltBuckle) then
+			beltBuckleIssues = 1;
+			totalIssues = totalIssues + 1;
 		end
 		local name, level = NRC:getNameFromGUID(guid), NRC:getLevelFromGUID(guid);
 		if (NRC.glyphs[name]) then
@@ -760,6 +860,9 @@ function NRC:updateIssuesCache(guid)
 			glyphIssues = glyphIssues,
 			gearMissingIssues = gearMissingIssues,
 			talentsMissing = talentsMissing,
+			fishingIssues = fishingIssues,
+			gemIssues = gemIssues,
+			beltBuckleIssues = beltBuckleIssues;
 			otherIssues = otherIssues,
 		};
 		NRC.issuesCache[guid] = t;
@@ -779,38 +882,53 @@ function NRC:getIssuesString(guid)
 	if (issues) then
 		if (issues.enchantIssues and issues.enchantIssues > 0) then
 			if (issues.enchantIssues == 1) then
-				text = text .. "\n|cFF9CD6DE" .. issues.enchantIssues .. " missing enchant";
+				text = text .. "\n|T136244:0|t |cFF9CD6DE" .. issues.enchantIssues .. " missing enchant|r";
 			else
-				text = text .. "\n|cFF9CD6DE" .. issues.enchantIssues .. " missing enchants";
+				text = text .. "\n|T136244:0|t |cFF9CD6DE" .. issues.enchantIssues .. " missing enchants|r";
+			end
+		end
+		if (issues.gemIssues and issues.gemIssues > 0) then
+			if (issues.gemIssues == 1) then
+				text = text .. "\n|T133252:0|t |cFF9CD6DE" .. issues.gemIssues .. " missing gem|r";
+			else
+				text = text .. "\n|T133252:0|t |cFF9CD6DE" .. issues.gemIssues .. " missing gems|r";
+			end
+		end
+		if (issues.beltBuckleIssues and issues.beltBuckleIssues > 0) then
+			if (issues.beltBuckleIssues == 1) then
+				text = text .. "\n|T132525:0|t |cFF9CD6DEMissing belt buckle|r";
 			end
 		end
 		if (issues.glyphIssues and issues.glyphIssues > 0) then
 			if (issues.glyphIssues == 1) then
-				text = text .. "\n|cFF9CD6DE" .. issues.glyphIssues .. " missing major glyph";
+				text = text .. "\n|T254288:0|t |cFF9CD6DE" .. issues.glyphIssues .. " missing major glyph|r";
 			else
-				text = text .. "\n|cFF9CD6DE" .. issues.glyphIssues .. " missing major glyphs";
+				text = text .. "\n|T254288:0|t |cFF9CD6DE" .. issues.glyphIssues .. " missing major glyphs|r";
 			end
 		end
 		if (issues.talentsMissing and issues.talentsMissing > 0) then
 			if (issues.talentsMissing == 1) then
-				text = text .. "\n|cFF9CD6DE" .. issues.talentsMissing .. " missing talent";
+				text = text .. "\n|T132222:0|t |cFF9CD6DE" .. issues.talentsMissing .. " missing talent|r";
 			else
-				text = text .. "\n|cFF9CD6DE" .. issues.talentsMissing .. " missing talents";
+				text = text .. "\n|T132222:0|t |cFF9CD6DE" .. issues.talentsMissing .. " missing talents|r";
 			end
+		end
+		if (issues.fishingIssues and issues.fishingIssues > 0) then
+			text = text .. "\n|T132931:0|t |cFF9CD6DEFishing gear equipped|r";
 		end
 		if (next(issues.otherIssues)) then
 			for k, v in ipairs(issues.otherIssues) do
-				text = text .. "\n|cFF9CD6DE" .. v;
+				text = text .. "\n|cFF9CD6DE" .. v .. "|r";
 			end
 		end
 		if (issues.gearMissingIssues and issues.gearMissingIssues > 0) then
 			if (issues.gearMissingIssues == 1) then
-				text = text .. "\n|cFF9CD6DE" .. issues.gearMissingIssues .. " gear slot empty";
+				text = text .. "\n|cFF9CD6DE" .. issues.gearMissingIssues .. " gear slot empty|r";
 			else
-				text = text .. "\n|cFF9CD6DE" .. issues.gearMissingIssues .. " gear slots empty";
+				text = text .. "\n|cFF9CD6DE" .. issues.gearMissingIssues .. " gear slots empty|r";
 			end
 			if (issues.gearMissingIssues > 5) then
-				text = text .. "\n|cFFFFFF00Possible equip error\nReinspect player";
+				text = text .. "\n|cFFFFFF00Possible equip error\nReinspect player|r";
 			end
 		end
 		text = gsub(text, "^\n", "");
@@ -1096,13 +1214,16 @@ function NRC:recalcEquipmentFrame(firstOpen)
 		local specID, talentCount, specName, specIcon, specIconPath, treeData = NRC:getSpecFromTalentString(talentString);
 		if (specIconPath) then
 			trees = {strsplit("-", trees, 4)};
-			local icon = "|T" .. specIconPath .. ":17:17:0:-1|t";
+			local icon = "|T" .. specIconPath .. ":17:17:0:0|t1|t";
 			local treeString = "|cFF9CD6DE(" .. treeData[1] .. "/" .. treeData[2] .. "/" .. treeData[3] .. ")|r";
 			--equipmentFrame.fs3:SetText(treeString);
 			--infoText = infoText .. "\n" .. specName .. " " .. treeString .. " |T" .. specIcon .. ":14:14|t";
 			infoText = infoText .. "\n" .. specName .. " " .. treeString;
 		elseif (talentCount == 0) then
 			infoText = infoText .. "\nNo talents spent";
+		elseif (specName) then
+			--If MoP+ and talents are spents just show spec name.
+			infoText = infoText .. "\n" .. specName;
 		else
 			infoText = infoText .. "\nNo talents data found";
 		end
@@ -1128,15 +1249,17 @@ function NRC:recalcEquipmentFrame(firstOpen)
 	end
 	equipmentFrame.fs2:SetText("|cFF9CD6DE" .. infoText);
 	local issues = NRC.issuesCache[guid];
+	local issuesHeight = 0;
 	if (issues and issues.totalIssues > 0) then
 		--equipmentFrame.fs4:SetText("|cFF9CD6DEIssues Found|r");
 		--equipmentFrame.fs4:SetText("|cFFFFFF00Issues Found|r");
 		equipmentFrame.fs4:SetText("|cFFFF6900[Potential Issues]|r");
 		local text = NRC:getIssuesString(guid);
 		equipmentFrame.fs5:SetText(text);
+		issuesHeight = equipmentFrame.fs5:GetHeight();
 	else
 		equipmentFrame.fs4:SetText("");
-		equipmentFrame.fs5:SetText("");
+		equipmentFrame.fs5:SetText("|cFFFFFF00No issues detected.");
 	end
 	equipmentFrame.fs6:SetText("|cFFFFFF00Average iLvl");
 	equipmentFrame.fs7:SetText("|cFF9CD6DE" .. NRC:getAverageItemLevel(guid, 2));
@@ -1145,6 +1268,13 @@ function NRC:recalcEquipmentFrame(firstOpen)
 		equipmentFrame.fs8:SetText("|cFFA1A1A1Last updated " .. NRC:getTimeString(GetServerTime() - updated, true) .. " ago");
 	else
 		equipmentFrame.fs8:SetText("");
+	end
+	--If the issues list is long ten extend the frame down to fit the text.
+	local issuesHeightOffset = issuesHeight - 55; --If more than 4 lines of text.
+	if (issuesHeightOffset > 0) then
+		equipmentFrame:SetHeight(equipmentFrame.defaultHeight + issuesHeightOffset);
+	else
+		equipmentFrame:SetHeight(equipmentFrame.defaultHeight);
 	end
 	equipmentFrame.loadEquipment(data.class, equipmentData);
 end

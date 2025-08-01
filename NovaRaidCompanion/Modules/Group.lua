@@ -331,6 +331,18 @@ function NRC:inOurGroup(who)
 	end
 end
 
+
+function NRC:isMaxLevel(guid)
+	if (guid == UnitGUID("player") and UnitLevel("player") == NRC.maxLevel) then
+		return true;
+	end
+	for k, v in pairs(NRC.groupCache) do
+		if (v.guid == guid and v.level == NRC.maxLevel) then
+			return true;
+		end
+	end
+end
+
 --Get guid from group member name, accepts name-realm.
 --Also accepts just name (less reliable if they ever enable cross realm in tbc, but would be rare to have 2 same names in group).
 --Checks class also if no realm is supplied to even further narrow down the right result.

@@ -5002,7 +5002,7 @@ NRC.optionDefaults = {
 		
 		raidStatusNaxx = true,
 		raidStatusSanc = true,
-		raidStatusIlvl = false,
+		raidStatusIlvl = true,
 		raidStatusEquip = true,
 		raidStatusFlask = true,
 		raidStatusFood = true,
@@ -5027,6 +5027,7 @@ NRC.optionDefaults = {
 		--Debug.
 		--raidCooldownArcaneIntellect = true,
 		--raidCooldownFelArmor = true,
+		checkFishingGear = true,
 	},
 	profile = {
 		lockAllFrames = true,
@@ -5442,7 +5443,7 @@ NRC.optionDefaults = {
 		
 		raidStatusNaxx = true,
 		raidStatusSanc = true,
-		raidStatusIlvl = false,
+		raidStatusIlvl = true,
 		raidStatusEquip = true,
 		raidStatusFlask = true,
 		raidStatusFood = true,
@@ -5839,24 +5840,27 @@ end
 
 function NRC:checkNewVersion()
 	--NRC.db.global.versions = {};
-	local newVersionNotes = 1.71;
+	local newVersionNotes = 1.73;
 	if (NRC.version and NRC.version == newVersionNotes) then
 		if (not NRC.db.global.versions[NRC.version]) then
-			if (NRC.isMOP) then
+			--if (NRC.isMOP) then
 				local notes = {
-					--"|cFF00FF00[General]|r",
-					"Changed raid status columns to show mop raid buffs stam/crit/mastery/stats/spell power/attack power/spell haste/attack speed.",
-					"Added a bunch of new MoP cooldowns.",
-					"Removed helm enchant check in MoP (helm enchants were moved from game).",
-					"Added missing major glyphs to \"issues\" display on raid status frame for whole raid.",
-					"Fixed raid status frame displaying missing equipped ranged slot in mop.",
-					"Cooldowns that require a specialization will now only show up once someone with that spec casts it the first time (next update these should be added to spec detection like talents).",
-					"Removed max rank flag for all cata consumes now that mop is launching.",
-					"The lockouts frames now shows raids in alphabetical order for better readability across alts.",
-					"There may be some bugs that I can't see until MoP raiding starts, let me know of any issues",
+					"|cFF00FF00[Version 1.73]|r",
+					"Added Gems missing to the issues display for TBC/Wrath/Cata/MoP.",
+					"Added Belt Buckle missing to the issues display for MoP.",
+					"The average ilvl column on raid status is now enabled by default (can be turned off in options).",
+					" ",
+					"|cFF00FF00[Version 1.72]|r",
+					"Added detecting a fishing rod being equipped by anyone in the raid to show as a gear issue on the raid status frame.",
+					"Added a reminder if you enter a raid/dungeon with a fishing rod equipped.",
+					"Added more MoP buff foods to the db.",
+					"Added Major Rejuvenation Potion to tracked consumes for classic.",
+					"Fixed hunter showing as having a missing gear slot in MoP.",
+					"Fixed average ilvl count in MoP.",
+					"Bunch of other small fixes.",
 				};
 				loadNewVersionFrame(NRC.version, notes, "Nova Raid Companion", "Interface\\AddOns\\NovaRaidCompanion\\Media\\nrc_icon2", 0, 300);
-			end
+			--end
 			--NRC:setLockAllFrames(nil, false);
 			--Wipe old data.
 			NRC.db.global.versions = {};

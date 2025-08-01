@@ -3336,6 +3336,105 @@ NRC.foods = {
 		desc = "+300 Expertise",
 		maxRank = true,
 	},
+	--5.4 foods.
+	[146804] = { --Fluffy Silkfeather Omelet.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+300 Strength",
+		maxRank = true,
+	},
+	[146808] = { --Stuffed Lushrooms.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+450 Stamina",
+		maxRank = true,
+	},
+	[146807] = { --Farmer's Delight.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+300 Spirit",
+		maxRank = true,
+	},
+	[146809] = { --Mango Ice.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+300 Mastery",
+		maxRank = true,
+	},
+	[146806] = { --Spiced Blossom Soup
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+300 Intellect",
+		maxRank = true,
+	},
+	[146805] = { --Seasoned Pomfruit Slices.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+300 Agility",
+		maxRank = true,
+	},
+	--+275 foods.
+	[104271] = { --Eternal Blossom Fish.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+275 Strength",
+	},
+	[104282] = { --Twin Fish Platter.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+415 Stamina",
+	},
+	[104276] = { --Braised Turtle.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+275 Intellect",
+	},
+	[104279] = { --Fire Spirit Salmon.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+275 Spirit",
+	},
+	[104274] = { --Valley Stir Fry.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+275 Agility",
+	},
+	[125106] = { --Wildfowl Ginseng Soup.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+275 Hit",
+	},
+	[125108] = { --Rice Pudding.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+275 Expertise",
+	},
+	--+250 food.
+	[104267] = { --Charbroiled Tiger Steak.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+275 Strength",
+	},
+	[104281] = { --Wildfowl Roast.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+375 Stamina",
+	},
+	[104264] = { --Swirling Mist Soup.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+275 Intellect",
+	},
+	[104278] = { --Shrimp Dumplings.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+275 Spirit",
+	},
+	[104273] = { --Sauteed Carrots.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+275 Agility",
+	},
 };
 
 --"Food" buffs used in RaidStatus to show player is currently eating buff food, these must match all foods above.
@@ -3375,26 +3474,14 @@ NRC.eating = {
 	[125114] = "Food",
 	[125116] = "Food",
 	[145267] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[0] = "Food",
-	[126543] = "Food", --Banquet of the Steamer.
+	[104934] = "Food", --+275.
+	[104235] = "Food", --+250.
+	--5.4.
+	[104935] = "Food",
+	
+	
+	--Banquets only give 250 skill so not adding them atm.
+	--[[[126543] = "Food",
 	[0] = "Food", --Great Banquet of the Steamer.
 	[126544] = "Food", --Banquet of the Oven.
 	[0] = "Food", --Great Banquet of the Oven.
@@ -3405,11 +3492,10 @@ NRC.eating = {
 	[126542] = "Food", --Banquet of the Pot.
 	[0] = "Food", --Great Banquet of the Pot.
 	[126532] = "Food", --Banquet of the Grill.
-	[0] = "Food", --Great Banquet of the Grill.
-	--I think these spellids are to place the banquets not the actual eating buff.
-	--There are different banquet types that spawn?
-	[104958] = "Food", --Pandaren Banquet.
-	[105193] = "Food", --Great Pandaren Banquet.
+	[0] = "Food", --Great Banquet of the Grill.]]
+	
+	[148984] = "Food", --Pandaren Banquet.
+	[144961] = "Food", --Pandaren Treasure Noodle Soup (+300 Noodle cart).
 };
 
 NRC.scrolls = {
@@ -9804,4 +9890,26 @@ NRC.extraSlot3Data = {
 
 NRC.worldBuffs = {
 
+};
+
+--itemID to equipment slot.
+NRC.fishingGear = {
+	--Rods.
+	[84661] = 16,
+	[45991] = 16,
+	[45858] = 16,
+	[19970] = 16,
+	[45992] = 16,
+	[84660] = 16,
+	[44050] = 16,
+	[19022] = 16,
+	[6367] = 16,
+	[25978] = 16,
+	[6256] = 16,
+	[6365] = 16,
+	[636] = 16,
+	[12225] = 16,
+	[45120] = 16,
+	[52678] = 16,
+	[46337] = 16,
 };

@@ -1346,3 +1346,5 @@ L["SP"] = "SP";
 L["AP"] = "AP";
 L["Haste"] = "Haste";
 L["Speed"] = "Speed";
+
+L["fishingGearWarning"] = "Fishing gear %s is still equipped!"

@@ -752,9 +752,9 @@ end
 	frame.updateTooltip(tooltipText);
 end]]
 
-local function updateTooltipSpecialSlot(frame, name, classHex, tooltipString)
+local function updateTooltipSpecialSlot(frame, name, classHex, tooltipString, prefixString)
 	local nameString = "|c" .. classHex .. name .. "|r";
-	local tooltipText = "|cFFDEDE42" .. nameString .. "|r";
+	local tooltipText = (prefixString or "") .. "|cFFDEDE42" .. nameString .. "|r";
 	if (tooltipString) then
 		tooltipText = tooltipText .. "\n" .. tooltipString;
 	end
@@ -2123,16 +2123,37 @@ function NRC:updateRaidStatusFrames(updateLayout)
 							local totalIssues = issues.totalIssues;
 							frame.texture:SetPoint("CENTER", 0, 0);
 							frame.fs:SetPoint("CENTER", -16.5, 0);
+							frame.texture:SetTexture("Interface\\AddOns\\NovaRaidCompanion\\Media\\redsword.png");
 							if (issues.gearMissingIssues and issues.gearMissingIssues > 0) then
 								frame.fs:SetText("|cFFFF0000" .. totalIssues);
 							else
 								frame.fs:SetText("|cFFA1A1A1" .. totalIssues);
 							end
-							frame.texture:SetTexture("Interface\\AddOns\\NovaRaidCompanion\\Media\\redsword.png");
-							if (issues.talentsMissing and issues.talentsMissing > 0) then
+							--Must use icons here that are also in TBC/Classic for thier issues.
+							if (issues.fishingIssues and issues.fishingIssues > 0) then
+								frame.texture2:SetPoint("CENTER", 16.5, 0);
+								frame.texture2:SetSize(16, 16);
+								frame.texture2:SetTexture(132931);
+								frame.texture2:Show();
+							elseif (issues.talentsMissing and issues.talentsMissing > 0) then
 								frame.texture2:SetPoint("CENTER", 16.5, 0);
 								frame.texture2:SetSize(16, 16);
 								frame.texture2:SetTexture(132222);
+								frame.texture2:Show();
+							elseif (issues.enchantIssues and issues.enchantIssues > 0) then
+								frame.texture2:SetPoint("CENTER", 16.5, 0);
+								frame.texture2:SetSize(16, 16);
+								frame.texture2:SetTexture(136244);
+								frame.texture2:Show();
+							elseif (issues.gemIssues and issues.gemIssues > 0) then
+								frame.texture2:SetPoint("CENTER", 16.5, 0);
+								frame.texture2:SetSize(16, 16);
+								frame.texture2:SetTexture(133252);
+								frame.texture2:Show();
+							elseif (issues.beltBuckleIssues and issues.beltBuckleIssues > 0) then
+								frame.texture2:SetPoint("CENTER", 16.5, 0);
+								frame.texture2:SetSize(16, 16);
+								frame.texture2:SetTexture(132525);
 								frame.texture2:Show();
 							elseif (issues.glyphIssues and issues.glyphIssues > 0) then
 								frame.texture2:SetPoint("CENTER", 16.5, 0);
@@ -2172,8 +2193,9 @@ function NRC:updateRaidStatusFrames(updateLayout)
 							--frame.texture2:Show();
 							tooltipString = tooltipString .. "|cFF00FF00No issues found";
 						end
-						tooltipString = tooltipString .. "\n|cFFFFAE42[Click here to view equipment]\n";
-						updateTooltipSpecialSlot(frame, name, classHex, tooltipString);
+						--tooltipString = tooltipString .. "\n\n|cFFFFAE42[Click here to view equipment]\n";
+						--tooltipString = tooltipString .. "\n\n|cFFFFFF00[Click here to view equipment]\n";
+						updateTooltipSpecialSlot(frame, name, classHex, tooltipString, "|cFFFFFF00(Click here to view equipment)\n");
 					end
 					if (not InCombatLockdown()) then
 						--frame:SetAttribute("click");

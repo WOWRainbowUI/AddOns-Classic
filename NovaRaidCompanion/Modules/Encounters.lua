@@ -212,6 +212,32 @@ function NRC:checkPvpTrinket(delay)
 	end
 end
 
+local lastFishingGearWarning = 0;
+function NRC:checkFishingGear(delay)
+	if (not NRC.fishingGear) then
+		return;
+	end
+	if (NRC.db.global.checkFishingGear) then
+		local cooldown = 300;
+		if (delay) then
+			cooldown = delay;
+		end
+		local gearLink = GetInventoryItemLink("player", GetInventorySlotInfo("MAINHANDSLOT"));
+		if (gearLink) then
+			local _, itemID = strsplit(":", gearLink);
+			if (itemID) then
+				itemID = tonumber(itemID);
+				if (NRC.fishingGear[itemID]) then
+					if (GetServerTime() - lastFishingGearWarning > cooldown) then
+						NRC:sendReminder(string.format(L["fishingGearWarning"], gearLink), true);
+						lastFishingGearWarning = GetServerTime();
+					end
+				end
+			end
+		end
+	end
+end
+
 --[[function NRC:playerEnteringWorldEncounters(...)
 	local isLogon, isReload = ...;
 	--On rare occasions you PLAYER_ENTERING_WORLD as a ghost still instead of unghosting beforehand.
@@ -792,6 +818,12 @@ f:SetScript('OnEvent', function(self, event, ...)
 				NRC:checkMetaGem();
 			end)
 		else
+			local inInstance, instanceType = IsInInstance();
+			if (inInstance) then
+				C_Timer.After(3, function()
+					NRC:checkFishingGear();
+				end)
+			end
 			C_Timer.After(5, function()
 				NRC:checkMetaGem();
 			end)
@@ -822,6 +854,9 @@ f:SetScript('OnEvent', function(self, event, ...)
 					NRC:checkPvpTrinket(300);
 				end)
 			end
+			C_Timer.After(3, function()
+				NRC:checkFishingGear(300);
+			end)
 		end
 	elseif (event == "GOSSIP_SHOW") then
 		gossipShow(...);
@@ -1024,6 +1059,10 @@ end
 
 local lastMetaWarning, lastMetaStatus = 0;
 function NRC:checkMetaGem()
+	if (NRC.expansionNum < 2 or NRC.expansionNum > 4) then
+		--No meta gem in classic and no activation req in MoP.
+		return;
+	end
 	if (not NRC.config.checkMetaGem or (GetServerTime() - NRC.loadTime) < 120) then
 		return;
 	end
@@ -1039,143 +1078,6 @@ function NRC:checkMetaGem()
  	end
 end
 
---[[function NRC:getMetaGem()
-    local metaGemName, metaGemLink, metaGemTexture, metaGemActive;
-    local headItem = GetInventoryItemLink("player", GetInventorySlotInfo("HEADSLOT"));
-    --Some non-english clients don't always have the meta gem in first slot.
-    --TW client has it in first or second slot on different items it can be either, really strange.
-    --So we need to try find which is the meta.
-    if (headItem) then
-        for slot = 1, 3 do
-            local gemName, gemLink = GetItemGem(headItem, slot);
-            if (gemLink) then
-                --Get the item subClass.
-                local itemID, itemType, itemSubType, itemEquipLoc, texture, classID, subclassID = GetItemInfoInstant(gemLink);
-                if (itemSubType == META_GEM) then
-                    local tooltipScanner = NRC:getTooltipScanner();
-                    tooltipScanner:SetHyperlink(gemLink)
-                    local gemEffect = _G[tooltipScanner:GetName() .. "TextLeft2"] and _G[tooltipScanner:GetName() .. "TextLeft2"]:GetText()
-                    local gemActivation = _G[tooltipScanner:GetName() .. "TextLeft3"] and _G[tooltipScanner:GetName() .. "TextLeft3"]:GetText()
-                    metaGemActive = not strmatch(gemActivation, "cff808080") or false;
-                    metaGemName, metaGemLink, metaGemTexture = gemName, gemLink, texture;
-                    tooltipScanner:Hide();
-                end
-            end
-        end
-    end
-    return metaGemName, metaGemLink, metaGemTexture, metaGemActive;
-end]]
-
---[[function NRC:getMetaGem()
-  local metaGemName, metaGemLink, metaGemTexture, metaGemActive;
-  local headSlot = GetInventorySlotInfo("HEADSLOT")
-  local headItem = GetInventoryItemLink("player", headSlot);
-  --Some non-english clients don't always have the meta gem in first slot.
-  --TW client has it in first or second slot on different items it can be either, really strange.
-  --So we need to try find which is the meta.
-  if (headItem) then
-    for slot = 1, 3 do
-      local gemName, gemLink = GetItemGem(headItem, slot);
-      if (gemLink) then
-        --Get the item subClass.
-        local itemID, itemType, itemSubType, itemEquipLoc, texture, classID, subclassID = GetItemInfoInstant(gemLink);
-        if (itemSubType == META_GEM) then
-          local tooltipScanner = NRC:getTooltipScanner();
-          tooltipScanner:SetHyperlink(gemLink)
-          local gemEffect
-          for line = 2,4 do
-            local lineText = _G[tooltipScanner:GetName() .. "TextLeft".. line] and _G[tooltipScanner:GetName() .. "TextLeft".. line]:GetText()
-            if lineText and lineText ~= ITEM_BIND_ON_PICKUP and lineText ~= ITEM_UNIQUE_EQUIPPABLE then
-              gemEffect = lineText;
-              break;
-            end
-          end
-          local hasItem, hasCD, repair = tooltipScanner:SetInventoryItem("player", headSlot)
-          if (hasItem) and (gemEffect) then
-            for line=2,12 do
-              local text = _G[tooltipScanner:GetName() .. "TextLeft".. line] and _G[tooltipScanner:GetName() .. "TextLeft".. line]:GetText()
-              if strfind(text, gemEffect, 1, true) then
-                metaGemActive = not strmatch(text, "cff808080") or false
-                break;
-              end
-            end
-          end
-          metaGemName, metaGemLink, metaGemTexture = gemName, gemLink, texture;
-          tooltipScanner:Hide();
-        end
-      end
-    end
-  end
-  return metaGemName, metaGemLink, metaGemTexture, metaGemActive;
-end
-
-local lastMetaWarning = 0;
-function NRC:checkMetaGem()
-    if (not NRC.config.checkMetaGem) then
-        return;
-    end
-    local metaGemName, metaGemLink, metaGemTexture, metaGemActive = NRC:getMetaGem();
-    if (metaGemLink) and not metaGemActive then
-        if (GetServerTime() - lastMetaWarning > 1800) then
-            local texture = "|T" .. metaGemTexture .. ":12:12:0:0|t";
-            NRC:print("Warning: Meta gem is inactive: " .. texture .. " " .. metaGemLink)
-            lastMetaWarning = GetServerTime();
-        end
-     end
-end]]
-
---[[function NRC:getMetaGem()
-	local metaGemName, metaGemLink, metaGemTexture;
-	local headItem = GetInventoryItemLink("player", GetInventorySlotInfo("HEADSLOT"));
-	--Some non-english clients don't always have the meta gem in first slot.
-	--TW client has it in first or second slot on different items it can be either, really strange.
-	--So we need to try find which is the meta.
-	if (headItem) then
-		for slot = 1, 3 do
-			local gemName, gemLink = GetItemGem(headItem, slot);
-			if (gemLink) then
-				--Get the item subClass.
-				local _, _, _, _, _, _, gemType, _, _, texture = GetItemInfo(gemLink);
-				if (gemType == META_GEM) then
-					metaGemName, metaGemLink, metaGemTexture = gemName, gemLink, texture;
-				end
-			end
-		end
-	end
-	return metaGemName, metaGemLink, metaGemTexture;
-end
-
-local lastMetaWarning = 0;
-function NRC:checkMetaGem()
-	if (not NRC.config.checkMetaGem) then
-		return;
-	end
-	local metaGemName, metaGemLink, metaGemTexture = NRC:getMetaGem();
-	if (metaGemLink) then
-		local tooltipScanner = NRC:getTooltipScanner();
-		local headSlot = GetInventorySlotInfo("HEADSLOT");
-		local hasItem = tooltipScanner:SetInventoryItem("player", headSlot);
-	 	if (hasItem) then
-	 		for line = 1, 15 do
-		 		local text = _G[tooltipScanner:GetName() .. "TextLeft" .. line] and _G[tooltipScanner:GetName() .. "TextLeft" .. line]:GetText();
-				if (text and strmatch(text, string.gsub(ITEM_REQ_SKILL, "%%s", "(.+)"))
-						and not strmatch(text, string.gsub(ITEM_MIN_LEVEL, "%%s", "(.+)"))
-						and not strmatch(text, string.gsub(ITEM_LEVEL_RANGE, "%%s", "(.+)"))
-						and not strmatch(text, string.gsub(ITEM_LEVEL_RANGE_CURRENT, "%%s", "(.+)"))) then
-					if (strmatch(text, "cff808080")) then
-						--Meta gem not active.
-						if (GetServerTime() - lastMetaWarning > 1800) then
-							local texture = "|T" .. metaGemTexture .. ":12:12:0:0|t";
-			 				NRC:print("Warning: Meta gem is inactive: " .. texture .. " " .. metaGemLink)
-			 				lastMetaWarning = GetServerTime();
-			 			end
-		 			end
-		 		end
-	 		end
-	 	end
-	 	tooltipScanner:Hide();
- 	end
-end]]
 
 --Some debug stuff just early testing possible future features.
 --[[local inCombat = {};

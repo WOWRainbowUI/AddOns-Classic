@@ -5314,7 +5314,7 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 	frame.fs3:SetFont(NRC.regionFont, 13);
 	--frame.fs3:SetJustifyH("LEFT");
 	frame.fs4 = frame:CreateFontString(name .. "FS4", "ARTWORK");
-	frame.fs4:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -340);
+	frame.fs4:SetPoint("TOPLEFT", frame, "TOPLEFT", 10, -330);
 	frame.fs4:SetFont(NRC.regionFont, 14);
 	frame.fs4:SetJustifyH("LEFT");
 	frame.fs5 = frame:CreateFontString(name .. "FS5", "ARTWORK");
@@ -5569,6 +5569,9 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 		["SHAMAN"] = true,
 		["DEATHKNIGHT"] = true,
 	};
+	local gemTextures = {
+	
+	};
 	--frame.tooltipScanner = CreateFrame("GameTooltip", "NRCEquipTooltipScanner", nil, "GameTooltipTemplate");
 	--frame.tooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
 	--data is the table for this guid from NRC.gearCache.
@@ -5642,6 +5645,18 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 						v.fs:SetPoint("RIGHT", -5, 0);
 					end
 				end
+				--[[if (data[v.slot].gems and not data[v.slot].skipGemCheck) then
+					local gemString = "";
+					for gemSlot, gemData in ipairs(data[v.slot].gems) do
+						--Meta/Cogwheel/Red etc
+						if (gemData.color and gemTextures[gemData.color]) then
+						
+						else
+							--Display a default gem icon if no color found.
+						end
+						gemString = gemString .. " |TInterface\\ITEMSOCKETINGFRAME/UI-EmptySocket-Red.PNG:0|t";
+					end
+				end]]
 			end
 			if (not foundTexture) then
 				if (k == 19 and class and NRC.expansionNum < 5) then
@@ -5670,7 +5685,8 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 	frame.loadEquipment();
 	frame.updateSize = function()
 		local count = #frame.lineFrames;
-		frame:SetHeight((startOffset + offset) - (size + 5))
+		frame:SetHeight((startOffset + offset) - (size + 5));
+		frame.defaultHeight = frame:GetHeight();
 	end
 	frame.updateSize();
 	frame:Hide();

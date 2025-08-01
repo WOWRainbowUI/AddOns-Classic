@@ -71,6 +71,7 @@ NRC.realm = GetRealmName();
 NRC.playerGUID = UnitGUID("player");
 NRC.faction = UnitFactionGroup("player");
 NRC.class = select(2, UnitClass("player"));
+NRC.maxLevel = GetMaxPlayerLevel();
 NRC.loadTime = 0;
 NRC.logonTime = 0;
 NRC.serializer = LibStub:GetLibrary("LibSerialize");

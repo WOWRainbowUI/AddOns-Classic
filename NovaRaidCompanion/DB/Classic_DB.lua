@@ -1296,6 +1296,13 @@ NRC.trackedConsumes = {
 		itemID = 13446,
 		quality = 1,
 	},
+	[22729] = {
+        name = "Major Rejuvenation Potion",
+        icon = 134827,
+        desc = "Restores 1440 to 1760 mana and health",
+        itemID = 18253,
+        quality = 1,
+    },
 	[17549] = {
 		name = "Greater Arcane Protection Potion",
 		icon = 134863,
@@ -3532,6 +3539,17 @@ NRC.pvpTrinkets = {
 --		print("[" .. k .. "] = \"" .. v .. "\",");
 --	end
 --end
+
+NRC.fishingGear = {
+	--Rods.
+	[6367] = 16,
+	[19970] = 16,
+	[19022] = 16,
+	[6365] = 16,
+	[6366] = 16,
+	[6256] = 16,
+	[12225] = 16,
+};
 
 --SoD specific stuff.
 if (NRC.isSOD) then
