@@ -80,8 +80,11 @@ function MopItemFixes.Load()
         [74763] = { -- Spirit Bottle
             [itemKeys.npcDrops] = {55291,65779},
         },
+        [74840] = { -- Green Cabbage
+            [itemKeys.npcDrops] = {58567},
+        },
         [74843] = { -- Scallions
-            [itemKeys.npcDrops] = {59547,59751,59808,61216,61239,61240,61242,63164,63165,63521,63536,63997,64194,64196,64197,65317},
+            [itemKeys.npcDrops] = {63165},
         },
         [75023] = { -- Pristine Silk Strand
             [itemKeys.objectDrops] = {209826},
@@ -222,8 +225,11 @@ function MopItemFixes.Load()
         [79025] = { -- Slitherscale Harpoon
             [itemKeys.objectDrops] = {210277},
         },
+        [79027] = { -- Saltback Meat
+            [itemKeys.npcDrops] = {58218},
+        },
         [79028] = { -- Saltback Meat Scrap
-            [itemKeys.npcDrops] = {58218,58219},
+            [itemKeys.npcDrops] = {58219},
         },
         [79030] = { -- Honeycomb
             [itemKeys.npcDrops] = {58363},
@@ -350,6 +356,9 @@ function MopItemFixes.Load()
         [80133] = { -- Preserved Vegetables
             [itemKeys.objectDrops] = {210956,210957},
         },
+        [80136] = { -- Waxed Plank
+            [itemKeys.objectDrops] = {211120,211122},
+        },
         [80134] = { -- Uncut Chrysoberyl
             [itemKeys.objectDrops] = {210958,210959,210960},
         },
@@ -403,6 +412,9 @@ function MopItemFixes.Load()
         },
         [80307] = { -- Grummlepack
             [itemKeys.npcDrops] = {59408,59896,59897,59898},
+        },
+        [80310] = { -- Silver Goby
+            [itemKeys.objectDrops] = {211169},
         },
         [80311] = { -- Filled Oil Vial
             [itemKeys.objectDrops] = {211530,211531},
@@ -470,7 +482,7 @@ function MopItemFixes.Load()
             [itemKeys.startQuest] = 30675;
         },
         [80830] = { -- Rusty Shipwreck Debris
-            [itemKeys.objectDrops] = {214547},
+            [itemKeys.objectDrops] = {211423},
         },
         [80832] = { -- Viseclaw Fisher Eye
             [itemKeys.npcDrops] = {58880,58881,61090},
@@ -511,6 +523,10 @@ function MopItemFixes.Load()
         },
         [81385] = { -- Stolen Inkgill Ritual Staff
             [itemKeys.npcDrops] = {59180},
+        },
+        [81407] = { -- Four Wind Soju
+            [itemKeys.npcDrops] = {},
+            [itemKeys.vendors] = {64319}, -- This is the closest vendor to Jogu the Drunk
         },
         [82298] = { -- Handful of Volatile Blooms
             [itemKeys.objectDrops] = {211684},
@@ -644,11 +660,36 @@ function MopItemFixes.Load()
         [85161] = { -- Soul-Gatherer's Beads
             [itemKeys.npcDrops] = {246246},
         },
+        [85204] = { -- Ancient Mogu Artifact
+            [itemKeys.npcDrops] = {63273},
+        },
         [85230] = { -- Sea Monarch Chunks
             [itemKeys.class] = itemClasses.QUEST,
         },
+        [85278] = { -- Guo-Lai Runestone
+            [itemKeys.objectDrops] = {213180},
+        },
         [85282] = { -- Tiger Flank
             [itemKeys.npcDrops] = {63537,63538,65612,67085},
+        },
+        [85477] = { -- Pristine Mogu Coin
+            [itemKeys.startQuest] = 31794,
+        },
+        [85557] = { -- Pristine Pandaren Tea Set
+            [itemKeys.startQuest] = 31795,
+        },
+        [85558] = { -- Pristine Game Board
+            [itemKeys.startQuest] = 31796,
+        },
+        [85571] = { -- Venomous Stinger
+            [itemKeys.npcDrops] = {63586,63588},
+        },
+        [85572] = { -- Scarab Wing
+            [itemKeys.npcDrops] = {63587},
+        },
+        [85582] = { -- Shao-Tien Cage Key
+            [itemKeys.class] = itemClasses.QUEST,
+            [itemKeys.npcDrops] = {63610,63611,63641},
         },
         [85681] = { -- Lushroom
             [itemKeys.objectDrops] = {213350,213352,213353},
@@ -695,6 +736,22 @@ function MopItemFixes.Load()
         },
         [86431] = { -- Stormstout Secrets
             [itemKeys.objectDrops] = {213795},
+        },
+        [86433] = { -- Nice Necklace
+            [itemKeys.startQuest] = 31325,
+            [itemKeys.npcDrops] = {59119,59120,59121,59122,59123,59124,59125,59126,59127,59128,59129,59130,59131,59132,59133,59134,59135},
+        },
+        [86434] = { -- Tasteful Tiara
+            [itemKeys.startQuest] = 31326,
+            [itemKeys.npcDrops] = {59119,59120,59121,59122,59123,59124,59125,59126,59127,59128,59129,59130,59131,59132,59133,59134,59135},
+        },
+        [86435] = { -- Exquisite Earring
+            [itemKeys.startQuest] = 31328,
+            [itemKeys.npcDrops] = {59119,59120,59121,59122,59123,59124,59125,59126,59127,59128,59129,59130,59131,59132,59133,59134,59135},
+        },
+        [86436] = { -- Beautiful Brooch
+            [itemKeys.startQuest] = 31329,
+            [itemKeys.npcDrops] = {59119,59120,59121,59122,59123,59124,59125,59126,59127,59128,59129,59130,59131,59132,59133,59134,59135},
         },
         [86446] = { -- Sheepie
             [itemKeys.npcDrops] = {64386},
@@ -759,17 +816,98 @@ function MopItemFixes.Load()
         [89163] = { -- Requisitioned Firework Launcher
             [itemKeys.class] = itemClasses.QUEST,
         },
+        [89169] = { -- Pristine Manacles of Rebellion
+            [itemKeys.startQuest] = 31786,
+        },
+        [89170] = { -- Pristine Mogu Runestone
+            [itemKeys.startQuest] = 31787,
+        },
+        [89171] = { -- Pristine Terracotta Arm
+            [itemKeys.startQuest] = 31788,
+        },
+        [89172] = { -- Pristine Petrified Bone Whip
+            [itemKeys.startQuest] = 31789,
+        },
+        [89173] = { -- Pristine Thunder King Insignia
+            [itemKeys.startQuest] = 31790,
+        },
+        [89174] = { -- Pristine Edicts of the Thunder King
+            [itemKeys.startQuest] = 31791,
+        },
+        [89175] = { -- Pristine Iron Amulet
+            [itemKeys.startQuest] = 31792,
+        },
+        [89176] = { -- Pristine Branding Iron
+            [itemKeys.startQuest] = 31793,
+        },
+        [89178] = { -- Pristine Twin Stein Set
+            [itemKeys.startQuest] = 31797,
+        },
+        [89179] = { -- Pristine Walking Cane
+            [itemKeys.startQuest] = 31798,
+        },
+        [89180] = { -- Pristine Empty Keg
+            [itemKeys.startQuest] = 31799,
+        },
+        [89181] = { -- Pristine Carved Bronze Mirror
+            [itemKeys.startQuest] = 31800,
+        },
+        [89182] = { -- Pristine Gold-Inlaid Figurine
+            [itemKeys.startQuest] = 31801,
+        },
+        [89183] = { -- Pristine Apothecary Tins
+            [itemKeys.startQuest] = 31802,
+        },
+        [89184] = { -- Pristine Pearl of Yu'lon
+            [itemKeys.startQuest] = 31803,
+        },
+        [89185] = { -- Pristine Standard of Niuzao
+            [itemKeys.startQuest] = 31804,
+        },
+        [89209] = { -- Pristine Monument Ledger
+            [itemKeys.startQuest] = 31805,
+        },
+        [89317] = { -- Claw of Anger
+            [itemKeys.startQuest] = 31809,
+        },
         [89603] = { -- Encoded Captain's Log
             [itemKeys.npcDrops] = {66148},
         },
         [89812] = { -- "Jinyu Princess" Irrigation System
             [itemKeys.startQuest] = 31936,
+            [itemKeys.npcDrops] = {58706},
         },
         [89813] = { -- "Thunder King" Pest Repellers
             [itemKeys.startQuest] = 31937,
+            [itemKeys.npcDrops] = {58706},
         },
         [89814] = { -- "Earth-Slasher" Master Plow
             [itemKeys.startQuest] = 31938,
+            [itemKeys.npcDrops] = {58706},
+        },
+        [95383] = { -- Pristine Banner of the Mantid Empire
+            [itemKeys.startQuest] = 32686,
+        },
+        [95384] = { -- Pristine Ancient Sap Feeder
+            [itemKeys.startQuest] = 32687,
+        },
+        [95385] = { -- Pristine Praying Mantid
+            [itemKeys.startQuest] = 32688,
+        },
+        [95386] = { -- Pristine Sound Beacon
+            [itemKeys.startQuest] = 32689,
+        },
+        [95387] = { -- Pristine Remains of a Paragon
+            [itemKeys.startQuest] = 32690,
+        },
+        [95388] = { -- Pristine Mantid Lamp
+            [itemKeys.startQuest] = 32691,
+        },
+        [95389] = { -- Pristine Pollen Collector
+            [itemKeys.startQuest] = 32692,
+        },
+        [95390] = { -- Pristine Kypari Sap Container
+            [itemKeys.startQuest] = 32693,
         },
         [244172] = { -- Eternal Blossom
             [itemKeys.name] = "Eternal Blossom",
