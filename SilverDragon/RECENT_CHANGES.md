@@ -1,4 +1,6 @@
-## Changed in v2025.10
+## Changed in v2025.12
 
-* Add a new Events data module that contains the Anniversary event mobs, and the Treasure Goblins for the current event
+* Updated for 11.2.0
+* K'aresh: all the basics, missing some non-achievement rares
+* Show requirements, if known, in the broker tooltip
 
