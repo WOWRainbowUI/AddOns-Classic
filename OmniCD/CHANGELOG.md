@@ -1,4 +1,4 @@
-### v2.8.20
--   Update for Patch 11.2_XPTR_
--   MoP: Add missing pvp item ID's (Dreadful, Crafted, Elite, ...)
--   MoP: Add Guard (Brewmaster)
+### v2.8.23
+-   Invigorating Healing Potion merged to Algari Healing Potion
+-   Legion of Souls will correctly replace Army of the Dead
+-   Apocalypse will correctly replace Dark Transformation
