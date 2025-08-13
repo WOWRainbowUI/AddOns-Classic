@@ -6,6 +6,18 @@ local DBIcon = LibStub('LibDBIcon-1.0')
 
 function Launcher:OnInitialize()
     DBIcon:Register(AddonName, self:CreateDataBrokerObject(), self:GetSettings())
+
+    if AddonCompartmentFrame and AddonCompartmentFrame.RegisterAddon then
+        AddonCompartmentFrame:RegisterAddon{
+            text = AddonName,
+            icon = C_AddOns.GetAddOnMetadata(AddonName, 'IconTexture'),
+            -- unfortunately, func doesn't pass in what button was clicked here
+            -- so we default to showing the options menu
+            func = function()
+                Addon:ShowOptionsFrame()
+            end
+        }
+    end
 end
 
 function Launcher:Load()
@@ -25,7 +37,7 @@ function Launcher:CreateDataBrokerObject()
         AddonName,
         {
             type = 'launcher',
-            icon = ([[Interface\Addons\%s\%s]]):format(AddonName, AddonName),
+            icon = C_AddOns.GetAddOnMetadata(AddonName, 'IconTexture'),
             OnClick = Addon.OnLaunch,
             OnTooltipShow = function(tooltip)
                 if not tooltip or not tooltip.AddLine then

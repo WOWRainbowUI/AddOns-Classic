@@ -1,5 +1,25 @@
 # Dominos Changelog
 
+## 11.2.1
+
+* Fix the addon compartment menu icon not showing the options menu when clicked
+
+## 11.2.0
+
+* Exclude the new combat assistant highlights from spell animation filtering
+
+## 11.1.9
+
+* Fix menu bar errors
+* Corrected pkgmeta file so that you'll actually see the right changelog and not just my commit messages
+
+## 11.1.8
+
+* Add support for 11.2.0
+* Updated TOCs to use conditional file loading directives
+* Rewrote the bar states configuration formats to handle multiple game versions a bit better
+* Updated the menu bar button ordering to hopefully prevent issues when switching to vehicle/pet battle UIs
+
 ## 11.1.7
 
 * Add support for Monk stances in MoP Classic
