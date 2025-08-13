@@ -953,6 +953,18 @@ function WeakAuras.ScanUnitEvents(event, unit, ...)
   scannerFrame:Queue(Private.ScanUnitEvents, event, unit, ...)
 end
 
+local function checkOnUpdateThrottle(data)
+  if data.onUpdateThrottle then
+    local now = GetTime()
+    if not data.lastOnUpdate or (now - data.lastOnUpdate) >= data.onUpdateThrottle then
+      data.lastOnUpdate = now
+      return true
+    end
+    return false
+  end
+  return true
+end
+
 ---@private
 ---@param event_list table<string>
 ---@param event string
@@ -965,14 +977,23 @@ function Private.ScanEventsInternal(event_list, event, arg1, arg2, ... )
     Private.ActivateAuraEnvironment(id);
     local updateTriggerState = false;
     for triggernum, data in pairs(triggers) do
-      local delay = GenericTrigger.GetDelay(data)
-      if delay == 0 then
-        local allStates = WeakAuras.GetTriggerStateForTrigger(id, triggernum);
-        if (RunTriggerFunc(allStates, data, id, triggernum, event, arg1, arg2, ...)) then
-          updateTriggerState = true
+      if event == "FRAME_UPDATE" then
+        if checkOnUpdateThrottle(data) then
+          local allStates = WeakAuras.GetTriggerStateForTrigger(id, triggernum);
+          if (RunTriggerFunc(allStates, data, id, triggernum, event, arg1, arg2, ...)) then
+            updateTriggerState = true
+          end
         end
       else
-        Private.RunTriggerFuncWithDelay(delay, id, triggernum, data, event, arg1, arg2, ...)
+        local delay = GenericTrigger.GetDelay(data)
+        if delay == 0 then
+          local allStates = WeakAuras.GetTriggerStateForTrigger(id, triggernum);
+          if (RunTriggerFunc(allStates, data, id, triggernum, event, arg1, arg2, ...)) then
+            updateTriggerState = true
+          end
+        else
+          Private.RunTriggerFuncWithDelay(delay, id, triggernum, data, event, arg1, arg2, ...)
+        end
       end
     end
     if (updateTriggerState) then
@@ -1877,6 +1898,7 @@ function GenericTrigger.Add(data, region)
           statesParameter = statesParameter,
           event = trigger.event,
           events = trigger_events,
+          onUpdateThrottle = trigger.onUpdateThrottle,
           ignorePartyUnitsInRaid = ignorePartyUnitsInRaid,
           internal_events = internal_events,
           loadInternalEventFunc = loadInternalEventFunc,
@@ -3917,35 +3939,49 @@ function Private.WatchStagger()
   if not staggerWatchFrame then
     staggerWatchFrame = CreateFrame("FRAME")
     Private.frames["WeakAuras Stagger Frame"] = staggerWatchFrame
-    staggerWatchFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
-    staggerWatchFrame:SetScript("OnEvent", function()
-      Private.StartProfileSystem("stagger")
-      local stagger = UnitStagger("player")
-      if stagger > 0 then
-        if not staggerWatchFrame.onupdate then
-          staggerWatchFrame.onupdate = true
-          staggerWatchFrame:SetScript("OnUpdate", function()
-            Private.StartProfileSystem("stagger")
-            local stagger = UnitStagger("player")
-            if stagger ~= staggerWatchFrame.stagger then
-              staggerWatchFrame.stagger = stagger
-              Private.ScanEvents("WA_UNIT_STAGGER_CHANGED", "player", stagger)
-            end
-            if stagger == 0 then
-              staggerWatchFrame:SetScript("OnUpdate", nil)
-              staggerWatchFrame.onupdate = nil
-            end
-            Private.StopProfileSystem("stagger")
-          end)
-        end
-      end
 
-      if stagger ~= staggerWatchFrame.stagger then
-        staggerWatchFrame.stagger = stagger
-        Private.ScanEvents("WA_UNIT_STAGGER_CHANGED", "player", stagger)
-      end
-      Private.StopProfileSystem("stagger")
-    end)
+    if WeakAuras.IsRetail() then
+      staggerWatchFrame:RegisterUnitEvent("UNIT_ABSORB_AMOUNT_CHANGED", "player")
+      staggerWatchFrame:SetScript("OnEvent", function()
+        Private.StartProfileSystem("stagger")
+        local stagger = UnitStagger("player")
+        if stagger > 0 then
+          if not staggerWatchFrame.onupdate then
+            staggerWatchFrame.onupdate = true
+            staggerWatchFrame:SetScript("OnUpdate", function()
+              Private.StartProfileSystem("stagger")
+              local stagger = UnitStagger("player")
+              if stagger ~= staggerWatchFrame.stagger then
+                staggerWatchFrame.stagger = stagger
+                Private.ScanEvents("WA_UNIT_STAGGER_CHANGED", "player", stagger)
+              end
+              if stagger == 0 then
+                staggerWatchFrame:SetScript("OnUpdate", nil)
+                staggerWatchFrame.onupdate = nil
+              end
+              Private.StopProfileSystem("stagger")
+            end)
+          end
+        end
+
+        if stagger ~= staggerWatchFrame.stagger then
+          staggerWatchFrame.stagger = stagger
+          Private.ScanEvents("WA_UNIT_STAGGER_CHANGED", "player", stagger)
+        end
+        Private.StopProfileSystem("stagger")
+      end)
+    elseif WeakAuras.IsMists() then
+      -- On Mists Stagger has no events
+      staggerWatchFrame:SetScript("OnUpdate", function()
+        Private.StartProfileSystem("stagger")
+        local stagger = UnitStagger("player")
+        if stagger ~= staggerWatchFrame.stagger then
+          staggerWatchFrame.stagger = stagger
+          Private.ScanEvents("WA_UNIT_STAGGER_CHANGED", "player", stagger)
+        end
+        Private.StopProfileSystem("stagger")
+      end)
+    end
   end
 end
 
@@ -4681,7 +4717,17 @@ function GenericTrigger.GetAdditionalProperties(data, triggernum)
         enable = v.enable
       end
       if (enable and v.store and v.name and v.display and v.conditionType ~= "bool") then
-        props[v.name] = v.display
+        local formatter = v.formatter
+        local formatterArgs = v.formatterArgs or {}
+        if not formatter then
+          if v.type == "unit" then
+            formatter = "Unit"
+            formatterArgs = { color = "class" }
+          elseif v.type == "string" then
+            formatter = "string"
+          end
+        end
+        props[v.name] = { display = v.display, formatter = formatter, formatterArgs = formatterArgs }
       end
     end
     if prototype.countEvents then
@@ -4693,7 +4739,7 @@ function GenericTrigger.GetAdditionalProperties(data, triggernum)
       if (type(variables) == "table") then
         for var, varData in pairs(variables) do
           if (type(varData) == "table") then
-            props[var] = varData.display or var
+            props[var] = { display = varData.display or var, formatter = varData.formatter, formatterArgs = varData.formatterArgs }
           end
         end
       end
@@ -4754,10 +4800,12 @@ local commonConditions = {
   duration = {
     display = L["Total Duration"],
     type = "number",
+    formatter = "Number",
   },
   durationModRate = {
     display = L["Total Duration"],
     type = "number",
+    formatter = "Number",
     useModRate = true
   },
   paused = {
@@ -4778,7 +4826,8 @@ local commonConditions = {
   },
   stacks = {
     display = L["Stacks"],
-    type = "number"
+    type = "number",
+    formatter = "Number",
   },
   name = {
     display = L["Name"],
@@ -4901,7 +4950,7 @@ function GenericTrigger.GetTriggerConditions(data, triggernum)
         if (enable) then
           result[v.name] = {
             display = v.display,
-            type = v.conditionType
+            type = v.conditionType,
           }
           if (result[v.name].type == "select" or result[v.name].type == "unit") then
             if (v.conditionValues) then

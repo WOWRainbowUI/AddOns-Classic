@@ -2221,8 +2221,7 @@ local brokenUnitMap = {
 }
 
 local function EventHandler(frame, event, arg1, arg2, ...)
-  Private.StartProfileSystem("bufftrigger2")
-
+  Private.StartProfileSystem("bufftrigger2 - ".. event)
   local deactivatedTriggerInfos = {}
   local unitsToRemove = {}
 
@@ -2361,19 +2360,19 @@ local function EventHandler(frame, event, arg1, arg2, ...)
     matchDataUpToDate[unit] = nil
   end
 
-  Private.StopProfileSystem("bufftrigger2")
+  Private.StopProfileSystem("bufftrigger2 - ".. event)
 end
 
 if WeakAuras.IsCataOrMistsOrRetail() then
   Private.LibSpecWrapper.Register(function(unit)
-    Private.StartProfileSystem("bufftrigger2")
+    Private.StartProfileSystem("bufftrigger2 - LibSpecWrapper")
 
     local deactivatedTriggerInfos = {}
     RecheckActiveForUnitType("group", unit, deactivatedTriggerInfos)
     RecheckActiveForUnitType("group", WeakAuras.unitToPetUnit[unit], deactivatedTriggerInfos)
     DeactivateScanFuncs(deactivatedTriggerInfos)
 
-    Private.StopProfileSystem("bufftrigger2")
+    Private.StopProfileSystem("bufftrigger2 - LibSpecWrapper")
   end)
 end
 
@@ -2502,13 +2501,13 @@ Buff2Frame:SetScript("OnUpdate", function()
   if WeakAuras.IsPaused() then
     return
   end
-  Private.StartProfileSystem("bufftrigger2")
+  Private.StartProfileSystem("bufftrigger2 - OnUpdate")
   if next(matchDataChanged) then
     local time = GetTime()
     UpdateStates(matchDataChanged, time)
     wipe(matchDataChanged)
   end
-  Private.StopProfileSystem("bufftrigger2")
+  Private.StopProfileSystem("bufftrigger2 - OnUpdate")
 end)
 
 local function UnloadAura(scanFuncName, id)
@@ -3390,55 +3389,55 @@ function BuffTrigger.GetAdditionalProperties(data, triggernum)
   local trigger = data.triggers[triggernum].trigger
   local props = {}
 
-  props["spellId"] = L["Spell ID"]
-  props["debuffClass"] = L["Debuff Class"]
-  props["debuffClassIcon"] = L["Debuff Class Icon"]
-  props["unitCaster"] = L["Caster Unit"]
-  props["casterName"] = L["Caster Name"]
+  props["spellId"] = { display = L["Spell ID"] }
+  props["debuffClass"] = { display =  L["Debuff Class"] }
+  props["debuffClassIcon"] = { display = L["Debuff Class Icon"] }
+  props["unitCaster"] = { display = L["Caster Unit"], formatter = "Unit", formatterArgs = { color = "class" } }
+  props["casterName"] = { display = L["Caster Name"], formatter = "string" }
 
   if trigger.unit ~= "multi" then
-    props["unit"] = L["Unit"]
+    props["unit"] = { display = L["Unit"], formatter = "Unit", formatterArgs = { color = "class" } }
+    props["unitName"] = { display = L["Unit Name"] }
   end
 
-  props["unitName"] = L["Unit Name"]
-  props["matchCount"] = L["Match Count"]
-  props["matchCountPerUnit"] = L["Match Count per Unit"]
-  props["unitCount"] = L["Units Affected"]
-  props["totalStacks"] = L["Total stacks over all matches"]
+  props["matchCount"] = { display = L["Match Count"] }
+  props["matchCountPerUnit"] = { display = L["Match Count per Unit"] }
+  props["unitCount"] = { display = L["Units Affected"] }
+  props["totalStacks"] = { display = L["Total stacks over all matches"] }
 
   if trigger.unit ~= "multi" then
-    props["maxUnitCount"] = L["Total Units"]
+    props["maxUnitCount"] = { display = L["Total Units"] }
   end
 
   if not IsSingleMissing(trigger) and trigger.unit ~= "multi" and trigger.fetchTooltip then
-    props["tooltip"] = L["Tooltip"]
-    props["tooltip1"] = L["First Value of Tooltip Text"]
-    props["tooltip2"] = L["Second Value of Tooltip Text"]
-    props["tooltip3"] = L["Third Value of Tooltip Text"]
-    props["tooltip4"] = L["Fourth Value of Tooltip Text"]
+    props["tooltip"] = { display = L["Tooltip"], formatter = "string" }
+    props["tooltip1"] = { display = L["First Value of Tooltip Text"] }
+    props["tooltip2"] = { display = L["Second Value of Tooltip Text"] }
+    props["tooltip3"] = { display = L["Third Value of Tooltip Text"] }
+    props["tooltip4"] = { display = L["Fourth Value of Tooltip Text"] }
   end
 
   if trigger.unit ~= "multi" then
-    props["stackGainTime"] = L["Since Stack Gain"]
-    props["stackLostTime"] = L["Since Stack Lost"]
-    props["initialTime"] = L["Since Apply"]
-    props["refreshTime"] = L["Since Apply/Refresh"]
+    props["stackGainTime"] = { display = L["Since Stack Gain"], formatter = "timed" }
+    props["stackLostTime"] = { display = L["Since Stack Lost"], formatter = "timed" }
+    props["initialTime"] = { display = L["Since Apply"], formatter = "timed" }
+    props["refreshTime"] = { display = L["Since Apply/Refresh"], formatter = "timed" }
   end
 
   if WeakAuras.IsCataOrMistsOrRetail() and trigger.unit ~= "multi" and trigger.fetchRole then
-    props["role"] = L["Assigned Role"]
-    props["roleIcon"] = L["Assigned Role Icon"]
+    props["role"] = { display = L["Assigned Role"] }
+    props["roleIcon"] = { display = L["Assigned Role Icon"] }
   end
 
   if trigger.unit ~= "multi" and trigger.fetchRaidMark then
-    props["raidMark"] = L["Raid Mark"]
+    props["raidMark"] = { display = L["Raid Mark"] }
   end
 
   if (trigger.unit == "group" or trigger.unit == "raid" or trigger.unit == "party") and trigger.useAffected then
-    props["affected"] = L["Names of affected Players"]
-    props["unaffected"] = L["Names of unaffected Players"]
-    props["affectedUnits"] = L["Units of affected Players in a table format"]
-    props["unaffectedUnits"] = L["Units of unaffected Players in a table format"]
+    props["affected"] = { display = L["Names of affected Players"], formatter = "string" }
+    props["unaffected"] = { display = L["Names of unaffected Players"], formatter = "string" }
+    props["affectedUnits"] = { display = L["Units of affected Players in a table format"]}
+    props["unaffectedUnits"] = { display = L["Units of unaffected Players in a table format"] }
   end
 
   return props
@@ -3547,7 +3546,9 @@ function BuffTrigger.GetTriggerConditions(data, triggernum)
 
   result["unitCaster"] = {
     display = L["Caster Unit"],
-    type = "string"
+    type = "string",
+    formatter = "Unit",
+    formatterArgs = { color = "class" }
   }
 
   result["nameCaster"] = {

@@ -1,6 +1,6 @@
 if not WeakAuras.IsLibsOK() then return end
 
-if ((GAME_LOCALE or GetLocale()) ~= "enUS") or ((GAME_LOCALE or GetLocale()) ~= "enGB") then
+if ((GAME_LOCALE or GetLocale()) ~= "enUS") and ((GAME_LOCALE or GetLocale()) ~= "enGB") then
   return
 end
 
@@ -277,6 +277,7 @@ Off Screen]=]
 	L["Custom Init"] = "Custom Init"
 	L["Custom Load"] = "Custom Load"
 	L["Custom Options"] = "Custom Options"
+	L["Custom Text Update Throttle"] = "Custom Text Update Throttle"
 	L["Custom Trigger"] = "Custom Trigger"
 	L["Custom trigger event tooltip"] = [=[Choose which events cause the custom trigger to be checked. Multiple events can be specified using commas or spaces.
 • "UNIT" events can use colons to define which unitIDs will be registered. In addition to UnitIDs Unit types can be used, they include "nameplate", "group", "raid", "party", "arena", "boss".
@@ -297,6 +298,7 @@ Since this is a status-type trigger, the specified events may be called by WeakA
 |cFF4444FFFor example:|r
 UNIT_POWER_UPDATE:player, UNIT_AURA:nameplate:group PLAYER_TARGET_CHANGED CLEU:SPELL_CAST_SUCCESS TRIGGER:3:1
 ]=]
+	L["Custom trigger Update Throttle"] = "Custom trigger Update Throttle"
 	L["Custom Trigger: Ignore Lua Errors on OPTIONS event"] = "Custom Trigger: Ignore Lua Errors on OPTIONS event"
 	L["Custom Trigger: Send fake events instead of STATUS event"] = "Custom Trigger: Send fake events instead of STATUS event"
 	L["Custom Unload"] = "Custom Unload"
@@ -683,6 +685,7 @@ every 3 events starting from 2nd and ending at 11th: 2-11/3]=]
 	L["Re-center X"] = "Re-center X"
 	L["Re-center Y"] = "Re-center Y"
 	L["Reciprocal TRIGGER:# requests will be ignored!"] = "Reciprocal TRIGGER:# requests will be ignored!"
+	L["Redo"] = "Redo"
 	L["Regions of type \"%s\" are not supported."] = "Regions of type \"%s\" are not supported."
 	L["Remove"] = "Remove"
 	L["Remove All Sounds"] = "Remove All Sounds"
@@ -794,7 +797,6 @@ every 3 events starting from 2nd and ending at 11th: 2-11/3]=]
 	L["Spell Selection Filters"] = "Spell Selection Filters"
 	L["Stack Info"] = "Stack Info"
 	L["Stacks - The number of stacks of an aura (usually)"] = "Stacks - The number of stacks of an aura (usually)"
-	L["Stagger"] = "Stagger"
 	L["Standby"] = "Standby"
 	L["Star"] = "Star"
 	L["Start"] = "Start"
@@ -885,6 +887,7 @@ Upgrade your version of WeakAuras or wait for next release before installing thi
 	L["Trigger %i: %s"] = "Trigger %i: %s"
 	L["Trigger Combination"] = "Trigger Combination"
 	L["Type 'select' for '%s' requires a values member'"] = "Type 'select' for '%s' requires a values member'"
+	L["Undo"] = "Undo"
 	L["Ungroup"] = "Ungroup"
 	L["Unit %s is not a valid unit for RegisterUnitEvent"] = "Unit %s is not a valid unit for RegisterUnitEvent"
 	L["Unit Count"] = "Unit Count"
@@ -900,8 +903,8 @@ Upgrade your version of WeakAuras or wait for next release before installing thi
 	L["Url: %s"] = "Url: %s"
 	L["Use Display Info Id"] = "Use Display Info Id"
 	L["Use SetTransform"] = "Use SetTransform"
-	L["Used in auras:"] = "Used in auras:"
 	L["Used in Auras:"] = "Used in Auras:"
+	L["Used in auras:"] = "Used in auras:"
 	L["Uses Texture Coordinates to rotate the texture."] = "Uses Texture Coordinates to rotate the texture."
 	L["Uses UnitIsVisible() to check if game client has loaded a object for this unit. This distance is around 100 yards. This is polled every second."] = "Uses UnitIsVisible() to check if game client has loaded a object for this unit. This distance is around 100 yards. This is polled every second."
 	L["Value"] = "Value"
