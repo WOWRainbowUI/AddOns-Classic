@@ -1,6 +1,7 @@
-## Changed in v2025.12
+## Changed in v2025.14
 
-* Updated for 11.2.0
-* K'aresh: all the basics, missing some non-achievement rares
-* Show requirements, if known, in the broker tooltip
+* K'aresh:
+    * Add loot to rares now data is available
+    * Note that the Devoured Energy-Pod leads to a mount
+    * Add Dangerous Prowlers and Remnants achievements to tooltips
 
