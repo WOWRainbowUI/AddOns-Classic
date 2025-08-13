@@ -1,6 +1,8 @@
 # Baganator
 
-## [719](https://github.com/Baganator/Baganator/tree/719) (2025-08-04)
-[Full Changelog](https://github.com/Baganator/Baganator/compare/718...719) 
+## [727](https://github.com/Baganator/Baganator/tree/727) (2025-08-12)
+[Full Changelog](https://github.com/Baganator/Baganator/compare/726...727) 
 
-- Fix skin loading issue with multiple characters with the same name (diff realm)  
+- [Fixes #534] Fix wrong headings for "Group by" for battle pets  
+- Forgot to commit increased limit  
+- Retail: Increase ignored slots limit to account for bigger bags  

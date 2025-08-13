@@ -265,7 +265,10 @@ function BaganatorItemViewCommonBankViewCharacterTabsViewMixin:CombineStacksAndS
   end
 
   if addonTable.API.ExternalContainerSorts[sortMethod] then
-    addonTable.API.ExternalContainerSorts[sortMethod].callback(isReverse, Baganator.API.Constants.ContainerType.CharacterBank)
+    if addonTable.Config.Get(addonTable.Config.Options.SORT_START_AT_BOTTOM) then
+      isReverse = not isReverse
+    end
+    addonTable.API.ExternalContainerSorts[sortMethod].callback(isReverse, Baganator.API.Constants.ContainerType.CharacterBank, self.currentTab ~= 0 and self.currentTab or nil)
   elseif sortMethod == "combine_stacks_only" then
     self:CombineStacks(function() end)
   else
@@ -315,7 +318,7 @@ function BaganatorItemViewCommonBankViewCharacterTabsViewMixin:SetupBlizzardFram
     local bagID = Syndicator.Constants.AllBankIndexes[self.currentTab]
 
     -- Ensure right-clicking a bag item puts the item into this bank
-    BankFrame.BankPanel.bankType = Enum.BankType.Character
+    BankFrame.BankPanel:SetBankType(Enum.BankType.Character)
 
     -- Workaround so that the tab edit UI shows the details for the current tab
     self.TabSettingsMenu.GetBankPanel = function()
@@ -597,7 +600,10 @@ function BaganatorItemViewCommonBankViewCharacterTabsViewMixin:OnFinished(charac
 
   self:SetSize(10, 10)
   local externalVerticalSpacing = self:GetParent().Tabs[1] and self:GetParent().Tabs[1]:IsShown() and (self:GetParent():GetBottom() - self:GetParent().Tabs[1]:GetBottom() + 5) or 0
-  local tabHeight = #self.Tabs * (self.Tabs[1]:GetHeight() + 12) * self.Tabs[1]:GetScale() + 20 * self.Tabs[1]:GetScale()
+  local tabHeight = 0
+  if #self.Tabs > 0 then
+    tabHeight = #self.Tabs * (self.Tabs[1]:GetHeight() + 12) * self.Tabs[1]:GetScale() + 20 * self.Tabs[1]:GetScale()
+  end
   local screenHeightSpace = UIParent:GetHeight() / self:GetParent():GetScale() - externalVerticalSpacing
   local spaceOccupied = self.Container:GetHeight() + 50 + searchSpacing + topSpacing / 2 + buttonPadding + self.CurrencyWidget:GetExtraHeight()
 
