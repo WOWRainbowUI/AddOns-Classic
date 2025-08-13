@@ -273,16 +273,16 @@ end
 ---@return table
 function Data.AddPositionSetting(location, moduleName, moduleFrame, playerType)
 	local numPoints = location.ActivePoints
+	local allModuleAnchors = GetAllModuleAnchors(moduleName)
 	local temp = {}
 	temp.Parent = {
 		type = "select",
 		name = "Parent",
-		values = GetAllModuleAnchors(moduleName),
+		values = allModuleAnchors,
 		order = 2
 	}
 	temp.Fake1 = Data.AddVerticalSpacing(3)
 	if location.Points and numPoints then
-
 		for i = 1, numPoints do
 			temp["Point"..i] = {
 				type = "group",
@@ -309,7 +309,7 @@ function Data.AddPositionSetting(location, moduleName, moduleFrame, playerType)
 					RelativeFrame = {
 						type = "select",
 						name = "RelativeFrame",
-						values = GetAllModuleAnchors(moduleName),
+						values = allModuleAnchors,
 						validate = function(option, value)
 
 							if validateAnchor(playerType, moduleName, value) then
@@ -391,10 +391,7 @@ function Data.AddPositionSetting(location, moduleName, moduleFrame, playerType)
 		name = L.Width,
 		order = numPoints + 5,
 		hidden = function()
-			local widthNeeded = BattleGroundEnemies:ModuleFrameNeedsWidth(moduleFrame, location)
-			if not widthNeeded then
-				return true
-			end
+			return not BattleGroundEnemies:ModuleFrameNeedsWidth(moduleFrame, location)
 		end,
 		inline = true,
 		args = {
@@ -425,10 +422,7 @@ function Data.AddPositionSetting(location, moduleName, moduleFrame, playerType)
 		name = L.Height,
 		order = numPoints + 6,
 		hidden = function()
-			local heightNeeded = BattleGroundEnemies:ModuleFrameNeedsHeight(moduleFrame, location)
-			if not heightNeeded then
-				return true
-			end
+			return not BattleGroundEnemies:ModuleFrameNeedsHeight(moduleFrame, location)
 		end,
 		inline = true,
 		args = {
@@ -940,11 +934,22 @@ local function addEnemyAndAllySettings(self, mainFrame)
 						type = "toggle",
 						name = L.RangeIndicator_Enabled,
 						desc = L.RangeIndicator_Enabled_Desc,
+						width = 1.2,
 						order = 2
 					},
-					RangeIndicator_Range = {
+					RangeIndicator_Alpha = {
+						type = "range",
+						name = L.RangeIndicator_Alpha,
+						desc = L.RangeIndicator_Alpha_Desc,
+						disabled = function() return not location.RangeIndicator_Enabled end,
+						min = 0,
+						max = 1,
+						step = 0.05,
+						order = 3
+					},
+					RangeIndicator_Range_InCombat = {
 						type = "select",
-						name = L.RangeIndicator_Range,
+						name = L.RangeIndicator_Range_InCombat,
 						desc = L.RangeIndicator_Range_Desc,
 						disabled = function() return not location.RangeIndicator_Enabled end,
 						-- get = function() return Data[playerType.."ItemIDToRange"][location.RangeIndicator_Range] end,
@@ -966,25 +971,42 @@ local function addEnemyAndAllySettings(self, mainFrame)
 							end
 							return ranges
 						end,
-						width = "half",
-						order = 3
-					},
-					RangeIndicator_Alpha = {
-						type = "range",
-						name = L.RangeIndicator_Alpha,
-						desc = L.RangeIndicator_Alpha_Desc,
-						disabled = function() return not location.RangeIndicator_Enabled end,
-						min = 0,
-						max = 1,
-						step = 0.05,
+						width = 1.2,
 						order = 4
 					},
-					Fake = Data.AddVerticalSpacing(5),
+					RangeIndicator_Range_OutOfCombat = {
+						type = "select",
+						name = L.RangeIndicator_Range_OutOfCombat,
+						desc = L.RangeIndicator_Range_Desc,
+						disabled = function() return not location.RangeIndicator_Enabled end,
+						-- get = function() return Data[playerType.."ItemIDToRange"][location.RangeIndicator_Range] end,
+						-- set = function(option, value)
+						-- 	value = Data[playerType.."RangeToItemID"][value]
+						-- 	return Data.SetOption(location, option, value)
+						-- end,
+						-- values =   Data[playerType.."RangeToRange"],
+						values = function()
+							local checkers
+							if playerType == "Enemies" then
+								checkers = LRC:GetHarmCheckers(false)
+							else
+								checkers = LRC:GetFriendCheckers(false)
+							end
+							local ranges = {}
+							for range, checker in checkers do
+								ranges[range] = range
+							end
+							return ranges
+						end,
+						width = 1.2,
+						order = 5
+					},
 					RangeIndicator_Everything = {
 						type = "toggle",
 						name = L.RangeIndicator_Everything,
 						disabled = function() return not location.RangeIndicator_Enabled end,
-						order = 6
+						order = 6,
+						width = "double",
 					},
 					RangeIndicator_Frames = {
 						type = "multiselect",
@@ -1022,14 +1044,16 @@ local function addEnemyAndAllySettings(self, mainFrame)
 						type = "toggle",
 						name = ACTION_BUTTON_USE_KEY_DOWN,
 						desc = OPTION_TOOLTIP_ACTION_BUTTON_USE_KEY_DOWN,
+						width = "full",
 						order = 2,
 					},
 					UseClique = {
 						type = "toggle",
 						name = L.EnableClique,
 						desc = L.EnableClique_Desc,
+						hidden = playerType == "Enemies",
+						width = "full",
 						order = 3,
-						hidden = playerType == "Enemies"
 					},
 					LeftButton = {
 						type = "group",
@@ -1139,7 +1163,7 @@ local function addEnemyAndAllySettings(self, mainFrame)
 		local isCustomProfile
 		local location = allDbLocations[i]
 
-		
+
 
 		if i > numBasicProfile then
 			isCustomProfile = true
@@ -1558,8 +1582,14 @@ function BattleGroundEnemies:SetupOptions()
 						min = 1,
 						max = 40,
 						step = 1,
-						get = function() return self.Testmode.PlayerCountTestmode end,
+						get = function()
+							--print("get", self.Testmode.PlayerCountTestmode)
+							--return 6
+							return  self.Testmode.PlayerCountTestmode
+						end,
 						set = function(option, value)
+							--print("set value", value)
+							--print("set", self.Testmode.PlayerCountTestmode)
 							self:TestModePlayerCountChanged(value)
 						end,
 						order = 1
@@ -1568,7 +1598,8 @@ function BattleGroundEnemies:SetupOptions()
 						type = "execute",
 						name = L.Testmode_Toggle,
 						desc = L.Testmode_Toggle_Desc,
-						disabled = function() return InCombatLockdown() end,
+						disabled = function()
+							return InCombatLockdown() end,
 						func = self.ToggleTestmode,
 						order = 2
 					},
@@ -1584,7 +1615,7 @@ function BattleGroundEnemies:SetupOptions()
 						type = "execute",
 						name = L.Testmode_ToggleAnimation,
 						desc = L.Testmode_ToggleAnimation_Desc,
-						disabled = function() return InCombatLockdown() or not self.Testmode.Active end,
+						disabled = function() return InCombatLockdown() or not self.states.testmodeActive end,
 						func = self.ToggleTestmodeOnUpdate,
 						order = 3
 					},
@@ -1592,10 +1623,43 @@ function BattleGroundEnemies:SetupOptions()
 						type = "toggle",
 						name = L.Testmode_UseTeammates,
 						desc = L.Testmode_UseTeammates_Desc,
-						disabled = function() return self.Testmode.Active end,
+						disabled = function() return self.states.testmodeActive end,
 						width = "full",
 						order = 4
 					},
+					-- Testmode_MapId = {
+					-- 	type = "select",
+					-- 	name = "select testmode map",
+					-- 	width = "full",
+					-- 	get = function() return self.states.test.currentMapId end,
+					-- 	set = function(option, value)
+					-- 		--value is the mapId
+					-- 		self.states.test.currentMapId = value
+
+					-- 	end,
+					-- 	order = 5,
+					-- 	values = function()
+					-- 		local buffs = Data.BattlegroundspezificBuffs
+					-- 		local debuffs = Data.BattlegroundspezificDebuffs
+					-- 		local commonMapIds = {}
+					-- 		for mapId in pairs(buffs) do
+					-- 			if debuffs[mapId] then
+					-- 				table.insert(commonMapIds, mapId)
+					-- 			end
+					-- 		end
+					-- 		local allCommonWithData = {}
+					-- 		for i, mapId in pairs(commonMapIds) do
+					-- 			local data = C_Map.GetMapInfo(mapId)
+					-- 			if data then table.insert(allCommonWithData, {mapId = mapId, data = data}) end
+					-- 		end
+					-- 		local allMapNames = {}
+					-- 		for _, mapData in pairs(allCommonWithData) do
+					-- 			allMapNames[mapData.mapId] = mapData.data.name
+					-- 		end
+
+					-- 		return allMapNames
+					-- 	end
+					-- },
 				}
 			},
 			GeneralSettings = {
@@ -2107,10 +2171,15 @@ function BattleGroundEnemies:SetupOptions()
 						name = "Enable Debug",
 						order = 1,
 					},
+					DebugBlizzEvents = {
+						type = "toggle",
+						name = "Debug Blizz Events",
+						order = 2,
+					},
 					SvDebugging = {
 						type = "group",
 						name = "Saved Variables",
-						order = 2,
+						order = 4,
 						inline = true,
 						args = {
 							DebugToSV = {
@@ -2137,7 +2206,7 @@ function BattleGroundEnemies:SetupOptions()
 						type = "group",
 						name = "Chat",
 						inline = true,
-						order = 3,
+						order = 5,
 						args = {
 							DebugToChat_AddTimestamp = {
 								type = "toggle",
