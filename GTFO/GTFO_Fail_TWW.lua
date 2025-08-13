@@ -577,6 +577,66 @@ GTFO.SpellID["1214690"] = {
   sound = 3;
 };
 
+GTFO.SpellID["1232621"] = {
+  --desc = "Void Rush (Shadowguard Infiltrator)";
+  sound = 3;
+};
+
+GTFO.SpellID["1234524"] = {
+  --desc = "Dark Sweep (Shadowlord Al'zar)";
+  sound = 3;
+};
+
+GTFO.SpellID["1240565"] = {
+  --desc = "Corrosive Spittle (Grubber)";
+  sound = 3;
+};
+
+GTFO.SpellID["1239791"] = {
+  --desc = "Gluttonous Eruption (Engorged Siltfeaster)";
+  sound = 3;
+};
+
+GTFO.SpellID["1231445"] = {
+  --desc = "Umbral Stomp (Void Terror)";
+  sound = 3;
+};
+
+GTFO.SpellID["1227789"] = {
+  --desc = "Burrowing Eruption (Void Creeper)";
+  sound = 3;
+};
+
+GTFO.SpellID["1226398"] = {
+  --desc = "Errant Zap (Reshanor)";
+  sound = 3;
+  applicationOnly = true;
+};
+
+GTFO.SpellID["1226441"] = {
+  --desc = "Null Rupture (Reshanor)";
+  sound = 3;
+};
+
+GTFO.SpellID["1237718"] = {
+  --desc = "Overcharged Mana";
+  sound = 3;
+};
+
+GTFO.SpellID["1216012"] = {
+  --desc = "Gorging Smash (Devourer Gorger)";
+  sound = 3;
+};
+
+GTFO.SpellID["1240114"] = {
+  --desc = "Rampaging Charge (Miasmawrath)";
+  sound = 3;
+};
+
+GTFO.SpellID["1236933"] = {
+  --desc = "Unstable Ejection (Miasmawrath)";
+  sound = 3;
+};
 
 --- ****************************
 --- * Ara-Kara, City of Echoes *
@@ -667,6 +727,12 @@ GTFO.SpellID["455838"] = {
   applicationOnly = true;
   sound = 3;
 };
+
+GTFO.SpellID["457277"] = {
+  --desc = "Azeroth's Rage";
+  sound = 3;
+};
+
 
 
 --- **********************
@@ -1840,6 +1906,38 @@ GTFO.SpellID["1228512"] = {
   sound = 3;
 };
 
+GTFO.SpellID["1244108"] = {
+  --desc = "Terrifying Screech (Pactsworn Sandreaver)";
+  applicationOnly = true;
+  sound = 3;
+};
+
+GTFO.SpellID["1236778"] = {
+  --desc = "Arcane Geyser (Shadowguard Steelsoul)";
+  sound = 3;
+};
+
+GTFO.SpellID["1245242"] = {
+  --desc = "Nexus Daggers (Nexus-Princess Ky'veza)";
+  sound = 3;
+};
+
+GTFO.SpellID["1245171"] = {
+  --desc = "Dark Massacre (Nexus-Princess Ky'veza)";
+  sound = 3;
+};
+
+GTFO.SpellID["1244599"] = {
+  --desc = "Shadow Eruption (Nexus-Princess Ky'veza)";
+  sound = 3;
+};
+
+GTFO.SpellID["1245594"] = {
+  --desc = "Nether Rift (Nexus-Princess Ky'veza)";
+  sound = 3;
+};
+
+
 --- *******************
 --- * Nerub-ar Palace *
 --- *******************
@@ -2773,6 +2871,60 @@ GTFO.SpellID["1218342"] = {
   sound = 3;
   test = true;
 };
+
+--- ********************
+--- * Eco-Dome Al'dani *
+--- ********************
+
+GTFO.SpellID["1221174"] = {
+  --desc = "Gorging Smash (Voracious Gorger)";
+  sound = 3;
+};
+
+GTFO.SpellID["1217439"] = {
+  --desc = "Toxic Regurgitation (Azhiccar)";
+  applicationOnly = true;
+  sound = 3;
+  test = true; -- Avoidable?
+};
+
+GTFO.SpellID["1231224"] = {
+  --desc = "Arcane Slash (Overcharged Sentinel)";
+  sound = 3;
+  tankSound = 0;
+  applicationOnly = true;
+};
+
+GTFO.SpellID["1222356"] = {
+  --desc = "Warp (Tamed Ruinstalker)";
+  sound = 3;
+};
+
+GTFO.SpellID["1237199"] = {
+  --desc = "Burrow Charge (Burrowing Creeper)";
+  sound = 3;
+  tankSound = 0;
+};
+
+GTFO.SpellID["1215850"] = {
+  --desc = "Earthcrusher (Burrowing Creeper)";
+  sound = 3;
+};
+
+GTFO.SpellID["1223008"] = {
+  --desc = "Burrowing Eruption (Wastes Creeper)";
+  sound = 3;
+};
+
+GTFO.SpellID["1236910"] = {
+  --desc = "Eternal Weave (Soul-Scribe)";
+  sound = 3;
+};
+
+
+--- *******************
+--- * Manaforge Omega *
+--- *******************
 
 
 end
