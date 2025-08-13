@@ -1,3 +1,4 @@
+---@diagnostic disable: undefined-global
 local addonName, ham = ...
 local isRetail = (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE)
 local isClassic = (WOW_PROJECT_ID == WOW_PROJECT_CLASSIC)
@@ -10,6 +11,9 @@ ham.demonicHealthstone = ham.Item.new(224464, "Demonic Healthstone") ---1 Minute
 ham.invigoratingHealingPotionR3 = ham.Item.new(244839, "Invigorating Healing Potion")
 ham.invigoratingHealingPotionR2 = ham.Item.new(244838, "Invigorating Healing Potion")
 ham.invigoratingHealingPotionR1 = ham.Item.new(244835, "Invigorating Healing Potion")
+ham.fleetingInvigoratingHealingPotionR3 = ham.Item.new(244849, "Fleeting Invigorating Healing Potion")
+ham.fleetingInvigoratingHealingPotionR2 = ham.Item.new(244848, "Fleeting Invigorating Healing Potion")
+ham.fleetingInvigoratingHealingPotionR1 = ham.Item.new(244847, "Fleeting Invigorating Healing Potion")
 ham.algariHealingPotionR3 = ham.Item.new(211880, "Algari Healing Potion")
 ham.algariHealingPotionR2 = ham.Item.new(211879, "Algari Healing Potion")
 ham.algariHealingPotionR1 = ham.Item.new(211878, "Algari Healing Potion")
@@ -69,6 +73,9 @@ ham.superior = ham.Item.new(3928, "Superior Healing Potion")
 ham.minor = ham.Item.new(118, "Minor Healing Potion")
 ham.greater = ham.Item.new(1710, "Greater Healing Potion")
 ham.healingPotion = ham.Item.new(929, "Healing Potion")
+-- Classic PvP battleground-only draughts
+ham.majorHealingDraught = ham.Item.new(17348, "Major Healing Draught")
+ham.superiorHealingDraught = ham.Item.new(17349, "Superior Healing Draught")
 
 ------Healthstones for Classic------
 ham.minor0 = ham.Item.new(5512, "Minor Healthstone")
@@ -126,6 +133,12 @@ end
 function ham.getPots()
   if isRetail then
     local pots = {
+      ham.fleetingInvigoratingHealingPotionR3,
+      ham.invigoratingHealingPotionR3,
+      ham.fleetingInvigoratingHealingPotionR2,
+      ham.invigoratingHealingPotionR2,
+      ham.fleetingInvigoratingHealingPotionR1,
+      ham.invigoratingHealingPotionR1,
       ham.fleetingAlgariHealingPotionR3,
       ham.algariHealingPotionR3,
       ham.fleetingAlgariHealingPotionR2,
@@ -190,7 +203,8 @@ function ham.getPots()
     return pots
   end
   if isClassic then
-    return {
+    -- Base Classic potions list
+    local pots = {
       ham.major,
       ham.combat,
       ham.superior,
@@ -199,6 +213,17 @@ function ham.getPots()
       ham.lesser,
       ham.minor
     }
+
+    -- If in a PvP battleground, prioritize battleground draughts
+    local inInstance, instanceType = IsInInstance()
+    local isInBattleground = inInstance and instanceType == "pvp"
+    if isInBattleground then
+      -- Insert in reverse order so final priority is Major then Superior
+      table.insert(pots, 1, ham.superiorHealingDraught)
+      table.insert(pots, 1, ham.majorHealingDraught)
+    end
+
+    return pots
   end
 
   if isWrath then
