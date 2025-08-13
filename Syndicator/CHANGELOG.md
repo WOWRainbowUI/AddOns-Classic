@@ -1,6 +1,6 @@
 # Syndicator
 
-## [224](https://github.com/Baganator/Syndicator/tree/224) (2025-08-02)
-[Full Changelog](https://github.com/Baganator/Syndicator/compare/223...224) 
+## [226](https://github.com/Baganator/Syndicator/tree/226) (2025-08-11)
+[Full Changelog](https://github.com/Baganator/Syndicator/compare/225...226) 
 
-- Revert fallback on ATT xpac check, as the rationale for the change is missing  
+- Fix "my class" to include two handed weapon variants on Evokers  
