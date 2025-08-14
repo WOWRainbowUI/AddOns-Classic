@@ -1,7 +1,7 @@
-## Interface: 11507, 30404, 50500, 110107
+## Interface: 11507, 30405, 50500, 110200
 ## Title: TomTom
 ## Author: Cladhaire, Ludovicus
-## Version: v4.0.12-release
+## Version: v4.0.15-release
 ## License: All Rights Reserved
 ## IconTexture: Interface\AddOns\TomTom\Images\StaticArrow.tga
 ## Notes: Acts as your portable navigation assistant
