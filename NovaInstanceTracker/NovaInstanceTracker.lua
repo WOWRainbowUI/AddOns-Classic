@@ -1057,8 +1057,8 @@ function NIT:updateMinimapButton(tooltip, frame)
 						instanceDiff = " |cFF9CD6DE(|cFF00C800D|r)|r";
 					end
 				elseif (data.type == "scenario") then
-          instanceDiff = " |cFF9CD6DE(|cFFFF2222S|r)|r";
-        end
+          			instanceDiff = " |cFF9CD6DE(|cFFFF2222S|r)|r";
+        		end
 				tooltip:AddLine("|cFF00C800" .. data.instanceName .. instanceDiff);
 			end
 			tooltip:AddLine("|cFF9CD6DE" .. timeInside);		
@@ -4478,7 +4478,7 @@ function NIT:recalcAltsLineFramesTooltip(obj)
 			end
 			local foundItems;
 			local itemString = "\n\n|cFFFFFF00" .. L["items"] .. "|r";
-			if (not NIT.isRetail) then
+			if (NIT.expansionNum < 5) then
 				if (data.classEnglish == "PRIEST" or data.classEnglish == "MAGE" or data.classEnglish == "DRUID"
 						or data.classEnglish == "WARLOCK" or data.classEnglish == "SHAMAN" or data.classEnglish == "PALADIN"
 								or data.classEnglish == "HUNTER") then

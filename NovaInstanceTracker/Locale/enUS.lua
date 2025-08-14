@@ -638,3 +638,5 @@ L["Sulfuron Harbinger"] = "Sulfuron Harbinger";
 L["Golemagg the Incinerator"] = "Golemagg the Incinerator";
 
 L["of level"] = "of level"; --This for XP display during a dung (23.4% of level)
+
+L["World Boss"] = "World Boss";

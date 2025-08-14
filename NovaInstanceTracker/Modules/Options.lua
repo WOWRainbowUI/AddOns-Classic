@@ -1034,18 +1034,18 @@ end
 
 function NIT:checkNewVersion()
 	--NIT.db.global.versions = {}; --To test.
-	local newVersionNotes = 1.98;
+	local newVersionNotes = 2.01;
 	if (NIT.version and NIT.version == newVersionNotes) then
 		if (not NIT.db.global.versions[NIT.version]) then
-			--if (NIT.isClassic) then
+			if (NIT.isMOP) then
 				local notes = {
-					--"Fixed an error if a player fresh installed this addon while inside an instance.",
-					"Added XP percentage of lvl gained while inside dungeon to stats shown at the end.",
-					"Made the lockouts frame scrollable if you have a lot of alts with lockouts.",
-					"Fixed lockout count to match how MoP works (10 per hour including raids).";
+					"Added MoP world bosses to the lockouts display.",
+					"Added tracking of lesser/greater charms, cooking tokens, august stone fragments in the chars window.",
+					"Added currency display for bgs in MoP (for conquest points).",
+					"Removed reagents count in MoP chars window tooltips.",
 				};
 				loadNewVersionFrame(NIT.version, notes, "Nova Instance Tracker", "Interface\\AddOns\\NovaInstanceTracker\\Media\\portal", 30, 200);
-			--end
+			end
 			--Wipe old data.
 			NIT.db.global.versions = {};
 			--Set this version has been loaded before.

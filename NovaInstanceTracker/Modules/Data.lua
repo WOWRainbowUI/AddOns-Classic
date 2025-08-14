@@ -396,8 +396,10 @@ f:SetScript('OnEvent', function(self, event, ...)
 	elseif (event == "QUEST_TURNED_IN") then
 		NIT:throddleEventByFunc(event, 2, "recordPlayerLevelData", ...);
 		NIT:throddleEventByFunc(event, 1, "recordQuests", ...);
+		NIT:throddleEventByFunc(event, 1, "recordLockoutData", ...);
 		C_Timer.After(5, function()
 			NIT:recordQuests();
+			NIT:recordLockoutData();
 		end)
 	elseif (event == "CHAT_MSG_SKILL") then
 		NIT:throddleEventByFunc(event, 4, "recordSkillUpData", ...);
@@ -433,13 +435,13 @@ f:SetScript('OnEvent', function(self, event, ...)
 			NIT:recordLeftInstanceStats();
 			NIT:showInstanceStats();
 		end
-		NIT:recordLockoutData();
+		NIT:recordLockoutData(true);
 		NIT:recordQuests();
 	elseif (event == "PLAYER_LOGOUT") then
 		--if (NIT.inInstance) then
 		--	NIT:recordLeftInstanceStats();
 		--end
-		NIT:recordLockoutData();
+		NIT:recordLockoutData(true);
 		NIT:recordQuests();
 	elseif (event == "TRADE_SKILL_UPDATE" or event == "TRADE_SKILL_SHOW" or event == "TRADE_SKILL_CLOSE") then
 		NIT:recordCooldowns();
@@ -1737,7 +1739,8 @@ function NIT:showInstanceStats(id, output, showAll, customPrefix, showDate)
 			text = text .. pColor .. " " .. L["statsRep"] .. "|r " .. sColor .. repText .. "|r";
 		end
 	end
-	if (not data.isPvp and (NIT.db.global.instanceStatsOutputCurrency or showAll)) then
+	--if (not data.isPvp and (NIT.db.global.instanceStatsOutputCurrency or showAll)) then
+	if (NIT.db.global.instanceStatsOutputCurrency or showAll) then
 		local curText = "";
 		if (data.currencies and next(data.currencies)) then
 			local count = 0;
@@ -2780,7 +2783,31 @@ function NIT:recordMarksData()
 	end
 end
 
-function NIT:recordLockoutData()
+--World bosses that have quests instead of instance IDs.
+local lockoutBossQuests = {
+	[32098] = {
+		name = L["Galleon"],
+		difficultyName = L["World Boss"],
+		--journalEncounterID = 0, Seems to have been an entry for Galleon in any version of the game, have to manually translate.
+	},
+	[32099] = {
+		name = L["Sha of Anger"],
+		difficultyName = L["World Boss"],
+		journalEncounterID = 691,
+	},
+	[32518] = {
+		name = L["Nalak"],
+		difficultyName = L["World Boss"],
+		journalEncounterID = 814,
+	},
+	[32519] = {
+		name = L["Oondasta"],
+		difficultyName = L["World Boss"],
+		journalEncounterID = 826,
+	},
+};
+
+function NIT:recordLockoutData(isLogout)
 	local char = UnitName("player");
 	if (not NIT.data.myChars[char]) then
 		NIT.data.myChars[char] = {};
@@ -2812,6 +2839,29 @@ function NIT:recordLockoutData()
 						};
 					end
 				end
+			end
+		end
+	end
+	if (not isLogout) then
+		--Quest info is nil at logout.
+		for k, v in pairs(lockoutBossQuests) do
+			if (IsQuestFlaggedCompleted(k)) then
+				local name = v.name;
+				if (v.journalEncounterID) then
+					local _, journalName = EJ_GetCreatureInfo(1, v.journalEncounterID);
+					if (journalName and journalName ~= "") then
+						--Use the journal API for localization.
+						name = journalName;
+					end
+				end
+				NIT.data.myChars[char].savedInstances[k] = {
+					name = name,
+					resetTime = GetServerTime() + C_DateAndTime.GetSecondsUntilWeeklyReset(),
+					difficultyName = v.difficultyName,
+					locked = true,
+				};
+			else
+				NIT.data.myChars[char].savedInstances[k] = nil;
 			end
 		end
 	end
@@ -3269,6 +3319,14 @@ local currencyItems = {
     --Misc
     [134481] = "Darkmoon Prize Ticket",
     [409548] = "Tol Barad Commendation",
+    --MoP.
+    [237281] = "Elder Charm of Good Fortune",
+    [237282] = "Lesser Charm of Good Fortune",
+    [840010] = "August Stone Fragment",
+    [134912] = "Ironpaw Token",
+    --[] = "",
+    --[] = "",
+    --[] = "",
 };
 
 function NIT:recordCurrency()
