@@ -5,6 +5,9 @@
 --- This file is part of addon Kaliel's Tracker.
 
 local addonName, KT = ...
+
+local M = KT:NewModule("Options")
+KT.Options = M
 KT.forcedUpdate = false
 
 local ACD = LibStub("MSA-AceConfigDialog-3.0")
@@ -25,7 +28,6 @@ local strsplit = string.split
 local strsub = string.sub
 
 local db, dbChar
-local mediaPath = "Interface\\AddOns\\"..addonName.."\\Media\\"
 local anchors = { "TOPLEFT", "TOPRIGHT", "BOTTOMLEFT", "BOTTOMRIGHT" }
 local strata = { "LOW", "MEDIUM", "HIGH" }
 local flags = { [""] = "無", ["OUTLINE"] = "外框", ["OUTLINE, MONOCHROME"] = "無消除鋸齒外框" }
@@ -119,12 +121,14 @@ local defaults = {
 	},
 	char = {
 		collapsed = false,
-		trackedQuests = {},
+		quests = {
+			cache = {}
+		},
 	}
 }
 
 local options = {
-	name = "|T"..mediaPath.."KT_logo:22:22:-1:7|t任務追蹤清單增強",
+	name = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:-1:7|t任務追蹤清單增強",
 	type = "group",
 	get = function(info) return db[info[#info]] end,
 	args = {
@@ -146,7 +150,7 @@ local options = {
 							order = 0.11,
 						},
 						build = {
-							name = " |cffffd100Build:|r  "..(WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and "Cataclysm Classic" or "Classic Era"),
+							name = " |cffffd100Build:|r  "..(WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and "MoP Classic" or "Classic Era"),
 							type = "description",
 							width = "normal",
 							fontSize = "medium",
@@ -848,7 +852,7 @@ local options = {
 							name = "按鈕外觀 Masque",
 							type = "execute",
 							disabled = function()
-								return (not IsAddOnLoaded("Masque") or not db.addonMasque or not KT.AddonOthers:IsEnabled())
+								return (not C_AddOns.IsAddOnLoaded("Masque") or not db.addonMasque or not KT.AddonOthers:IsEnabled())
 							end,
 							func = function()
 								SlashCmdList["MASQUE"]()
@@ -1002,7 +1006,6 @@ local options = {
 							name = "顯示任務數量",
 							desc = "在任務模組的標題中顯示任務數量。",
 							type = "toggle",
-							width = "normal+half",
 							set = function()
 								db.questsHeaderTitleAppend = not db.questsHeaderTitleAppend
 								KT:SetQuestsHeaderText(true)
@@ -1167,7 +1170,7 @@ local options = {
 							confirm = true,
 							confirmText = warning,
 							disabled = function()
-								return not IsAddOnLoaded("Questie")
+								return not C_AddOns.IsAddOnLoaded("Questie")
 							end,
 							set = function()
 								db.addonQuestie = not db.addonQuestie
@@ -1220,7 +1223,7 @@ function KT:CheckAddOn(addon, version, isUI)
 	local ver = isUI and "" or "---"
 	local result = false
 	local path
-	if IsAddOnLoaded(addon) then
+	if C_AddOns.IsAddOnLoaded(addon) then
 		local actualVersion = C_AddOns.GetAddOnMetadata(addon, "Version") or "unknown"
 		actualVersion = gsub(actualVersion, "(.*%S)%s+", "%1")
 		ver = isUI and "  -  " or ""
@@ -1240,95 +1243,13 @@ function KT:CheckAddOn(addon, version, isUI)
 end
 
 function KT:OpenOptions()
-	Settings.OpenToCategory(self.optionsFrame.general.name, true)
+	if self.optionsFrame then
+		Settings.OpenToCategory(self.optionsFrame.general.name, true)
+	end
 end
 
 function KT:InitProfile(event, database, profile)
 	ReloadUI()
-end
-
-function KT:SetupOptions()
-	self.db = LibStub("AceDB-3.0"):New(strsub(addonName, 2).."DB", defaults, true)
-	self.options = options
-	db = self.db.profile
-	dbChar = self.db.char
-
-	general.sec2.args.classBorder.name = general.sec2.args.classBorder.name:format(self.RgbToHex(self.classColor))
-
-	general.sec7.args.messageOutput = self:GetSinkAce3OptionsDataTable()
-	general.sec7.args.messageOutput.inline = true
-	general.sec7.args.messageOutput.disabled = function() return not (db.messageQuest or db.messageAchievement) end
-	self:SetSinkStorage(db)
-
-	options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(self.db)
-	options.args.profiles.confirm = true
-	options.args.profiles.args.reset.confirmText = warning
-	options.args.profiles.args.new.confirmText = warning
-	options.args.profiles.args.choose.confirmText = warning
-	options.args.profiles.args.copyfrom.confirmText = warning
-	if not options.args.profiles.plugins then
-		options.args.profiles.plugins = {}
-	end
-	options.args.profiles.plugins[addonName] = {
-		clearTrackerDataDesc1 = {
-			name = "清空當前角色已追蹤的任務內容資料 (不包含設定)。",
-			type = "description",
-			order = 0.1,
-		},
-		clearTrackerData = {
-			name = "清空清單資料",
-			desc = "清空已追蹤內容的資料。",
-			type = "execute",
-			confirm = true,
-			confirmText = "清空清單資料 - "..cBold..self.playerName,
-			func = function()
-				self.stopUpdate = true
-				dbChar.trackedQuests = {}
-				local trackedAchievements = { GetTrackedAchievements() }
-				for i = 1, #trackedAchievements do
-					RemoveTrackedAchievement(trackedAchievements[i])
-				end
-				for i = 1, #db.filterAuto do
-					db.filterAuto[i] = nil
-				end
-				self.stopUpdate = false
-				ReloadUI()
-			end,
-			order = 0.2,
-		},
-		clearTrackerDataDesc2 = {
-			name = "當前角色: "..cBold..self.playerName,
-			type = "description",
-			width = "double",
-			order = 0.3,
-		},
-		clearTrackerDataDesc4 = {
-			name = "",
-			type = "description",
-			order = 0.4,
-		}
-	}
-
-	ACR:RegisterOptionsTable(addonName, options, nil)
-	
-	self.optionsFrame = {}
-	self.optionsFrame.general = ACD:AddToBlizOptions(addonName, "任務-追蹤清單", nil, "general")
-	self.optionsFrame.content = ACD:AddToBlizOptions(addonName, options.args.content.name, "任務-追蹤清單", "content")
-	self.optionsFrame.modules = ACD:AddToBlizOptions(addonName, options.args.modules.name, "任務-追蹤清單", "modules")
-	self.optionsFrame.addons = ACD:AddToBlizOptions(addonName, options.args.addons.name, "任務-追蹤清單", "addons")
-	self.optionsFrame.profiles = ACD:AddToBlizOptions(addonName, options.args.profiles.name, "任務-追蹤清單", "profiles")
-
-	self.db.RegisterCallback(self, "OnProfileChanged", "InitProfile")
-	self.db.RegisterCallback(self, "OnProfileCopied", "InitProfile")
-	self.db.RegisterCallback(self, "OnProfileReset", "InitProfile")
-
-	-- Classic Era - resets and hides some options
-	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-		general.sec7.args.messageAchievement = nil
-		db.messageAchievement = false
-		content.sec2 = nil
-		db.achievementsHeaderTitleAppend = false
-	end
 end
 
 SettingsPanel:HookScript("OnHide", function(self)
@@ -1370,12 +1291,25 @@ function GetModulesOptionsTable()
 			order = 0.2,
 		},
 	}
+	if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then
+		args.descModules = {
+			name = "\n * "..TRACKER_HEADER_SCENARIO.." / |cffff0000"..TRACKER_HEADER_PROVINGGROUNDS.." (not supported)\n",
+			type = "description",
+			order = 20,
+		}
+	end
 
 	for i, module in ipairs(db.modulesOrder) do
 		text = _G[module].Header.Text:GetText()
+		if module == "SCENARIO_CONTENT_TRACKER_MODULE" then
+			text = text.." *"
+		end
 
 		defaultModule = OTF.MODULES_UI_ORDER[i]
 		defaultText = defaultModule.Header.Text:GetText()
+		if defaultModule == SCENARIO_CONTENT_TRACKER_MODULE then
+			defaultText = defaultText.." *"
+		end
 
 		args["pos"..i] = {
 			name = " "..text,
@@ -1449,9 +1383,115 @@ function IsSpecialLocale()
 			KT.locale == "ruRU")
 end
 
--- Init
-OTF:HookScript("OnEvent", function(self, event)
-	if event == "PLAYER_ENTERING_WORLD" and not KT.initialized then
-		modules.sec1.args = GetModulesOptionsTable()
+local function Init()
+	KT.db = LibStub("AceDB-3.0"):New(strsub(addonName, 2).."DB", defaults, true)
+	KT.options = options
+	db = KT.db.profile
+	dbChar = KT.db.char
+end
+
+local function Setup()
+	general.sec2.args.classBorder.name = general.sec2.args.classBorder.name:format(KT.RgbToHex(KT.classColor))
+
+	general.sec7.args.messageOutput = KT:GetSinkAce3OptionsDataTable()
+	general.sec7.args.messageOutput.inline = true
+	general.sec7.args.messageOutput.disabled = function() return not (db.messageQuest or db.messageAchievement) end
+	KT:SetSinkStorage(db)
+
+	options.args.profiles = LibStub("AceDBOptions-3.0"):GetOptionsTable(KT.db)
+	options.args.profiles.confirm = true
+	options.args.profiles.args.reset.confirmText = warning
+	options.args.profiles.args.new.confirmText = warning
+	options.args.profiles.args.choose.confirmText = warning
+	options.args.profiles.args.copyfrom.confirmText = warning
+	if not options.args.profiles.plugins then
+		options.args.profiles.plugins = {}
 	end
-end)
+	options.args.profiles.plugins[addonName] = {
+		clearTrackerDataDesc1 = {
+			name = "Clear the data (no settings) of the tracked content (Quests, Achievements etc.) for current character.",
+			type = "description",
+			order = 0.1,
+		},
+		clearTrackerData = {
+			name = "Clear Tracker Data",
+			desc = "Clear the data of the tracked content.",
+			type = "execute",
+			confirm = true,
+			confirmText = "Clear Tracker Data - "..cBold..KT.playerName,
+			func = function()
+				KT.stopUpdate = true
+				local numEntries = GetNumQuestLogEntries()
+				for i = 1, numEntries do
+					local _, _, _, isHeader = GetQuestLogTitle(i)
+					if not isHeader then
+						RemoveQuestWatch(i)
+					end
+				end
+				local trackedAchievements = { GetTrackedAchievements() }
+				for i = 1, #trackedAchievements do
+					RemoveTrackedAchievement(trackedAchievements[i])
+				end
+				for i = 1, #db.filterAuto do
+					db.filterAuto[i] = nil
+				end
+				KT:SetBackground()
+				KT.QuestsCache_Rebuild(true, true)
+				KT.stopUpdate = false
+				ObjectiveTracker_Update()
+			end,
+			order = 0.2,
+		},
+		clearTrackerDataDesc2 = {
+			name = "Current character: "..cBold..KT.playerName,
+			type = "description",
+			width = "double",
+			order = 0.3,
+		},
+		clearTrackerDataDesc4 = {
+			name = "",
+			type = "description",
+			order = 0.4,
+		}
+	}
+
+	ACR:RegisterOptionsTable(addonName, options, nil)
+
+	KT.optionsFrame = {}
+	KT.optionsFrame.general = ACD:AddToBlizOptions(addonName, KT.title, nil, "general")
+	KT.optionsFrame.content = ACD:AddToBlizOptions(addonName, options.args.content.name, KT.title, "content")
+	KT.optionsFrame.modules = ACD:AddToBlizOptions(addonName, options.args.modules.name, KT.title, "modules")
+	KT.optionsFrame.addons = ACD:AddToBlizOptions(addonName, options.args.addons.name, KT.title, "addons")
+	KT.optionsFrame.profiles = ACD:AddToBlizOptions(addonName, options.args.profiles.name, KT.title, "profiles")
+
+	KT.db.RegisterCallback(KT, "OnProfileChanged", "InitProfile")
+	KT.db.RegisterCallback(KT, "OnProfileCopied", "InitProfile")
+	KT.db.RegisterCallback(KT, "OnProfileReset", "InitProfile")
+
+	-- Classic Era - resets and hides some options
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		general.sec7.args.messageAchievement = nil
+		db.messageAchievement = false
+		content.sec2 = nil
+		db.achievementsHeaderTitleAppend = false
+	end
+end
+
+local function SetupModules()
+	modules.sec1.args = GetModulesOptionsTable()
+end
+
+function M:OnInitialize()
+	_DBG("|cffffff00Init|r - "..self:GetName(), true)
+	Init()
+end
+
+function M:OnEnable()
+	_DBG("|cff00ff00Enable|r - "..self:GetName(), true)
+	Setup()
+
+	KT:RegEvent("PLAYER_ENTERING_WORLD", function(eventID)
+		SetupModules()
+		KT:UnregEvent(eventID)
+	end)
+end

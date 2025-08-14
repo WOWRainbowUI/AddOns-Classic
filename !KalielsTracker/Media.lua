@@ -4,16 +4,14 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
-local addonName, KT = ...
+local _, KT = ...
 
 local LSM = LibStub("LibSharedMedia-3.0")
 
-local mediaPath = "Interface\\AddOns\\"..addonName.."\\Media\\"
-
 local media = {
     -- Textures
-    { type = "BORDER",      name = "Border",        filePath = mediaPath.."KT-border" },
-    { type = "STATUSBAR",   name = "Flat",          filePath = mediaPath.."KT-statusbar-flat" },
+    { type = "BORDER",      name = "Border",        filePath = KT.MEDIA_PATH.."KT-border" },
+    { type = "STATUSBAR",   name = "Flat",          filePath = KT.MEDIA_PATH.."KT-statusbar-flat" },
     -- Sounds (Blizzard)
     { type = "SOUND",       name = "Default",       filePath = 558132 },    -- PeonBuildingComplete1.ogg
     { type = "SOUND",       name = "Dwarf (M)",     filePath = 540042 },    -- DwarfMaleCongratulations04.ogg
@@ -40,6 +38,12 @@ if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then
         { type = "SOUND",   name = "BloodElf (F)",  filePath = 539175 },    -- BloodElfFemaleCongratulations03.ogg
         { type = "SOUND",   name = "Draenei (M)",   filePath = 539661 },    -- DraeneiMaleCongratulations02.ogg
         { type = "SOUND",   name = "Draenei (F)",   filePath = 539676 },    -- DraeneiFemaleCongratulations03.ogg
+        { type = "SOUND",   name = "Goblin (M)",    filePath = 542005 },    -- VO_PCGoblinMale_Congratulations01.ogg
+        { type = "SOUND",   name = "Goblin (F)",    filePath = 541735 },    -- VO_PCGoblinFemale_Congratulations01.ogg
+        { type = "SOUND",   name = "Pandaren (M)",  filePath = 630070 },    -- VO_PCPandarenMale_Congratulations02.ogg
+        { type = "SOUND",   name = "Pandaren (F)",  filePath = 636419 },    -- VO_PCPandarenFemale_Congratulations02.ogg
+        { type = "SOUND",   name = "Worgen (M)",    filePath = 542228 },    -- VO_PCWorgenMale_Congratulations01.ogg
+        { type = "SOUND",   name = "Worgen (F)",    filePath = 542028 },    -- VO_PCWorgenFemale_Congratulations01.ogg
     })
 end
 

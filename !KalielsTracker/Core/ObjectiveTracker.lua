@@ -632,11 +632,13 @@ end
 function ObjectiveTracker_Initialize(self)
 	if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then
 		self.MODULES = {
+			SCENARIO_CONTENT_TRACKER_MODULE,
 			AUTO_QUEST_POPUP_TRACKER_MODULE,
 			QUEST_TRACKER_MODULE,
 			ACHIEVEMENT_TRACKER_MODULE,
 		};
 		self.MODULES_UI_ORDER = {
+			SCENARIO_CONTENT_TRACKER_MODULE,
 			AUTO_QUEST_POPUP_TRACKER_MODULE,
 			QUEST_TRACKER_MODULE,
 			ACHIEVEMENT_TRACKER_MODULE,
@@ -654,8 +656,14 @@ function ObjectiveTracker_Initialize(self)
 	self:RegisterEvent("TRACKED_ACHIEVEMENT_LIST_CHANGED");
 	self:RegisterEvent("QUEST_WATCH_LIST_CHANGED");
 	self:RegisterEvent("QUEST_AUTOCOMPLETE");
-	self:RegisterEvent("QUEST_ACCEPTED");
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then  -- MSA
+		self:RegisterEvent("QUEST_ACCEPTED");
+	end
 	self:RegisterEvent("SUPER_TRACKED_QUEST_CHANGED");
+	if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then  -- MSA
+		self:RegisterEvent("SCENARIO_UPDATE");
+		self:RegisterEvent("SCENARIO_CRITERIA_UPDATE");
+	end
 	self:RegisterEvent("TRACKED_ACHIEVEMENT_UPDATE");
 	self:RegisterEvent("ZONE_CHANGED_NEW_AREA");
 	self:RegisterEvent("ZONE_CHANGED");
@@ -683,8 +691,8 @@ function ObjectiveTracker_OnEvent(self, event, ...)
 		AchievementObjectiveTracker_OnAchievementUpdate(...);
 	elseif ( event == "QUEST_ACCEPTED" ) then
 		local questLogIndex, questID = ...;
-		if ( AUTO_QUEST_WATCH == "1" and KT_GetNumQuestWatches() < MAX_WATCHABLE_QUESTS ) then
-			KT_AddQuestWatch(questID);
+		if ( AUTO_QUEST_WATCH == "1" and GetNumQuestWatches() < MAX_WATCHABLE_QUESTS ) then
+			AddQuestWatch(questLogIndex);
 		end
 	elseif ( event == "TRACKED_ACHIEVEMENT_LIST_CHANGED" ) then
 		local achievementID, added = ...;
@@ -695,9 +703,18 @@ function ObjectiveTracker_OnEvent(self, event, ...)
 		end
 	elseif ( event == "QUEST_WATCH_LIST_CHANGED" ) then
 		local questID, added = ...;
+		if ( added ) then
+			if ( IsQuestComplete(questID) ) then
+				ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_QUEST_ADDED, questID);
+			end
+		else
+			ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_QUEST);
+		end
 	elseif ( event == "QUEST_POI_UPDATE" ) then
 		QuestPOIUpdateIcons();
 		ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_QUEST);
+	elseif ( event == "SCENARIO_CRITERIA_UPDATE" ) then
+		ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_SCENARIO);
 	elseif ( event == "SUPER_TRACKED_QUEST_CHANGED" ) then
 		local questID = ...;
 		ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_SUPER_TRACK_CHANGED, questID);
@@ -711,6 +728,13 @@ function ObjectiveTracker_OnEvent(self, event, ...)
 	elseif ( event == "QUEST_AUTOCOMPLETE" ) then
 		local questId = ...;
 		AutoQuestPopupTracker_AddPopUp(questId, "COMPLETE");
+	elseif ( event == "SCENARIO_UPDATE" ) then
+		local newStage = ...;
+		if ( newStage ) then
+			ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_SCENARIO_NEW_STAGE);
+		else
+			ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_SCENARIO);
+		end
 	elseif ( event == "ZONE_CHANGED_NEW_AREA" ) then
 		SortQuestWatches();
 	elseif ( event == "QUEST_TURNED_IN" ) then
@@ -718,9 +742,10 @@ function ObjectiveTracker_OnEvent(self, event, ...)
 	elseif ( event == "PLAYER_MONEY" and self.watchMoneyReasons > 0 ) then
 		ObjectiveTracker_Update(self.watchMoneyReasons);
 	elseif ( event == "PLAYER_ENTERING_WORLD" ) then
-		if ( not self.initialized ) then
+		-- MSA
+		--[[if ( not self.initialized ) then
 			ObjectiveTracker_Initialize(self);
-		end
+		end]]
 		ObjectiveTracker_Update();
 		self.lastMapID = C_Map.GetBestMapForUnit("player");
 	elseif ( event == "CVAR_UPDATE" ) then

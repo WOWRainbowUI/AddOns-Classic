@@ -4,16 +4,15 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
-local addonName, KT = ...
-local M = KT:NewModule(addonName.."_Help")
+local _, KT = ...
+local M = KT:NewModule("Help")
 KT.Help = M
 
 local T = LibStub("MSA-Tutorials-1.0")
 local _DBG = function(...) if _DBG then _DBG("KT", ...) end end
 
 local db, dbChar
-local mediaPath = "Interface\\AddOns\\"..addonName.."\\Media\\"
-local helpPath = mediaPath.."Help\\"
+local helpPath = KT.MEDIA_PATH.."Help\\"
 local helpName = "help"
 local helpNumPages = 9
 local supportersName = "supporters"
@@ -23,7 +22,7 @@ local cBold = "|cff00ffe3"
 local cWarning = "|cffff7f00"
 local cDots = "|cff808080"
 local offs = "\n|T:1:8|t"
-local ebSpace = "|T:22:1|t"
+local ebSpace = "|T:24:1|t"
 local beta = "|cffff7fff[Beta]|r"
 local new = "|cffff7fff[新功能]|r"
 
@@ -35,7 +34,7 @@ local KTF = KT.frame
 
 local function AddonInfo(name)
 	local info = "插件 "..name
-	if IsAddOnLoaded(name) then
+	if C_AddOns.IsAddOnLoaded(name) then
 		info = info.." |cff00ff00已安裝|r。"
 	else
 		info = info.." |cffff0000未安裝|r。"
@@ -105,15 +104,15 @@ local function SetupTutorials()
 			imageHeight = 128,
 			text = cTitle.."標題列按鈕|r\n\n"..
 					"最小化按鈕:\n"..
-					"|T"..mediaPath.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:0:14:209:170:0|t "..cDots.."...|r 展開追蹤清單\n"..
-					"|T"..mediaPath.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:16:30:209:170:0|t "..cDots.."...|r 收起追蹤清單\n"..
-					"|T"..mediaPath.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:32:46:209:170:0|t "..cDots.."...|r 追蹤清單是空的時候\n\n"..
+					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:0:14:209:170:0|t "..cDots.."...|r 展開追蹤清單\n"..
+					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:16:30:209:170:0|t "..cDots.."...|r 收起追蹤清單\n"..
+					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:32:46:209:170:0|t "..cDots.."...|r 追蹤清單是空的時候\n\n"..
 					"其他按鈕:\n"..
-					"|T"..mediaPath.."UI-KT-HeaderButtons:14:14:-1:2:32:64:16:30:0:14:209:170:0|t "..cDots.."...|r 開啟任務日誌\n"..
-					"|T"..mediaPath.."UI-KT-HeaderButtons:14:14:-1:2:32:64:16:30:16:30:209:170:0|t "..cDots.."...|r 開啟成就視窗 (經典時期不包含此功能)\n"..
-					"|T"..mediaPath.."UI-KT-HeaderButtons:14:14:-1:2:32:64:16:30:32:46:209:170:0|t "..cDots.."...|r 開啟過濾方式選單\n\n"..
-					"按鈕 |T"..mediaPath.."UI-KT-HeaderButtons:14:14:0:2:32:64:16:30:0:14:209:170:0|t 和 "..
-					"|T"..mediaPath.."UI-KT-HeaderButtons:14:14:0:2:32:64:16:30:16:30:209:170:0|t 可以在設定選項中停用。\n\n"..
+					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:16:30:0:14:209:170:0|t "..cDots.."...|r 開啟任務日誌\n"..
+					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:16:30:16:30:209:170:0|t "..cDots.."...|r 開啟成就視窗 (經典時期不包含此功能)\n"..
+					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:16:30:32:46:209:170:0|t "..cDots.."...|r 開啟過濾方式選單\n\n"..
+					"按鈕 |T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:0:2:32:64:16:30:0:14:209:170:0|t 和 "..
+					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:0:2:32:64:16:30:16:30:209:170:0|t 可以在設定選項中停用。\n\n"..
 					"可以設定"..cBold.." [快速鍵]|r 來最小化追蹤清單。\n"..
 					cBold.."Alt+左鍵|r 點擊最小化按鈕會開啟 "..KT.title.."的設定選項。",
 			textY = 16,
@@ -147,12 +146,12 @@ local function SetupTutorials()
 		{	-- 4
 			image = helpPath.."help_tracker-filters",
 			text = cTitle.."任務過濾|r\n\n"..
-					"要開啟過濾方式選單請"..cBold.."點一下|r這個按鈕 |T"..mediaPath.."UI-KT-HeaderButtons:14:14:-2:2:32:64:16:30:32:46:209:170:0|t.\n\n"..
+					"要開啟過濾方式選單請"..cBold.."點一下|r這個按鈕 |T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-2:2:32:64:16:30:32:46:209:170:0|t.\n\n"..
 					"過濾方式分為兩種類型:\n"..
 					cTitle.."固定過濾|r - 依據規則 (例如 \"每日\") 將任務和成就加入到追蹤清單，然後便可以手動新增 / 移除項目。\n"..
 					cTitle.."動態過濾|r - 自動新增任務/成就依據條件 (例如 \"|cff00ff00自動|r區域\") "..
 					"會持續更新項目。這種類型不允許手動加入/移除項目。"..
-					"啟用動態過濾時，標題按鈕是綠色 |T"..mediaPath.."UI-KT-HeaderButtons:14:14:-2:2:32:64:16:30:32:46:0:255:0|t.\n\n"..
+					"啟用動態過濾時，標題按鈕是綠色 |T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-2:2:32:64:16:30:32:46:0:255:0|t.\n\n"..
 					"更改成就的搜尋類別時，也會影響過濾的結果。\n\n"..
 					"這個選單也會顯示影響追蹤清單內容的其他選項。",
 			textY = 16,
@@ -201,13 +200,13 @@ local function SetupTutorials()
 					text = "https://www.wowinterface.com/downloads/info24937-ClassicQuestLogforClassic.html",
 					width = 485,
 					left = 9,
-					bottom = 37,
+					bottom = 39,
 				},
 				{
 					text = "https://www.curseforge.com/wow/addons/questguru_classic",
 					width = 485,
 					left = 9,
-					bottom = 3,
+					bottom = 5,
 				}
 			},
 			shine = KTF,
@@ -234,7 +233,7 @@ local function SetupTutorials()
 				{
 					text = "https://www.curseforge.com/wow/addons/questie",
 					width = 450,
-					bottom = 3,
+					bottom = 6,
 				}
 			},
 			shine = KTF,
@@ -245,32 +244,34 @@ local function SetupTutorials()
 		},
 		{	-- 9
 			image = helpPath.."help_whats-new_logo",
-			imageWidth = 182,
-			imageHeight = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and 40 or 21,
+			imageWidth = 192,
+			imageHeight = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and 42 or 22,
 			imageTexCoords = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and { 0, 0.75, 0, 0.65625 } or { 0, 0.75, 0.65625, 1 },
 			imagePoint = "TOPRIGHT",
 			imageX = -20,
-			imageY = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and 9 or 16,
+			imageY = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and 3 or 16,
 			imageAbsolute = true,
-			text = "            |T"..helpPath.."help_whats-new_title:32:181:0:0:256:32:0:181:0:32|t\n\n"..
-					cTitle.."版本 4.2.2|r\n"..
-					"- 修正 - 取得不正確的任務資料時出錯 (未複製，可能會導致新的錯誤)\n"..
+			text = "           |T"..helpPath.."help_whats-new_title:32:181:0:0:256:32:0:181:0:32|t\n\n"..
+					cTitle.."版本 5.0.1|r\n"..
+					"- 修正 (任務) - 使用自動任務追蹤按區域過濾時出錯\n"..
 					"\n"..
-					cTitle.."版本 4.2.1|r\n"..
-					"- 修正 (任務) - 儲存不正確的任務資料\n"..
-					"- 回復 - 任務等級的值為 nil \n"..
-					"\n"..
-					cTitle.."版本 4.2.0|r\n"..
-					"- 新增 - 支援 WoW 4.4.2.59346\n"..
-					"- 新增 - 支援 WoW 1.15.6.58912\n"..
-					"- 更新 - 支援插件 - ElvUI 13.86, Tukui 20.460\n"..
-					"- 更新 - 支援插件 - Questie 10.18.1\n"..
-					"- 更新 (說明) - Active Patrons\n"..
-					"- 更新 - 支援插件 - ElvUI 13.84, Tukui 20.458\n"..
-					"- 更新 - 支援插件 - Questie 10.17.0\n"..
+					cTitle.."版本 5.0.0|r\n"..
+					"- 新增 - 支援 WoW 1.15.7.61582\n"..
+					"- 新增 - 支援 WoW 5.5.0.62258\n"..
+					"- 變更 (說明) - Active Patrons\n"..
+					"- 變更 (事件) - 不支援試煉場 (可能會導致錯誤)\n"..
+					"- 變更 (任務) - 保持一致 (完整的聲音不再重複播放)\n"..
+					"- 變更 (任務) - 改善區域過濾\n"..
+					"- 變更 (任務) - 任務追蹤管理（內部監視清單）\n"..
+					"- 變更 - 支援插件 - Questie 11.2.11\n"..
+					"- 變更 (任務) - 增強右鍵選單\n"..
+					"- 變更 - WoW 3.4.4 移除的函數\n"..
+					"- 修正 - 取得錯誤的任務資料時出錯\n"..
+					"- 修正 - 登入後，已追蹤的任務將被取消追蹤。\n"..
 					"\n"..
 
-					cTitle.."WoW 4.4.2/1.15.6 - 尚無解決辦法的已知問題|r\n"..
+					cTitle.."WoW 5.5.0/1.15.7 - 尚無解決辦法的已知問題|r\n"..
+					"- 不支援試煉場事件。我目前無法測試，並且可能會導致錯誤。\n"..
 					"- 戰鬥中點擊追蹤的任務或成就不會有反應。\n"..
 					"- 戰鬥中標題列的 Q 和 A 按鈕無法運作。\n\n"..
 
@@ -305,15 +306,14 @@ local function SetupTutorials()
 					self[i].shineLeft = db.headerOtherButtons and -55 + eraMod or -15
 				end
 			elseif i == 3 then
-				local questInfo = KT_GetQuestListInfo(1)
-				if questInfo then
-					local block = QUEST_TRACKER_MODULE.usedBlocks[questInfo.id]
-					if block then
-						self[i].shine = block
-					end
-					KTF.Scroll.value = 0
-					ObjectiveTracker_Update()
+				local questLogIndex = GetQuestIndexForWatch(1)
+				local questID = GetQuestIDFromLogIndex(questLogIndex)
+				local block = QUEST_TRACKER_MODULE.usedBlocks[questID]
+				if block then
+					self[i].shine = block
 				end
+				KTF.Scroll.value = 0
+				ObjectiveTracker_Update()
 			elseif i == 5 then
 				self[i].shine = KTF.Buttons
 			end
@@ -338,16 +338,14 @@ local function SetupTutorials()
 					"經過了 10 年的插件工作後，我啟用了 Patreon，當作是開發插件所需時間的補償。\n\n"..
 					"                                    非常感謝所有贊助者  |T"..helpPath.."help_patreon:16:16:0:0:256:32:157:173:0:16|t\n\n"..
 					cTitle.."Active Patrons|r\n"..
-					SetFormatedPatronName("Epic", "Haekwon", "Elune")..
 					SetFormatedPatronName("Epic", "Liothen", "Emerald Dream")..
-					SetFormatedPatronName("Rare", "A")..
+					SetFormatedPatronName("Rare", "Ian F")..
+					SetFormatedPatronName("Rare", "Spance")..
 					SetFormatedPatronName("Uncommon", "Anaara", "Auchindoun")..
 					SetFormatedPatronName("Uncommon", "Charles Howarth")..
-					SetFormatedPatronName("Uncommon", "Flex (drantor)")..
 					SetFormatedPatronName("Uncommon", "Illidanclone", "Kazzak")..
 					SetFormatedPatronName("Uncommon", "Mystekal")..
 					SetFormatedPatronName("Uncommon", "Semy", "Ravencrest")..
-					SetFormatedPatronName("Uncommon", "Sopleb")..
 					SetFormatedPatronName("Uncommon", "Xeelee", "Razorfen")..
 					SetFormatedPatronName("Common", "Darren Divecha")..
 					"\n"..

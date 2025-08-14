@@ -4,8 +4,8 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
-local addonName, KT = ...
-local M = KT:NewModule(addonName.."_AddonQuestie")
+local _, KT = ...
+local M = KT:NewModule("AddonQuestie")
 KT.AddonQuestie = M
 
 local _DBG = function(...) if _DBG then _DBG("KT", ...) end end
@@ -233,6 +233,45 @@ local function ShowQuestOnMap(quest)
     end
 end
 
+local function MenuUpdate(_, info, questID)
+    MSA_DropDownMenu_AddSeparator(info)
+
+    info = MSA_DropDownMenu_CreateInfo()
+    info.notCheckable = true
+
+    if not isQuestieDBLoaded then
+        info.disabled = true
+        info.text = "等待任務位置提示插件 Questie..."
+        MSA_DropDownMenu_AddButton(info, MSA_DROPDOWN_MENU_LEVEL)
+        return
+    end
+
+    local quest = QuestieDB.GetQuest(questID)
+
+    info.disabled = not HasMapData(quest)
+
+    info.text = "在地圖上顯示"
+    info.func = function()
+        if quest:IsComplete() == 1 then
+            TrackerUtils:ShowFinisherOnMap(quest)
+        else
+            ShowQuestOnMap(quest)
+        end
+    end
+    MSA_DropDownMenu_AddButton(info, MSA_DROPDOWN_MENU_LEVEL)
+
+    if C_AddOns.IsAddOnLoaded("TomTom") then
+        info.text = "開始 |cff33ff99TomTom|r 導航"
+        info.func = function()
+            local spawn, zone, name = DistanceUtils.GetNearestSpawnForQuest(quest)
+            if spawn then
+                TrackerUtils:SetTomTomTarget(name, zone, spawn[1], spawn[2])
+            end
+        end
+        MSA_DropDownMenu_AddButton(info, MSA_DROPDOWN_MENU_LEVEL)
+    end
+end
+
 local function GetQuestZones(questID)
     local zones = {}
     local quest = QuestieDB.GetQuest(questID)
@@ -291,45 +330,15 @@ end
 function M:OnInitialize()
     _DBG("|cffffff00Init|r - "..self:GetName(), true)
     db = KT.db.profile
-    self.isLoaded = (KT:CheckAddOn("Questie", "10.18.1") and db.addonQuestie)
+    self.isLoaded = (KT:CheckAddOn("Questie", "11.2.11") and db.addonQuestie)
 end
 
 function M:OnEnable()
     _DBG("|cff00ff00Enable|r - "..self:GetName(), true)
     GetQuestieData()
     SetHooks()
-end
 
-function M:CreateMenu(info, questID)
-    if not self.isLoaded or not isQuestieDBLoaded then return end
-    local quest = QuestieDB.GetQuest(questID)
-
-    MSA_DropDownMenu_AddSeparator(info)
-
-    info = MSA_DropDownMenu_CreateInfo()
-    info.notCheckable = true
-    info.disabled = not HasMapData(quest)
-
-    info.text = "在地圖上顯示"
-    info.func = function()
-        if quest:IsComplete() == 1 then
-            TrackerUtils:ShowFinisherOnMap(quest)
-        else
-            ShowQuestOnMap(quest)
-        end
-    end
-    MSA_DropDownMenu_AddButton(info, MSA_DROPDOWN_MENU_LEVEL)
-
-    if IsAddOnLoaded("TomTom") then
-        info.text = "開始 |cff33ff99TomTom|r 導航"
-        info.func = function()
-            local spawn, zone, name = DistanceUtils.GetNearestSpawnForQuest(quest)
-            if spawn then
-                TrackerUtils:SetTomTomTarget(name, zone, spawn[1], spawn[2])
-            end
-        end
-        MSA_DropDownMenu_AddButton(info, MSA_DROPDOWN_MENU_LEVEL)
-    end
+    KT:RegSignal("CONTEXT_MENU_UPDATE", MenuUpdate)
 end
 
 function M:GetQuestZones(questID)

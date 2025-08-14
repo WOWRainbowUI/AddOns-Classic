@@ -1,0 +1,9 @@
+<Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
+..\Blizzard_SharedXML\UI.xsd">
+	<Script file="Options.lua"/>
+	<Script file="QuestLog.lua"/>
+	<Script file="Filters.lua"/>
+	<Script file="Addon_Questie.lua"/>
+	<Script file="Addon_Others.lua"/>
+	<Script file="Help.lua"/>
+</Ui>

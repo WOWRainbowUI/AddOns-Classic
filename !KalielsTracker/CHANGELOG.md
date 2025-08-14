@@ -1,14 +1,16 @@
 # Kaliel's Tracker Classic changelog
-### 4.2.2
-- FIXED - error getting incorrect quest data (not replicated, may cause new errors)
-### 4.2.1
-- FIXED (quests) - incorrect quest data saved
-- REVERTED - &quot;fix(quests): nil value of quest level&quot;
-### 4.2.0
-- ADDED - support for WoW 4.4.2.59346
-- ADDED - support for WoW 1.15.6.58912
-- CHANGED - addon support - ElvUI 13.86, Tukui 20.460
-- CHANGED - addon support - Questie 10.18.1
+### 5.0.1
+- FIXED (quests) - error when filtering by zone with Auto Quest tracking
+### 5.0.0
+- ADDED - support for WoW 1.15.7.61582
+- ADDED - support for WoW 5.5.0.62258
 - CHANGED (help) - Active Patrons
-- CHANGED - addon support - ElvUI 13.84, Tukui 20.458
-- CHANGED - addon support - Questie 10.17.0
+- CHANGED (scenario) - Proving Grounds is not supported (it may cause errors)
+- CHANGED (quests) - persistent states (&quot;complete&quot; sounds no longer play repeatedly)
+- CHANGED (quests) - improved zone filtering
+- CHANGED (quests) - quest tracking management (internal watchlist)
+- CHANGED - addon support - Questie 11.2.11
+- CHANGED (quests) - context menu improvements
+- CHANGED - deprecated functions in WoW 3.4.4
+- FIXED - error getting incorrect quest data
+- FIXED - tracked quests are untracked after login

@@ -172,7 +172,8 @@ function QuestObjectiveTracker_OpenQuestDetails(dropDownButton, questID)
 end
 
 function QuestObjectiveTracker_UntrackQuest(dropDownButton, questID)
-	KT_RemoveQuestWatch(questID);
+	local questLogIndex = GetQuestLogIndexByID(questID);
+	RemoveQuestWatch(questLogIndex);
 	if QuestLogFrame:IsVisible() then
 		QuestLog_Update()
 	end
@@ -235,19 +236,17 @@ end
 
 local function EnumQuestWatchData(func)
 	local questWatchInfoList = {}
-	local questInfo, questLogIndex
 
 	--cache the questWatchInfo
-	for i = 1, KT_GetNumQuestWatches() do
-		questInfo = KT_GetQuestListInfo(i)
-		questLogIndex = GetQuestLogIndexByID(questInfo.id)
+	for i = 1, GetNumQuestWatches() do
+		local questLogIndex = GetQuestIndexForWatch(i)
 		questWatchInfoList[i] = { KT_GetQuestWatchInfo(questLogIndex) }
 	end
 
 	KT.Filters:QuestSort(questWatchInfoList)
 
 	for _, orderingFlag in ipairs(questTrackerOrderingFlags) do
-		for i = 1, KT_GetNumQuestWatches() do
+		for i = 1, GetNumQuestWatches() do
 			if EnumQuestWatchDataHelper(func, orderingFlag.flagIndex, questWatchInfoList[i]) then
 				return
 			end
@@ -394,8 +393,10 @@ function QUEST_TRACKER_MODULE:Update()
 				end
 
 				if KT.db.profile.questsShowZones then
-					local questInfo = KT_GetQuestListInfo(questID, true)
-					QUEST_TRACKER_MODULE:AddObjective(block, "Zone", questInfo.zone, nil, nil, OBJECTIVE_DASH_STYLE_HIDE, OBJECTIVE_TRACKER_COLOR["Zone"])
+					local questZone = KT.QuestsCache_GetProperty(questID, "zone")
+					if questZone then
+						QUEST_TRACKER_MODULE:AddObjective(block, "Zone", questZone, nil, nil, OBJECTIVE_DASH_STYLE_HIDE, OBJECTIVE_TRACKER_COLOR["Zone"])
+					end
 				end
 
 				if ( isComplete ) then

@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.blizzard.com/wow/ui/
 ..\..\Blizzard_SharedXML\UI.xsd">
 	
-	<Script file="Blizzard_ObjectiveTracker.lua"/>
+	<Script file="ObjectiveTracker.lua"/>
 	
 	<Frame name="ObjectiveTrackerBlockTemplate" hidden="true" virtual="true">
 		<Size x="232" y="10"/>
@@ -139,7 +139,7 @@
 				<Texture parentKey="IconAnchor">
 					<Size x="16" y="16"/>
 					<Anchors>
-						<Anchor point="TOPLEFT" x="1" y="2"/>
+						<Anchor point="TOPLEFT" x="1" y="1"/>  <!-- MSA -->
 					</Anchors>
 				</Texture>				
 				<Texture parentKey="Icon">

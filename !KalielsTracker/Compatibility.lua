@@ -75,6 +75,43 @@ elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
 end
 
 -- Classic + Classic Era
+if not C_QuestLog.GetNumQuestLogEntries then
+    C_QuestLog.GetNumQuestLogEntries = GetNumQuestLogEntries
+end
+
+if not C_QuestLog.GetInfo then
+    C_QuestLog.GetInfo = function(questLogIndex)
+        local title, level, suggestedGroup, isHeader, isCollapsed, isComplete, frequency, questID, startEvent, displayQuestID, isOnMap, hasLocalPOI, isTask, isBounty, isStory, isHidden, isScaling = GetQuestLogTitle(questLogIndex)
+        return {
+            title = title,
+            questLogIndex = questLogIndex,
+            questID = questID,
+            campaignID = nil,
+            level = level,
+            difficultyLevel = 0,
+            suggestedGroup = suggestedGroup,
+            frequency = frequency,
+            isHeader = isHeader,
+            useMinimalHeader = false,
+            sortAsNormalQuest = true,
+            isCollapsed = isCollapsed,
+            startEvent = startEvent,
+            isTask = isTask,
+            isBounty = isBounty,
+            isStory = isStory,
+            isScaling = isScaling,
+            isOnMap = isOnMap,
+            hasLocalPOI = hasLocalPOI,
+            isHidden = isHidden,
+            isAutoComplete = GetQuestLogIsAutoComplete(questLogIndex)
+        }
+    end
+end
+
+if not C_QuestLog.IsComplete then
+    C_QuestLog.IsComplete = IsQuestComplete
+end
+
 if not QuestMapQuestOptions_AbandonQuest then
     QuestMapQuestOptions_AbandonQuest = function(questID)
         local bckQuestLogSelection = GetQuestLogSelection()  -- backup Quest Log selection

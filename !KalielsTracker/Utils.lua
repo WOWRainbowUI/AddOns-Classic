@@ -146,11 +146,17 @@ function KT_GetQuestWatchInfo(questLogIndex)
     local title, level, _, _, _, isComplete, _, questID, startEvent, _, isOnMap, hasLocalPOI, isTask, isBounty, isStory, isHidden = GetQuestLogTitle(questLogIndex)
     local numObjectives = GetNumQuestLeaderBoards(questLogIndex)
     local requiredMoney = GetQuestLogRequiredMoney(questLogIndex)
-    local isAutoComplete = nil
+    local isAutoComplete = GetQuestLogIsAutoComplete(questLogIndex)
     local failureTime = nil
     local timeElapsed = nil
     local questType = nil
     return questID, level, title, questLogIndex, numObjectives, requiredMoney, isComplete, startEvent, isAutoComplete, failureTime, timeElapsed, questType, isTask, isBounty, isStory, isOnMap, hasLocalPOI, isHidden
+end
+
+-- Scenario
+function KT.IsScenarioHidden()
+    local numStages = select(3, C_Scenario.GetInfo())
+    return numStages == 0
 end
 
 -- Map
@@ -278,7 +284,7 @@ function KT.GameTooltip_AddQuestRewardsToTooltip(tooltip, questID, isBonus)
         end
         -- money
         if money > 0 then
-            tooltip:AddLine(GetCoinTextureString(money, 12), 1, 1, 1)
+            tooltip:AddLine(C_CurrencyInfo.GetCoinTextureString(money, 12), 1, 1, 1)
         end
         -- artifact power
         if artifactXP > 0 then

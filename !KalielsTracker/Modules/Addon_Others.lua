@@ -5,7 +5,7 @@
 --- This file is part of addon Kaliel's Tracker.
 
 local addonName, KT = ...
-local M = KT:NewModule(addonName.."_AddonOthers")
+local M = KT:NewModule("AddonOthers")
 KT.AddonOthers = M
 
 local _DBG = function(...) if _DBG then _DBG("KT", ...) end end
@@ -57,10 +57,10 @@ end
 -- QuestGuru / Classic Quest Log
 local function QuestGuru_ClassicQuestLog_SetSupport()
     local ql, prefix
-    if IsAddOnLoaded("QuestGuru") then
+    if C_AddOns.IsAddOnLoaded("QuestGuru") then
         ql = QuestGuru
         prefix = "QuestGuru"
-    elseif IsAddOnLoaded("Classic Quest Log") then
+    elseif C_AddOns.IsAddOnLoaded("Classic Quest Log") then
         ql = ClassicQuestLog
         prefix = "ClassicQuestLog"
     end

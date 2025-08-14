@@ -5,7 +5,7 @@
 --- This file is part of addon Kaliel's Tracker.
 
 local addonName, KT = ...
-local M = KT:NewModule(addonName.."_Filters")
+local M = KT:NewModule("Filters")
 KT.Filters = M
 
 local _DBG = function(...) if _DBG then _DBG("KT", ...) end end
@@ -23,7 +23,6 @@ local tsort = table.sort
 local _G = _G
 
 local db, dbChar
-local mediaPath = "Interface\\AddOns\\"..addonName.."\\Media\\"
 
 local KTF = KT.frame
 local OTF = ObjectiveTrackerFrame
@@ -47,10 +46,11 @@ local instanceQuestDifficulty = {
 	[DIFFICULTY_PRIMARYRAID_LFR] = { Enum.QuestTag.Raid },
 }
 local zoneSlug = {
-	[198] = "Hyjal",     -- Mount Hyjal
-	[201] = "Vashj'ir",  -- Kelp'thar Forest
-	[204] = "Vashj'ir",  -- Abyssal Depths
-	[205] = "Vashj'ir",  -- Shimmering Expanse
+	[198] = "Hyjal",        -- Mount Hyjal
+	[201] = "Vashj'ir",     -- Kelp'thar Forest
+	[204] = "Vashj'ir",     -- Abyssal Depths
+	[205] = "Vashj'ir",     -- Shimmering Expanse
+	[371] = "Jade Forest",  -- The Jade Forest
 }
 
 local eventFrame
@@ -174,11 +174,11 @@ local function Filter_Quests(spec, idx)
 	local numEntries, _ = GetNumQuestLogEntries()
 
 	KT.stopUpdate = true
-	if KT_GetNumQuestWatches() > 0 then
+	if GetNumQuestWatches() > 0 then
 		for i = 1, numEntries do
 			local _, _, _, isHeader, _, _, _, questID, _, _, _, _, isTask, isBounty = GetQuestLogTitle(i)
 			if not isHeader and not isTask and (not isBounty or IsQuestComplete(questID)) then
-				KT_RemoveQuestWatch(questID)
+				RemoveQuestWatch(i)
 			end
 		end
 	end
@@ -191,7 +191,7 @@ local function Filter_Quests(spec, idx)
 				headerName = title
 			else
 				if not isTask and (not isBounty or IsQuestComplete(questID)) then
-					KT_AddQuestWatch(questID, headerName)
+					AddQuestWatch(i)
 				end
 			end
 		end
@@ -203,7 +203,7 @@ local function Filter_Quests(spec, idx)
 				headerName = title
 			else
 				if not isHeader and not isTask and (not isBounty or IsQuestComplete(questID)) then
-					KT_AddQuestWatch(questID, headerName)
+					AddQuestWatch(i)
 				else
 					break
 				end
@@ -225,6 +225,8 @@ local function Filter_Quests(spec, idx)
 				headerName = title
 				isInZone = (strfind(zoneName, title) ~= nil or (subzoneName ~= "" and strfind(subzoneName, title) ~= nil) or KT.playerClass == title)
 			else
+				isOnMap = (isOnMap or
+							KT.QuestsCache_GetProperty(questID, "startMapID") == mapID)
 				if not isInZone then
 					local _, questDescription = GetQuestLogQuestText(i)
 					questDescription = strlower(questDescription)
@@ -244,10 +246,10 @@ local function Filter_Quests(spec, idx)
 				if not isTask and (not isBounty or IsQuestComplete(questID)) and (isOnMap or isInZone or zoneInDesc or isInQuestieZone) then
 					if KT.inInstance then
 						if IsInstanceQuest(questID) then
-							KT_AddQuestWatch(questID, headerName)
+							AddQuestWatch(i)
 						end
 					else
-						KT_AddQuestWatch(questID, headerName)
+						AddQuestWatch(i)
 					end
 				end
 			end
@@ -259,7 +261,7 @@ local function Filter_Quests(spec, idx)
 				headerName = title
 			else
 				if not isTask and (not isBounty or IsQuestComplete(questID)) and frequency >= 2 then
-					KT_AddQuestWatch(questID, headerName)
+					AddQuestWatch(i)
 				end
 			end
 		end
@@ -276,7 +278,7 @@ local function Filter_Quests(spec, idx)
 						tagID == Enum.QuestTag.Raid or
 						tagID == Enum.QuestTag.Raid10 or
 						tagID == Enum.QuestTag.Raid25 then
-						KT_AddQuestWatch(questID, headerName)
+						AddQuestWatch(i)
 					end
 				end
 			end
@@ -288,7 +290,7 @@ local function Filter_Quests(spec, idx)
 				headerName = title
 			else
 				if not isTask and (not isBounty or IsQuestComplete(questID)) and IsQuestComplete(questID) then
-					KT_AddQuestWatch(questID, headerName)
+					AddQuestWatch(i)
 				end
 			end
 		end
@@ -302,10 +304,13 @@ local function Filter_Quests(spec, idx)
 end
 
 local function GetCategoryByZone()
-	-- Kalimdor, Eastern Kingdoms, Outland, Northrend
+	-- 0 - Kalimdor, Eastern Kingdoms
+	-- 1 - Outland
+	-- 2 - Northrend
+	-- 4 - Pandaria
 	local category = KT.GetCurrentMapContinent().name
 	local mapID = KT.GetCurrentMapAreaID()
-	-- Cataclysm
+	-- 3 - Cataclysm
 	if mapID == 198 or         -- Mount Hyjal
 			mapID == 201 or    -- Vashj'ir - Kelp'thar Forest
 			mapID == 204 or    -- Vashj'ir - Abyssal Depths
@@ -372,7 +377,9 @@ local function Filter_Achievements(spec)
 						(parentID == instance) or                          -- Dungeons & Raids
 						(parentID == 169) or                               -- Professions
 						(parentID == 201) or                               -- Reputation
-						(parentID == 155 and strfind(events, name)) then   -- World Events
+						(parentID == 15165) or                             -- Scenarios
+						(parentID == 155 and strfind(events, name)) or     -- World Events
+						(category == 15117 or parentID == 15117) then      -- Pet Battles
 					local aNumItems, _ = GetCategoryNumAchievements(category)
 					for j = 1, aNumItems do
 						local track = false
@@ -622,7 +629,7 @@ function DropDown_Initialize(self, level)
 		info.icon = nil
 
 		info.text = "全部取消追蹤"
-		info.disabled = (db.filterAuto[1] or KT_GetNumQuestWatches() == 0)
+		info.disabled = (db.filterAuto[1] or GetNumQuestWatches() == 0)
 		info.arg1 = ""
 		MSA_DropDownMenu_AddButton(info)
 
@@ -846,7 +853,7 @@ local function SetFrames()
 	button:SetSize(16, 16)
 	button:SetPoint("TOPRIGHT", KTF.MinimizeButton, "TOPLEFT", -4, 0)
 	button:SetFrameLevel(KTF:GetFrameLevel() + 10)
-	button:SetNormalTexture(mediaPath.."UI-KT-HeaderButtons")
+	button:SetNormalTexture(KT.MEDIA_PATH.."UI-KT-HeaderButtons")
 	button:GetNormalTexture():SetTexCoord(0.5, 1, 0.5, 0.75)
 	
 	button:RegisterForClicks("AnyDown")
@@ -897,14 +904,16 @@ function M:OnInitialize()
 				nil,	-- [2] Achievements
 			},
 			filterAchievCat = {
-				[92] = true,	-- General
-				[96] = true,	-- Quests
-				[97] = true,	-- Exploration
-				[95] = true,	-- Player vs. Player
-				[168] = true,	-- Dungeons & Raids
-				[169] = true,	-- Professions
-				[201] = true,	-- Reputation
-				[155] = true,	-- World Events
+				[92] = true,     -- General
+				[96] = true,     -- Quests
+				[97] = true,     -- Exploration
+				[95] = true,     -- Player vs. Player
+				[168] = true,    -- Dungeons & Raids
+				[169] = true,    -- Professions
+				[201] = true,    -- Reputation
+				[15165] = true,  -- Scenarios
+				[155] = true,    -- World Events
+				[15117] = true,  -- Pet Battles
 			},
         },
 		char = {
@@ -934,8 +943,12 @@ function M:QuestSort(questWatchInfoList)
 			if next(a) == nil or next(b) == nil then
 				return false
 			end
-			local aZone, bZone = KT_GetQuestListInfo(a[1], true).zone, KT_GetQuestListInfo(b[1], true).zone
+			local aZone = KT.QuestsCache_GetProperty(a[1], "zone") or ""
+			local bZone = KT.QuestsCache_GetProperty(b[1], "zone") or ""
 			if aZone == bZone then
+				if a[2] == b[2] then
+					return a[3] < b[3]
+				end
 				return a[2] < b[2]
 			end
 			return aZone < bZone
