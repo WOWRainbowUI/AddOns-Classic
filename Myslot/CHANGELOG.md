@@ -1,6 +1,6 @@
 # Myslot
 
-## [v5.23.1](https://github.com/tg123/myslot/tree/v5.23.1) (2025-03-23)
-[Full Changelog](https://github.com/tg123/myslot/commits/v5.23.1) 
+## [v5.23.3](https://github.com/tg123/myslot/tree/v5.23.3) (2025-08-09)
+[Full Changelog](https://github.com/tg123/myslot/commits/v5.23.3) 
 
-- bump interface versions for compatibility updates  
+- Update Interface version to 110200 for compatibility  
