@@ -3349,6 +3349,12 @@ NRC.foods = {
 		desc = "+450 Stamina",
 		maxRank = true,
 	},
+	[104283] = { --Chun Tian Spring Rolls.
+		name = "Well Fed",
+		icon = 136000,
+		desc = "+450 Stamina",
+		maxRank = true,
+	},
 	[146807] = { --Farmer's Delight.
 		name = "Well Fed",
 		icon = 136000,
@@ -9164,6 +9170,10 @@ NRC.ignoredLoot = {
 	[45624] = "Emblem of Conquest",
 	[49426] = "Emblem of Frost",
 	--No badges in cata?
+	
+	--MoP.
+	[87208] = "Sigil of Power",
+	[87209] = "Sigil of Wisdom",
 };
 
 NRC.distractingShot = {

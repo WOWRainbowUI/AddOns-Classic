@@ -5840,27 +5840,21 @@ end
 
 function NRC:checkNewVersion()
 	--NRC.db.global.versions = {};
-	local newVersionNotes = 1.73;
+	local newVersionNotes = 1.75;
 	if (NRC.version and NRC.version == newVersionNotes) then
 		if (not NRC.db.global.versions[NRC.version]) then
-			--if (NRC.isMOP) then
+			if (NRC.isMOP) then
 				local notes = {
-					"|cFF00FF00[Version 1.73]|r",
-					"Added Gems missing to the issues display for TBC/Wrath/Cata/MoP.",
-					"Added Belt Buckle missing to the issues display for MoP.",
-					"The average ilvl column on raid status is now enabled by default (can be turned off in options).",
-					" ",
-					"|cFF00FF00[Version 1.72]|r",
-					"Added detecting a fishing rod being equipped by anyone in the raid to show as a gear issue on the raid status frame.",
-					"Added a reminder if you enter a raid/dungeon with a fishing rod equipped.",
-					"Added more MoP buff foods to the db.",
-					"Added Major Rejuvenation Potion to tracked consumes for classic.",
-					"Fixed hunter showing as having a missing gear slot in MoP.",
-					"Fixed average ilvl count in MoP.",
-					"Bunch of other small fixes.",
+					--"|cFF00FF00[Version 1.73]|r",
+					"Fixed the \"Don't Release\" safety warning during encounters in MoP raids so cooldowns can be reset.",
+					"Fixed the resurrection timer that NRC adds to res/bres popups in MoP.",
+					"Added missing stamina food to raid status.",
+					"Added world bosses to the lockouts display for alts.",
+					"Removed legendary quest items from the loot log.",
+					"Added bonus roll loot tracking to the raid log, you can type \"bonus\" in the filter to only show bonus roll also (untested but should work, will test during raid this week).",
 				};
 				loadNewVersionFrame(NRC.version, notes, "Nova Raid Companion", "Interface\\AddOns\\NovaRaidCompanion\\Media\\nrc_icon2", 0, 300);
-			--end
+			end
 			--NRC:setLockAllFrames(nil, false);
 			--Wipe old data.
 			NRC.db.global.versions = {};

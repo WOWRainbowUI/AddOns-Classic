@@ -43,6 +43,7 @@ L["logEntryFrameTitle"] = "重新命名記錄 %s";
 L["renamedLogEntry"] = "重新命名記錄 %s 為 %s";
 L["clearedLogEntryName"] = "清除記錄 %s";
 L["tradeFilterTooltip"] = "|cFFFFFF00Enter any of the following:|r\n|cFF9CD6DEYour character name.\nOther player name or item name.\nGold amount.";
+L["lootFilterTooltip"] = "|cFF9CD6DE輸入物品或玩家姓名或獎勵骰子。";
 L["deleteInstanceConfirm"] = "從副本記錄刪除 %s 事件？"
 L["noRaidsRecordedYet"] = "還沒有任何出團記錄，請等等回來確認。";
 L["Boss Journal"] = "首領日誌";

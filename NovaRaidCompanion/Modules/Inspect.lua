@@ -1513,6 +1513,10 @@ end
 
 --Inspect a single player.
 function NRC:inspect(guid, priority)
+	if (NRC:isInArena()) then
+		--Temp disabled until I do arena next and fix a lua error.
+		return;
+	end
 	local me = UnitGUID("player");
 	if (guid == me or not guid) then
 		return;

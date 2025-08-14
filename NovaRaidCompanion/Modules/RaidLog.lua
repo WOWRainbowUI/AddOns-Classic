@@ -28,6 +28,7 @@ local GetItemCount = GetItemCount or C_Item.GetItemCount;
 local GetItemQualityColor = GetItemQualityColor or C_Item.GetItemQualityColor;
 local GetSpellLink = GetSpellLink or C_Spell.GetSpellLink;
 local GetSpellInfo = NRC.GetSpellInfo;
+local IsQuestFlaggedCompleted = IsQuestFlaggedCompleted or C_QuestLog.IsQuestFlaggedCompleted;
 NRC.currentInstanceID = 0;
 local inRaid;
 	
@@ -45,7 +46,7 @@ function NRC:chatMsgLoot(...)
     --Self receive multiple loot "You receive loot: [Item]x2"
     local amount;
     local name = UnitName("Player");
-    local otherPlayer;
+    local otherPlayer, bonusRoll;
     --Self loot multiple item "You receive loot: [Item]x2"
 	local itemLink, amount = strmatch(msg, string.gsub(string.gsub(LOOT_ITEM_SELF_MULTIPLE, "%%s", "(.+)"), "%%d", "(%%d+)"));
 	if (not itemLink) then
@@ -63,7 +64,6 @@ function NRC:chatMsgLoot(...)
     end
     --If no matches for self loot then check other player loot msgs.
     if (not itemLink) then
-    	otherPlayer = true;
     	--Other player receive multiple loot "Otherplayer receives loot: [Item]x2"
     	name, itemLink, amount = strmatch(msg, string.gsub(string.gsub(LOOT_ITEM_MULTIPLE, "%%s", "(.+)"), "%%d", "(%%d+)"));
     	if (not itemLink) then
@@ -78,7 +78,32 @@ function NRC:chatMsgLoot(...)
 				end
 			end
     	end
+    	if (itemLink) then
+    		otherPlayer = true;
+    	end
     end
+    --Bonus rolls for MoP+.
+    if (not itemLink) then
+	    local itemLink, amount = strmatch(msg, string.gsub(string.gsub(LOOT_ITEM_BONUS_ROLL_SELF_MULTIPLE, "%%s", "(.+)"), "%%d", "(%%d+)"));
+		if (not itemLink) then
+	 		--Self receive single loot "You receive loot: [Item]"
+	    	itemLink = msg:match(LOOT_ITEM_BONUS_ROLL_SELF:gsub("%%s", "(.+)"));
+			if (not itemLink) then
+				--Other players.
+				name, itemLink, amount = strmatch(msg, string.gsub(string.gsub(LOOT_ITEM_BONUS_ROLL_MULTIPLE, "%%s", "(.+)"), "%%d", "(%%d+)"));
+		    	if (not itemLink) then
+		    		--Other player receive single loot "Otherplayer receives loot: [Item]"
+		    		name, itemLink = msg:match("^" .. LOOT_ITEM_BONUS_ROLL:gsub("%%s", "(.+)"));
+			    end
+			    if (itemLink) then
+		    		otherPlayer = true;
+		    	end
+			end							
+	    end
+	    if (itemLink) then
+    		bonusRoll = true;
+    	end
+	end
     if (not amount) then
     	amount = 1;
     end
@@ -121,7 +146,7 @@ function NRC:chatMsgLoot(...)
 		--Also include coffer keys from aq20/40.
 		if (itemRarity and (itemRarity >= 2 or (itemID and (itemID == "21761" or itemID == "21762")))) then
 			--If we're recording above a certain level
-			NRC:addLoot(name, itemLink, amount, itemRarity);
+			NRC:addLoot(name, itemLink, amount, itemRarity, bonusRoll);
 		--elseif (itemRarity and itemRarity >= 1) then
 			--If we're recording all non-greys.
 			--NRC:addLoot(name, itemLink, amount, itemRarity, time);
@@ -131,7 +156,10 @@ function NRC:chatMsgLoot(...)
 end
 
 local lastEncounterEnd = {};
-function NRC:addLoot(name, itemLink, amount, itemRarity)
+function NRC:addLoot(name, itemLink, amount, itemRarity, bonusRoll)
+	if (bonusRoll) then
+		NRC:debug("Bonus Loot:", name, itemLink, amount, itemRarity);
+	end
 	--NRC:debug("Loot", name, itemLink, amount, itemRarity);
 	--No need to store amount if it's only 1 for now.
 	--Maybe if we're grouping items together later we'll need the amount.
@@ -144,6 +172,7 @@ function NRC:addLoot(name, itemLink, amount, itemRarity)
 			itemLink = itemLink,
 			itemRarity = itemRarity,
 			time = GetServerTime(),
+			bonusRoll = bonusRoll,
 		};
 		if (amount and tonumber(amount)) then
 			t.amount = tonumber(amount);
@@ -1110,15 +1139,19 @@ local function getLootData(logID, minQuality, exactQuality, showKtWeapons, encou
 	local count, bossCount, trashCount = 0, 0, 0;
 	local lootData = {};
 	--NRC:debug(data.loot)
+	local filter = raidLogFrame.scrollChild.filterFrame.filterString;
+	local includeBonusRolls;
+	if (filter and filter ~= "") then
+		includeBonusRolls = strfind(strlower(L["Bonus Roll"]), strlower(filter));
+	end
 	if (data.loot) then
 		local filtered = data.loot;
-		local filter = raidLogFrame.scrollChild.filterFrame.filterString;
 		if (filter and filter ~= "") then
 			filtered = {};
 			filter = strlower(filter);
 			for k, v in pairs(data.loot) do
 				local name = strmatch(v.itemLink, "%[.+%]");
-				if ((name and strfind(strlower(name), filter)) or strfind(strlower(v.name), filter)) then
+				if ((name and strfind(strlower(name), filter)) or strfind(strlower(v.name), filter) or includeBonusRolls and v.bonusRoll) then
 					tinsert(filtered, v);
 				end
 			end
@@ -2723,6 +2756,9 @@ local function setLootText(logID, lootID, lineFrameCount, displayNum, text, loot
 			frame.fs:SetPoint("LEFT", 12, 0);
 		else
 			frame.fs:SetPoint("LEFT", 5, 0);
+		end --/run NRC.db.global.instances[1].loot[1].bonusRoll = true
+		if (lootData and lootData.bonusRoll) then
+			text = text .. " |cFFFFFF00(" .. L["Bonus Roll"] .. ")|r";
 		end
 		if (displayNum > 0) then
 			--Only display number if not a header or spacer;
@@ -6436,6 +6472,30 @@ function NRC:deleteInstance(num)
 	end
 end
 
+--World bosses that have quests instead of instance IDs.
+local lockoutBossQuests = {
+	[32098] = {
+		name = L["Galleon"],
+		difficultyName = L["World Boss"],
+		--journalEncounterID = 0, Seems to have been an entry for Galleon in any version of the game, have to manually translate.
+	},
+	[32099] = {
+		name = L["Sha of Anger"],
+		difficultyName = L["World Boss"],
+		journalEncounterID = 691,
+	},
+	[32518] = {
+		name = L["Nalak"],
+		difficultyName = L["World Boss"],
+		journalEncounterID = 814,
+	},
+	[32519] = {
+		name = L["Oondasta"],
+		difficultyName = L["World Boss"],
+		journalEncounterID = 826,
+	},
+};
+
 function NRC:recordLockoutData()
 	local char = UnitName("player");
 	if (not NRC.data.myChars[char]) then
@@ -6455,6 +6515,24 @@ function NRC:recordLockoutData()
 				resetTime = resetTime,
 				difficultyName = difficultyName,
 				locked = locked,
+			};
+		end
+	end
+	for k, v in pairs(lockoutBossQuests) do
+		if (IsQuestFlaggedCompleted(k)) then
+			local name = v.name;
+			if (v.journalEncounterID) then
+				local _, journalName = EJ_GetCreatureInfo(1, v.journalEncounterID);
+				if (journalName and journalName ~= "") then
+					--Use the journal API for localization.
+					name = journalName;
+				end
+			end
+			NRC.data.myChars[char].savedInstances[k] = {
+				name = name,
+				resetTime = GetServerTime() + C_DateAndTime.GetSecondsUntilWeeklyReset(),
+				difficultyName = v.difficultyName,
+				locked = true,
 			};
 		end
 	end
