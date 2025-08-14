@@ -197,6 +197,25 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.THE_WANDERING_ISLE] = {{51.59,61.29}}},
             [objectKeys.zoneID] = zoneIDs.THE_WANDERING_ISLE,
         },
+        [210968] = { -- Bloodbloom
+            [objectKeys.name] = 'Bloodbloom',
+            [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{44.36,19.67},{44.38,19.03},{45,18.75},{45.22,19.28},{44.71,20.57}}},
+            [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
+        },
+        [210969] = { -- Cave Lily
+            [objectKeys.name] = 'Cave Lily',
+            [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{47.83,20.16},{48.93,19.3},{49.05,18.68},{48.62,18.17},{48.41,18.39},{47.45,18.99}}},
+            [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
+        },
+        [210970] = { -- Ghostcap
+            [objectKeys.name] = 'Ghostcap',
+            [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{38.7,17.88},{38.6,17.39},{38.53,17.22},{38.58,16.8},{39,16.56},{39.39,17.22},{39.3,17.76},{39.24,19.23}}},
+            [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
+        },
+        [210971] = { -- Violet Lichen
+            [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{44.38,21.96},{40.25,21.23},{42.49,22.36},{41.44,22.58},{40.13,19.76},{38.56,21.67},{47.14,20.31},{36.42,21.09}}},
+            [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
+        },
         [211020] = { -- Yoon's Apples
             [objectKeys.name] = 'Yoon\'s Apples',
             [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{52.63,47.8}}},
@@ -229,6 +248,10 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{56.84,70.98}}},
             [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
         },
+        [211305] = { -- Rocks
+            [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{37.01,23.69}}},
+            [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
+        },
         [211306] = { -- Revelite Crystal
             [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{23.15,30.87},{23.49,33.25},{26.96,32.85},{27.65,29.00},{26.07,28.38},{26.33,25.12},{24.14,27.42},{21.59,28.46},{20.39,30.60},{22.37,30.78},{21.57,31.41},{23.16,30.73},{23.18,26.58},{22.11,27.19}}},
             [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
@@ -251,6 +274,20 @@ function MopObjectFixes.Load()
             [objectKeys.name] = 'Tough Kelp',
             [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{52.24,77.89}}},
             [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [211393] = { -- Battle Helm of the Thunder King
+            [objectKeys.name] = 'Battle Helm of the Thunder King',
+            [objectKeys.spawns] = {[zoneIDs.GUO_LAI_HALLS_THE_HALL_OF_THE_SERPENT] = {{50.01,82.1}}},
+            [objectKeys.zoneID] = zoneIDs.GUO_LAI_HALLS_THE_HALL_OF_THE_SERPENT,
+        },
+        [211395] = { -- Battle Spear of the Thunder King
+            [objectKeys.name] = 'Battle Spear of the Thunder King',
+            [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{21.4,19.79}}},
+            [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
+        },
+        [211396] = { -- Battle Axe of the Thunder King
+            [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{45.49,76.19}}},
+            [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
         },
         [211510] = { -- Sage Liao's Belongings
             [objectKeys.name] = 'Sage Liao\'s Belongings',
@@ -275,6 +312,10 @@ function MopObjectFixes.Load()
             [objectKeys.name] = 'Incense of Life',
             [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{66.95,33.33}}},
             [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
+        },
+        [211596] = { -- Goblin Fishing Raft
+            [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{67.43,44.77}}},
+            [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
         },
         [211720] = { -- Meeting Stone (Terrace of Endless Spring)
             [objectKeys.spawns] = {[zoneIDs.THE_VEILED_STAIRS] = {{51.7,69.4}}},
@@ -386,6 +427,10 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{74.8,30.3}}},
             [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
         },
+        [213319] = { -- Amber Pot
+            [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{67.5,43.87},{66.14,44.81},{66.6,43.77},{66.44,43.43},{65.87,44.48},{67.37,42.64},{66.17,43.01},{68.09,40.14},{66.53,39.25},{65.6,38.31},{68.34,33.98},{69.65,34.18},{69.39,32.34},{71.13,30.25},{72.33,35.55},{72.2,30.66},{70.87,29.39},{73.88,28.79},{71.15,24.11},{69.71,17.14},{68.1,17.06}}},
+            [objectKeys.zoneID] = zoneIDs.DREAD_WASTES,
+        },
         [213365] = { -- Stolen Mistfall Keg
             [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{34.6,75.32}}}, -- needs more spawns
             [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
@@ -421,6 +466,10 @@ function MopObjectFixes.Load()
             [objectKeys.name] = "Potent Dream Brew",
             [objectKeys.spawns] = {[zoneIDs.THE_JADE_FOREST] = {{54.68,92.06}}},
             [objectKeys.zoneID] = zoneIDs.THE_JADE_FOREST,
+        },
+        [213767] = { -- Hidden Treasure
+            [objectKeys.spawns] = {[zoneIDs.CAVERN_OF_ENDLESS_ECHOES] = {{31.36,52.86}}},
+            [objectKeys.zoneID] = zoneIDs.CAVERN_OF_ENDLESS_ECHOES,
         },
         [213795] = { -- Stormstout Secrets
             [objectKeys.name] = "Stormstout Secrets",
@@ -483,6 +532,14 @@ function MopObjectFixes.Load()
                 [zoneIDs.SCARLET_MONASTERY] = {{-1,-1}},
             },
             [objectKeys.zoneID] = zoneIDs.SCARLET_MONASTERY,
+        },
+        [214394] = { -- Ancient Guo-Lai Artifact
+            [objectKeys.spawns] = {[zoneIDs.GUO_LAI_HALLS] = {{49.8,30.81}}},
+            [objectKeys.zoneID] = zoneIDs.GUO_LAI_HALLS,
+        },
+        [214477] = { -- Deactivate Final Spirit Wall
+            [objectKeys.spawns] = {[zoneIDs.GUO_LAI_HALLS] = {{41.67,18.15}}},
+            [objectKeys.zoneID] = zoneIDs.GUO_LAI_HALLS,
         },
         [214543] = { -- Dreadspore Bulb
             [objectKeys.name] = "Dreadspore Bulb",
@@ -575,6 +632,16 @@ function MopObjectFixes.Load()
         },
         [440007] = {
             [objectKeys.name] = "Pandaren Archaeology Fragment",
+        },
+        [440008] = {
+            [objectKeys.name] = "Golden Falls",
+            [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{56.71,21.87}}},
+            [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
+        },
+        [440009] = {
+            [objectKeys.name] = "Rappelling Rope",
+            [objectKeys.spawns] = {[zoneIDs.THE_JADE_FOREST] = {{31.51,11.1},{31.43,10.69},{31.55,10.43}}},
+            [objectKeys.zoneID] = zoneIDs.THE_JADE_FOREST,
         },
     }
 end
