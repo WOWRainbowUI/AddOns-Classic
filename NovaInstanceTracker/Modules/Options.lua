@@ -616,7 +616,7 @@ NIT.options = {
 };
 
 function NIT:loadSpecificOptions()
-	if (NIT.expansionNum == 3 or NIT.expansionNum == 4 or NIT.expansionNum == 5) then
+	if (NIT.expansionNum > 2) then
 		NIT.options.args["autoGammaBuffHeader"] = {
 			type = "header",
 			name = L["autoGammaBuffDesc"],
@@ -669,6 +669,13 @@ function NIT:loadSpecificOptions()
 			get = "getAutoGammaBuffType",
 			set = "setAutoGammaBuffType",
 		};
+		if (NIT.isMOP) then
+			--In mop the buffs changed a bit to caster/phys instead of melee and ranged.
+			NIT.options.args.autoGammaBuffType.values[2] = STRING_SCHOOL_PHYSICAL .. " (Xuen)";
+			NIT.options.args.autoGammaBuffType.values[3] = gsub(SPELL_SCHOOLMAGICAL, "^%l", strupper) .. " (Chi-Ji)";
+			NIT.options.args.autoGammaBuffType.values[4] = HEALER .. " (Yu'lon)";
+			NIT.options.args.autoGammaBuffType.values[5] = TANK .. " (Niuzao)";
+		end
 		NIT.options.args["autoGammaText"] = {
 			type = "description",
 			name = "|cFFFF0000" .. L["note"] .. " |cFF9CD6DE" .. L["gammaConfigWarning"],
@@ -893,6 +900,7 @@ NIT.optionDefaults = {
 		argentDawnTrinketReminder = true,
 		skipRealMsgIfCapped = false,
 		soundsLootReminder = "None",
+		resetCelestialBuffChoice = true,
 	},
 };
 
@@ -1034,15 +1042,17 @@ end
 
 function NIT:checkNewVersion()
 	--NIT.db.global.versions = {}; --To test.
-	local newVersionNotes = 2.01;
+	local newVersionNotes = 2.03;
 	if (NIT.version and NIT.version == newVersionNotes) then
 		if (not NIT.db.global.versions[NIT.version]) then
 			if (NIT.isMOP) then
 				local notes = {
+					"|cFF00FF00[Version 2.03]|r",
+					"Added Celestial dungeon buff helper that auto selects a buff based on spec from the signet NPC, or you can set an overide in config. This also does auto gossip for the 4 npcs at the start.",
+					"|cFF00FF00[Version 2.01]|r",
 					"Added MoP world bosses to the lockouts display.",
 					"Added tracking of lesser/greater charms, cooking tokens, august stone fragments in the chars window.",
 					"Added currency display for bgs in MoP (for conquest points).",
-					"Removed reagents count in MoP chars window tooltips.",
 				};
 				loadNewVersionFrame(NIT.version, notes, "Nova Instance Tracker", "Interface\\AddOns\\NovaInstanceTracker\\Media\\portal", 30, 200);
 			end

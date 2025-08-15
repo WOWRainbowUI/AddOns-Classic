@@ -517,6 +517,9 @@ L["of level"] = "當前等級"; --This for XP display during a dung (23.4% of le
 
 L["World Boss"] = "世界王";
 
+L["autoCelestialBuffReminder"] = "從 %s 獲得天界地城增益效果。";
+L["NPC"] = "NPC";
+
 --增加
 L["Nova Instance Tracker"] = "Nova 副本進度追蹤";
 L["NovaInstanceTracker"] = "副本-進度";

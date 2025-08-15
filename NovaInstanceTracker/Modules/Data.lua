@@ -332,7 +332,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 		NIT:combatLogEventUnfiltered(...);
 	elseif (event == "UNIT_TARGET" or event == "PLAYER_TARGET_CHANGED") then
 		NIT:parseGUID("target", nil, "target");
-		if (NIT.inInstance and (NIT.isWrath or NIT.isCata)) then
+		if (NIT.inInstance and NIT.expansionNum > 4) then
 			NIT:scanDungeonSubDifficulty();
 		end
 	elseif (event == "UPDATE_MOUSEOVER_UNIT") then
@@ -391,6 +391,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 		end
 	elseif (event == "PLAYER_DEAD") then
 		NIT:throddleEventByFunc(event, 2, "recordDurabilityData", ...);
+		scanDungeonSubDifficulty = nil;
 	elseif (event == "BAG_UPDATE" or event == "PLAYER_MONEY") then
 		NIT:throddleEventByFunc(event, 3, "recordInventoryData", ...);
 	elseif (event == "QUEST_TURNED_IN") then
@@ -1168,10 +1169,12 @@ local subDiffculties = {
 	--Cata.
 	[470595] = "inferno",
 	[1224923] = "twilight",
+	--MoP.
+	[1243929] = "celestial",
 };
 function NIT:scanDungeonSubDifficulty()
 	--Only scan once per entering.
-	if (NIT.inInstance and not scanDungeonSubDifficulty) then
+	if (NIT.inInstance and not scanDungeonSubDifficulty and not UnitIsDead("player")) then
 		local found;
 		local guid = UnitGUID("target");
 		if (guid and string.match(guid, "Creature")) then
@@ -1201,7 +1204,8 @@ function NIT:scanDungeonSubDifficulty()
 		if (found) then
 			scanDungeonSubDifficulty = true;
 		end
-		if (found and (NIT.data.instances[1].subDifficulty == "gamma" or NIT.data.instances[1].subDifficulty == "twilight") and NIT.db.global.autoGammaBuffReminder)then
+		if (found and (NIT.data.instances[1].subDifficulty == "gamma" or NIT.data.instances[1].subDifficulty == "twilight"
+				or NIT.data.instances[1].subDifficulty == "celestial") and NIT.db.global.autoGammaBuffReminder)then
 			--If we don't have a buff already then remind us, should only fire once per dung.
 			local hasBuff;
 			local gammaBuffs = {
@@ -1214,7 +1218,11 @@ function NIT:scanDungeonSubDifficulty()
 				[1224926] = true, --Red.
 				[1224932] = true, --Green.
 				[1224928] = true, --Bronze.
-				
+				--Celestial.
+				[1244204] = true, --Blessing of Yu'lon.
+				[1244217] = true, --Blessing of Niuzao.
+				[1243285] = true, --Blessing of Chi-Ji.
+				[1243315] = true, --Blessing of Xuen.
 			};
 			for i = 1, 32 do
 				local _, _, _, _, _, _, _, _, _, spellID = UnitBuff("player", i);
@@ -1243,6 +1251,11 @@ function NIT:scanDungeonSubDifficulty()
 					NIT:print("|cFF00FF00" .. string.format(L["autoTwilightBuffReminder"], npcType), nil, "[NIT Reminder]");
 					local colorTable = {r = 1, g = 0.96, b = 0.41, id = 41, sticky = 0};
 					RaidNotice_AddMessage(RaidWarningFrame, NIT.prefixColor .. "[NIT Reminder]:|r |cFF00FF00" .. string.format(L["autoTwilightBuffReminder"], npcType), colorTable, 6);
+				elseif (NIT.data.instances[1].subDifficulty == "celestial") then
+					local npcType = L["NPC"];
+					NIT:print("|cFF00FF00" .. string.format(L["autoCelestialBuffReminder"], npcType), nil, "[NIT Reminder]");
+					local colorTable = {r = 1, g = 0.96, b = 0.41, id = 41, sticky = 0};
+					RaidNotice_AddMessage(RaidWarningFrame, NIT.prefixColor .. "[NIT Reminder]:|r |cFF00FF00" .. string.format(L["autoCelestialBuffReminder"], npcType), colorTable, 6);
 				end
 			end
 		end
@@ -3943,8 +3956,20 @@ function NIT:resetCharData()
 		end
 		NIT:recalcAltsLineFrames();
 		NIT:recordCharacterData();
+		NIT.db.global.resetCharData = false;
 	end
-	NIT.db.global.resetCharData = false;
+	if (NIT.isMOP) then
+		if (NIT.db.global.resetCelestialBuffChoice) then
+			for k, realm in pairs(NIT.db.global) do
+				if (type(realm) == "table" and k ~= "minimapIcon" and k ~= "data") then
+					if (realm.gammaBuffSettings) then
+						NIT.db.global[k].gammaBuffSettings = {};
+					end
+				end
+			end
+			NIT.db.global.resetCelestialBuffChoice = false;
+		end
+	end
 end
 ---Trades---
 

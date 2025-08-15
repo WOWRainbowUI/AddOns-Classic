@@ -640,3 +640,6 @@ L["Golemagg the Incinerator"] = "Golemagg the Incinerator";
 L["of level"] = "of level"; --This for XP display during a dung (23.4% of level)
 
 L["World Boss"] = "World Boss";
+
+L["autoCelestialBuffReminder"] = "Get Celestial Dungeon buff from %s.";
+L["NPC"] = "NPC";

@@ -1041,7 +1041,7 @@ function NIT:updateMinimapButton(tooltip, frame)
 						instanceDiff = " |cFF9CD6DE(|cFFa335eeM+|r)|r";
 					end
 				elseif (data.difficultyID == 174 or data.difficultyID == 2 or data.difficultyID == 5 or data.difficultyID == 6 or data.difficultyID == 11
-						 or data.difficultyID == 15 or data.difficultyID == 39 or data.difficultyID == 149) then
+						 or data.difficultyID == 15 or data.difficultyID == 39 or data.difficultyID == 149 or data.difficultyID == 237) then --237 new MoP ID for celestials?
 					if (data.subDifficulty) then
 						--Display if gamma dung in wrath or inferno/twilight cata.
 						instanceDiff = " |cFF9CD6DE(|cFFFF2222" .. gsub(data.subDifficulty, "^%l", string.upper) .. "|r)|r";
@@ -2321,7 +2321,7 @@ function NIT:buildInstanceLineFrameString(v, count, logID)
 		end
 		instance = instance .. mythicPlusString;
 	elseif (v.difficultyID == 174 or v.difficultyID == 2 or v.difficultyID == 5 or v.difficultyID == 6 or v.difficultyID == 11
-			 or v.difficultyID == 15 or v.difficultyID == 39 or v.difficultyID == 149) then
+			 or v.difficultyID == 15 or v.difficultyID == 39 or v.difficultyID == 149 or v.difficultyID == 237) then
 		if (v.subDifficulty) then
 			--Display if gamma dung in wrath.
 			instance = instance .. " (|cFFFF2222" .. gsub(v.subDifficulty, "^%l", string.upper) .. "|r)";
@@ -2570,7 +2570,7 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 				mythicPlusString = " |cFFFF0000Incomplete" .. "|r";
 			end
 		elseif (data.difficultyID == 174 or data.difficultyID == 2 or data.difficultyID == 5 or data.difficultyID == 6 or data.difficultyID == 11
-				 or data.difficultyID == 15 or data.difficultyID == 39 or data.difficultyID == 149) then
+				 or data.difficultyID == 15 or data.difficultyID == 39 or data.difficultyID == 149 or data.difficultyID == 237) then
 			if (data.subDifficulty) then
 			--Display if gamma dung in wrath.
 				heroicString = " (|cFFFF2222" .. gsub(data.subDifficulty, "^%l", string.upper) .. "|r)";
@@ -5127,13 +5127,13 @@ f:SetScript('OnEvent', function(self, event, ...)
 			NIT:selectGossipOption(1);
 			return;
 		end
-		if (NIT.isWrath or NIT.isCata) then
+		if (NIT.expansionNum > 2) then
 			if (NIT.db.global.autoGammaBuff and isInstance) then
 				if (npcID == "211299" or npcID == "211297") then
 					if (IsShiftKeyDown()) then
 						return;
 					end
-					local buffType, buffName, role = NIT:getGammaBuffType();
+					local buffType, buffName, role, dmgType, notAuto = NIT:getGammaBuffType();
 					if (buffType) then
 						local roleText = "";
 						local _, class = UnitClass("player");
@@ -5166,7 +5166,11 @@ f:SetScript('OnEvent', function(self, event, ...)
 							buffNameText = "|cFF0096FF" .. buffName .. roleText .. "|r";
 						end
 						if (GetTime() - lastGammaBuffMsg > 2) then
-							NIT:print(NIT.prefixColor .. "Gamma Dungeon:|r |cFF9CD6DEAuto getting " .. icon .. buffNameText .. " buff for your current spec (can be changed in config or hold shift to manually select).");
+							if (notAuto) then
+								NIT:print(NIT.prefixColor .. "Gamma Dungeon:|r |cFF9CD6DEGetting " .. icon .. buffNameText .. " based on your config setting (hold shift to manually select).", nil, nil, true);
+							else
+								NIT:print(NIT.prefixColor .. "Gamma Dungeon:|r |cFF9CD6DEAuto getting " .. icon .. buffNameText .. " buff for your current spec (can be changed in config or hold shift to manually select).");
+							end
 							lastGammaBuffMsg = GetTime();
 						end
 						NIT:selectGossipOption(buffType);
@@ -5182,7 +5186,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 					if (IsShiftKeyDown()) then
 						return;
 					end
-					local buffType, buffName, role, specName = NIT:getTwilightBuffType();
+					local buffType, buffName, role, specName, dmgType, notAuto = NIT:getTwilightBuffType();
 					if (buffType) then
 						local roleText = "";
 						local _, class = UnitClass("player");
@@ -5231,15 +5235,114 @@ f:SetScript('OnEvent', function(self, event, ...)
 							specNameText = specName .. " ";
 						end
 						if (GetTime() - lastGammaBuffMsg > 2) then
-							NIT:print(NIT.prefixColor .. "Twilight Dungeon:|r |cFF9CD6DEAuto getting " .. icon .. twilightIcon .. buffNameText .. " buff for your current spec " .. specNameText .. "(can be changed in config or hold shift to manually select).", nil, nil, true);
+							if (notAuto) then
+								NIT:print(NIT.prefixColor .. "Twilight Dungeon:|r |cFF9CD6DEGetting " .. icon .. twilightIcon .. buffNameText .. " based on your config setting (hold shift to manually select).", nil, nil, true);
+							else
+								NIT:print(NIT.prefixColor .. "Twilight Dungeon:|r |cFF9CD6DEAuto getting " .. icon .. twilightIcon .. buffNameText .. " buff for your current spec " .. specNameText .. "(can be changed in config or hold shift to manually select).", nil, nil, true);
+							end
 							lastGammaBuffMsg = GetTime();
 						end
 						NIT:selectGossipOption(buffType);
 					else
 						if (GetTime() - lastGammaBuffMsg > 2) then
-							NIT:print(NIT.prefixColor .. "Twilight Dungeon:|r |cFF9CD6DEError selecting correct gamma buff please let the dev know on curseforge.");
+							NIT:print(NIT.prefixColor .. "Twilight Dungeon:|r |cFF9CD6DEError selecting correct twilight buff please let the dev know on curseforge.");
 							lastGammaBuffMsg = GetTime();
 						end
+					end
+					return;
+				elseif (npcID == "247440") then
+					NIT:selectGossipOption(1);
+					NIT:print("Auto getting |cFF50C878Healing|r buff from " .. UnitName("npc") .. ".");
+				elseif (npcID == "247730") then
+					NIT:selectGossipOption(1);
+					NIT:print("Auto getting |cFFEB0000Physical DPS|r buff from " .. UnitName("npc") .. ".");
+				elseif (npcID == "247731") then
+					NIT:selectGossipOption(1);
+					NIT:print("Auto getting |cFF0096FFTank|r buff from " .. UnitName("npc") .. ".");
+				elseif (npcID == "247732") then
+					NIT:selectGossipOption(1);
+					NIT:print("Auto getting |cFFEB0000Magic DPS|r buff from " .. UnitName("npc") .. ".");
+				elseif (npcID == "248115") then
+					--MoP celestial dungeons.
+					if (IsShiftKeyDown()) then
+						return;
+					end
+					local buffType, buffName, role, specName, dmgType, notAuto = NIT:getCelestialBuffType();
+					if (buffType) then
+						local roleText = "";
+						local _, class = UnitClass("player");
+						if (role and class == "DRUID") then
+							roleText = " (" .. role .. ")";
+						end
+						--Make the icon slightly bigger than the font size, it looks better.
+						local _, fontHeight = DEFAULT_CHAT_FRAME:GetFont();
+						local size = 0; --If 0 then it defaults to fit current text size.
+						if (fontHeight) then
+							--Round up, font is always slightly below round number.
+							--And make it slightly bigger than the text.
+							size = math.floor(fontHeight + 0.5) + 2;
+						end
+						local icon = "";
+						local icons = { --GetTexCoordsForRole("HEALER")
+							["dps"] = "|TInterface\\LFGFrame\\UI-LFG-ICON-ROLES:" .. size .. ":" .. size .. ":0:0:256:256:" .. 0.26171875*255 .. ":" .. 0.5234375*255 .. ":" .. 0.26171875*255 .. ":" .. 0.5234375*255 .. "|t ",
+							["healer"] = "|TInterface\\LFGFrame\\UI-LFG-ICON-ROLES:" .. size .. ":" .. size .. ":0:0:256:256:" .. 0.26171875*255 .. ":" .. 0.5234375*255 .. ":0:" .. 0.26171875*255 .. "|t ",
+							["tank"] = "|TInterface\\LFGFrame\\UI-LFG-ICON-ROLES:" .. size .. ":" .. size .. ":0:0:256:256:0:" .. 0.26171875*255 .. ":" .. 0.26171875*255 .. ":" .. 0.5234375*255 .. "|t ",
+						};
+						if (icons[role]) then
+							icon = icons[role];
+						end
+						--Remap the npc options order to dmg type for dps instead of spec for MoP.
+						--[[if (role == "healer") then
+							buffType = 1;
+						elseif (role == "tank") then
+							buffType = 2;
+						elseif (dmgType == "physical") then
+							buffType = 3;
+						elseif (dmgType == "magic") then
+							buffType = 4;
+						else
+							NIT:debug("Missing role/dmg type for celestial buff.");
+							return;
+						end]]
+						local twilightIcon = "";
+						local twilightIcons = { --GetTexCoordsForRole("HEALER")
+							[1] = "|T877514:" .. size .. ":" .. size .. "|t ", --Blessing of Chi-Ji (Magic dps).
+							[2] = "|T615340:" .. size .. ":" .. size .. "|t ", --Blessing of Niuzao (Tank).
+							[3] = "|T620832:" .. size .. ":" .. size .. "|t ", --Blessing of Xuen (Str/Agi phys dps).
+							[4] = "|T620831:" .. size .. ":" .. size .. "|t ", --Blessing of Yu'lon (Healer).
+						};
+						if (twilightIcons[buffType]) then
+							twilightIcon = twilightIcons[buffType];
+						end
+						local buffNameText = buffName .. roleText;
+						if (buffType == 1) then
+							buffNameText = "|cFFEB0000" .. buffName .. roleText .. "|r"; --Red.
+						elseif (buffType == 2) then
+							buffNameText = "|cFFEFBF04" .. buffName .. roleText .. "|r"; --Bronze.
+						elseif (buffType == 3) then
+							buffNameText = "|cFF50C878" .. buffName .. roleText .. "|r"; --Green.
+						elseif (buffType == 4) then
+							buffNameText = "|cFF0096FF" .. buffName .. roleText .. "|r"; --Blue.
+						end
+						local specNameText = "";
+						if (specName) then
+							specNameText = specName .. " ";
+						end
+						if (GetTime() - lastGammaBuffMsg > 2) then
+							if (notAuto) then
+								NIT:print(NIT.prefixColor .. "Celestial Dungeon:|r |cFF9CD6DEGetting " .. icon .. twilightIcon .. buffNameText .. " based on your config setting (hold shift to manually select).", nil, nil, true);
+							else
+								NIT:print(NIT.prefixColor .. "Celestial Dungeon:|r |cFF9CD6DEAuto getting " .. icon .. twilightIcon .. buffNameText .. " buff for your current spec " .. specNameText .. "(can be changed in config or hold shift to manually select).", nil, nil, true);
+							end
+							lastGammaBuffMsg = GetTime();
+						end
+						NIT:selectGossipOption(buffType);
+					else
+						--Let it silently fail in MoP, need to check all specs work.
+						--if (GetTime() - lastGammaBuffMsg > 2) then
+						--	NIT:print(NIT.prefixColor .. "Celestial Dungeon:|r |cFF9CD6DEError selecting correct celestial buff please let the dev know on curseforge.");
+						--	lastGammaBuffMsg = GetTime();
+						--end
 					end
 					return;
 				end
@@ -5646,7 +5749,7 @@ function NIT:openNITCopyFrame(text)
 end
 
 function NIT:getGammaBuffType()
-	local buffType, buffName, role;
+	local buffType, buffName, role, notAuto;
 	local option = NIT:getAutoGammaBuffType();
 	if (option == 1) then
 		--Auto spec detect.
@@ -5662,18 +5765,22 @@ function NIT:getGammaBuffType()
 		end
 	elseif (option == 2) then
 		buffType, buffName, role = 1, MELEE, "dps";
+		notAuto = true;
 	elseif (option == 3) then
 		buffType, buffName, role = 2, RANGED, "dps";
+		notAuto = true;
 	elseif (option == 4) then
 		buffType, buffName, role = 3, HEALER, "healer";
+		notAuto = true;
 	elseif (option == 5) then
 		buffType, buffName, role = 4, TANK, "tank";
+		notAuto = true;
 	end
-	return buffType, buffName, role;
+	return buffType, buffName, role, nil, notAuto;
 end
 
 function NIT:getTwilightBuffType()
-	local buffType, buffName, role, specName;
+	local buffType, buffName, role, specName, notAuto;
 	local option = NIT:getAutoGammaBuffType();
 	local name, icon, talentCount, specType, r = NIT:getActiveSpec();
 	if (option == 1) then
@@ -5689,120 +5796,366 @@ function NIT:getTwilightBuffType()
 		end
 	elseif (option == 2) then
 		buffType, buffName, role = 2, MELEE, "dps";
+		notAuto = true;
 	elseif (option == 3) then
 		buffType, buffName, role = 4, RANGED, "dps";
+		notAuto = true;
 	elseif (option == 4) then
 		buffType, buffName, role = 3, HEALER, "healer";
+		notAuto = true;
 	elseif (option == 5) then
 		buffType, buffName, role = 1, TANK, "tank";
+		notAuto = true;
 	end
-	return buffType, buffName, role, name;
+	return buffType, buffName, role, name, nil, notAuto;
+end
+
+function NIT:getCelestialBuffType()
+	--[[[1] = "|T877514:" .. size .. ":" .. size .. "|t ", --Blessing of Chi-Ji (Magic dps).
+	[2] = "|T615340:" .. size .. ":" .. size .. "|t ", --Blessing of Niuzao (Tank).
+	[3] = "|T620832:" .. size .. ":" .. size .. "|t ", --Blessing of Xuen (Str/Agi phys dps).
+	[4] = "|T620831:" .. size .. ":" .. size .. "|t ", --Blessing of Yu'lon (Healer).]]
+	local buffType, buffName, role, specName, notAuto;
+	local option = NIT:getAutoGammaBuffType();
+	local name, icon, talentCount, specType, r, dmgType = NIT:getActiveSpec();
+	--Set these best we can, dps get remapped at the bottom depending on dmg type caus that's how the buffs work in mop.
+	if (option == 1) then
+		--Auto spec detect.
+		if (specType == "melee") then
+			buffType, buffName, role = 3, MELEE, "dps";
+		elseif (specType == "ranged") then
+			buffType, buffName, role = 1, RANGED, "dps";
+		elseif (specType == "healer") then
+			buffType, buffName, role = 4, HEALER, "healer";
+		elseif (specType == "tank") then
+			buffType, buffName, role = 2, TANK, "tank";
+		end
+	elseif (option == 2) then
+		buffType, buffName, role = 3, MELEE, "dps";
+		notAuto = true;
+	elseif (option == 3) then
+		buffType, buffName, role = 1, RANGED, "dps";
+		notAuto = true;
+	elseif (option == 4) then
+		buffType, buffName, role = 4, HEALER, "healer";
+		notAuto = true;
+	elseif (option == 5) then
+		buffType, buffName, role = 2, TANK, "tank";
+		notAuto = true;
+	end
+	--Remap the npc options order to dmg type for dps instead of spec for MoP.
+	if (role == "dps") then
+		if (dmgType == "physical") then
+			dmgType = 3;
+		elseif (dmgType == "magic") then
+			dmgType = 4;
+		else
+			NIT:debug("Missing role/dmg type for celestial buff.");
+			return;
+		end
+	end
+	return buffType, buffName, role, name, dmgType, notAuto;
 end
 
 
 function NIT:getActiveSpec()
-	local name, icon, talentCount, specType, role, fileName = nil, nil, 0;
-	for tab = 1, GetNumTalentTabs() do
-		local _, specName, specIcon, pointsSpent, file;
-		--if (NIT.isCata) then
-			_, specName, _, specIcon, pointsSpent, file = GetTalentTabInfo(tab, false, false, GetActiveTalentGroup());
-		--else
-			--This returns order was changed in 1.15.3 era to the cata version above.
-		--	specName, specIcon, pointsSpent, file = GetTalentTabInfo(tab, false, false, GetActiveTalentGroup());
-		--end
-		if (pointsSpent and pointsSpent > talentCount) then
-			name, icon, talentCount, fileName = specName, specIcon, pointsSpent, file;
+	if (NIT.expansionNum > 4) then
+		local specNum = C_SpecializationInfo.GetSpecialization();
+		if (not specNum) then
+			return;
 		end
-	end
-	--Why do different expansions use different capitalization in file names?
-	fileName = string.lower(fileName);
-	if (name) then
-		local _, class = UnitClass("player");
-		if (class == "ROGUE") then
-			--Melee dps only classes.
-			specType = "melee";
-			role = "dps";
-		elseif (class == "HUNTER" or class == "MAGE" or  class == "WARLOCK") then
-			--Ranged dps only classes.
-			specType = "ranged";
-			role = "dps";
-		else
-			--Multi role classes.
-			if (class == "DRUID") then
-				if (fileName == "druidferalcombat") then
-					--Both feral tank and melee dps go down the feral tree, so we use role as backup.
-					--The role system in classic is scuffed but there's no better way I know of to tell the different.
-					--Hopefully feral tanks have thier role properly set.
-					--Try group role first so more accurate in group finder.
-					local r = UnitGroupRolesAssigned("player");
-					if (r == "NONE") then
-						--Fall back to talent window spec choice set by the player.
-						r = GetTalentGroupRole(GetActiveTalentGroup());
+		local specID, name, description, icon, role, primaryStat, talentCount, background, previewPointsSpent, isUnlocked = C_SpecializationInfo.GetSpecializationInfo(specNum);
+		--[[Dump: value=C_SpecializationInfo.GetSpecializationInfo(3)
+		[1]=255,
+		[2]="Survival",
+		[3]="A rugged tracker who favors using animal venom, explosives and traps as deadly weapons.",
+		[4]=461113,
+		[5]="DAMAGER",
+		[6]=2,
+		[7]=0,
+		[9]=0,
+		[10]=true]]
+		local specType;
+		if (name) then
+			local specIndex, dmgType;
+			local _, class, classID = UnitClass("player");
+			--[[WARRIOR 1 71 Arms
+			WARRIOR 2 72 Fury
+			WARRIOR 3 73 Protection
+			PALADIN 1 65 Holy
+			PALADIN 2 66 Protection
+			PALADIN 3 70 Retribution
+			HUNTER 1 253 Beast Mastery
+			HUNTER 2 254 Marksmanship
+			HUNTER 3 255 Survival
+			ROGUE 1 259 Assassination
+			ROGUE 2 260 Combat
+			ROGUE 3 261 Subtlety
+			PRIEST 1 256 Discipline
+			PRIEST 2 257 Holy
+			PRIEST 3 258 Shadow
+			DEATHKNIGHT 1 250 Blood
+			DEATHKNIGHT 2 251 Frost
+			DEATHKNIGHT 3 252 Unholy
+			SHAMAN 1 262 Elemental
+			SHAMAN 2 263 Enhancement
+			SHAMAN 3 264 Restoration
+			MAGE 1 62 Arcane
+			MAGE 2 63 Fire
+			MAGE 3 64 Frost
+			WARLOCK 1 265 Affliction
+			WARLOCK 2 266 Demonology
+			WARLOCK 3 267 Destruction
+			MONK 1 268 Brewmaster
+			MONK 2 270 Mistweaver
+			MONK 3 269 Windwalker
+			DRUID 1 102 Balance
+			DRUID 2 103 Feral
+			DRUID 3 104 Guardian
+			DRUID 4 105 Restoration]]
+			local specsByClassID = {
+				[0] = {74, 81, 79},
+			    [1] = {71, 72, 73, 1446},
+			    [2] = {65, 66, 70, 1451},
+			    [3] = {253, 254, 255, 1448},
+			    [4] = {259, 260, 261, 1453},
+			    [5] = {256, 257, 258, 1452},
+			    [6] = {250, 251, 252, 1455},
+			    [7] = {262, 263, 264, 1444},
+			    [8] = {62, 63, 64, 1449},
+			    [9] = {265, 266, 267, 1454},
+			    [10] = {268, 270, 269, 1450},
+			    [11] = {102, 103, 104, 105, 1447},
+			};
+			for k, v in pairs(specsByClassID[classID]) do
+				if (v == specID) then
+					specIndex = k;
+				end
+			end
+			if (not specIndex) then
+				return;
+			end
+			if (class == "ROGUE") then
+				--Melee dps only classes.
+				specType = "melee";
+				role = "dps";
+				dmgType = "physical";
+			elseif (class == "HUNTER") then
+				--Ranged dps only classes.
+				specType = "ranged";
+				role = "dps";
+				dmgType = "physical";
+			elseif (class == "MAGE" or class == "WARLOCK") then
+				--Ranged dps only classes.
+				specType = "ranged";
+				role = "dps";
+				dmgType = "magic";
+			else
+				--Multi role classes.
+				if (class == "DRUID") then
+					if (specID == 104) then
+						specType = "tank";
+						role = "tank";
+						dmgType = "physical";
+					elseif (specID == 103) then
+						specType = "melee";
+						role = "dps";
+						dmgType = "physical";
+					elseif (specID == 105) then
+						specType = "healer";
+						role = "healer";
+						dmgType = "magic";
+					else
+						specType = "ranged";
+						role = "dps";
+						dmgType = "magic";
 					end
-					if (r == "TANK") then
+				elseif (class == "DEATHKNIGHT") then
+					if (specID == 250) then
 						specType = "tank";
 						role = "tank";
 					else
 						specType = "melee";
 						role = "dps";
 					end
-				elseif (fileName == "druidrestoration") then
-					specType = "healer";
-					role = "healer";
-				else
-					specType = "ranged"; --Balance.
-					role = "dps";
-				end
-			elseif (class == "DEATHKNIGHT") then
-				if (fileName == "deathknightblood") then
-					specType = "tank";
-					role = "tank";
-				else
-					specType = "melee";
-					role = "dps";
-				end
-			elseif (class == "PALADIN") then
-				if (fileName == "paladinprotection") then
-					specType = "tank";
-					role = "tank";
-				elseif (fileName == "paladinholy") then
-					specType = "healer";
-					role = "healer";
-				else
-					specType = "melee";
-					role = "dps";
-				end
-			elseif (class == "PRIEST") then
-				if (fileName == "priestshadow") then
-					specType = "ranged";
-					role = "dps";
-				else
-					specType = "healer";
-					role = "healer";
-				end
-			elseif (class == "SHAMAN") then
-				if (fileName == "shamanelementalcombat") then
-					specType = "ranged";
-					role = "dps";
-				elseif (fileName == "shamanrestoration") then
-					specType = "healer";
-					role = "healer";
-				else
-					specType = "melee";
-					role = "dps";
-				end
-			elseif (class == "WARRIOR") then
-				if (fileName == "warriorprotection") then
-					specType = "tank";
-					role = "tank";
-				else
-					specType = "melee";
-					role = "dps";
+					dmgType = "physical";
+				elseif (class == "PALADIN") then
+					if (specID == 66) then
+						specType = "tank";
+						role = "tank";
+						dmgType = "both";
+					elseif (specID == 65) then
+						specType = "healer";
+						role = "healer";
+						dmgType = "magic";
+					else
+						specType = "melee";
+						role = "dps";
+						dmgType = "both";
+					end
+				elseif (class == "PRIEST") then
+					if (specID == 258) then
+						specType = "ranged";
+						role = "dps";
+					else
+						specType = "healer";
+						role = "healer";
+					end
+					dmgType = "magic";
+				elseif (class == "SHAMAN") then
+					if (specID == 262) then
+						specType = "ranged";
+						role = "dps";
+						dmgType = "magic";
+					elseif (specID == 264) then
+						specType = "healer";
+						role = "healer";
+						dmgType = "magic";
+					else
+						specType = "melee";
+						role = "dps";
+						dmgType = "physical";
+					end
+				elseif (class == "WARRIOR") then
+					if (specID == 73) then
+						specType = "tank";
+						role = "tank";
+					else
+						specType = "melee";
+						role = "dps";
+					end
+					dmgType = "physical";
+				elseif (class == "MONK") then
+					if (specID == 268) then
+						specType = "tank";
+						role = "tank";
+					elseif (specID == 270) then
+						specType = "healer";
+						role = "healer";
+					else
+						specType = "melee";
+						role = "dps";
+					end
+					dmgType = "physical";
+				--[[elseif (class == "DEMONHUNTER") then --Maybe one day?
+					if (specID == 581) then
+						specType = "tank";
+						role = "tank";
+					else
+						specType = "melee";
+						role = "dps";
+					end
+					dmgType = "physical";]]
 				end
 			end
+			if (specType) then
+				return name, icon, talentCount, specType, role, dmgType;
+			end
 		end
-		if (specType) then
-			return name, icon, talentCount, specType, role;
+	else
+		local name, icon, talentCount, specType, role, fileName = nil, nil, 0;
+		for tab = 1, GetNumTalentTabs() do
+			local _, specName, specIcon, pointsSpent, file;
+			--if (NIT.isCata) then
+				_, specName, _, specIcon, pointsSpent, file = GetTalentTabInfo(tab, false, false, GetActiveTalentGroup());
+			--else
+				--This returns order was changed in 1.15.3 era to the cata version above.
+			--	specName, specIcon, pointsSpent, file = GetTalentTabInfo(tab, false, false, GetActiveTalentGroup());
+			--end
+			if (pointsSpent and pointsSpent > talentCount) then
+				name, icon, talentCount, fileName = specName, specIcon, pointsSpent, file;
+			end
+		end
+		--Why do different expansions use different capitalization in file names?
+		fileName = string.lower(fileName);
+		if (name) then
+			local _, class = UnitClass("player");
+			if (class == "ROGUE") then
+				--Melee dps only classes.
+				specType = "melee";
+				role = "dps";
+			elseif (class == "HUNTER" or class == "MAGE" or  class == "WARLOCK") then
+				--Ranged dps only classes.
+				specType = "ranged";
+				role = "dps";
+			else
+				--Multi role classes.
+				if (class == "DRUID") then
+					if (fileName == "druidferalcombat") then
+						--Both feral tank and melee dps go down the feral tree, so we use role as backup.
+						--The role system in classic is scuffed but there's no better way I know of to tell the different.
+						--Hopefully feral tanks have thier role properly set.
+						--Try group role first so more accurate in group finder.
+						local r = UnitGroupRolesAssigned("player");
+						if (r == "NONE") then
+							--Fall back to talent window spec choice set by the player.
+							r = GetTalentGroupRole(GetActiveTalentGroup());
+						end
+						if (r == "TANK") then
+							specType = "tank";
+							role = "tank";
+						else
+							specType = "melee";
+							role = "dps";
+						end
+					elseif (fileName == "druidrestoration") then
+						specType = "healer";
+						role = "healer";
+					else
+						specType = "ranged"; --Balance.
+						role = "dps";
+					end
+				elseif (class == "DEATHKNIGHT") then
+					if (fileName == "deathknightblood") then
+						specType = "tank";
+						role = "tank";
+					else
+						specType = "melee";
+						role = "dps";
+					end
+				elseif (class == "PALADIN") then
+					if (fileName == "paladinprotection") then
+						specType = "tank";
+						role = "tank";
+					elseif (fileName == "paladinholy") then
+						specType = "healer";
+						role = "healer";
+					else
+						specType = "melee";
+						role = "dps";
+					end
+				elseif (class == "PRIEST") then
+					if (fileName == "priestshadow") then
+						specType = "ranged";
+						role = "dps";
+					else
+						specType = "healer";
+						role = "healer";
+					end
+				elseif (class == "SHAMAN") then
+					if (fileName == "shamanelementalcombat") then
+						specType = "ranged";
+						role = "dps";
+					elseif (fileName == "shamanrestoration") then
+						specType = "healer";
+						role = "healer";
+					else
+						specType = "melee";
+						role = "dps";
+					end
+				elseif (class == "WARRIOR") then
+					if (fileName == "warriorprotection") then
+						specType = "tank";
+						role = "tank";
+					else
+						specType = "melee";
+						role = "dps";
+					end
+				end
+			end
+			if (specType) then
+				return name, icon, talentCount, specType, role;
+			end
 		end
 	end
 end
