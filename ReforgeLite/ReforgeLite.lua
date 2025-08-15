@@ -216,7 +216,7 @@ ReforgeLite.itemStats = {
         return (orig and method.orig_stats and method.orig_stats[statIds.HIT]) or method.stats[statIds.HIT]
       end
     },
-    RatingStat (statIds.CRIT,    "ITEM_MOD_CRIT_RATING",          CRIT_ABBR,      STAT_CRITICAL_STRIKE, CR_CRIT),
+    RatingStat (statIds.CRIT,    "ITEM_MOD_CRIT_RATING",          CRIT_ABBR,      CRIT_ABBR,            CR_CRIT),
     RatingStat (statIds.HASTE,   "ITEM_MOD_HASTE_RATING",         STAT_HASTE,     STAT_HASTE,           CR_HASTE),
     RatingStat (statIds.EXP,     "ITEM_MOD_EXPERTISE_RATING",     EXPERTISE_ABBR, STAT_EXPERTISE,       CR_EXPERTISE),
     RatingStat (statIds.MASTERY, "ITEM_MOD_MASTERY_RATING_SHORT", STAT_MASTERY,   STAT_MASTERY,         CR_MASTERY),
@@ -708,7 +708,7 @@ function ReforgeLite:CreateItemTable ()
     self.playerTalents[tier]:SetPoint("TOPLEFT", self.playerTalents[tier-1] or self.playerSpecTexture, "TOPRIGHT", 4, 0)
     self.playerTalents[tier]:SetSize(18, 18)
     self.playerTalents[tier]:SetTexCoord(0.0825, 0.0825, 0.0825, 0.9175, 0.9175, 0.0825, 0.9175, 0.9175)
-    self.playerTalents[tier]:SetScript("OnLeave", function() GameTooltip:Hide() end)
+    self.playerTalents[tier]:SetScript("OnLeave", GameTooltip_Hide)
   end
 
   self:UpdatePlayerSpecInfo()
@@ -749,7 +749,7 @@ function ReforgeLite:CreateItemTable ()
       end
       GameTooltip:Show ()
     end)
-    self.itemData[i]:SetScript ("OnLeave", function () GameTooltip:Hide() end)
+    self.itemData[i]:SetScript ("OnLeave", GameTooltip_Hide)
     self.itemData[i]:SetScript ("OnMouseDown", function (frame)
       if not frame.itemGUID then return end
       self.pdb.itemsLocked[frame.itemGUID] = not self.pdb.itemsLocked[frame.itemGUID] and 1 or nil
@@ -860,7 +860,7 @@ function ReforgeLite:AddCapPoint (i, loading)
       rating = RoundToSignificantDigits(rating, 1)
       local expBonus = self:GetExpertiseBonus()
       if expBonus > 0 then
-        rating = ("%.2f%% + %s = %.2f"):format(rating, expBonus, rating + expBonus)
+        rating = ("%.2f%% + %s%% = %.2f%%"):format(rating, expBonus, rating + expBonus)
       else
         rating = ("%.2f%%"):format(rating)
       end
@@ -1091,6 +1091,9 @@ function ReforgeLite:CreateOptionList ()
 
   local levelList = {
     {value=0,name=("%s (+%d)"):format(PVP, 0)},
+  --[===[@debug@
+    {value=1,name=("%s (+%d)"):format("Normal", 1)},
+  --@end-debug@]===]
     {value=2,name=("%s (+%d)"):format(LFG_TYPE_HEROIC_DUNGEON, 2)},
     {value=3,name=("%s (+%d)"):format(LFG_TYPE_RAID, 3)}
   }
@@ -1672,7 +1675,7 @@ function ReforgeLite:CreateMethodWindow()
       end
       GameTooltip:Show()
     end)
-    self.methodWindow.items[i]:SetScript ("OnLeave", function () GameTooltip:Hide() end)
+    self.methodWindow.items[i]:SetScript ("OnLeave", GameTooltip_Hide)
     self.methodWindow.items[i]:SetScript ("OnDragStart", function (itemSlot)
       if itemSlot.item and ReforgeFrameIsVisible() then
         PickupInventoryItem(itemSlot.slotId)
@@ -1761,54 +1764,8 @@ function ReforgeLite:ShowMethodWindow()
   self.methodWindow:Show()
 end
 
-function ReforgeLite:IsReforgeMatching (slotId, reforge, override)
-  if override == 1 then
-    return true
-  end
-
-  local oreforge = GetReforgeID (slotId)
-
-  if override == -1 then
-    return reforge == oreforge
-  end
-
-  local stats = GetItemStats(GetInventoryItemLink("player", slotId), self.pdb.ilvlCap)
-
-  local deltas = {}
-  for i = 1, #self.itemStats do
-    deltas[i] = 0
-  end
-
-  if oreforge then
-    local osrc, odst = unpack(reforgeTable[oreforge])
-    local oamount = floor ((stats[self.itemStats[osrc].name] or 0) * addonTable.REFORGE_COEFF)
-    deltas[osrc] = deltas[osrc] + oamount
-    deltas[odst] = deltas[odst] - oamount
-  end
-
-  if reforge then
-    local src, dst = unpack(reforgeTable[reforge])
-    local amount = floor ((stats[self.itemStats[src].name] or 0) * addonTable.REFORGE_COEFF)
-    deltas[src] = deltas[src] - amount
-    deltas[dst] = deltas[dst] + amount
-  end
-
-  local mult = self:GetStatMultipliers()
-  for i = 1, #self.itemStats do
-    deltas[i] = math.floor(deltas[i] * (mult[i] or 1) + 0.5)
-  end
-  for src, c in pairs(self.conversion) do
-    for dst, factor in pairs(c) do
-      deltas[dst] = deltas[dst] + math.floor(deltas[src] * factor + 0.5)
-    end
-  end
-
-  for i = 1, #self.itemStats do
-    if self:GetStatScore (i, self.pdb.method.stats[i]) ~= self:GetStatScore (i, self.pdb.method.stats[i] - deltas[i]) then
-      return false
-    end
-  end
-  return true
+local function IsReforgeMatching (slotId, reforge, override)
+  return override == 1 or reforge == GetReforgeID(slotId)
 end
 
 function ReforgeLite:UpdateMethodChecks ()
@@ -1819,7 +1776,7 @@ function ReforgeLite:UpdateMethodChecks ()
       local item = Item:CreateFromEquipmentSlot(v.slotId)
       v.item = item:GetItemLink()
       v.texture:SetTexture (item:GetItemIcon() or v.slotTexture)
-      if item:IsItemEmpty() or self:IsReforgeMatching (v.slotId, self.pdb.method.items[i].reforge, self.methodOverride[i]) then
+      if item:IsItemEmpty() or IsReforgeMatching(v.slotId, self.pdb.method.items[i].reforge, self.methodOverride[i]) then
         v.check:SetChecked (true)
       else
         anyDiffer = true
@@ -1915,7 +1872,7 @@ function ReforgeLite:DoReforgeUpdate()
   if self.methodWindow then
     for slotId, slotInfo in ipairs(self.methodWindow.items) do
       local newReforge = self.pdb.method.items[slotId].reforge
-      if slotInfo.item and not self:IsReforgeMatching(slotInfo.slotId, newReforge, self.methodOverride[slotId]) then
+      if slotInfo.item and not IsReforgeMatching(slotInfo.slotId, newReforge, self.methodOverride[slotId]) then
         PickupInventoryItem(slotInfo.slotId)
         C_Reforge.SetReforgeFromCursorItem()
         if newReforge then

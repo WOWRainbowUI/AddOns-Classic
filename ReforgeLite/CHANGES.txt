@@ -1,48 +1,46 @@
-tag e3c67a343a016d2665def148cf0dca47dcf8dc61 v2.0.6
+tag a2bb5607e8d4717f651f6a5ee9ff9f82eac25ba5 v2.0.7
 Author:	skyler-code <skylerh15@github.com>
-Date:	Fri Jul 25 21:49:15 2025 -0500
+Date:	Thu Aug 14 19:49:03 2025 -0500
 
-commit d5a796e35d423f79abc055a893e24deb4df03f84
+commit b7fc87acb03b651c5ef656877062bf632fc31abc
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Jul 25 21:49:04 2025 -0500
+Date:   Sat Aug 9 17:40:51 2025 -0500
 
-    Updated Cat weights
+    debug
 
-commit 4a2adb0a80da7613bdfcc517f8f74f41a43eb5e9
+commit b75bd849f60d419d567361f35c52973d2237e736
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Jul 25 21:32:36 2025 -0500
+Date:   Sat Aug 9 17:40:35 2025 -0500
 
-    Workaround for Exp->Spell Hit
-    
-    Closes #41
+    correct expertise formatting
 
-commit 8f0899bd377a46336fd31c96d579394540e3f092
+commit 109c2c80d592ddedce96c413c012c9205506c2d9
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Jul 25 21:27:07 2025 -0500
+Date:   Sat Aug 2 16:27:01 2025 -0500
 
-    no magic numbers
+    add wrap
 
-commit 4dc85f40d8778afb75fe03bc667237d55244bb2f
+commit 400af0daf29db69468e0ef8c4aded3961392b777
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Jul 25 19:55:44 2025 -0500
+Date:   Sat Aug 2 16:26:49 2025 -0500
 
-    small cleanup
+    utilize GameTooltip_Hide
 
-commit 0e3795ffbb78221fe94360d901921ca7533cb538
+commit db224dbd43a4bcf58e29f6263a0629e09a1a9040
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Jul 25 19:55:26 2025 -0500
+Date:   Sat Aug 2 15:24:53 2025 -0500
 
-    Updated Bear weights
+    use global function
 
-commit a7be7989c2345179d736ec34aa97b015bcc95074
+commit 381115374d706ded91bed2a659862489ac05fd66
 Author: skyler-code <skylerh15@github.com>
-Date:   Sat Jul 12 03:31:42 2025 -0500
+Date:   Sun Jul 27 22:22:38 2025 -0500
 
-    small cleanup cause we dont need to clear onleave just to set it back to the same thing
+    simplify isreforgematching
 
-commit 02d90cb3d807637d3e811d4a08b780c92843e403
+commit f10fea57db4be2662f5626a23c30dc992fd676bc
 Author: skyler-code <skylerh15@github.com>
-Date:   Sat Jul 12 03:31:12 2025 -0500
+Date:   Sun Jul 27 21:18:31 2025 -0500
 
-    Fixed issue where help button was showing over method window
+    use crit abbreviation every where
 
