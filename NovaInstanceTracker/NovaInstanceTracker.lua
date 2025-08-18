@@ -26,7 +26,7 @@ elseif (WOW_PROJECT_ID == WOW_PROJECT_WARLORDS_CLASSIC) then
 elseif (WOW_PROJECT_ID == WOW_PROJECT_LEGION_CLASSIC) then
 	NIT.isLegion = true;
 	NIT.expansionNum = 7;
-elseif (WOW_PROJECT_ID == WOW_PROJECT_MAINLINE) then
+else
 	NIT.isRetail = true;
 	NIT.expansionNum = 11;
 end
@@ -5252,16 +5252,16 @@ f:SetScript('OnEvent', function(self, event, ...)
 					return;
 				elseif (npcID == "247440") then
 					NIT:selectGossipOption(1);
-					NIT:print("Auto getting |cFF50C878Healing|r buff from " .. UnitName("npc") .. ".");
+					NIT:print("Auto getting |cFF50C878" .. HEALER .. "|r buff from " .. UnitName("npc") .. ".");
 				elseif (npcID == "247730") then
 					NIT:selectGossipOption(1);
-					NIT:print("Auto getting |cFFEB0000Physical DPS|r buff from " .. UnitName("npc") .. ".");
+					NIT:print("Auto getting |cFFEB0000" .. STRING_SCHOOL_PHYSICAL .. "|r buff from " .. UnitName("npc") .. ".");
 				elseif (npcID == "247731") then
 					NIT:selectGossipOption(1);
-					NIT:print("Auto getting |cFF0096FFTank|r buff from " .. UnitName("npc") .. ".");
+					NIT:print("Auto getting |cFF0096FF" .. TANK .. "|r buff from " .. UnitName("npc") .. ".");
 				elseif (npcID == "247732") then
 					NIT:selectGossipOption(1);
-					NIT:print("Auto getting |cFFEB0000Magic DPS|r buff from " .. UnitName("npc") .. ".");
+					NIT:print("Auto getting |cFFEB0000" .. gsub(SPELL_SCHOOLMAGICAL, "^%l", strupper) .. "|r buff from " .. UnitName("npc") .. ".");
 				elseif (npcID == "248115") then
 					--MoP celestial dungeons.
 					if (IsShiftKeyDown()) then
@@ -5291,38 +5291,25 @@ f:SetScript('OnEvent', function(self, event, ...)
 						if (icons[role]) then
 							icon = icons[role];
 						end
-						--Remap the npc options order to dmg type for dps instead of spec for MoP.
-						--[[if (role == "healer") then
-							buffType = 1;
-						elseif (role == "tank") then
-							buffType = 2;
-						elseif (dmgType == "physical") then
-							buffType = 3;
-						elseif (dmgType == "magic") then
-							buffType = 4;
-						else
-							NIT:debug("Missing role/dmg type for celestial buff.");
-							return;
-						end]]
 						local twilightIcon = "";
 						local twilightIcons = { --GetTexCoordsForRole("HEALER")
-							[1] = "|T877514:" .. size .. ":" .. size .. "|t ", --Blessing of Chi-Ji (Magic dps).
+							[1] = "|T877514:" .. size .. ":" .. size .. "|t ", --Blessing of Chi-Ji (Healer).
 							[2] = "|T615340:" .. size .. ":" .. size .. "|t ", --Blessing of Niuzao (Tank).
 							[3] = "|T620832:" .. size .. ":" .. size .. "|t ", --Blessing of Xuen (Str/Agi phys dps).
-							[4] = "|T620831:" .. size .. ":" .. size .. "|t ", --Blessing of Yu'lon (Healer).
+							[4] = "|T620831:" .. size .. ":" .. size .. "|t ", --Blessing of Yu'lon (Magic dps).
 						};
 						if (twilightIcons[buffType]) then
 							twilightIcon = twilightIcons[buffType];
 						end
 						local buffNameText = buffName .. roleText;
 						if (buffType == 1) then
-							buffNameText = "|cFFEB0000" .. buffName .. roleText .. "|r"; --Red.
+							buffNameText = "|cFFEB0000" .. buffName .. roleText .. "|r";
 						elseif (buffType == 2) then
-							buffNameText = "|cFFEFBF04" .. buffName .. roleText .. "|r"; --Bronze.
+							buffNameText = "|cFFEFBF04" .. buffName .. roleText .. "|r";
 						elseif (buffType == 3) then
-							buffNameText = "|cFF50C878" .. buffName .. roleText .. "|r"; --Green.
+							buffNameText = "|cFF50C878" .. buffName .. roleText .. "|r";
 						elseif (buffType == 4) then
-							buffNameText = "|cFF0096FF" .. buffName .. roleText .. "|r"; --Blue.
+							buffNameText = "|cFF0096FF" .. buffName .. roleText .. "|r";
 						end
 						local specNameText = "";
 						if (specName) then
@@ -5811,10 +5798,10 @@ function NIT:getTwilightBuffType()
 end
 
 function NIT:getCelestialBuffType()
-	--[[[1] = "|T877514:" .. size .. ":" .. size .. "|t ", --Blessing of Chi-Ji (Magic dps).
+	--[[[1] = "|T877514:" .. size .. ":" .. size .. "|t ", --Blessing of Chi-Ji (Healer).
 	[2] = "|T615340:" .. size .. ":" .. size .. "|t ", --Blessing of Niuzao (Tank).
 	[3] = "|T620832:" .. size .. ":" .. size .. "|t ", --Blessing of Xuen (Str/Agi phys dps).
-	[4] = "|T620831:" .. size .. ":" .. size .. "|t ", --Blessing of Yu'lon (Healer).]]
+	[4] = "|T620831:" .. size .. ":" .. size .. "|t ", --Blessing of Yu'lon (Magic dps).]]
 	local buffType, buffName, role, specName, notAuto;
 	local option = NIT:getAutoGammaBuffType();
 	local name, icon, talentCount, specType, r, dmgType = NIT:getActiveSpec();
@@ -5822,22 +5809,22 @@ function NIT:getCelestialBuffType()
 	if (option == 1) then
 		--Auto spec detect.
 		if (specType == "melee") then
-			buffType, buffName, role = 3, MELEE, "dps";
+			buffType, buffName, role = 3, STRING_SCHOOL_PHYSICAL, "dps";
 		elseif (specType == "ranged") then
-			buffType, buffName, role = 1, RANGED, "dps";
+			buffType, buffName, role = 4, gsub(SPELL_SCHOOLMAGICAL, "^%l", strupper), "dps";
 		elseif (specType == "healer") then
-			buffType, buffName, role = 4, HEALER, "healer";
+			buffType, buffName, role = 1, HEALER, "healer";
 		elseif (specType == "tank") then
 			buffType, buffName, role = 2, TANK, "tank";
 		end
 	elseif (option == 2) then
-		buffType, buffName, role = 3, MELEE, "dps";
+		buffType, buffName, role = 3, STRING_SCHOOL_PHYSICAL, "dps";
 		notAuto = true;
 	elseif (option == 3) then
-		buffType, buffName, role = 1, RANGED, "dps";
+		buffType, buffName, role = 4, gsub(SPELL_SCHOOLMAGICAL, "^%l", strupper), "dps";
 		notAuto = true;
 	elseif (option == 4) then
-		buffType, buffName, role = 4, HEALER, "healer";
+		buffType, buffName, role = 1, HEALER, "healer";
 		notAuto = true;
 	elseif (option == 5) then
 		buffType, buffName, role = 2, TANK, "tank";
@@ -5846,9 +5833,9 @@ function NIT:getCelestialBuffType()
 	--Remap the npc options order to dmg type for dps instead of spec for MoP.
 	if (role == "dps") then
 		if (dmgType == "physical") then
-			dmgType = 3;
+			buffType = 3;
 		elseif (dmgType == "magic") then
-			dmgType = 4;
+			buffType = 4;
 		else
 			NIT:debug("Missing role/dmg type for celestial buff.");
 			return;

@@ -1173,6 +1173,9 @@ local subDiffculties = {
 	[1243929] = "celestial",
 };
 function NIT:scanDungeonSubDifficulty()
+	if (not UnitBuff) then
+		return;
+	end
 	--Only scan once per entering.
 	if (NIT.inInstance and not scanDungeonSubDifficulty and not UnitIsDead("player")) then
 		local found;
