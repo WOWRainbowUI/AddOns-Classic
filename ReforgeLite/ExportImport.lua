@@ -42,23 +42,25 @@ function ReforgeLite:DisplayMessage(name, message)
 end
 
 function ReforgeLite:DebugMethod()
-    local website = C_AddOns.GetAddOnMetadata(addonName, "X-Website")
-    if self.methodDebug then
-        self:DisplayMessage (website, C_EncodingUtil.SerializeJSON(self.methodDebug))
-    else
-        self:DisplayMessage (website, "<no data>\n nty <3")
-    end
+    self:DisplayMessage(C_AddOns.GetAddOnMetadata(addonName, "X-Website"), C_EncodingUtil.SerializeJSON(self.methodDebug or {nty="<3"}))
 end
 
 function ReforgeLite:ExportJSON(preset, name)
     self:DisplayMessage(name, C_EncodingUtil.SerializeJSON(preset))
 end
 
-function ReforgeLite:ImportData()
+function ReforgeLite:ImportData(anchor)
+    self:Initialize()
+    self:UpdateItems()
     local frame = GetDataFrame()
     frame:SetTitle(L["Import"])
+    if anchor then
+        frame:SetPoint("TOP", anchor, "TOP")
+    else
+        frame:SetPoint("CENTER", self, "CENTER")
+    end
     frame.editbox:DisableButton(false)
-    frame.editbox:SetLabel(L["Enter WoWSims or Pawn string"])
+    frame.editbox:SetLabel(L["Enter WoWSims JSON or Pawn string"])
     frame.editbox.editBox:SetFocus()
     frame.editbox.button:SetScript("OnClick", function()
         local function OnHide(values)
@@ -74,6 +76,8 @@ function ReforgeLite:ImportData()
             local valueType = type(values)
             if valueType == "table" then
                 self:ApplyWoWSimsImport(values)
+                self:ShowMethodWindow()
+                self.methodWindow:AttachToReforgingFrame()
             elseif valueType == "string" then
                 frame:SetStatusText(values)
                 return
@@ -86,4 +90,8 @@ function ReforgeLite:ImportData()
         end
         OnHide(values)
     end)
+    if self.pdb.methodOrigin == addonTable.WoWSimsOriginTag and anchor then
+        self:ShowMethodWindow()
+        self.methodWindow:AttachToReforgingFrame()
+    end
 end

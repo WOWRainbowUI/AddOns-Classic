@@ -1,46 +1,22 @@
-tag a2bb5607e8d4717f651f6a5ee9ff9f82eac25ba5 v2.0.7
+tag b261fa3f8770a360f47d747c1ff50624b23776c2 v2.1.0
 Author:	skyler-code <skylerh15@github.com>
-Date:	Thu Aug 14 19:49:03 2025 -0500
+Date:	Fri Aug 15 20:48:47 2025 -0500
 
-commit b7fc87acb03b651c5ef656877062bf632fc31abc
+commit 00180bc1d295debcdb577bbfae7e278f748ba095
 Author: skyler-code <skylerh15@github.com>
-Date:   Sat Aug 9 17:40:51 2025 -0500
+Date:   Fri Aug 15 20:37:37 2025 -0500
 
-    debug
+    properly attach to ReforgingFrame
 
-commit b75bd849f60d419d567361f35c52973d2237e736
+commit 7d1267d4d472d95dc5b6887b97b31f3e843da979
 Author: skyler-code <skylerh15@github.com>
-Date:   Sat Aug 9 17:40:35 2025 -0500
+Date:   Fri Aug 15 20:35:17 2025 -0500
 
-    correct expertise formatting
+    move methodwindow to reforgingframe when using import btn
 
-commit 109c2c80d592ddedce96c413c012c9205506c2d9
+commit 211a9ea93dce32f63370920eb08ac92bd65be72a
 Author: skyler-code <skylerh15@github.com>
-Date:   Sat Aug 2 16:27:01 2025 -0500
+Date:   Fri Aug 15 20:17:55 2025 -0500
 
-    add wrap
-
-commit 400af0daf29db69468e0ef8c4aded3961392b777
-Author: skyler-code <skylerh15@github.com>
-Date:   Sat Aug 2 16:26:49 2025 -0500
-
-    utilize GameTooltip_Hide
-
-commit db224dbd43a4bcf58e29f6263a0629e09a1a9040
-Author: skyler-code <skylerh15@github.com>
-Date:   Sat Aug 2 15:24:53 2025 -0500
-
-    use global function
-
-commit 381115374d706ded91bed2a659862489ac05fd66
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Jul 27 22:22:38 2025 -0500
-
-    simplify isreforgematching
-
-commit f10fea57db4be2662f5626a23c30dc992fd676bc
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Jul 27 21:18:31 2025 -0500
-
-    use crit abbreviation every where
+    adjust import button padding
 

@@ -7,10 +7,11 @@ L["%s does not match your currently equipped %s. ReforgeLite only supports equip
 L["^+(%d+) %s$"] = "^+(%d+)%s$"
 L["Active window color"] = "當前視窗的顏色"
 L["Add cap"] = "增加上限"
+L["Apply %s Output"] = "套用%s輸出"
 L["At least"] = "至少（可超過）"
 L["At most"] = "最多（不超過）"
 --[[Translation missing --]]
---[[ L["Bearweave"] = ""--]] 
+--[[ L["Bearweave"] = ""--]]
 L["Best Result"] = "最佳結果"
 L["Buffs"] = "增益效果"
 L["Cap value"] = "上限值"
@@ -22,14 +23,15 @@ L["Destination stat color"] = "目標屬性顏色"
 L["Enable spec profiles"] = "啟用專精設定檔"
 L["Enter pawn string"] = "輸入pawn字串"
 L["Enter the preset name"] = "輸入預設名稱"
-L["Enter WoWSims JSON"] = "输入 WoWSims JSON"
+L["Enter WoWSims JSON"] = "輸入 WoWSims JSON"
+L["Enter WoWSims JSON or Pawn string"] = "輸入 WoWSims JSON 或 Pawn 字串"
 L["Exactly"] = "確切地"
 L["Expertise hard cap"] = "熟練硬上限"
 L["Expertise soft cap"] = "熟練軟上限"
 L["Export"] = "出口"
 L["Highlight reforged stats"] = "顯著標示重鑄後的屬性"
-L["Import Pawn"] = "匯入Pawn"
-L["Import WoWSims"] = "匯入WoWSims"
+L["Import"] = "匯入"
+L["Import WoWSims/Pawn"] = "匯入 WoWSims/Pawn"
 L["Inactive window color"] = "非當前視窗的顏色"
 --[[Translation missing --]]
 --[[ L["Masterfrost"] = ""--]] 

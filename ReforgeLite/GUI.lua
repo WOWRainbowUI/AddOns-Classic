@@ -112,7 +112,7 @@ GUI.unusedEditBoxes = {}
 function GUI:CreateEditBox (parent, width, height, default, setter)
   local box
   if #self.unusedEditBoxes > 0 then
-    box = tremove (self.unusedEditBoxes, 1)
+    box = tremove (self.unusedEditBoxes)
     box:SetParent (parent)
     box:Show ()
     box:SetTextColor (1, 1, 1)
@@ -168,7 +168,7 @@ GUI.unusedDropdowns = {}
 function GUI:CreateDropdown (parent, values, options)
   local sel
   if #self.unusedDropdowns > 0 then
-    sel = tremove (self.unusedDropdowns, 1)
+    sel = tremove (self.unusedDropdowns)
     sel:SetParent (parent)
     sel:Show ()
     self.dropdowns[sel:GetName()] = sel
@@ -177,12 +177,12 @@ function GUI:CreateDropdown (parent, values, options)
     self.dropdowns[sel:GetName()] = sel
     LibDD:UIDropDownMenu_SetInitializeFunction(sel, function (dropdown)
       self:ClearEditFocus()
-      for _, value in ipairs(dropdown.values) do
+      for _, item in ipairs(dropdown:GetValues()) do
         local info = LibDD:UIDropDownMenu_CreateInfo()
-        info.text = value.name
-        info.value = value.value
-        info.checked = (dropdown.value == value.value)
-        info.category = value.category
+        info.text = item.name
+        info.value = item.value
+        info.checked = (dropdown.value == item.value)
+        info.category = item.category
         info.func = function (inf)
           LibDD:UIDropDownMenu_SetSelectedValue (dropdown, inf.value)
           if dropdown.setter then dropdown.setter (dropdown,inf.value) end
@@ -196,16 +196,17 @@ function GUI:CreateDropdown (parent, values, options)
         end
       end
     end)
+    sel.GetValues = function(frame) return GetValueOrCallFunction(frame, 'values') end
     sel.SetValue = function (dropdown, value)
       dropdown.value = value
       dropdown.selectedValue = value
-      for i = 1, #dropdown.values do
-        if dropdown.values[i].value == value then
-          LibDD:UIDropDownMenu_SetText (dropdown, dropdown.values[i].name)
+      for _, v in ipairs(dropdown:GetValues()) do
+        if v.value == value then
+          LibDD:UIDropDownMenu_SetText(dropdown, v.name)
           return
         end
       end
-      LibDD:UIDropDownMenu_SetText (dropdown, "")
+      LibDD:UIDropDownMenu_SetText(dropdown, "")
     end
     sel.EnableDropdown = function(dropdown)
       LibDD:UIDropDownMenu_EnableDropDown (dropdown)
@@ -254,7 +255,7 @@ GUI.unusedCheckButtons = {}
 function GUI:CreateCheckButton (parent, text, default, setter, forceNew)
   local btn
   if #self.unusedCheckButtons > 0 and not forceNew then
-    btn = tremove (self.unusedCheckButtons, 1)
+    btn = tremove (self.unusedCheckButtons)
     btn:SetParent (parent)
     btn:Show ()
     self.checkButtons[btn:GetName()] = btn
@@ -286,7 +287,7 @@ GUI.unusedImgButtons = {}
 function GUI:CreateImageButton (parent, width, height, img, pus, hlt, disabledTexture, handler)
   local btn
   if #self.unusedImgButtons > 0 then
-    btn = tremove (self.unusedImgButtons, 1)
+    btn = tremove (self.unusedImgButtons)
     btn:SetParent (parent)
     btn:Show ()
   else
@@ -318,7 +319,7 @@ GUI.unusedPanelButtons = {}
 function GUI:CreatePanelButton(parent, text, handler)
   local btn
   if #self.unusedPanelButtons > 0 then
-    btn = tremove(self.unusedPanelButtons, 1)
+    btn = tremove(self.unusedPanelButtons)
     btn:SetParent(parent)
     btn:Show()
     self.panelButtons[btn:GetName()] = btn
@@ -752,7 +753,7 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
       self.cells[i][j]:SetFontObject (font)
       self.cells[i][j]:Show ()
     elseif #self.textTagPool > 0 then
-      self.cells[i][j] = tremove (self.textTagPool, 1)
+      self.cells[i][j] = tremove (self.textTagPool)
       self.cells[i][j]:SetFontObject (font)
       self.cells[i][j]:Show ()
     else

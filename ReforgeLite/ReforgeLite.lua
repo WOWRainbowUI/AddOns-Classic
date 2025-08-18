@@ -25,16 +25,15 @@ local DefaultDB = {
   global = {
     windowWidth = 800,
     windowHeight = 564,
-    windowY = false,
-    windowX = false,
-    methodWindowX = false,
-    methodWindowY = false,
+    windowLocation = false,
+    methodWindowLocation = false,
     openOnReforge = true,
     updateTooltip = false,
     speed = addonTable.MAX_LOOPS * 0.8,
     activeWindowTitle = {0.6, 0, 0},
     inactiveWindowTitle = {0.5, 0.5, 0.5},
     specProfiles = false,
+    importButton = true,
   },
   char = {
     targetLevel = 3,
@@ -66,6 +65,7 @@ local DefaultDB = {
         }
       }
     },
+    methodOrigin = addonName,
     itemsLocked = {},
     categoryStates = { [SETTINGS] = false },
   },
@@ -264,6 +264,8 @@ function ReforgeLite:GetStatScore (stat, value)
   end
 end
 
+addonTable.WoWSimsOriginTag = "WoWSims"
+
 function ReforgeLite:ValidateWoWSimsString(importStr)
   local success, wowsims = pcall(function () return C_EncodingUtil.DeserializeJSON(importStr) end)
   if success and (wowsims or {}).player then
@@ -291,6 +293,7 @@ function ReforgeLite:ApplyWoWSimsImport(newItems)
   else
     self.pdb.method.items = newItems
   end
+  self.pdb.methodOrigin = addonTable.WoWSimsOriginTag
   self:FinalizeReforge(self.pdb)
   self:UpdateMethodCategory()
 end
@@ -500,6 +503,7 @@ function ReforgeLite:SetScroll (value)
   self.scrollOffset = offset
   self.scrollValue = value
 end
+
 function ReforgeLite:FixScroll ()
   local offset = self.scrollOffset
   local viewheight = self.scrollFrame:GetHeight ()
@@ -527,15 +531,15 @@ function ReforgeLite:FixScroll ()
   end
 end
 
-function ReforgeLite:SwapFrameLevels(window)
-  if not self.methodWindow then return end
+function ReforgeLite:SetNewTopWindow(newTopWindow)
   local topWindow, bottomWindow = self:GetFrameOrder()
-  if (window or self) == topWindow then
-    topWindow:SetFrameActive(true)
-    return
+  if not bottomWindow then return end
+  if (newTopWindow or self) == topWindow then
+    topWindow = bottomWindow
+    bottomWindow = newTopWindow or self
   end
-  bottomWindow:SetFrameLevel(topWindow:GetFrameLevel())
-  topWindow:SetFrameLevel(max(bottomWindow:GetFrameLevel() - 10, 1))
+  bottomWindow:SetFrameLevel(10)
+  topWindow:SetFrameLevel(1)
   bottomWindow:SetFrameActive(true)
   topWindow:SetFrameActive(false)
 end
@@ -546,8 +550,8 @@ function ReforgeLite:CreateFrame()
   self:ClearAllPoints ()
   self:SetSize(self.db.windowWidth, self.db.windowHeight)
   self:SetResizeBounds(780, 500, 1000, 800)
-  if self.db.windowX and self.db.windowY then
-    self:SetPoint ("TOPLEFT", UIParent, "BOTTOMLEFT", self.db.windowX, self.db.windowY)
+  if self.db.windowLocation then
+    self:SetPoint (SafeUnpack(self.db.windowLocation))
   else
     self:SetPoint ("CENTER")
   end
@@ -578,7 +582,7 @@ function ReforgeLite:CreateFrame()
   self:SetMovable (true)
   self:SetResizable (true)
   self:SetScript ("OnMouseDown", function (self, arg)
-    self:SwapFrameLevels()
+    self:SetNewTopWindow()
     if arg == "LeftButton" then
       self:StartMoving ()
       self.moving = true
@@ -588,8 +592,7 @@ function ReforgeLite:CreateFrame()
     if self.moving then
       self:StopMovingOrSizing ()
       self.moving = false
-      self.db.windowX = self:GetLeft()
-      self.db.windowY = self:GetTop()
+      self.db.windowLocation = SafePack(self:GetPoint())
     end
   end)
   tinsert(UISpecialFrames, self:GetName()) -- allow closing with escape
@@ -721,6 +724,8 @@ function ReforgeLite:CreateItemTable ()
   self.itemLevel = self:CreateFontString (nil, "OVERLAY", "GameFontNormal")
   ReforgeLite.itemLevel:SetPoint ("BOTTOMRIGHT", ReforgeLite.itemTable, "TOPRIGHT", 0, 8)
   self.itemLevel:SetTextColor (1, 1, 0.8)
+  self:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE")
+  self:PLAYER_AVG_ITEM_LEVEL_UPDATE()
 
   self.itemLockHelpButton = CreateFrame("Button",nil, self,"MainHelpPlateButton")
   self.itemLockHelpButton:SetFrameLevel(self.itemLockHelpButton:GetParent():GetFrameLevel() + 1)
@@ -1085,18 +1090,18 @@ function ReforgeLite:CreateOptionList ()
   self.exportPresetButton:SetPoint ("LEFT", self.deletePresetButton, "RIGHT", 5, 0)
   --@end-debug@]===]
 
-  self.pawnButton = GUI:CreatePanelButton (self.content, L["Import"], function(btn) self:ImportData() end)
+  self.pawnButton = GUI:CreatePanelButton (self.content, L["Import WoWSims/Pawn"], function(btn) self:ImportData() end)
   self.statWeightsCategory:AddFrame (self.pawnButton)
   self:SetAnchor (self.pawnButton, "TOPLEFT", self.presetsButton, "BOTTOMLEFT", 0, -5)
 
-  local levelList = {
-    {value=0,name=("%s (+%d)"):format(PVP, 0)},
-  --[===[@debug@
-    {value=1,name=("%s (+%d)"):format("Normal", 1)},
-  --@end-debug@]===]
-    {value=2,name=("%s (+%d)"):format(LFG_TYPE_HEROIC_DUNGEON, 2)},
-    {value=3,name=("%s (+%d)"):format(LFG_TYPE_RAID, 3)}
-  }
+  local levelList = function()
+    return {
+        {value=0,name=("%s (+%d)"):format(PVP, 0)},
+        {value=1,name=("%d (+%d)"):format(UnitLevel('player') + 1, 1)},
+        {value=2,name=("%s (+%d)"):format(LFG_TYPE_HEROIC_DUNGEON, 2)},
+        {value=3,name=("%s %s (+%d)"):format(CreateSimpleTextureMarkup([[Interface\TargetingFrame\UI-TargetingFrame-Skull]], 16, 16), LFG_TYPE_RAID, 3)},
+    }
+  end
 
   self.targetLevel = GUI:CreateDropdown(self.content, levelList, {
     default =  self.pdb.targetLevel,
@@ -1256,7 +1261,7 @@ function ReforgeLite:CreateOptionList ()
 
   self.settingsCategory = self:CreateCategory (SETTINGS)
   self:SetAnchor (self.settingsCategory, "TOPLEFT", self.computeButton, "BOTTOMLEFT", 0, -10)
-  self.settings = GUI:CreateTable (6, 1, nil, 200)
+  self.settings = GUI:CreateTable (7, 1, nil, 200)
   self.settingsCategory:AddFrame (self.settings)
   self:SetAnchor (self.settings, "TOPLEFT", self.settingsCategory, "BOTTOMLEFT", 0, -5)
   self.settings:SetPoint ("RIGHT", self.content, -10, 0)
@@ -1307,6 +1312,17 @@ function ReforgeLite:FillSettings()
     end),
     "LEFT")
 
+  self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Show import button on Reforging window"],
+    self.db.importButton, function (val)
+      self.db.importButton = val
+      if val then
+        self:CreateImportButton()
+      elseif self.importButton then
+        self.importButton:Hide()
+      end
+    end),
+    "LEFT")
+
   local activeWindowTitleOrderId = getOrderId('settings')
   self.settings:SetCellText (activeWindowTitleOrderId, 0, L["Active window color"], "LEFT", nil, "GameFontNormal")
   self.settings:SetCell (activeWindowTitleOrderId, 1, GUI:CreateColorPicker (self.settings, 20, 20, self.db.activeWindowTitle, function ()
@@ -1334,6 +1350,20 @@ function ReforgeLite:FillSettings()
     function (val) self.db.debug = val or nil end
   ), "LEFT")
 --@end-debug@]===]
+end
+
+function ReforgeLite:CreateImportButton()
+  if not self.db.importButton then return end
+  if self.importButton then
+    self.importButton:Show()
+  else
+    self.importButton = CreateFrame("Button", nil, ReforgingFrame.TitleContainer, "UIPanelButtonTemplate")
+    self.importButton:SetPoint("TOPRIGHT")
+    self.importButton:SetText(L["Import"])
+    self.importButton.fitTextWidthPadding = 20
+    self.importButton:FitToText()
+    self.importButton:SetScript("OnClick", function(btn) self:ImportData(btn) end)
+  end
 end
 
 function ReforgeLite:UpdateMethodCategory()
@@ -1516,7 +1546,6 @@ function ReforgeLite:UpdateItems()
       end
     end
   end
-  self.itemLevel:SetFormattedText(CHARACTER_LINK_ITEM_LEVEL_TOOLTIP, select(2,GetAverageItemLevel()))
   self:RefreshMethodStats()
 end
 
@@ -1580,10 +1609,10 @@ function ReforgeLite:CreateMethodWindow()
   self.methodWindow:SetFrameStrata ("DIALOG")
   self.methodWindow:ClearAllPoints ()
   self.methodWindow:SetSize(250, 480)
-  if self.db.methodWindowX and self.db.methodWindowY then
-    self.methodWindow:SetPoint ("TOPLEFT", UIParent, "BOTTOMLEFT", self.db.methodWindowX, self.db.methodWindowY)
+  if self.db.methodWindowLocation then
+    self.methodWindow:SetPoint (SafeUnpack(self.db.methodWindowLocation))
   else
-    self.methodWindow:SetPoint ("CENTER")
+    self.methodWindow:SetPoint ("CENTER", self, "CENTER")
   end
   self.methodWindow.backdropInfo = self.backdropInfo
   self.methodWindow:ApplyBackdrop()
@@ -1607,7 +1636,7 @@ function ReforgeLite:CreateMethodWindow()
   self.methodWindow:EnableMouse (true)
   self.methodWindow:SetMovable (true)
   self.methodWindow:SetScript ("OnMouseDown", function (window, arg)
-    self:SwapFrameLevels(window)
+    self:SetNewTopWindow(window)
     if arg == "LeftButton" then
       window:StartMoving ()
       window.moving = true
@@ -1617,15 +1646,17 @@ function ReforgeLite:CreateMethodWindow()
     if window.moving then
       window:StopMovingOrSizing ()
       window.moving = false
-      self.db.methodWindowX = window:GetLeft ()
-      self.db.methodWindowY = window:GetTop ()
+      self.db.methodWindowLocation = SafePack(window:GetPoint())
     end
   end)
   tinsert(UISpecialFrames, self.methodWindow:GetName()) -- allow closing with escape
 
   self.methodWindow.title = self.methodWindow:CreateFontString (nil, "OVERLAY", "GameFontNormal")
-  self.methodWindow.title:SetText (addonTitle.." Output")
   self.methodWindow.title:SetTextColor (1, 1, 1)
+  self.methodWindow.title.RefreshText = function(frame)
+    frame:SetFormattedText(L["Apply %s Output"], self.pdb.methodOrigin)
+  end
+  self.methodWindow.title:RefreshText()
   self.methodWindow.title:SetPoint ("TOPLEFT", 12, self.methodWindow.title:GetHeight()-self.methodWindow.titlebar:GetHeight())
 
   self.methodWindow.close = CreateFrame ("Button", nil, self.methodWindow, "UIPanelCloseButtonNoScripts")
@@ -1715,6 +1746,12 @@ function ReforgeLite:CreateMethodWindow()
   self.methodWindow.cost = CreateFrame ("Frame", "ReforgeLiteReforgeCost", self.methodWindow, "SmallMoneyFrameTemplate")
   MoneyFrame_SetType (self.methodWindow.cost, "REFORGE")
   self.methodWindow.cost:SetPoint ("LEFT", self.methodWindow.reforge, "RIGHT", 5, 0)
+
+  self.methodWindow.AttachToReforgingFrame = function(frame)
+    frame:ClearAllPoints()
+    frame:SetPoint("LEFT", ReforgingFrame, "RIGHT")
+  end
+
   self:RefreshMethodWindow()
 end
 
@@ -1750,6 +1787,7 @@ function ReforgeLite:RefreshMethodWindow()
       v.reforge:SetTextColor (0.7, 0.7, 0.7)
     end
   end
+  self.methodWindow.title:RefreshText()
   self:UpdateMethodChecks ()
 end
 
@@ -1758,7 +1796,7 @@ function ReforgeLite:ShowMethodWindow()
     self:CreateMethodWindow()
   end
 
-  self.methodWindow:SetFrameLevel(self:GetFrameLevel() + 10)
+  self:SetNewTopWindow(self.methodWindow)
 
   GUI:ClearFocus()
   self.methodWindow:Show()
@@ -1936,6 +1974,37 @@ end
 
 --------------------------------------------------------------------------
 
+function ReforgeLite:OnEvent(event, ...)
+  if self[event] then
+    self[event](self, ...)
+  end
+  if queueUpdateEvents[event] then
+    self:QueueUpdate()
+  end
+end
+
+function ReforgeLite:Initialize()
+  if not self.initialized then
+    self:CreateFrame()
+    self.initialized = true
+  end
+end
+
+function ReforgeLite:OnShow()
+  self:Initialize()
+  self:SetNewTopWindow()
+  self:UpdateItems()
+end
+
+function ReforgeLite:OnHide()
+  self:SetNewTopWindow(self.methodWindow)
+end
+
+function ReforgeLite:OnCommand (cmd)
+  if InCombatLockdown() then print(ERROR_CAPS, ERR_AFFECTING_COMBAT) return end
+  self:Show ()
+end
+
 function ReforgeLite:FORGE_MASTER_ITEM_CHANGED()
   self:ContinueReforge()
 end
@@ -1948,6 +2017,7 @@ function ReforgeLite:FORGE_MASTER_OPENED()
   if self.methodWindow then
     self:RefreshMethodWindow()
   end
+  self:CreateImportButton()
   self:StopReforging()
 end
 
@@ -1960,33 +2030,6 @@ function ReforgeLite:FORGE_MASTER_CLOSED()
     self.autoOpened = nil
   end
   self:StopReforging()
-end
-
-function ReforgeLite:OnEvent(event, ...)
-  if self[event] then
-    self[event](self, ...)
-  end
-  if queueUpdateEvents[event] then
-    self:QueueUpdate()
-  end
-end
-
-function ReforgeLite:OnShow()
-  if not self.initialized then
-    self:CreateFrame()
-    self.initialized = true
-  end
-  self:SwapFrameLevels()
-  self:UpdateItems()
-end
-
-function ReforgeLite:OnHide()
-  self:SwapFrameLevels(self.methodWindow)
-end
-
-function ReforgeLite:OnCommand (cmd)
-  if InCombatLockdown() then print(ERROR_CAPS, ERR_AFFECTING_COMBAT) return end
-  self:Show ()
 end
 
 function ReforgeLite:PLAYER_REGEN_DISABLED()
@@ -2015,6 +2058,9 @@ function ReforgeLite:PLAYER_ENTERING_WORLD()
   self:GetConversion()
 end
 
+function ReforgeLite:PLAYER_AVG_ITEM_LEVEL_UPDATE()
+  self.itemLevel:SetFormattedText(CHARACTER_LINK_ITEM_LEVEL_TOOLTIP, select(2,GetAverageItemLevel()))
+end
 
 function ReforgeLite:ADDON_LOADED (addon)
   if addon ~= addonName then return end
