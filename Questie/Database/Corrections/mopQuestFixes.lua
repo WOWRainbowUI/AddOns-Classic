@@ -834,6 +834,7 @@ function MopQuestFixes.Load()
         },
         [29577] = { -- Ashyo's Vision
             [questKeys.objectives] = {{{56113,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.preQuestSingle] = {},
             [questKeys.breadcrumbs] = {29871},
         },
         [29578] = { -- Defiance
@@ -1277,7 +1278,7 @@ function MopQuestFixes.Load()
             [questKeys.requiredRaces] = raceIDs.PANDAREN_ALLIANCE + raceIDs.PANDAREN_HORDE + raceIDs.PANDAREN,
         },
         [29815] = { -- Forensic Science
-            [questKeys.objectives] = {nil,nil,{{74621,nil,Questie.ICON_TYPE_OBJECT}}},
+            [questKeys.objectives] = {nil,nil,{{74621}}},
             [questKeys.preQuestSingle] = {31999},
         },
         [29821] = { -- Missed Me By... That Much!
@@ -1397,6 +1398,7 @@ function MopQuestFixes.Load()
         [29907] = { -- Chen and Li Li
             [questKeys.preQuestSingle] = {},
             [questKeys.breadcrumbs] = {32018,32019},
+            [questKeys.objectives] = {nil,nil,nil,nil,{{{56344,56343},56343,nil,Questie.ICON_TYPE_EVENT}}},
         },
         [29908] = { -- A Seemingly Endless Nuisance
             [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_OBJECT,l10n("Reveal Virmen Pesters"),0,{{"object",214638}}}},
@@ -1437,8 +1439,7 @@ function MopQuestFixes.Load()
         },
         [29919] = { -- Great Minds Drink Alike
             [questKeys.preQuestSingle] = {29918},
-            [questKeys.objectives] = {},
-            [questKeys.triggerEnd] = {"Escort Chen and Li Li", {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{68.87,43.14}}}},
+            [questKeys.objectives] = {nil,nil,nil,nil,{{{56572,56571},56571,nil,Questie.ICON_TYPE_EVENT}}},
             [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Chen"),0,{{"monster",56133}}}},
         },
         [29922] = { -- In Search of Wisdom
@@ -1509,10 +1510,14 @@ function MopQuestFixes.Load()
         },
         [29947] = { -- Crouching Carrot, Hidden Turnip
             [questKeys.sourceItemId] = 76370,
-            [questKeys.objectives] = {{{56538,nil,Questie.ICON_TYPE_INTERACT}}},
+            [questKeys.objectives] = {{{56538,nil,Questie.ICON_TYPE_EVENT}}},
         },
         [29948] = { -- Thieves to the Core
-            [questKeys.preQuestSingle] = {29944}, -- might be preQuestGroup with 29945
+            [questKeys.preQuestSingle] = {29944},
+        },
+        [29949] = { -- Legacy
+            [questKeys.preQuestSingle] = {},
+            [questKeys.preQuestGroup] = {29946,29947,29948},
         },
         [29950] = { -- Li Li's Day Off
             [questKeys.objectives] = {{{56546,nil,Questie.ICON_TYPE_EVENT},{56547,nil,Questie.ICON_TYPE_EVENT},{56548,nil,Questie.ICON_TYPE_EVENT}}},
@@ -1552,6 +1557,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestGroup] = {29981,29982},
         },
         [29984] = { -- Unyielding Fists: Trial of Bamboo
+            [questKeys.objectives] = {{{56797,nil,Questie.ICON_TYPE_INTERACT}}},
             [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Master Bruised Paw"),0,{{"monster",56714}}}},
         },
         [29985] = { -- They Will Be Mist
@@ -1562,11 +1568,13 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {nil,{{209945,nil,Questie.ICON_TYPE_OBJECT},{209946,nil,Questie.ICON_TYPE_OBJECT},{209947,nil,Questie.ICON_TYPE_OBJECT}}},
         },
         [29987] = { -- Unyielding Fists: Trial of Wood
+            [questKeys.objectives] = {{{56800,nil,Questie.ICON_TYPE_INTERACT}}},
             [questKeys.preQuestSingle] = {},
             [questKeys.preQuestGroup] = {29985,29986,29992},
             [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Master Bruised Paw"),0,{{"monster",56714}}}},
         },
         [29989] = { -- Unyielding Fists: Trial of Stone
+            [questKeys.objectives] = {{{56801,nil,Questie.ICON_TYPE_INTERACT}}},
             [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Master Bruised Paw"),0,{{"monster",56714}}}},
         },
         [29990] = { -- Training and Discipline
@@ -1704,7 +1712,7 @@ function MopQuestFixes.Load()
             [questKeys.requiredRaces] = raceIDs.PANDAREN_ALLIANCE + raceIDs.PANDAREN_HORDE + raceIDs.PANDAREN,
         },
         [30046] = { -- Chen's Resolution
-            [questKeys.preQuestSingle] = {29952},
+            [questKeys.preQuestGroup] = {29951,29952},
         },
         [30048] = { -- Li Li and the Grain
             [questKeys.preQuestSingle] = {30046},
@@ -1728,16 +1736,21 @@ function MopQuestFixes.Load()
         [30053] = { -- Hop Hunting
             [questKeys.preQuestSingle] = {30046},
             [questKeys.objectives] = {{{62377,nil,Questie.ICON_TYPE_TALK},{57385,nil,Questie.ICON_TYPE_TALK},{62385,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.finishedBy] = {{110012}},
         },
         [30054] = { -- Enough is Ookin' Enough
             [questKeys.preQuestSingle] = {30046},
+        },
+        [30055] = { -- Stormstout's Hops
+            [questKeys.startedBy] = {{56133}},
+            [questKeys.preQuestSingle] = {},
+            [questKeys.preQuestGroup] = {30047,30050,30052,30053,30054,30057,30028,30172}, -- 30028,30053 not super certain, but high probability. turn those in last to check
         },
         [30056] = { -- The Farmer's Daughter
             [questKeys.preQuestSingle] = {30046},
         },
         [30057] = { -- Seeing Orange
-            [questKeys.triggerEnd] = {"Bring Mina Mudclaw home to her father", {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{44.22,34.65}}}},
-            [questKeys.objectives] = {},
+            [questKeys.objectives] = {{{62385,nil,Questie.ICON_TYPE_EVENT}}},
         },
         [30058] = { -- Mothallus!
             [questKeys.preQuestSingle] = {30059},
@@ -1786,8 +1799,7 @@ function MopQuestFixes.Load()
             [questKeys.exclusiveTo] = {32035}, --ingame bug
         },
         [30073] = { -- The Emperor
-            [questKeys.preQuestSingle] = {},
-            [questKeys.preQuestGroup] = {30047,30172,30055},
+            [questKeys.preQuestSingle] = {30055},
         },
         [30075] = { -- Clear the Way
             [questKeys.preQuestSingle] = {30074},
@@ -1802,7 +1814,12 @@ function MopQuestFixes.Load()
         [30078] = { -- Cleaning House
             [questKeys.preQuestSingle] = {},
             [questKeys.preQuestGroup] = {30075,30076,30077},
-            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Chen"),0,{{"monster",56133}}},{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Mudmug"),0,{{"monster",58027}}},{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Li Li"),0,{{"monster",58028}}},{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Chen"),0,{{"monster",58029}}}},
+            [questKeys.extraObjectives] = {
+                {nil,Questie.ICON_TYPE_TALK,l10n("Talk to Chen"),0,{{"monster",56133}}},
+                {nil,Questie.ICON_TYPE_TALK,l10n("Talk to Mudmug"),1,{{"monster",58027}}},
+                {nil,Questie.ICON_TYPE_TALK,l10n("Talk to Li Li"),2,{{"monster",58028}}},
+                {nil,Questie.ICON_TYPE_TALK,l10n("Talk to Chen"),3,{{"monster",58029}}}
+            },
         },
         [30079] = { -- What's Eating Zhu's Watch?
             [questKeys.preQuestSingle] = {},
@@ -1832,6 +1849,7 @@ function MopQuestFixes.Load()
         },
         [30086] = { -- The Search for the Hidden Master
             [questKeys.preQuestGroup] = {29908,29877},
+            [questKeys.exclusiveTo] = {30087}, -- estimated guess
         },
         [30088] = { -- Why So Serious?
             [questKeys.preQuestSingle] = {30081},
@@ -1954,6 +1972,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestGroup] = {30142,30187}, -- need to check if 30187 is good
             [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.requiredMinRep] = {factionIDs.ORDER_OF_THE_CLOUD_SERPENT,21000},
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_TALK, l10n("Start the event"), 0, {{"monster", 58420}}}},
         },
         [30154] = { -- The Easiest Way To A Serpent's Heart
             [questKeys.preQuestSingle] = {30142},
@@ -2146,7 +2165,7 @@ function MopQuestFixes.Load()
         },
         [30225] = { -- The Ashweb Matriarch
             [questKeys.startedBy] = {{58503}},
-            [questKeys.preQuestSingle] = {}, -- handled in questHubs
+            [questKeys.preQuestSingle] = {}, -- handled in questHubs. offered after 30200+30228.
             [questKeys.objectives] = {{{245926}}},
             [questKeys.requiredMinRep] = {factionIDs.GOLDEN_LOTUS,9000},
             [questKeys.questFlags] = questFlags.DAILY,
@@ -2295,12 +2314,12 @@ function MopQuestFixes.Load()
             [questKeys.preQuestGroup] = {30306,30240},
             [questKeys.requiredMinRep] = {factionIDs.GOLDEN_LOTUS,9000},
             [questKeys.exclusiveTo] = {30245,30246,30266,30444}, -- the other 2 groups of 2 quests in this hub stage
-            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_INTERACT,l10n("Use it"),0,{{"monster",64369}}}},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_MOUNT_UP,l10n("Mount up"),0,{{"monster",64369}}}},
         },
         [30244] = { -- Along the Serpent's Spine
             [questKeys.startedBy] = {{58920}},
             [questKeys.finishedBy] = {{58920}},
-            [questKeys.preQuestGroup] = {30306,30240},
+            [questKeys.preQuestSingle] = {30243}, -- check if 31652 needed/related/involved
             [questKeys.objectives] = {nil,nil,nil,nil,{{{63974,63976},63974}}},
             [questKeys.requiredMinRep] = {factionIDs.GOLDEN_LOTUS,9000},
             [questKeys.questFlags] = questFlags.DAILY,
@@ -2353,17 +2372,10 @@ function MopQuestFixes.Load()
         },
         [30254] = { -- Learn and Grow II: Tilling and Planting
             [questKeys.preQuestSingle] = {30535},
-            [questKeys.objectives] = {{{59985,nil,Questie.ICON_TYPE_INTERACT}},{{59990,nil,Questie.ICON_TYPE_INTERACT}}},
+            [questKeys.objectives] = {{{59985,nil,Questie.ICON_TYPE_INTERACT},{59990,nil,Questie.ICON_TYPE_INTERACT}}},
         },
         [30255] = { -- Learn and Grow III: Tending Crops
             [questKeys.objectives] = {{{59987,nil,Questie.ICON_TYPE_INTERACT}}},
-        },
-        [30256] = { -- Learn and Grow IV: Harvesting
-            [questKeys.objectives] = {nil,nil,{{80314,nil,Questie.ICON_TYPE_INTERACT}}},
-        },
-        [30257] = { -- Learn and Grow V: Halfhill Market
-            [questKeys.objectives] = {nil,nil,{{80314,nil,Questie.ICON_TYPE_INTERACT}}},
-            [questKeys.requiredSourceItems] = {79269},
         },
         [30258] = { --Mung-Mung's Vote I: A Hozen's Problem
             [questKeys.requiredMinRep] = {1272,14600}, -- available at 5600/12000 honored with Tillers
@@ -2434,7 +2446,7 @@ function MopQuestFixes.Load()
             [questKeys.requiredMinRep] = {factionIDs.GOLDEN_LOTUS,21000},
             [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.preQuestGroup] = {30642},
-            [questKeys.preQuestSingle] = {31240,31244,31248,31294,31295,31296}, -- TO DO: 31240 needs exclusiveTo with the other Ruins lead ins
+            --[questKeys.preQuestSingle] = {test}, -- offered after 30200+30228.
             [questKeys.exclusiveTo] = {30280},
         },
         [30280] = { -- The Thunder Below
@@ -2444,7 +2456,7 @@ function MopQuestFixes.Load()
             [questKeys.requiredMinRep] = {factionIDs.GOLDEN_LOTUS,21000},
             [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.preQuestGroup] = {30642},
-            [questKeys.preQuestSingle] = {31240,31244,31248,31294,31295,31296}, -- TO DO: 31240 needs exclusiveTo with the other Ruins lead ins
+            --[questKeys.preQuestSingle] = {31240,31244,31248,31294,31295,31296},
             [questKeys.exclusiveTo] = {30277},
         },
         [30281] = { -- The Silent Approach
@@ -3174,7 +3186,7 @@ function MopQuestFixes.Load()
             [questKeys.requiredMaxRep] = {factionIDs.GOLDEN_LOTUS,9000},
         },
         [30484] = { -- Gauging Our Progress
-            [questKeys.objectives] = {nil,nil,{{80013,nil,Questie.ICON_TYPE_TALK},{80014,nil,Questie.ICON_TYPE_TALK},{80015,nil,Questie.ICON_TYPE_TALK},{80061,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.objectives] = {nil,nil,{{80013,nil,Questie.ICON_TYPE_TALK},{80014,nil,Questie.ICON_TYPE_TALK},{80015,nil,Questie.ICON_TYPE_TALK},{80061,nil,Questie.ICON_TYPE_TALK}}}, -- why is there item with icon correction? - Cheeq
         },
         [30485] = { -- Last Piece of the Puzzle
             [questKeys.preQuestGroup] = {30466,30484},
@@ -3881,7 +3893,8 @@ function MopQuestFixes.Load()
             [questKeys.breadcrumbForQuestId] = 30884,
         },
         [30786] = { -- A Spear Through My Side, A Chain Through My Soul
-            [questKeys.preQuestSingle] = {31894},
+            [questKeys.preQuestSingle] = {},
+            [questKeys.breadcrumbs] = {31894},
         },
         [30787] = { -- The Torches
             [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_SLAY,l10n("Kill the Mist-Shamans after they placed their torch"),0,{{"monster",60697}}}},
@@ -3994,33 +4007,33 @@ function MopQuestFixes.Load()
         },
         [30879] = { -- Round 1: Brewmaster Chani
             [questKeys.preQuestSingle] = {31511,31512},
-            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Brewmaster Chani"),0,{{"monster",60996}}}},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Start the fight"),0,{{"monster",60996}}}},
             [questKeys.exclusiveTo] = {30880},
             [questKeys.questFlags] = questFlags.DAILY,
         },
         [30880] = { -- Round 1: The Streetfighter
             [questKeys.preQuestSingle] = {31511,31512},
-            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Lun-Chi"),0,{{"monster",60994}}}},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Start the fight"),0,{{"monster",60994}}}},
             [questKeys.exclusiveTo] = {30879},
             [questKeys.questFlags] = questFlags.DAILY,
         },
         [30881] = { -- Round 2: Clever Ashyo & Ken-Ken
-            --[questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to ??"),0,{{"monster",??}}}},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Start the fight"),0,{{"monster",60979},{"monster",60980}}}},
             [questKeys.questFlags] = questFlags.DAILY,
         },
         [30882] = { -- Round 2: Kang Bramblestaff
-            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Kang Bramblestaff"),0,{{"monster",60978}}}},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Start the fight"),0,{{"monster",60978}}}},
             [questKeys.questFlags] = questFlags.DAILY,
         },
         [30883] = { -- Round 3: The Wrestler
-            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to The Wrestler"),0,{{"monster",60997}}}},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Start the fight"),0,{{"monster",60997}}}},
             [questKeys.questFlags] = questFlags.DAILY,
         },
         [30884] = { -- Behind the Battlefront
             [questKeys.breadcrumbs] = {30785},
         },
         [30885] = { -- Round 3: Master Boom Boom
-            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Master Boom Boom"),0,{{"monster",61013}}}},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Start the fight"),0,{{"monster",61013}}}},
             [questKeys.questFlags] = questFlags.DAILY,
         },
         [30888] = { -- Breach in the Defenses
@@ -4057,11 +4070,11 @@ function MopQuestFixes.Load()
             [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Man a Dragon Launcher"),0,{{"monster",61746},{"monster",62024}}}},
         },
         [30902] = { -- Round 4: Master Windfur
-            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Master Windfur"),0,{{"monster",61012}}}},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Start the fight"),0,{{"monster",61012}}}},
             [questKeys.questFlags] = questFlags.DAILY,
         },
         [30907] = { -- Round 4: The P.U.G
-            --[questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to ??"),0,{{"monster",??}}}},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Start the fight"),0,{{"monster",61004},{"monster",61006},{"monster",61007}}}},
             [questKeys.questFlags] = questFlags.DAILY,
         },
         [30921] = { -- The Motives of the Mantid
@@ -4862,6 +4875,7 @@ function MopQuestFixes.Load()
         },
         [31198] = { -- A Morale Victory
             [questKeys.questFlags] = questFlags.DAILY,
+            [questKeys.objectives] = {nil,{{213304},{213305},{213303},{213306}}},
         },
         [31199] = { -- Destroy the Siege Weapons!
             [questKeys.objectives] = {nil,{{213307},{213308},{213310},{213311}}},
@@ -4875,14 +4889,12 @@ function MopQuestFixes.Load()
             [questKeys.questFlags] = questFlags.DAILY,
         },
         [31203] = { -- Target of Opportunity: Sra'thik Swarmlord
-            [questKeys.exclusiveTo] = {31204},
+            [questKeys.exclusiveTo] = {31204}, -- check if it's direct followup of 31197
             [questKeys.questFlags] = questFlags.DAILY,
-            [questKeys.preQuestSingle] = {31196}, -- TO DO needs prequest involving 2 out of 4
         },
         [31204] = { -- Target of Opportunity: Sra'thik Hivelord
             [questKeys.exclusiveTo] = {31203},
             [questKeys.questFlags] = questFlags.DAILY,
-            [questKeys.preQuestSingle] = {31196}, -- TO DO needs prequest involving 2 out of 4
         },
         [31207] = { -- The Arena of Annihilation
             [questKeys.preQuestSingle] = {31511,31512},
@@ -5175,9 +5187,13 @@ function MopQuestFixes.Load()
         },
         [31308] = { -- Learning the Ropes
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31548,31552,31556,31582,31591},
         },
         [31309] = { -- On The Mend
+            [questKeys.preQuestSingle] = {31308,31548,31552,31556,31582,31591},
             [questKeys.objectives] = {{{6749,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31549,31553,31568,31583,31592},
+            [questKeys.requiredSpell] = 119467,
         },
         [31312] = { -- The Old Map
             [questKeys.nextQuestInChain] = 31313,
@@ -5212,7 +5228,9 @@ function MopQuestFixes.Load()
             [questKeys.preQuestSingle] = {31314},
         },
         [31316] = { -- Julia, The Pet Tamer
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{64330,nil,Questie.ICON_TYPE_PET_BATTLE}}},
+            [questKeys.preQuestSingle] = {},
         },
         [31319] = { -- Emergency Response
             [questKeys.objectives] = {{{64491,nil,Questie.ICON_TYPE_INTERACT},{64493,nil,Questie.ICON_TYPE_INTERACT},{64494,nil,Questie.ICON_TYPE_INTERACT}}},
@@ -5657,100 +5675,193 @@ function MopQuestFixes.Load()
         [31548] = { -- Learning the Ropes
             [questKeys.startedBy] = {{63075}},
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31308,31552,31556,31582,31591},
         },
         [31549] = { -- On The Mend
+            [questKeys.startedBy] = {{63075}},
+            [questKeys.preQuestSingle] = {31308,31548,31552,31556,31582,31591},
             [questKeys.objectives] = {{{9980,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31309,31553,31568,31583,31592},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31550] = { -- Got one!
+            [questKeys.preQuestSingle] = {31785,31821,31822,31825,31826,31832},
+            [questKeys.exclusiveTo] = {31551,31555,31569,31584,31593},
+            [questKeys.requiredSpell] = 119467,
         },
         [31551] = { -- Got one!
             [questKeys.startedBy] = {{63075}},
+            [questKeys.preQuestSingle] = {31785,31821,31822,31825,31826,31832},
+            [questKeys.exclusiveTo] = {31550,31555,31569,31584,31593},
+            [questKeys.requiredSpell] = 119467,
         },
         [31552] = { -- Learning the Ropes
             [questKeys.startedBy] = {{63070}},
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31308,31548,31556,31582,31591},
         },
         [31553] = { -- On The Mend
             [questKeys.startedBy] = {{63070}},
+            [questKeys.preQuestSingle] = {31308,31548,31552,31556,31582,31591},
             [questKeys.objectives] = {{{10051,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31309,31549,31568,31583,31592},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31555] = { -- Got one!
+            [questKeys.preQuestSingle] = {31785,31821,31822,31825,31826,31832},
+            [questKeys.exclusiveTo] = {31550,31551,31569,31584,31593},
+            [questKeys.requiredSpell] = 119467,
         },
         [31556] = { -- Learning the Ropes
             [questKeys.startedBy] = {{63077}},
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31308,31548,31552,31582,31591},
         },
         [31568] = { -- On The Mend
             [questKeys.startedBy] = {{63077}},
+            [questKeys.preQuestSingle] = {31308,31548,31552,31556,31582,31591},
             [questKeys.objectives] = {{{17485,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31309,31549,31553,31583,31592},
+            [questKeys.requiredSpell] = 119467,
         },
         [31569] = { -- Got one!
             [questKeys.startedBy] = {{63077}},
+            [questKeys.preQuestSingle] = {31785,31821,31822,31825,31826,31832},
+            [questKeys.exclusiveTo] = {31550,31551,31555,31584,31593},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31570] = { -- Got one!
+            [questKeys.preQuestSingle] = {31823,31824,31827,31828,31830,31831},
+            [questKeys.exclusiveTo] = {31575,31578,31581,31587,31590},
+            [questKeys.requiredSpell] = 119467,
         },
         [31571] = { -- Learning the Ropes
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31573,31576,31579,31585,31588},
         },
         [31572] = { -- On The Mend
             [questKeys.startedBy] = {{63061}},
+            [questKeys.preQuestSingle] = {31571,31573,31576,31579,31585,31588},
             [questKeys.objectives] = {{{9987,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31574,31577,31580,31586,31589},
+            [questKeys.requiredSpell] = 119467,
         },
         [31573] = { -- Learning the Ropes
             [questKeys.startedBy] = {{63067}},
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31571,31576,31579,31585,31588},
         },
         [31574] = { -- On The Mend
             [questKeys.startedBy] = {{63067}},
+            [questKeys.preQuestSingle] = {31571,31573,31576,31579,31585,31588},
             [questKeys.objectives] = {{{10050,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31572,31577,31580,31586,31589},
+            [questKeys.requiredSpell] = 119467,
         },
         [31575] = { -- Got one!
             [questKeys.startedBy] = {{63067}},
+            [questKeys.preQuestSingle] = {31823,31824,31827,31828,31830,31831},
+            [questKeys.exclusiveTo] = {31570,31578,31581,31587,31590},
+            [questKeys.requiredSpell] = 119467,
         },
         [31576] = { -- Learning the Ropes
             [questKeys.startedBy] = {{63073}},
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31571,31573,31579,31585,31588},
         },
         [31577] = { -- On The Mend
             [questKeys.startedBy] = {{63073}},
+            [questKeys.preQuestSingle] = {31571,31573,31576,31579,31585,31588},
             [questKeys.objectives] = {{{10055,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31572,31574,31580,31586,31589},
+            [questKeys.requiredSpell] = 119467,
         },
         [31578] = { -- Got one!
             [questKeys.startedBy] = {{63073}},
+            [questKeys.preQuestSingle] = {31823,31824,31827,31828,31830,31831},
+            [questKeys.exclusiveTo] = {31570,31575,31581,31587,31590},
+            [questKeys.requiredSpell] = 119467,
         },
         [31579] = { -- Learning the Ropes
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31571,31573,31576,31585,31588},
         },
         [31580] = { -- On The Mend
             [questKeys.startedBy] = {{63080}},
+            [questKeys.preQuestSingle] = {31571,31573,31576,31579,31585,31588},
             [questKeys.objectives] = {{{16185,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31572,31574,31577,31586,31589},
+            [questKeys.requiredSpell] = 119467,
         },
         [31581] = { -- Got one!
             [questKeys.startedBy] = {{63080}},
+            [questKeys.preQuestSingle] = {31823,31824,31827,31828,31830,31831},
+            [questKeys.exclusiveTo] = {31570,31575,31578,31587,31590},
+            [questKeys.requiredSpell] = 119467,
         },
         [31582] = { -- Learning the Ropes
             [questKeys.startedBy] = {{63083}},
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31308,31548,31552,31556,31591},
         },
         [31583] = { -- On The Mend
             [questKeys.startedBy] = {{63083}},
+            [questKeys.preQuestSingle] = {31308,31548,31552,31556,31582,31591},
             [questKeys.objectives] = {{{10085,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31309,31549,31553,31568,31592},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31584] = { -- Got one!
+            [questKeys.preQuestSingle] = {31785,31821,31822,31825,31826,31832},
+            [questKeys.exclusiveTo] = {31550,31551,31555,31569,31593},
+            [questKeys.requiredSpell] = 119467,
         },
         [31585] = { -- Learning the Ropes
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31571,31573,31576,31579,31588},
         },
         [31586] = { -- On The Mend
             [questKeys.startedBy] = {{63086}},
+            [questKeys.preQuestSingle] = {31571,31573,31576,31579,31585,31588},
             [questKeys.objectives] = {{{45789,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31572,31574,31577,31580,31589},
+            [questKeys.requiredSpell] = 119467,
         },
         [31587] = { -- Got one!
             [questKeys.startedBy] = {{63086}},
+            [questKeys.preQuestSingle] = {31823,31824,31827,31828,31830,31831},
+            [questKeys.exclusiveTo] = {31570,31575,31578,31581,31590},
+            [questKeys.requiredSpell] = 119467,
         },
         [31588] = { -- Learning the Ropes
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31571,31573,31576,31579,31585},
         },
         [31589] = { -- On The Mend
+            [questKeys.preQuestSingle] = {31571,31573,31576,31579,31585,31588},
             [questKeys.objectives] = {{{47764,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31572,31574,31577,31580,31586},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31590] = { -- Got one!
+            [questKeys.preQuestSingle] = {31823,31824,31827,31828,31830,31831},
+            [questKeys.exclusiveTo] = {31570,31575,31578,31581,31587},
+            [questKeys.requiredSpell] = 119467,
         },
         [31591] = { -- Learning the Ropes
             [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31308,31548,31552,31556,31582},
         },
         [31592] = { -- On The Mend
+            [questKeys.preQuestSingle] = {31308,31548,31552,31556,31582,31591},
             [questKeys.objectives] = {{{11069,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.exclusiveTo] = {31309,31549,31553,31568,31583},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31593] = { -- Got one!
+            [questKeys.preQuestSingle] = {31785,31821,31822,31825,31826,31832},
+            [questKeys.exclusiveTo] = {31550,31551,31555,31569,31584},
+            [questKeys.requiredSpell] = 119467,
         },
         [31598] = { -- Kypa'rak's Core
             [questKeys.questFlags] = questFlags.DAILY,
@@ -5856,6 +5967,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestSingle] = {31661},
         },
         [31693] = { -- Julia Stevens
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
             [questKeys.objectives] = {{{64330,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
@@ -5972,21 +6084,26 @@ function MopQuestFixes.Load()
             [questKeys.requiredMinRep] = {factionIDs.ORDER_OF_THE_CLOUD_SERPENT,21000},
         },
         [31724] = { -- Old MacDonald
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{65648,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31725] = { -- Lindsay
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{65651,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31726] = { -- Eric Davidson
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{65655,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31727] = { -- Gambling Problem
             [questKeys.requiredMinRep] = {factionIDs.THE_KLAXXI,9000},
         },
         [31728] = { -- Bill Buckler
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{65656,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31729] = { -- Steven Lisbane
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{63194,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31730] = { -- A Not So Friendly Request
@@ -6139,10 +6256,12 @@ function MopQuestFixes.Load()
             [questKeys.preQuestGroup] = {31775,31776,31777,31778,},
         },
         [31780] = { -- Old MacDonald
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
             [questKeys.objectives] = {{{65648,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31781] = { -- Lindsay
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
             [questKeys.objectives] = {{{65651,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
@@ -6154,6 +6273,11 @@ function MopQuestFixes.Load()
             [questKeys.questFlags] = 0,
             [questKeys.requiredMinRep] = {},
             [questKeys.requiredMaxRep] = {factionIDs.ORDER_OF_THE_CLOUD_SERPENT,42000},
+        },
+        [31785] = { -- Level Up!
+            [questKeys.preQuestSingle] = {31309,31549,31553,31568,31583,31592},
+            [questKeys.exclusiveTo] = {31821,31822,31825,31826,31832},
+            [questKeys.requiredSpell] = 119467,
         },
         [31808] = { -- Rampage Against the Machine
             [questKeys.preQuestGroup] = {31092,31359,31398},
@@ -6173,33 +6297,93 @@ function MopQuestFixes.Load()
             [questKeys.exclusiveTo] = {30188,31810},
         },
         [31812] = { -- Zunta, The Pet Tamer
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66126,nil,Questie.ICON_TYPE_PET_BATTLE}}},
+            [questKeys.preQuestSingle] = {},
         },
         [31813] = { -- Dagra the Fierce
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66135,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31814] = { -- Analynn
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66136,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31815] = { -- Zonya the Sadist
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66137,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31817] = { -- Merda Stronghoof
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66372,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31818] = { -- Zunta
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
             [questKeys.objectives] = {{{66126,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31819] = { -- Dagra the Fierce
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
             [questKeys.objectives] = {{{66135,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
+        [31821] = { -- Level Up!
+            [questKeys.preQuestSingle] = {31309,31549,31553,31568,31583,31592},
+            [questKeys.exclusiveTo] = {31785,31822,31825,31826,31832},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31822] = { -- Level Up!
+            [questKeys.preQuestSingle] = {31309,31549,31553,31568,31583,31592},
+            [questKeys.exclusiveTo] = {31785,31821,31825,31826,31832},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31823] = { -- Level Up!
+            [questKeys.preQuestSingle] = {31572,31574,31577,31580,31586,31589},
+            [questKeys.exclusiveTo] = {31824,31827,31828,31830,31831},
+            [questKeys.requiredSpell] = 119467,
+        },
         [31824] = { -- Level Up!
             [questKeys.startedBy] = {{63080}},
+            [questKeys.preQuestSingle] = {31572,31574,31577,31580,31586,31589},
+            [questKeys.exclusiveTo] = {31823,31827,31828,31830,31831},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31825] = { -- Level Up!
+            [questKeys.preQuestSingle] = {31309,31549,31553,31568,31583,31592},
+            [questKeys.exclusiveTo] = {31785,31821,31822,31826,31832},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31826] = { -- Level Up!
+            [questKeys.startedBy] = {{63070}},
+            [questKeys.preQuestSingle] = {31309,31549,31553,31568,31583,31592},
+            [questKeys.exclusiveTo] = {31785,31821,31822,31825,31832},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31827] = { -- Level Up!
+            [questKeys.preQuestSingle] = {31572,31574,31577,31580,31586,31589},
+            [questKeys.exclusiveTo] = {31823,31824,31828,31830,31831},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31828] = { -- Level Up!
+            [questKeys.preQuestSingle] = {31572,31574,31577,31580,31586,31589},
+            [questKeys.exclusiveTo] = {31823,31824,31827,31830,31831},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31830] = { -- Level Up!
+            [questKeys.preQuestSingle] = {31572,31574,31577,31580,31586,31589},
+            [questKeys.exclusiveTo] = {31823,31824,31827,31828,31831},
+            [questKeys.requiredSpell] = 119467,
         },
         [31831] = { -- Level Up!
             [questKeys.startedBy] = {{63067}},
+            [questKeys.preQuestSingle] = {31572,31574,31577,31580,31586,31589},
+            [questKeys.exclusiveTo] = {31823,31824,31827,31828,31830},
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31832] = { -- Level Up!
+            [questKeys.preQuestSingle] = {31309,31549,31553,31568,31583,31592},
+            [questKeys.exclusiveTo] = {31785,31821,31822,31825,31826},
+            [questKeys.requiredSpell] = 119467,
         },
         [31833] = { -- Continue Your Training: Master Woo
             [questKeys.requiredClasses] = classIDs.MONK,
@@ -6298,14 +6482,18 @@ function MopQuestFixes.Load()
             [questKeys.exclusiveTo] = {31000,31390,31391,31656,31886,31895},
         },
         [31850] = { -- Eric Davidson
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
             [questKeys.objectives] = {{{65655,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31851] = { -- Bill Buckler
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
             [questKeys.objectives] = {{{65656,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31852] = { -- Steven Lisbane
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
             [questKeys.objectives] = {{{63194,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
@@ -6313,6 +6501,8 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {},
         },
         [31854] = { -- Analynn
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
             [questKeys.objectives] = {{{66136,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
@@ -6345,17 +6535,24 @@ function MopQuestFixes.Load()
             [questKeys.breadcrumbForQuestId] = 31839,
         },
         [31862] = { -- Zonya the Sadist
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
             [questKeys.objectives] = {{{66137,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31870] = { -- Cassandra Kaboom
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66422,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31871] = { -- Traitor Gluk
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
             [questKeys.objectives] = {{{66352,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31872] = { -- Merda Stronghoof
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
             [questKeys.objectives] = {{{66372,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
@@ -6382,129 +6579,177 @@ function MopQuestFixes.Load()
             [questKeys.exclusiveTo] = {31000,31390,31391,31656,31847,31895},
         },
         [31889] = { -- Battle Pet Tamers: Kalimdor
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66352,nil,Questie.ICON_TYPE_PET_BATTLE},{66436,nil,Questie.ICON_TYPE_PET_BATTLE},{66452,nil,Questie.ICON_TYPE_PET_BATTLE},{66442,nil,Questie.ICON_TYPE_PET_BATTLE},{66412,nil,Questie.ICON_TYPE_PET_BATTLE}}},
-            [questKeys.preQuestSingle] = {31917},
+            [questKeys.preQuestSingle] = {31728},
         },
         [31891] = { -- Battle Pet Tamers: Kalimdor
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66352,nil,Questie.ICON_TYPE_PET_BATTLE},{66436,nil,Questie.ICON_TYPE_PET_BATTLE},{66452,nil,Questie.ICON_TYPE_PET_BATTLE},{66442,nil,Questie.ICON_TYPE_PET_BATTLE},{66412,nil,Questie.ICON_TYPE_PET_BATTLE}}},
-            [questKeys.preQuestSingle] = {31918},
+            [questKeys.preQuestSingle] = {31870},
         },
         [31894] = { -- A Delicate Balance
             [questKeys.preQuestSingle] = {30784},
+            [questKeys.breadcrumbForQuestId] = 30786,
         },
         [31895] = { -- Better Off Dread
             [questKeys.breadcrumbForQuestId] = 31001,
             [questKeys.exclusiveTo] = {31000,31390,31391,31656,31847,31886},
         },
         [31897] = { -- Grand Master Trixxy
+            [questKeys.preQuestSingle] = {31889,31891},
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66466,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31902] = { -- Battle Pet Tamers: Eastern Kingdoms
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66478,nil,Questie.ICON_TYPE_PET_BATTLE},{66512,nil,Questie.ICON_TYPE_PET_BATTLE},{66515,nil,Questie.ICON_TYPE_PET_BATTLE},{66518,nil,Questie.ICON_TYPE_PET_BATTLE},{66520,nil,Questie.ICON_TYPE_PET_BATTLE}}},
-            [questKeys.preQuestSingle] = {31917},
+            [questKeys.preQuestSingle] = {31728},
         },
         [31903] = { -- Battle Pet Tamers: Eastern Kingdoms
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66478,nil,Questie.ICON_TYPE_PET_BATTLE},{66512,nil,Questie.ICON_TYPE_PET_BATTLE},{66515,nil,Questie.ICON_TYPE_PET_BATTLE},{66518,nil,Questie.ICON_TYPE_PET_BATTLE},{66520,nil,Questie.ICON_TYPE_PET_BATTLE}}},
-            [questKeys.preQuestSingle] = {31918},
+            [questKeys.preQuestSingle] = {31870},
         },
         [31904] = { -- Cassandra Kaboom
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
             [questKeys.objectives] = {{{66422,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31905] = { -- Grazzle the Great
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
             [questKeys.objectives] = {{{66436,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31906] = { -- Kela Grimtotem
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
             [questKeys.objectives] = {{{66452,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31907] = { -- Zoltan
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
             [questKeys.objectives] = {{{66442,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31908] = { -- Elena Flutterfly
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
             [questKeys.objectives] = {{{66412,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31909] = { -- Grand Master Trixxy
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66466,nil,Questie.ICON_TYPE_PET_BATTLE}}},
+            [questKeys.preQuestSingle] = {31897},
         },
         [31910] = { -- David Kosse
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
             [questKeys.objectives] = {{{66478,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31911] = { -- Deiza Plaguehorn
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
             [questKeys.objectives] = {{{66512,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31912] = { -- Kortas Darkhammer
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
             [questKeys.objectives] = {{{66515,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31913] = { -- Everessa
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
             [questKeys.objectives] = {{{66518,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31914] = { -- Durin Darkhammer
+            [questKeys.requiredSpell] = 119467,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
             [questKeys.objectives] = {{{66520,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31915] = { -- Grand Master Lydia Accoste
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66522,nil,Questie.ICON_TYPE_PET_BATTLE}}},
+            [questKeys.preQuestSingle] = {31902,31903},
         },
         [31916] = { -- Grand Master Lydia Accoste
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66522,nil,Questie.ICON_TYPE_PET_BATTLE}}},
+            [questKeys.preQuestSingle] = {31915},
+        },
+        [31917] = { -- A Tamer's Homecoming
+            [questKeys.requiredSpell] = 119467,
+        },
+        [31918] = { -- A Tamer's Homecoming
+            [questKeys.requiredSpell] = 119467,
         },
         [31919] = { -- Battle Pet Tamers: Outland
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.preQuestSingle] = {31897,31915},
             [questKeys.objectives] = {{{66550,nil,Questie.ICON_TYPE_PET_BATTLE},{66551,nil,Questie.ICON_TYPE_PET_BATTLE},{66552,nil,Questie.ICON_TYPE_PET_BATTLE},{66553,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31920] = { -- Grand Master Antari
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66557,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31921] = { -- Battle Pet Tamers: Outland
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.preQuestSingle] = {31897,31915},
             [questKeys.objectives] = {{{66550,nil,Questie.ICON_TYPE_PET_BATTLE},{66551,nil,Questie.ICON_TYPE_PET_BATTLE},{66552,nil,Questie.ICON_TYPE_PET_BATTLE},{66553,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31922] = { -- Nicki Tinytech
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66550,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31923] = { -- Ras'an
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66551,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31924] = { -- Narrok
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66552,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31925] = { -- Morulu The Elder
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66553,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31926] = { -- Grand Master Antari
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66557,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31927] = { -- Battle Pet Tamers: Northrend
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66635,nil,Questie.ICON_TYPE_PET_BATTLE},{66636,nil,Questie.ICON_TYPE_PET_BATTLE},{66638,nil,Questie.ICON_TYPE_PET_BATTLE},{66639,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31928] = { -- Grand Master Payne
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66675,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31929] = { -- Battle Pet Tamers: Northrend
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66635,nil,Questie.ICON_TYPE_PET_BATTLE},{66636,nil,Questie.ICON_TYPE_PET_BATTLE},{66638,nil,Questie.ICON_TYPE_PET_BATTLE},{66639,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31930] = { -- Battle Pet Tamers: Pandaria
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66730,nil,Questie.ICON_TYPE_PET_BATTLE},{66734,nil,Questie.ICON_TYPE_PET_BATTLE},{66733,nil,Questie.ICON_TYPE_PET_BATTLE},{66738,nil,Questie.ICON_TYPE_PET_BATTLE},{66918,nil,Questie.ICON_TYPE_PET_BATTLE},{66739,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31931] = { -- Beegle Blastfuse
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66635,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31932] = { -- Nearly Headless Jacob
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66636,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31933] = { -- Okrut Dragonwaste
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66638,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31934] = { -- Gutretch
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66639,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31935] = { -- Grand Master Payne
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66675,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31936] = { -- The "Jinyu Princess" Irrigation System
@@ -6533,7 +6778,7 @@ function MopQuestFixes.Load()
             [questKeys.breadcrumbs] = {31989},
         },
         [31945] = { -- Learn and Grow VI: Gina's Vote
-            [questKeys.objectives] = {{{59990,nil,Questie.ICON_TYPE_INTERACT},{63165,nil,Questie.ICON_TYPE_INTERACT}},nil,{{74843}}},
+            [questKeys.objectives] = {{{58563,nil,Questie.ICON_TYPE_INTERACT},{63165,nil,Questie.ICON_TYPE_INTERACT}},nil,{{74843}}},
             [questKeys.requiredSourceItems] = {80591},
         },
         [31946] = { -- Mung-Mung's Vote III: The Great Carrot Caper
@@ -6556,24 +6801,31 @@ function MopQuestFixes.Load()
             [questKeys.preQuestSingle] = {31930,31952},
         },
         [31952] = { -- Battle Pet Tamers: Pandaria
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66730,nil,Questie.ICON_TYPE_PET_BATTLE},{66734,nil,Questie.ICON_TYPE_PET_BATTLE},{66733,nil,Questie.ICON_TYPE_PET_BATTLE},{66738,nil,Questie.ICON_TYPE_PET_BATTLE},{66918,nil,Questie.ICON_TYPE_PET_BATTLE},{66739,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31953] = { -- Grand Master Hyuna
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66730,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31954] = { -- Grand Master Mo'ruk
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66733,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31955] = { -- Grand Master Nishi
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66734,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31956] = { -- Grand Master Yon
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66738,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31957] = { -- Grand Master Shu
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66739,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31958] = { -- Grand Master Aki
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66741,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31959] = { -- The Empress' Gambit
@@ -6594,35 +6846,50 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {{{66776,nil,Questie.ICON_TYPE_TALK}}},
         },
         [31966] = { -- Battle Pet Tamers: Cataclysm
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66819,nil,Questie.ICON_TYPE_PET_BATTLE},{66815,nil,Questie.ICON_TYPE_PET_BATTLE},{66822,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31967] = { -- Battle Pet Tamers: Cataclysm
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66819,nil,Questie.ICON_TYPE_PET_BATTLE},{66815,nil,Questie.ICON_TYPE_PET_BATTLE},{66822,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31970] = { -- Grand Master Obalis
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66824,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31971] = { -- Grand Master Obalis
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66824,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31972] = { -- Brok
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66819,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31973] = { -- Bordin Steadyfist
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66815,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31974] = { -- Goz Banefury
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66822,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31975] = { -- The Returning Champion
             [questKeys.startedBy] = {{66466}},
-            [questKeys.preQuestSingle] = {31897},
+            [questKeys.preQuestSingle] = {31897,31915},
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.nextQuestInChain] = 0,
+            [questKeys.exclusiveTo] = {31976},
         },
         [31976] = { -- The Returning Champion
-            [questKeys.preQuestSingle] = {31897},
+            [questKeys.preQuestSingle] = {31897,31915},
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.nextQuestInChain] = 0,
+            [questKeys.exclusiveTo] = {31975},
         },
         [31977] = { -- The Returning Champion
-            [questKeys.preQuestSingle] = {31897},
+            [questKeys.preQuestSingle] = {31897,31915},
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.nextQuestInChain] = 0, -- not exclusive to 31980!
         },
         [31978] = { -- Priorities!
             [questKeys.objectives] = {nil,{{215695}}},
@@ -6630,7 +6897,9 @@ function MopQuestFixes.Load()
             [questKeys.exclusiveTo] = {31772},
         },
         [31980] = { -- The Returning Champion
-            [questKeys.preQuestSingle] = {31897},
+            [questKeys.preQuestSingle] = {31897,31915},
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.nextQuestInChain] = 0, -- not exclusive to 31977!
         },
         [31981] = { -- Exceeding Expectations
             [questKeys.preQuestSingle] = {31920},
@@ -6659,6 +6928,7 @@ function MopQuestFixes.Load()
             [questKeys.exclusiveTo] = {31316},
         },
         [31991] = { -- Grand Master Zusshi
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66918,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31998] = {-- A Worthy Challenge: Sha of Doubt
@@ -6690,7 +6960,12 @@ function MopQuestFixes.Load()
             [questKeys.exclusiveTo] = {31998,32000,32001,32002,32003,32004,32005,32006},
         },
         [32008] = { -- Audrey Burnhep
-            [questKeys.exclusiveTo] = {31316},
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31785,31821,31822,31825,31826,31832}, -- not available once you turn any of these in
+        },
+        [32009] = { -- Varzok
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.exclusiveTo] = {31823,31824,31827,31828,31830,31831}, -- not available once you turn any of these in
         },
         [32016] = { -- Elder Charms of Good Fortune
             [questKeys.startedBy] = {{64029}},
@@ -6722,6 +6997,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestSingle] = {30181},
         },
         [32175] = { -- Darkmoon Pet Battle
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{67370,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [32317] = { -- Seeking the Soulstones
@@ -6732,22 +7008,28 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {{{68463},{68465},{68464},{68462}}},
         },
         [32434] = { -- Burning Pandaren Spirit
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{68463,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [32439] = { -- Flowing Pandaren Spirit
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{68462,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [32440] = { -- Whispering Pandaren Spirit
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{68464,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [32441] = { -- Thundering Pandaren Spirit
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{68465,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [32603] = { -- Beasts of Fable
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{68555,nil,Questie.ICON_TYPE_PET_BATTLE},{68558,nil,Questie.ICON_TYPE_PET_BATTLE},{68559,nil,Questie.ICON_TYPE_PET_BATTLE},{68560,nil,Questie.ICON_TYPE_PET_BATTLE},{68561,nil,Questie.ICON_TYPE_PET_BATTLE},{68562,nil,Questie.ICON_TYPE_PET_BATTLE},{68563,nil,Questie.ICON_TYPE_PET_BATTLE},{68564,nil,Questie.ICON_TYPE_PET_BATTLE},{68565,nil,Questie.ICON_TYPE_PET_BATTLE},{68566,nil,Questie.ICON_TYPE_PET_BATTLE}}},
             [questKeys.preQuestSingle] = {31958},
         },
         [32604] = { -- Beasts of Fable Book I
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{68555,nil,Questie.ICON_TYPE_PET_BATTLE},{68563,nil,Questie.ICON_TYPE_PET_BATTLE},{68564,nil,Questie.ICON_TYPE_PET_BATTLE},{68565,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [32618] = { -- Learn To Ride
@@ -6820,18 +7102,23 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {{{110001}}},
         },
         [32868] = { -- Beasts of Fable Book II
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{68560,nil,Questie.ICON_TYPE_PET_BATTLE},{68561,nil,Questie.ICON_TYPE_PET_BATTLE},{68566,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [32869] = { -- Beasts of Fable Book III
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{68558,nil,Questie.ICON_TYPE_PET_BATTLE},{68559,nil,Questie.ICON_TYPE_PET_BATTLE},{68562,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [33136] = { -- The Rainy Day is Here
             [questKeys.preQuestSingle] = {33137},
         },
         [33137] = { -- The Celestial Tournament
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.questFlags] = questFlags.WEEKLY,
             [questKeys.objectives] = {{{73082,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [33222] = { -- Little Tommy Newcomer
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{73626,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [33336] = { -- The Essence of Time

@@ -872,8 +872,11 @@ function QuestieDB.IsDoable(questId, debugPrint)
     -- quest in the DB in order to update icons, while
     -- IsDoableVerbose is only called manually by the user.
 
+    local completedQuests = Questie.db.char.complete
+    local currentQuestlog = QuestiePlayer.currentQuestlog
+
     -- These are localized in the init function
-    if Questie.db.char.complete[questId] then
+    if completedQuests[questId] then
         if debugPrint then Questie:Debug(Questie.DEBUG_SPAM, "[QuestieDB.IsDoable] Quest " .. questId .. " is already finished!") end
         return false
     end
@@ -963,7 +966,7 @@ function QuestieDB.IsDoable(questId, debugPrint)
 
     local nextQuestInChain = QuestieDB.QueryQuestSingle(questId, "nextQuestInChain")
     if nextQuestInChain and nextQuestInChain ~= 0 then
-        if Questie.db.char.complete[nextQuestInChain] or QuestiePlayer.currentQuestlog[nextQuestInChain] then
+        if completedQuests[nextQuestInChain] or currentQuestlog[nextQuestInChain] then
             if debugPrint then Questie:Debug(Questie.DEBUG_SPAM, "[QuestieDB.IsDoable] Follow up quests already completed or in the quest log for quest " .. questId) end
             return false
         end
@@ -974,7 +977,7 @@ function QuestieDB.IsDoable(questId, debugPrint)
     local ExclusiveQuestGroup = QuestieDB.QueryQuestSingle(questId, "exclusiveTo")
     if ExclusiveQuestGroup then -- fix (DO NOT REVERT, tested thoroughly)
         for _, v in pairs(ExclusiveQuestGroup) do
-            if Questie.db.char.complete[v] or QuestiePlayer.currentQuestlog[v] then
+            if completedQuests[v] or currentQuestlog[v] then
                 if debugPrint then Questie:Debug(Questie.DEBUG_SPAM, "[QuestieDB.IsDoable] Player has completed a quest exclusive with quest " .. questId) end
                 return false
             end
@@ -1018,14 +1021,14 @@ function QuestieDB.IsDoable(questId, debugPrint)
     local breadcrumbForQuestId = QuestieDB.QueryQuestSingle(questId, "breadcrumbForQuestId")
     if breadcrumbForQuestId and breadcrumbForQuestId ~= 0 then
         -- Check the target quest of this breadcrumb
-        if Questie.db.char.complete[breadcrumbForQuestId] or QuestiePlayer.currentQuestlog[breadcrumbForQuestId] then
+        if completedQuests[breadcrumbForQuestId] or currentQuestlog[breadcrumbForQuestId] then
             if debugPrint then Questie:Debug(Questie.DEBUG_SPAM, "[QuestieDB.IsDoable] Target of breadcrumb quest already completed or in the quest log for quest " .. questId) end
             return false
         end
         -- Check if the other breadcrumbs are active
         local otherBreadcrumbs = QuestieDB.QueryQuestSingle(breadcrumbForQuestId, "breadcrumbs")
         for _, breadcrumbId in ipairs(otherBreadcrumbs or {}) do -- TODO: Remove `or {}` when we have a validation for the breadcrumb data
-            if breadcrumbId ~= questId and QuestiePlayer.currentQuestlog[breadcrumbId] then
+            if breadcrumbId ~= questId and currentQuestlog[breadcrumbId] then
                 if debugPrint then Questie:Debug(Questie.DEBUG_SPAM, "[QuestieDB.IsDoable] Alternative breadcrumb quest in the quest log for quest " .. questId) end
                 return false
             end
@@ -1041,6 +1044,11 @@ function QuestieDB.IsDoable(questId, debugPrint)
                 return false
             end
         end
+    end
+
+    if DailyQuests.ShouldBeHidden(questId, completedQuests, currentQuestlog) then
+        if debugPrint then Questie:Debug(Questie.DEBUG_SPAM, "[QuestieDB.IsDoable] Daily quest " .. questId .. " is not active") end
+        return false
     end
 
     return true
@@ -1068,7 +1076,10 @@ function QuestieDB.IsDoableVerbose(questId, debugPrint, returnText, returnBrief)
     -- quest in the DB in order to update icons, while
     -- IsDoableVerbose is only called manually by the user.
 
-    if Questie.db.char.complete[questId] then
+    local completedQuests = Questie.db.char.complete
+    local currentQuestlog = QuestiePlayer.currentQuestlog
+
+    if completedQuests[questId] then
         if returnText and returnBrief then
             return "Ineligible: Already complete"
         elseif returnText then
@@ -1226,7 +1237,7 @@ function QuestieDB.IsDoableVerbose(questId, debugPrint, returnText, returnBrief)
 
     local nextQuestInChain = QuestieDB.QueryQuestSingle(questId, "nextQuestInChain")
     if nextQuestInChain and nextQuestInChain ~= 0 then
-        if Questie.db.char.complete[nextQuestInChain] or QuestiePlayer.currentQuestlog[nextQuestInChain] then
+        if completedQuests[nextQuestInChain] or currentQuestlog[nextQuestInChain] then
             local msg = "Follow up quests already completed or in the quest log for quest " .. questId
             if returnText and returnBrief then
                 return "Ineligible: Later quest completed or active " .. nextQuestInChain
@@ -1241,7 +1252,7 @@ function QuestieDB.IsDoableVerbose(questId, debugPrint, returnText, returnBrief)
     local ExclusiveQuestGroup = QuestieDB.QueryQuestSingle(questId, "exclusiveTo")
     if ExclusiveQuestGroup then -- fix (DO NOT REVERT, tested thoroughly)
         for _, v in pairs(ExclusiveQuestGroup) do
-            if Questie.db.char.complete[v] or QuestiePlayer.currentQuestlog[v] then
+            if completedQuests[v] or currentQuestlog[v] then
                 local msg = "Player has completed a quest exclusive with quest " .. questId
                 if returnText and returnBrief then
                     return "Ineligible: Exclusive quest completed"
@@ -1309,7 +1320,7 @@ function QuestieDB.IsDoableVerbose(questId, debugPrint, returnText, returnBrief)
     local breadcrumbForQuestId = QuestieDB.QueryQuestSingle(questId, "breadcrumbForQuestId")
     if breadcrumbForQuestId and breadcrumbForQuestId ~= 0 then
         -- Check the target quest of this breadcrumb
-        if Questie.db.char.complete[breadcrumbForQuestId] or QuestiePlayer.currentQuestlog[breadcrumbForQuestId] then
+        if completedQuests[breadcrumbForQuestId] or currentQuestlog[breadcrumbForQuestId] then
             if returnText and returnBrief then
                 return "Ineligible: Breadcrumb target " .. breadcrumbForQuestId .. " active or finished"
             elseif returnText and not returnBrief then
@@ -1319,7 +1330,7 @@ function QuestieDB.IsDoableVerbose(questId, debugPrint, returnText, returnBrief)
         -- Check if the other breadcrumbs are active
         local otherBreadcrumbs = QuestieDB.QueryQuestSingle(breadcrumbForQuestId, "breadcrumbs")
         for _, breadcrumbId in ipairs(otherBreadcrumbs) do
-            if breadcrumbId ~= questId and QuestiePlayer.currentQuestlog[breadcrumbId] then
+            if breadcrumbId ~= questId and currentQuestlog[breadcrumbId] then
                 if returnText and returnBrief then
                     return "Ineligible: Another breadcrumb is active: " .. breadcrumbId
                 elseif returnText and not returnBrief then
@@ -1333,13 +1344,21 @@ function QuestieDB.IsDoableVerbose(questId, debugPrint, returnText, returnBrief)
     local breadcrumbs = QuestieDB.QueryQuestSingle(questId, "breadcrumbs")
     if breadcrumbs then
         for _, breadcrumbId in ipairs(breadcrumbs) do
-            if QuestiePlayer.currentQuestlog[breadcrumbId] then
+            if currentQuestlog[breadcrumbId] then
                 if returnText and returnBrief then
                     return "Ineligible: A breadcrumb is active: " .. breadcrumbId
                 elseif returnText and not returnBrief then
                     return "A breadcrumb quest " .. breadcrumbId .." is in the quest log for quest " .. questId
                 end
             end
+        end
+    end
+
+    if DailyQuests.ShouldBeHidden(questId, completedQuests, currentQuestlog) then
+        if returnText and returnBrief then
+            return "Ineligible: Daily quest not active"
+        elseif returnText then
+            return "Daily quest " .. questId .. " is not active"
         end
     end
 
@@ -1812,10 +1831,10 @@ end
 -- Modifications to questDB
 
 local questsRequiringNewbieAchievement = {
-    [31316] = true, -- Julia, The Pet Tamer
-    [31812] = true, -- Zunta, The Pet Tamer
-    [32008] = true, -- Audrey Burnhep
-    [32009] = true, -- Varzok
+    [31316] = true, -- Julia, The Pet Tamer -- Alliance
+    [31812] = true, -- Zunta, The Pet Tamer -- Horde
+    [32008] = true, -- Audrey Burnhep -- Alliance
+    [32009] = true, -- Varzok -- Horde
 }
 
 local questsRequiringTamingKalimdorAchievement = {
@@ -1830,7 +1849,6 @@ local questsRequiringTamingKalimdorAchievement = {
     [31906] = true, -- Kela Grimtotem
     [31907] = true, -- Zoltan
     [31908] = true, -- Elena Flutterfly
-    [31909] = true, -- Grand Master Trixxy
 }
 
 local questsRequiringTamingEasternKingdomsAchievement = {
@@ -1845,7 +1863,6 @@ local questsRequiringTamingEasternKingdomsAchievement = {
     [31912] = true, -- Kortas Darkhammer
     [31913] = true, -- Everessa
     [31914] = true, -- Durin Darkhammer
-    [31916] = true, -- Grand Master Lydia Accoste
 }
 
 local questsRequiringTamingOutlandAchievement = {

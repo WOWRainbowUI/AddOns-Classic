@@ -298,7 +298,7 @@ local phases = {
     SHANG_THUNDERFOOT_AT_THUNDERFOOT_FIELDS = 1226,
     SHANG_THUNDERFOOT_SOUTH_OF_THUNDERFOOT_FIELDS = 1227,
     CLEVER_ASHYO_AT_POOLS_OF_PURITY = 1228,
-    CLEVER_ASHYO_SOUTH_OF_POOLS_OF_PURITY = 1229,
+    CLEVER_ASHYO_AT_NEW_CIFERA = 1229,
     KANG_AT_THUNDER_CLEFT = 1230,
     KANG_AT_DAWNCHASER_RETREAT = 1231,
     KOR_AT_THUNDER_CLEFT = 1232,
@@ -384,6 +384,27 @@ local phases = {
     JOGU_THE_DRUNK_FARM = 1312,
     JOGU_THE_DRUNK_MARKET = 1313,
     RIKKAL_AT_ZANVESS = 1314,
+    HE_SOFTFOOT_DAILY = 1315,
+    HE_SOFTFOOT_NOT_DAILY = 1316,
+    GOLDEN_LOTUS_DAILY_LOCKED = 1317,
+    GOLDEN_LOTUS_DAILY_UNLOCKED = 1318,
+    CHEN_AT_EAST_BRIDGE = 1319,
+    CHEN_AT_PANGS_STEAD = 1320,
+    CHEN_AT_SHANGS_STEAD = 1321,
+    CHEN_AT_MUDMUGS_PLACE = 1322,
+    CHEN_AT_MUDMUGS_PLACE_LEGACY = 1323,
+    CHEN_AT_HALFHILL = 1324,
+    CHEN_AT_HALFHILL_BREWED = 1325,
+    CHEN_AT_STORMSTOUT_BREWERY_DOOR = 1326,
+    CHEN_AT_STORMSTOUT_BREWERY_HOZEN = 1327,
+    MUDMUG_AT_STORMSTOUT_BREWERY_HOZEN = 1328,
+    LI_LI_AT_STORMSTOUT_BREWERY_HOZEN = 1329,
+    CHEN_AT_STORMSTOUT_BREWERY_SIDE = 1330,
+    MUDMUG_AT_STORMSTOUT_BREWERY_SIDE = 1331,
+    LI_LI_AT_STORMSTOUT_BREWERY_SIDE = 1332,
+    CHEN_AT_STORMSTOUT_BREWERY_CLEANED_HOUSE = 1333,
+    FARMER_YOON_HOUSE = 1334,
+    FARM_HAS_4_SLOTS = 1335,
 }
 Phasing.phases = phases
 
@@ -1380,8 +1401,8 @@ function Phasing.IsSpawnVisible(phase)
         return complete[29577] or questLog[29577] and true or false
     end
 
-    if phase == phases.CLEVER_ASHYO_SOUTH_OF_POOLS_OF_PURITY then
-        return (not complete[29577]) and (not questLog[29577]) and (complete[29871] or questLog[29871]) and true or false
+    if phase == phases.CLEVER_ASHYO_AT_NEW_CIFERA then
+        return not (complete[29577] or questLog[29577]) or false
     end
 
     if phase == phases.KANG_AT_THUNDER_CLEFT then
@@ -1548,6 +1569,10 @@ function Phasing.IsSpawnVisible(phase)
         return complete[31338] or false
     end
 
+    if phase == phases.FARM_HAS_4_SLOTS then
+        return complete[30256] or false
+    end
+
     if phase == phases.FARM_HAS_8_SLOTS then
         return complete[30516] or false
     end
@@ -1577,23 +1602,26 @@ function Phasing.IsSpawnVisible(phase)
     end
 
     if phase == phases.XUEN_START then
-        return not (complete[30879] or (questLog[30879] and questLog[30879].isComplete == 1)) or false
+        return not (complete[30879] or (questLog[30879] and questLog[30879].isComplete == 1)) and not (complete[30880] or (questLog[30880] and questLog[30880].isComplete == 1)) or false
     end
 
     if phase == phases.XUEN_AFTER_FIRST_FIGHT then
-        return (complete[30879] or (questLog[30879] and questLog[30879].isComplete == 1)) and not (complete[30881] or (questLog[30881] and questLog[30881].isComplete == 1)) or false
+        return (complete[30879] or (questLog[30879] and questLog[30879].isComplete == 1)) and not (complete[30881] or (questLog[30881] and questLog[30881].isComplete == 1)) or 
+               (complete[30880] or (questLog[30880] and questLog[30880].isComplete == 1)) and not (complete[30882] or (questLog[30882] and questLog[30882].isComplete == 1)) or false
     end
 
     if phase == phases.XUEN_AFTER_SECOND_FIGHT then
-        return (complete[30881] or (questLog[30881] and questLog[30881].isComplete == 1)) and not (complete[30883] or (questLog[30883] and questLog[30883].isComplete == 1)) or false
+        return (complete[30881] or (questLog[30881] and questLog[30881].isComplete == 1)) and not (complete[30883] or (questLog[30883] and questLog[30883].isComplete == 1)) or 
+               (complete[30882] or (questLog[30882] and questLog[30882].isComplete == 1)) and not (complete[30885] or (questLog[30885] and questLog[30885].isComplete == 1)) or false
     end
 
     if phase == phases.XUEN_AFTER_THIRD_FIGHT then
-        return (complete[30883] or (questLog[30883] and questLog[30883].isComplete == 1)) and not (complete[30907] or (questLog[30907] and questLog[30907].isComplete == 1)) or false
+        return (complete[30883] or (questLog[30883] and questLog[30883].isComplete == 1)) and not (complete[30907] or (questLog[30907] and questLog[30907].isComplete == 1)) or 
+               (complete[30885] or (questLog[30885] and questLog[30885].isComplete == 1)) and not (complete[30902] or (questLog[30902] and questLog[30902].isComplete == 1)) or false
     end
 
     if phase == phases.XUEN_AFTER_FOURTH_FIGHT then
-        return (complete[30907] or (questLog[30907] and questLog[30907].isComplete == 1)) or false
+        return (complete[30902] or (questLog[30902] and questLog[30902].isComplete == 1)) or (complete[30907] or (questLog[30907] and questLog[30907].isComplete == 1)) or false
     end
 
     if phase == phases.ZIN_AT_PAGODA then
@@ -1708,14 +1736,6 @@ function Phasing.IsSpawnVisible(phase)
         return complete[30324] or questLog[30324] or false
     end
 
-    if phase == phases.FARMER_YOON_FARM then
-        return not complete[32682] or false
-    end
-
-    if phase == phases.FARMER_YOON_MARKET then
-        return complete[32682] or false
-    end
-
     if phase == phases.GINA_MUDCLAW_FARM then
         return complete[30374] and not (complete[30322] or questLog[30322]) or false
     end
@@ -1734,6 +1754,94 @@ function Phasing.IsSpawnVisible(phase)
 
     if phase == phases.RIKKAL_AT_ZANVESS then
         return not complete[31606] or false
+    end
+
+    if phase == phases.HE_SOFTFOOT_DAILY then
+        return complete[31131] or questLog[31131] or false
+    end
+
+    if phase == phases.HE_SOFTFOOT_NOT_DAILY then
+        return not complete[31131] and not questLog[31131] or false
+    end
+
+    if phase == phases.GOLDEN_LOTUS_DAILY_LOCKED then
+        return not complete[30638] or false
+    end
+
+    if phase == phases.GOLDEN_LOTUS_DAILY_UNLOCKED then
+        return complete[30638] or false
+    end
+
+    if phase == phases.CHEN_AT_EAST_BRIDGE then
+        return not (complete[29907] or questLog[29907]) or false
+    end
+
+    if phase == phases.CHEN_AT_PANGS_STEAD then
+        return (complete[29907] or questLog[29907])and not complete[29918] or false
+    end
+
+    if phase == phases.CHEN_AT_SHANGS_STEAD then
+        return complete[29918] and not (complete[29919] or questLog[29919]) or false
+    end
+
+    if phase == phases.CHEN_AT_MUDMUGS_PLACE then
+        return (complete[29919] or questLog[29919]) and not (complete[29949] or questLog[29949]) or false
+    end
+
+    if phase == phases.CHEN_AT_MUDMUGS_PLACE_LEGACY then
+        return (complete[29949] or questLog[29949]) and not (complete[30046] or questLog[30046]) or false
+    end
+
+    if phase == phases.CHEN_AT_HALFHILL then
+        return ((complete[30046] or questLog[30046]) and not (complete[30073] or (questLog[30073] and questLog[30073].isComplete == 1))) or false
+    end
+
+    if phase == phases.CHEN_AT_HALFHILL_BREWED then
+        return (complete[30073] or (questLog[30073] and questLog[30073].isComplete == 1)) and not questLog[30074] and not complete[30074] or false
+    end
+
+    if phase == phases.CHEN_AT_STORMSTOUT_BREWERY_DOOR then
+        return questLog[30074] and not complete[30074] or false
+    end
+
+    if phase == phases.CHEN_AT_STORMSTOUT_BREWERY_HOZEN then
+        return complete[30074] and not (complete[30075] or (questLog[30075] and questLog[30075].isComplete == 1)) or false
+    end
+
+    if phase == phases.MUDMUG_AT_STORMSTOUT_BREWERY_HOZEN then
+        return complete[30074] and not (complete[30076] or (questLog[30076] and questLog[30076].isComplete == 1)) or false
+    end
+
+    if phase == phases.LI_LI_AT_STORMSTOUT_BREWERY_HOZEN then
+        return complete[30074] and not (complete[30077] or (questLog[30077] and questLog[30077].isComplete == 1)) or false
+    end
+
+    if phase == phases.CHEN_AT_STORMSTOUT_BREWERY_SIDE then
+        return (complete[30075] or (questLog[30075] and questLog[30075].isComplete == 1)) and not (complete[30078] or (questLog[30078] and questLog[30078].isComplete == 1)) or false
+    end
+
+    if phase == phases.MUDMUG_AT_STORMSTOUT_BREWERY_SIDE then
+        return (complete[30076] or (questLog[30076] and questLog[30076].isComplete == 1)) and not (complete[30078] or (questLog[30078] and questLog[30078].isComplete == 1)) or false
+    end
+
+    if phase == phases.LI_LI_AT_STORMSTOUT_BREWERY_SIDE then
+        return (complete[30077] or (questLog[30077] and questLog[30077].isComplete == 1)) and not (complete[30078] or (questLog[30078] and questLog[30078].isComplete == 1)) or false
+    end
+
+    if phase == phases.CHEN_AT_STORMSTOUT_BREWERY_CLEANED_HOUSE then
+        return (complete[30078] or (questLog[30078] and questLog[30078].isComplete == 1)) or false
+    end
+
+    if phase == phases.FARMER_YOON_HOUSE then
+        return questLog[30252] or false
+    end
+
+    if phase == phases.FARMER_YOON_FARM then
+        return complete[30252] and not complete[32682] or false
+    end
+
+    if phase == phases.FARMER_YOON_MARKET then
+        return complete[32682] or false
     end
 
     return false

@@ -923,6 +923,13 @@ function MopItemFixes.Load()
         [88715] = { -- Ashes of Warlord Gurthan
             [itemKeys.startQuest] = 31677,
         },
+        [88855] = { -- Stolen Sri-La Stout
+            [itemKeys.npcDrops] = {65621,65624,65628},
+            [itemKeys.objectDrops] = {214845,214986},
+        },
+        [89053] = { -- Big Bag of Poop
+            [itemKeys.npcDrops] = {65711,67084},
+        },
         [89054] = { -- Stolen Boots
             [itemKeys.objectDrops] = {214865,214866,214867,214868},
         },
