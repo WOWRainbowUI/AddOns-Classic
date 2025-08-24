@@ -1,15 +1,15 @@
-## Interface: 30403, 50500, 110005, 110007
+## Interface: 30405, 50500, 110107, 110200
 ## Title: |TInterface/Addons/ClassicPlatesPlus/media/icons/ClassicPlatesPlus_icon:16:16|t ClassicPlates Plus
 ## Notes: ClassicPlates Plus is an addon that adds additional features and new Classic-themed visuals to nameplates.
 ## Author: Reubin
-## Version: 3.5.0
+## Version: 3.5.1
 ## DefaultState: disabled
 ## SavedVariables: CFG_Account_ClassicPlatesPlus
 ## SavedVariablesPerCharacter: CFG_ClassicPlatesPlus
 
-## Title-zhTW: |cff4DD2FF[頭像]|r 經典血條 Plus
+## Title-zhTW: |cff0099FF[介面]|r 經典血條 Plus
 ## Notes-zhTW: ClassicPlates Plus|r |n|n還原並美化經典版本的血條，有超清楚的個人資源條和簡單的自訂選項。|n|n|cffffd200使用方法: |r從Esc>選項>插件>血條，進行設定。
-## X-Category-zhTW: 介面
+## Category-zhTW: 血條
 ## IconTexture: Interface/Addons/ClassicPlatesPlus/media/icons/ClassicPlatesPlus_icon
 
 core.lua
