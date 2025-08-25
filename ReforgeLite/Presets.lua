@@ -10,35 +10,34 @@ local StatHaste = addonTable.statIds.HASTE
 local StatExp = addonTable.statIds.EXP
 
 local SPELL_HASTE_BUFFS = {
-  [24907] = true, -- Moonkin Aura
-  [49868] = true, -- Mind Quickening
-  [51470] = true, -- Elemental Oath
-  [135678] = true, -- Energizing Spores
+  24907, -- Moonkin Aura
+  49868, -- Mind Quickening
+  51470, -- Elemental Oath
+  135678, -- Energizing Spores
 }
 
 local MELEE_HASTE_BUFFS = {
-  [55610] = true, -- Unholy Aura
-  [128432] = true, -- Cackling Howl
-  [128433] = true, -- Serpent's Swiftness
-  [113742] = true, -- Swiftblade's Cunning
-  [30809] = true, -- Unleashed Rage
+  55610, -- Unholy Aura
+  128432, -- Cackling Howl
+  128433, -- Serpent's Swiftness
+  113742, -- Swiftblade's Cunning
+  30809, -- Unleashed Rage
 }
 
-function ReforgeLite:GetPlayerBuffs()
-  local spellHaste, meleeHaste
-  local slots = {C_UnitAuras.GetAuraSlots('player','helpful')}
-  for i = 2, #slots do
-    local aura = C_UnitAuras.GetAuraDataBySlot('player',slots[i])
-    if aura then
-      local id = aura.spellId
-      if SPELL_HASTE_BUFFS[id] then
-        spellHaste = true
-      elseif MELEE_HASTE_BUFFS[id] then
-        meleeHaste = true
-      end
+function ReforgeLite:PlayerHasSpellHasteBuff()
+  for _,v in ipairs(SPELL_HASTE_BUFFS) do
+    if C_UnitAuras.GetPlayerAuraBySpellID(v) then
+      return true
     end
   end
-  return spellHaste, meleeHaste
+end
+
+function ReforgeLite:PlayerHasMeleeHasteBuff()
+  for _,v in ipairs(MELEE_HASTE_BUFFS) do
+    if C_UnitAuras.GetPlayerAuraBySpellID(v) then
+      return true
+    end
+  end
 end
 
 ----------------------------------------- CAP PRESETS ---------------------------------
@@ -65,11 +64,8 @@ function ReforgeLite:GetExpertiseBonus()
 end
 function ReforgeLite:GetNonSpellHasteBonus(hasteFunc, ratingBonusId)
   local baseBonus = RoundToSignificantDigits((hasteFunc()+100)/(GetCombatRatingBonus(ratingBonusId)+100), 4)
-  if self.pdb.meleeHaste then
-    local _, meleeHaste = self:GetPlayerBuffs()
-    if not meleeHaste then
-      baseBonus = baseBonus * 1.1
-    end
+  if self.pdb.meleeHaste and not self:PlayerHasMeleeHasteBuff() then
+    baseBonus = baseBonus * 1.1
   end
   return baseBonus
 end
@@ -81,11 +77,8 @@ function ReforgeLite:GetRangedHasteBonus()
 end
 function ReforgeLite:GetSpellHasteBonus()
   local baseBonus = (UnitSpellHaste('PLAYER')+100)/(GetCombatRatingBonus(CR_HASTE_SPELL)+100)
-  if self.pdb.spellHaste then
-    local spellHaste = self:GetPlayerBuffs()
-    if not spellHaste then
-      baseBonus = baseBonus * 1.05
-    end
+  if self.pdb.spellHaste and not self:PlayerHasSpellHasteBuff() then
+    baseBonus = baseBonus * 1.05
   end
   return RoundToSignificantDigits(baseBonus, 6)
 end
@@ -284,6 +277,21 @@ do
       category = StatHaste,
       name = nameFormatWithTicks:format(renewMarkup, 87.44, 4, renew),
       getter = GetSpellHasteRequired(87.44),
+    })
+  elseif addonTable.playerClass == "WARLOCK" then
+    local doom, doomMarkup = C_Spell.GetSpellName(603), CreateIconMarkup(136122)
+    local shadowflame, shadowflameMarkup = C_Spell.GetSpellName(47960), CreateIconMarkup(425954)
+    tinsert(ReforgeLite.capPresets, {
+      value = CAPS.FirstHasteBreak,
+      category = StatHaste,
+      name = nameFormatWithTicks:format(doomMarkup, 12.51, 1, doom),
+      getter = GetSpellHasteRequired(12.51),
+    })
+    tinsert(ReforgeLite.capPresets, {
+      value = CAPS.SecondHasteBreak,
+      category = StatHaste,
+      name = nameFormatWithTicks:format(shadowflameMarkup, 25, 2, shadowflame),
+      getter = GetSpellHasteRequired(25),
     })
   end
 end
@@ -488,10 +496,20 @@ do
         },
       },
       [specs.monk.windwalker] = {
-        weights = {
-          0, 0, 0, 141, 46, 57, 99, 39
+        [C_Spell.GetSpellName(114355)] = { -- Dual Wield
+          icon = 132147,
+          weights = {
+            0, 0, 0, 141, 46, 57, 99, 39
+          },
+          caps = MeleeCaps,
         },
-        caps = MeleeCaps,
+        [AUCTION_SUBCATEGORY_TWO_HANDED] = { -- Two-Handed
+          icon = 135145,
+          weights = {
+            0, 0, 0, 138, 46, 54, 122, 38
+          },
+          caps = MeleeCaps,
+        },
       },
     },
     ["PALADIN"] = {
@@ -546,7 +564,7 @@ do
       },
       [specs.priest.shadow] = {
         weights = {
-          0, 0, 0, 200, 80, 120, 0, 40
+          90, 0, 0, 85, 42, 76, 0, 48
         },
         caps = CasterCaps
       },
@@ -593,7 +611,7 @@ do
     ["WARLOCK"] = {
       [specs.warlock.afflication] = {
         weights = {
-          0, 0, 0, 150, 50, 120, 0, 100
+          0, 0, 0, 93, 38, 58, 0, 80
         },
         caps = CasterCaps,
       },
@@ -605,7 +623,7 @@ do
       },
       [specs.warlock.demonology] = {
         weights = {
-          0, 0, 0, 150, 50, 100, 0, 120
+          0, 0, 0, 400, 51, 275, 0, 57
         },
         caps = CasterCaps,
       },
@@ -652,7 +670,7 @@ end
 function ReforgeLite:InitCustomPresets()
   local customPresets = {}
   for k, v in pairs(self.cdb.customPresets) do
-    local preset = addonTable.DeepCopy(v)
+    local preset = CopyTable(v)
     preset.name = k
     tinsert(customPresets, preset)
   end
@@ -784,14 +802,14 @@ function ReforgeLite:InitPresets()
       return result
     end
   }
-  addonTable.MergeTables(exportList, self.presets)
+  MergeTable(exportList, self.presets)
 
   --[===[@debug@
   self.exportPresetMenu = LibDD:Create_UIDropDownMenu("ReforgeLiteExportPresetMenu", self)
   self.exportPresetMenu.list = exportList
   LibDD:UIDropDownMenu_Initialize(self.exportPresetMenu, menuListInit({
     onClick = function(info)
-      local output = addonTable.DeepCopy(info.value)
+      local output = CopyTable(info.value)
       output.prioritySort = nil
       self:ExportJSON(output, info.sortKey)
     end

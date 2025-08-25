@@ -10,7 +10,6 @@ local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 addonTable.MAX_LOOPS = 200000
 local MIN_LOOPS = 1000
 
-local DeepCopy = addonTable.DeepCopy
 local GetItemStats = addonTable.GetItemStatsUp
 
 local gprint = print
@@ -74,6 +73,8 @@ local DefaultDB = {
   },
 }
 
+local RFL_FRAMES = { ReforgeLite }
+
 local function ReforgeFrameIsVisible()
   return ReforgingFrame and ReforgingFrame:IsShown()
 end
@@ -92,11 +93,11 @@ function ReforgeLite:UpgradeDB()
   local db = ReforgeLiteDB
   if not db then return end
   if db.classProfiles then
-    db.class = DeepCopy(db.classProfiles)
+    db.class = CopyTable(db.classProfiles)
     db.classProfiles = nil
   end
   if db.profiles then
-    db.char = DeepCopy(db.profiles)
+    db.char = CopyTable(db.profiles)
     db.profiles = nil
   end
   if not db.global then
@@ -105,7 +106,7 @@ function ReforgeLite:UpgradeDB()
       local default = DefaultDB.global[k]
       if default ~= nil then
         if default ~= v then
-          db.global[k] = DeepCopy(v)
+          db.global[k] = CopyTable(v)
         end
         db[k] = nil
       end
@@ -117,8 +118,8 @@ end
 
 GUI.CreateStaticPopup("REFORGE_LITE_SAVE_PRESET", L["Enter the preset name"], { func = function(text)
   ReforgeLite.cdb.customPresets[text] = {
-    caps = DeepCopy(ReforgeLite.pdb.caps),
-    weights = DeepCopy(ReforgeLite.pdb.weights)
+    caps = CopyTable(ReforgeLite.pdb.caps),
+    weights = CopyTable(ReforgeLite.pdb.weights)
   }
   ReforgeLite:InitCustomPresets()
   ReforgeLite.deletePresetButton:Enable()
@@ -269,7 +270,7 @@ addonTable.WoWSimsOriginTag = "WoWSims"
 function ReforgeLite:ValidateWoWSimsString(importStr)
   local success, wowsims = pcall(function () return C_EncodingUtil.DeserializeJSON(importStr) end)
   if success and (wowsims or {}).player then
-    local newItems = DeepCopy((self.pdb.method or self:InitializeMethod()).items)
+    local newItems = CopyTable((self.pdb.method or self:InitializeMethod()).items)
     for slot,item in ipairs(newItems) do
       local simItemInfo = wowsims.player.equipment.items[slot] or {}
       local equippedItemInfo = self.itemData[slot]
@@ -532,22 +533,24 @@ function ReforgeLite:FixScroll ()
 end
 
 function ReforgeLite:SetNewTopWindow(newTopWindow)
-  local topWindow, bottomWindow = self:GetFrameOrder()
-  if not bottomWindow then return end
-  if (newTopWindow or self) == topWindow then
-    topWindow = bottomWindow
-    bottomWindow = newTopWindow or self
+  if not RFL_FRAMES[2] then return end
+  newTopWindow = newTopWindow or self
+  for _, frame in ipairs(RFL_FRAMES) do
+    if frame == newTopWindow then
+      frame:Raise()
+      frame:SetFrameActive(true)
+    else
+      frame:Lower()
+      frame:SetFrameActive(false)
+    end
   end
-  bottomWindow:SetFrameLevel(10)
-  topWindow:SetFrameLevel(1)
-  bottomWindow:SetFrameActive(true)
-  topWindow:SetFrameActive(false)
 end
 
 function ReforgeLite:CreateFrame()
   self:InitPresets()
   self:SetFrameStrata ("DIALOG")
   self:ClearAllPoints ()
+  self:SetToplevel(true)
   self:SetSize(self.db.windowWidth, self.db.windowHeight)
   self:SetResizeBounds(780, 500, 1000, 800)
   if self.db.windowLocation then
@@ -947,8 +950,19 @@ function ReforgeLite:UpdateCapPoints (i)
     self.statCaps.cells[base + point][4]:SetText (self.pdb.caps[i].points[point].after)
   end
 end
+function ReforgeLite:RefreshCaps()
+  for capIndex, cap in ipairs(self.pdb.caps) do
+    for pointIndex, point in ipairs(cap.points) do
+      local oldValue = point.value
+      self:UpdateCapPreset(capIndex, pointIndex)
+      if oldValue ~= point.value then
+        self:ReorderCapPoint (capIndex, pointIndex)
+      end
+    end
+  end
+end
 function ReforgeLite:CollapseStatCaps()
-  local caps = DeepCopy(self.pdb.caps)
+  local caps = CopyTable(self.pdb.caps)
   table.sort(caps, function(a,b)
     local aIsNone = a.stat == 0 and 1 or 0
     local bIsNone = b.stat == 0 and 1 or 0
@@ -958,7 +972,7 @@ function ReforgeLite:CollapseStatCaps()
 end
 function ReforgeLite:SetStatWeights (weights, caps)
   if weights then
-    self.pdb.weights = DeepCopy (weights)
+    self.pdb.weights = CopyTable (weights)
     for i = 1, #self.itemStats do
       if self.statWeights.inputs[i] then
         self.statWeights.inputs[i]:SetText (self.pdb.weights[i])
@@ -980,7 +994,7 @@ function ReforgeLite:SetStatWeights (weights, caps)
         self:RemoveCapPoint (i, 1)
       end
       if caps[i] then
-        self.pdb.caps[i] = DeepCopy (caps[i])
+        self.pdb.caps[i] = CopyTable (caps[i])
         for p = 1, #self.pdb.caps[i].points do
           self.pdb.caps[i].points[p].method = self.pdb.caps[i].points[p].method or 3
           self.pdb.caps[i].points[p].after = self.pdb.caps[i].points[p].after or 0
@@ -1090,7 +1104,7 @@ function ReforgeLite:CreateOptionList ()
   self.exportPresetButton:SetPoint ("LEFT", self.deletePresetButton, "RIGHT", 5, 0)
   --@end-debug@]===]
 
-  self.pawnButton = GUI:CreatePanelButton (self.content, L["Import WoWSims/Pawn"], function(btn) self:ImportData() end)
+  self.pawnButton = GUI:CreatePanelButton (self.content, L["Import WoWSims/Pawn/QE"], function(btn) self:ImportData() end)
   self.statWeightsCategory:AddFrame (self.pawnButton)
   self:SetAnchor (self.pawnButton, "TOPLEFT", self.presetsButton, "BOTTOMLEFT", 0, -5)
 
@@ -1126,15 +1140,7 @@ function ReforgeLite:CreateOptionList ()
     end
     local function SetSelected(value)
         self.pdb[value] = not self.pdb[value]
-        for capIndex, cap in ipairs(self.pdb.caps) do
-          for pointIndex, point in ipairs(cap.points) do
-            local oldValue = point.value
-            self:UpdateCapPreset(capIndex, pointIndex)
-            if oldValue ~= point.value then
-              self:ReorderCapPoint (capIndex, pointIndex)
-            end
-          end
-        end
+        self:RefreshCaps()
     end
     local buffsContextValues = {
       { text = CreateSimpleTextureMarkup(136092, 20, 20) .. " " .. L["Spell Haste"], key = "spellHaste"},
@@ -1279,11 +1285,32 @@ function ReforgeLite:CreateOptionList ()
     ReforgeLite:UpdateMethodCategory ()
   end
 end
-function ReforgeLite:GetFrameOrder()
-  if self.methodWindow and self.methodWindow:IsShown() and self.methodWindow:GetFrameLevel () > self:GetFrameLevel() then
-    return self.methodWindow, self
+
+function ReforgeLite:GetActiveWindow()
+  if(not RFL_FRAMES[2] and RFL_FRAMES[1]:IsShown()) then
+    return RFL_FRAMES[1]
   end
-  return self, self.methodWindow
+  local topWindow
+  for _, frame in ipairs(RFL_FRAMES) do
+    if frame:IsShown() and (not topWindow or frame:GetRaisedFrameLevel() > topWindow:GetRaisedFrameLevel()) then
+      topWindow = frame
+    end
+  end
+  return topWindow
+end
+
+function ReforgeLite:GetInactiveWindows()
+  if(not RFL_FRAMES[2]) then
+    return {}
+  end
+  local activeWindow = self:GetActiveWindow()
+  local bottomWindows = {}
+  for _, frame in ipairs(RFL_FRAMES) do
+    if frame:IsShown() and frame:GetRaisedFrameLevel() < activeWindow:GetRaisedFrameLevel() then
+      tinsert(bottomWindows, frame)
+    end
+  end
+  return bottomWindows
 end
 
 function ReforgeLite:FillSettings()
@@ -1326,15 +1353,14 @@ function ReforgeLite:FillSettings()
   local activeWindowTitleOrderId = getOrderId('settings')
   self.settings:SetCellText (activeWindowTitleOrderId, 0, L["Active window color"], "LEFT", nil, "GameFontNormal")
   self.settings:SetCell (activeWindowTitleOrderId, 1, GUI:CreateColorPicker (self.settings, 20, 20, self.db.activeWindowTitle, function ()
-    self:GetFrameOrder():SetFrameActive(true)
+    self:GetActiveWindow():SetFrameActive(true)
   end), "LEFT")
 
   local inactiveWindowTitleOrderId = getOrderId('settings')
   self.settings:SetCellText (inactiveWindowTitleOrderId, 0, L["Inactive window color"], "LEFT", nil, "GameFontNormal")
   self.settings:SetCell (inactiveWindowTitleOrderId, 1, GUI:CreateColorPicker (self.settings, 20, 20, self.db.inactiveWindowTitle, function ()
-    local _, inactiveWindow = self:GetFrameOrder()
-    if inactiveWindow then
-      inactiveWindow:SetFrameActive(false)
+    for _, frame in ipairs(self:GetInactiveWindows()) do
+      frame:SetFrameActive(false)
     end
   end), "LEFT")
 
@@ -1537,15 +1563,7 @@ function ReforgeLite:UpdateItems()
     self.statTotals[i]:SetText(v.getter())
   end
 
-  for capIndex, cap in ipairs(self.pdb.caps) do
-    for pointIndex, point in ipairs(cap.points) do
-      local oldValue = point.value
-      self:UpdateCapPreset (capIndex, pointIndex)
-      if oldValue ~= point.value then
-        self:ReorderCapPoint (capIndex, pointIndex)
-      end
-    end
-  end
+  self:RefreshCaps()
   self:RefreshMethodStats()
 end
 
@@ -1585,14 +1603,31 @@ function ReforgeLite:UpdatePlayerSpecInfo()
 end
 
 local queueUpdateEvents = {
-  ["COMBAT_RATING_UPDATE"] = true,
-  ["MASTERY_UPDATE"] = true,
-  ["PLAYER_EQUIPMENT_CHANGED"] = true,
-  ["FORGE_MASTER_ITEM_CHANGED"] = true,
+  COMBAT_RATING_UPDATE = true,
+  MASTERY_UPDATE = true,
+  PLAYER_EQUIPMENT_CHANGED = true,
+  FORGE_MASTER_ITEM_CHANGED = true,
+  UNIT_AURA = "player",
 }
 
+local queueEventsRegistered = false
+function ReforgeLite:RegisterQueueUpdateEvents()
+  if queueEventsRegistered then return end
+  for event in pairs(queueUpdateEvents) do
+    self:RegisterEvent(event)
+  end
+  queueEventsRegistered = true
+end
+
+function ReforgeLite:UnregisterQueueUpdateEvents()
+  if not queueEventsRegistered then return end
+  for event in pairs(queueUpdateEvents) do
+    self:UnregisterEvent(event)
+  end
+  queueEventsRegistered = false
+end
+
 function ReforgeLite:QueueUpdate()
-  if not self:GetFrameOrder():IsShown() then return end
   local time = GetTime()
   if self.lastRan == time then return end
   self.lastRan = time
@@ -1607,6 +1642,7 @@ end
 function ReforgeLite:CreateMethodWindow()
   self.methodWindow = CreateFrame ("Frame", "ReforgeLiteMethodWindow", UIParent, "BackdropTemplate")
   self.methodWindow:SetFrameStrata ("DIALOG")
+  self.methodWindow:SetToplevel(true)
   self.methodWindow:ClearAllPoints ()
   self.methodWindow:SetSize(250, 480)
   if self.db.methodWindowLocation then
@@ -1621,13 +1657,7 @@ function ReforgeLite:CreateMethodWindow()
   self.methodWindow.titlebar:SetPoint("TOPLEFT",self.methodWindow,"TOPLEFT",3,-3)
   self.methodWindow.titlebar:SetPoint("TOPRIGHT",self.methodWindow,"TOPRIGHT",-3,-3)
   self.methodWindow.titlebar:SetHeight(20)
-  self.methodWindow.SetFrameActive = function(frame, active)
-    if active then
-      frame.titlebar:SetColorTexture(unpack (self.db.activeWindowTitle))
-    else
-      frame.titlebar:SetColorTexture(unpack (self.db.inactiveWindowTitle))
-    end
-  end
+  self.methodWindow.SetFrameActive = self.SetFrameActive
   self.methodWindow:SetFrameActive(true)
 
   self.methodWindow:SetBackdropColor (0.1, 0.1, 0.1)
@@ -1649,7 +1679,9 @@ function ReforgeLite:CreateMethodWindow()
       self.db.methodWindowLocation = SafePack(window:GetPoint())
     end
   end)
+
   tinsert(UISpecialFrames, self.methodWindow:GetName()) -- allow closing with escape
+  tinsert(RFL_FRAMES, self.methodWindow)
 
   self.methodWindow.title = self.methodWindow:CreateFontString (nil, "OVERLAY", "GameFontNormal")
   self.methodWindow.title:SetTextColor (1, 1, 1)
@@ -1666,14 +1698,18 @@ function ReforgeLite:CreateMethodWindow()
     btn:GetParent():Hide()
   end)
   self.methodWindow:SetScript ("OnHide", function (frame)
-    self:SetFrameActive(true)
+    local activeWindow = self:GetActiveWindow()
+    if activeWindow then
+      self:SetFrameActive(true)
+    else
+      self:UnregisterQueueUpdateEvents()
+    end
   end)
   self.methodWindow:SetScript ("OnShow", function (frame)
-    self:SetFrameActive(false)
-    frame:SetFrameActive(true)
+    self:SetNewTopWindow(frame)
     self:RefreshMethodWindow()
+    self:RegisterQueueUpdateEvents()
   end)
-  self:SetFrameActive(false)
 
   self.methodWindow.itemTable = GUI:CreateTable (#self.itemSlots + 1, 3, 0, 0, nil, self.methodWindow)
   self.methodWindow:ClearAllPoints ()
@@ -1753,6 +1789,7 @@ function ReforgeLite:CreateMethodWindow()
   end
 
   self:RefreshMethodWindow()
+  self:SetNewTopWindow(self.methodWindow)
 end
 
 function ReforgeLite:RefreshMethodWindow()
@@ -1795,8 +1832,6 @@ function ReforgeLite:ShowMethodWindow()
   if not self.methodWindow then
     self:CreateMethodWindow()
   end
-
-  self:SetNewTopWindow(self.methodWindow)
 
   GUI:ClearFocus()
   self.methodWindow:Show()
@@ -1846,16 +1881,16 @@ function ReforgeLite:SwapSpecProfiles()
   if not self.db.specProfiles then return end
 
   local currentSettings = {
-    caps = DeepCopy(self.pdb.caps),
-    weights = DeepCopy(self.pdb.weights),
+    caps = CopyTable(self.pdb.caps),
+    weights = CopyTable(self.pdb.weights),
   }
 
   if self.pdb.prevSpecSettings then
     if self.initialized then
       self:SetStatWeights(self.pdb.prevSpecSettings.weights, self.pdb.prevSpecSettings.caps or {})
     else
-      self.pdb.weights = DeepCopy(self.pdb.prevSpecSettings.weights)
-      self.pdb.caps = DeepCopy(self.pdb.prevSpecSettings.caps)
+      self.pdb.weights = CopyTable(self.pdb.prevSpecSettings.weights)
+      self.pdb.caps = CopyTable(self.pdb.prevSpecSettings.caps)
     end
   end
 
@@ -1979,7 +2014,10 @@ function ReforgeLite:OnEvent(event, ...)
     self[event](self, ...)
   end
   if queueUpdateEvents[event] then
-    self:QueueUpdate()
+    local arg1 = ...
+    if queueUpdateEvents[event] == true or queueUpdateEvents[event] == arg1 then
+      self:QueueUpdate()
+    end
   end
 end
 
@@ -1994,15 +2032,21 @@ function ReforgeLite:OnShow()
   self:Initialize()
   self:SetNewTopWindow()
   self:UpdateItems()
+  self:RegisterQueueUpdateEvents()
 end
 
 function ReforgeLite:OnHide()
-  self:SetNewTopWindow(self.methodWindow)
+  local activeWindow = self:GetActiveWindow()
+  if activeWindow then
+    self:SetNewTopWindow(activeWindow)
+  else
+    self:UnregisterQueueUpdateEvents()
+  end
 end
 
 function ReforgeLite:OnCommand (cmd)
   if InCombatLockdown() then print(ERROR_CAPS, ERR_AFFECTING_COMBAT) return end
-  self:Show ()
+  self:Show()
 end
 
 function ReforgeLite:FORGE_MASTER_ITEM_CHANGED()
@@ -2091,9 +2135,6 @@ function ReforgeLite:ADDON_LOADED (addon)
     self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
   end
 
-  for event in pairs(queueUpdateEvents) do
-    self:RegisterEvent(event)
-  end
   self:UnregisterEvent("ADDON_LOADED")
 
   self:SetScript("OnShow", self.OnShow)
