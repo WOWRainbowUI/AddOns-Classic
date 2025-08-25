@@ -158,7 +158,7 @@
 		},
 		--[[The Cape of Stranglethorn]] [210] = {
 			{"FlightA", 41.7, 74.5, L["Booty Bay"] .. ", " .. L["The Cape of Stranglethorn"], nil, tATex, nil, nil},
-			{"FlightA", 41.7, 74.5, L["Explorer's League Digsite"] .. ", " .. L["The Cape of Stranglethorn"], nil, tATex, nil, nil},
+			{"FlightA", 55.7, 41.2, L["Explorers' League Digsite"] .. ", " .. L["The Cape of Stranglethorn"], nil, tATex, nil, nil},
 			{"FlightH", 35.0, 29.2, L["Hardwrench Hideaway"] .. ", " .. L["The Cape of Stranglethorn"], nil, tHTex, nil, nil},
 			{"FlightH", 40.6, 73.4, L["Booty Bay"] .. ", " .. L["The Cape of Stranglethorn"], nil, tHTex, nil, nil},
 			{"TravelN", 39.0, 67.0, L["Boat to"] .. " " .. L["Ratchet"] .. ", " .. L["The Barrens"], nil, fNTex, nil, nil, nil, nil, nil, 0, 1413},

@@ -1,4 +1,7 @@
-﻿5.0.02 - 14th July 2025
+﻿5.0.03 - 5th August 2025
+- Fixed the location of Explorers' League Digsite flight point icon.
+
+5.0.02 - 14th July 2025
 - Fixed the Southern Barrens map.
 
 5.0.01 - 7th July 2025
