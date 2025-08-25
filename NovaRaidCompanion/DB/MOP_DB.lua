@@ -3300,10 +3300,10 @@ NRC.foods = {
 		desc = "+300 Intellect",
 		maxRank = true,
 	},
-	[146806] = { --Spiced Blossom Soup.
+	[104283] = { --Chun Tian Spring Rolls.
 		name = "Well Fed",
 		icon = 136000,
-		desc = "+300 Intellect",
+		desc = "+450 Stamina",
 		maxRank = true,
 	},
 	[104280] = { --Steamed Crab Surprise.
@@ -3344,12 +3344,6 @@ NRC.foods = {
 		maxRank = true,
 	},
 	[146808] = { --Stuffed Lushrooms.
-		name = "Well Fed",
-		icon = 136000,
-		desc = "+450 Stamina",
-		maxRank = true,
-	},
-	[104283] = { --Chun Tian Spring Rolls.
 		name = "Well Fed",
 		icon = 136000,
 		desc = "+450 Stamina",

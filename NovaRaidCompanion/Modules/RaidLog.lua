@@ -84,7 +84,7 @@ function NRC:chatMsgLoot(...)
     end
     --Bonus rolls for MoP+.
     if (not itemLink) then
-	    local itemLink, amount = strmatch(msg, string.gsub(string.gsub(LOOT_ITEM_BONUS_ROLL_SELF_MULTIPLE, "%%s", "(.+)"), "%%d", "(%%d+)"));
+	    itemLink, amount = strmatch(msg, string.gsub(string.gsub(LOOT_ITEM_BONUS_ROLL_SELF_MULTIPLE, "%%s", "(.+)"), "%%d", "(%%d+)"));
 		if (not itemLink) then
 	 		--Self receive single loot "You receive loot: [Item]"
 	    	itemLink = msg:match(LOOT_ITEM_BONUS_ROLL_SELF:gsub("%%s", "(.+)"));
@@ -5869,9 +5869,9 @@ f:SetScript('OnEvent', function(self, event, ...)
 		if (NRC.inInstance) then
 			NRC.raid.leftTime = GetServerTime();
 		end
-		NRC:recordLockoutData();
+		NRC:recordLockoutData(true);
 	elseif (event == "PLAYER_LOGOUT") then
-		NRC:recordLockoutData();
+		NRC:recordLockoutData(true);
 	elseif (event == "GROUP_JOINED") then
 		if (NRC.raid) then
 			--Rejoined group while inside raid.
@@ -6496,7 +6496,7 @@ local lockoutBossQuests = {
 	},
 };
 
-function NRC:recordLockoutData()
+function NRC:recordLockoutData(isLogout)
 	local char = UnitName("player");
 	if (not NRC.data.myChars[char]) then
 		NRC.data.myChars[char] = {};
@@ -6504,7 +6504,6 @@ function NRC:recordLockoutData()
 	if (not NRC.data.myChars[char].savedInstances) then
 		NRC.data.myChars[char].savedInstances = {};
 	end
-	local data = {};
 	for i = 1, GetNumSavedInstances() do
 		local name, id, reset, difficulty, locked, extended, instanceIDMostSig, isRaid, maxPlayers,
 				difficultyName, numEncounters, encounterProgress = GetSavedInstanceInfo(i);
@@ -6518,22 +6517,27 @@ function NRC:recordLockoutData()
 			};
 		end
 	end
-	for k, v in pairs(lockoutBossQuests) do
-		if (IsQuestFlaggedCompleted(k)) then
-			local name = v.name;
-			if (v.journalEncounterID) then
-				local _, journalName = EJ_GetCreatureInfo(1, v.journalEncounterID);
-				if (journalName and journalName ~= "") then
-					--Use the journal API for localization.
-					name = journalName;
+	if (not isLogout) then
+		--Quest info is nil at logout.
+		for k, v in pairs(lockoutBossQuests) do
+			if (IsQuestFlaggedCompleted(k)) then
+				local name = v.name;
+				if (v.journalEncounterID) then
+					local _, journalName = EJ_GetCreatureInfo(1, v.journalEncounterID);
+					if (journalName and journalName ~= "") then
+						--Use the journal API for localization.
+						name = journalName;
+					end
 				end
+				NRC.data.myChars[char].savedInstances[k] = {
+					name = name,
+					resetTime = GetServerTime() + C_DateAndTime.GetSecondsUntilWeeklyReset(),
+					difficultyName = v.difficultyName,
+					locked = true,
+				};
+			else
+				NRC.data.myChars[char].savedInstances[k] = nil;
 			end
-			NRC.data.myChars[char].savedInstances[k] = {
-				name = name,
-				resetTime = GetServerTime() + C_DateAndTime.GetSecondsUntilWeeklyReset(),
-				difficultyName = v.difficultyName,
-				locked = true,
-			};
 		end
 	end
 end

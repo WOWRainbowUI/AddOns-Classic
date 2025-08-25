@@ -818,12 +818,14 @@ f:SetScript('OnEvent', function(self, event, ...)
 				NRC:checkMetaGem();
 			end)
 		else
-			local inInstance, instanceType = IsInInstance();
-			if (inInstance) then
-				C_Timer.After(3, function()
-					NRC:checkFishingGear();
-				end)
-			end
+			C_Timer.After(2, function()
+				local inInstance, instanceType = IsInInstance();
+				if (inInstance) then
+					C_Timer.After(3, function()
+						NRC:checkFishingGear();
+					end)
+				end
+			end)
 			C_Timer.After(5, function()
 				NRC:checkMetaGem();
 			end)

@@ -21,6 +21,8 @@ local GetNormalizedRealmName = GetNormalizedRealmName;
 local tinsert = tinsert;
 local cachedGetNormalizedRealmName;
 local lastGroupJoin = 0;
+local MAX_PARTY_MEMBERS = MAX_PARTY_MEMBERS;
+local MAX_RAID_MEMBERS = MAX_RAID_MEMBERS;
 
 function NRC:updateGroupCache()
 	local group = {};
@@ -443,10 +445,12 @@ end]]
 
 function NRC:getUnitFromGUID(guid)
 	local unitType = "party";
+	local groupLimit = MAX_PARTY_MEMBERS;
 	if (IsInRaid()) then
-		unitType = "raid";
+	  unitType = "raid";
+	  groupLimit = MAX_RAID_MEMBERS;
 	end
-	for i = 1, GetNumGroupMembers() do
+	for i = 1, groupLimit do
 		--local name, rank, subGroup, level, class, classEnglish, zone, online, isDead, role, loot = GetRaidRosterInfo(i);
 		if (UnitGUID(unitType .. i) == guid) then
 			return unitType .. i;
@@ -458,17 +462,19 @@ function NRC:getUnitFromGUID(guid)
 	if (UnitGUID("target") == guid) then
 		return "target";
 	end
-	if (UnitGUID("player") == guid) then
+	if (UnitGUID("focus") == guid) then
 		return "focus";
 	end
 end
 
 function NRC:getUnitFromName(name)
 	local unitType = "party";
+	local groupLimit = MAX_PARTY_MEMBERS;
 	if (IsInRaid()) then
-		unitType = "raid";
+	  unitType = "raid";
+	  groupLimit = MAX_RAID_MEMBERS;
 	end
-	for i = 1, GetNumGroupMembers() do
+	for i = 1, groupLimit do
 		if (UnitName(unitType .. i) == name) then
 			return unitType .. i;
 		end
@@ -479,7 +485,7 @@ function NRC:getUnitFromName(name)
 	if (UnitName("target") == name) then
 		return "target";
 	end
-	if (UnitName("player") == name) then
+	if (UnitName("focus") == name) then
 		return "focus";
 	end
 end

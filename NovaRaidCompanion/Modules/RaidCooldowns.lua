@@ -621,7 +621,10 @@ end
 --Check a single character for cooldowns to track when they join group.
 --If cooldownName is passed then we track this spell for this player without class checks (for neck buffs etc).
 function NRC:loadRaidCooldownChar(name, data, cooldownName)
-	--NRC:debug("loading char", name, data, cooldownName);
+	if (not data) then
+		NRC:debug("missing cooldown data loading char", name, data, cooldownName);
+		return;
+	end
 	NRC:removeRaidCooldownChar(data.guid);
 	for k, v in pairs(NRC.cooldowns) do
 		if (NRC.config["raidCooldown" .. string.gsub(k, " ", "")] and (v.class == data.class or cooldownName == k)

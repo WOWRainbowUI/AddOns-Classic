@@ -17,6 +17,7 @@ local expansionNum = NRC.expansionNum;
 local strmatch = strmatch;
 local isTierTalents = NRC.isTierTalents;
 local talentRowCount = NRC.talentRowCount;
+local lastEnteringWorld = 0;
 
 local enchantNames = {};
 NRC.gearCache = {};
@@ -704,7 +705,7 @@ function NRC:getEnchantsData(guid)
 	end
 end
 
-function NRC:getGemsData(guid)
+function NRC:getGemsData(guid) --/dump NRC:getGemsData(UnitGUID("target")) /dump NRC.gearCache[UnitGUID("target")]
 	if (NRC.gearCache[guid]) then
 		local sockets, equipped = 0, 0;
 		local data = NRC.gearCache[guid];
@@ -737,6 +738,9 @@ function NRC:getGlyphsData(name)
 	end
 end
 
+function NRC:checkGearForArmorBonus(guid)
+
+end
 
 local pvpTrinkets = NRC.pvpTrinkets or {};
 function NRC:updateIssuesCache(guid)
@@ -1072,6 +1076,7 @@ end
 local f = CreateFrame("Frame");
 f:RegisterEvent("UNIT_INVENTORY_CHANGED");
 f:RegisterEvent("PLAYER_ENTERING_WORLD");
+f:RegisterEvent("PLAYER_LEAVING_WORLD");
 f:RegisterEvent("ENCOUNTER_END");
 f:SetScript('OnEvent', function(self, event, ...)
 	if (event == "UNIT_INVENTORY_CHANGED") then
@@ -1085,12 +1090,15 @@ f:SetScript('OnEvent', function(self, event, ...)
 			end
 		end
 	elseif (event == "PLAYER_ENTERING_WORLD") then
+		lastEnteringWorld = GetTime();
 		C_Timer.After(5, function()
 			NRC:buildMyInventoryFromInspect();
 		end);
 		--if (NRC.isSOD) then
 		--	NRC:loadInspectQueue(true);
 		--end
+	elseif (event == "PLAYER_LEAVING_WORLD") then
+		lastEnteringWorld = GetTime();
 	elseif (event == "ENCOUNTER_END") then
 		NRC:loadInspectQueue(true);
 	end
@@ -1418,7 +1426,9 @@ local function inspectTicker()
 		return;
 	end
 	if (next(inspectQueue)) then
-		if (GetTime() - lastInspect > inspectTimeout) then
+		--Add a small delay during and after loading screens where data can be iffy.
+		--Keep in mind though other addons may still try inspect uring this time and trigger our INSPECT_READY event.
+		if ((GetTime() - lastInspect > inspectTimeout) and (GetTime() - lastEnteringWorld > 5)) then
 			if (inspectingGUID) then
 				NRC:stopCurrentInspect();
 			end
@@ -1652,11 +1662,24 @@ end
 
 function NRC:createTalentStringFromInspect(guid, isInspect)
 	local talentString, talentString2;
+	local unit = NRC:getUnitFromGUID(guid);
+	if (not unit) then
+		if (guid) then
+			local _, _, _, _, _, name = GetPlayerInfoByGUID(guid);
+			NRC:debug("Missing inspect unit for GUID:", guid, name);
+		else
+			NRC:debug("Missing inspect unit and guid createTalentStringFromInspect().")
+		end
+		return;
+	end
 	if (NRC.isRetail) then
 		return "1-0-0-0";
 	elseif (isTierTalents) then
-		local unit = NRC:getUnitFromGUID(guid);
 		local _, _, classID = UnitClass(unit);
+		if (not classID) then
+			NRC:debug("Missing inspect classID for GUID:", guid, UnitName(unit));
+			return;
+		end
 		talentString = tostring(classID) .. "-";
 		talentString2 = tostring(classID) .. "-";
 		
@@ -1694,29 +1717,43 @@ function NRC:createTalentStringFromInspect(guid, isInspect)
 		end
 		local specID;
 		if (isInspect) then
-			local specsByClassID = {
-				[0] = {74, 81, 79},
-			    [1] = {71, 72, 73, 1446},
-			    [2] = {65, 66, 70, 1451},
-			    [3] = {253, 254, 255, 1448},
-			    [4] = {259, 260, 261, 1453},
-			    [5] = {256, 257, 258, 1452},
-			    [6] = {250, 251, 252, 1455},
-			    [7] = {262, 263, 264, 1444},
-			    [8] = {62, 63, 64, 1449},
-			    [9] = {265, 266, 267, 1454},
-			    [10] = {268, 270, 269, 1450},
-			    [11] = {102, 103, 104, 105, 1447},
-			};
-			local spec = GetInspectSpecialization(unit);
-			for k, v in pairs(specsByClassID[classID]) do
-				if (v == spec) then
-					specID = k;
-				end
+		    local spec = GetInspectSpecialization(unit);
+		    if (not spec or spec < 1) then
+				NRC:debug("Missing GetInspectSpecialization() for:", UnitName(unit), UnitClass(unit), spec);
+				return;
 			end
+		    for i = 1, C_SpecializationInfo.GetNumSpecializationsForClassID(classID) do
+		        local id = GetSpecializationInfoForClassID(classID,i);
+		        if (id == spec) then
+		            specID = i;
+		            break;
+		        end
+		    end
+		    if (not specID) then
+		    	--Backup old way.
+		    	local specsByClassID = {
+					[0] = {74, 81, 79},
+				    [1] = {71, 72, 73, 1446},
+				    [2] = {65, 66, 70, 1451},
+				    [3] = {253, 254, 255, 1448},
+				    [4] = {259, 260, 261, 1453},
+				    [5] = {256, 257, 258, 1452},
+				    [6] = {250, 251, 252, 1455},
+				    [7] = {262, 263, 264, 1444},
+				    [8] = {62, 63, 64, 1449},
+				    [9] = {265, 266, 267, 1454},
+				    [10] = {268, 270, 269, 1450},
+				    [11] = {102, 103, 104, 105, 1447},
+				};
+				for k, v in pairs(specsByClassID[classID]) do
+					if (v == spec) then
+						specID = k;
+					end
+				end
+		    end
 			if (not specID) then
-				--Fallback just to avoid errors for now, this won't be accurate though until they fix the func fir inspect...
-				--specID = C_SpecializationInfo.GetSpecialization(isInspect, nil, activeSpec);
+				NRC:debug("Missing specID for:", UnitName(unit), UnitClass(unit));
+				return;
 			end
 			--specID = specsByClassID[classID][GetInspectSpecialization(unit)];
 			--print(UnitName(unit), specID, classID, GetInspectSpecialization(unit))
@@ -1745,7 +1782,6 @@ function NRC:createTalentStringFromInspect(guid, isInspect)
 		--GetInspectSpecialization()
 		--NRC:debug(talentString, talentString2)
 	else
-		local unit = NRC:getUnitFromGUID(guid);
 		local _, class = GetPlayerInfoByGUID(guid);
 		local classID;
 		for i = 1, GetNumClasses() do
