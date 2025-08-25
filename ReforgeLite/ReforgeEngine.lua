@@ -3,7 +3,6 @@ local REFORGE_COEFF = addonTable.REFORGE_COEFF
 
 local ReforgeLite = addonTable.ReforgeLite
 local L = addonTable.L
-local DeepCopy = addonTable.DeepCopy
 local playerClass, playerRace = addonTable.playerClass, addonTable.playerRace
 local statIds = addonTable.statIds
 
@@ -19,7 +18,7 @@ function ReforgeLite:GetStatMultipliers()
   for _, v in ipairs (self.itemData) do
     if v.itemId then
       local id, iLvl = addonTable.GetItemInfoUp(v.itemId)
-      if id and addonTable.AmplificationItems[id] then
+      if addonTable.AmplificationItems[id] then
         local factor = 1 + 0.01 * Round(addonTable.GetRandPropPoints(iLvl, 2) / 420)
         result[addonTable.statIds.HASTE] = (result[addonTable.statIds.HASTE] or 1) * factor
         result[addonTable.statIds.MASTERY] = (result[addonTable.statIds.MASTERY] or 1) * factor
@@ -72,12 +71,12 @@ function ReforgeLite:GetConversion()
   local result = {}
 
   if classConversionInfo.base then
-    addonTable.MergeTables(result, classConversionInfo.base)
+    MergeTable(result, classConversionInfo.base)
   end
 
   local spec = C_SpecializationInfo.GetSpecialization()
   if spec and classConversionInfo.specs and classConversionInfo.specs[spec] then
-    addonTable.MergeTables(result, classConversionInfo.specs[spec])
+    MergeTable(result, classConversionInfo.specs[spec])
   end
 
   self.conversion = result
@@ -279,14 +278,14 @@ function ReforgeLite:InitReforgeClassic()
   local method, orgitems = self:InitializeMethod()
   local data = {}
   data.method = method
-  data.weights = DeepCopy (self.pdb.weights)
-  data.caps = DeepCopy (self.pdb.caps)
+  data.weights = CopyTable (self.pdb.weights)
+  data.caps = CopyTable (self.pdb.caps)
   data.caps[1].init = 0
   data.caps[2].init = 0
   data.initial = {}
 
   data.mult = self:GetStatMultipliers()
-  data.conv = DeepCopy(self.conversion)
+  data.conv = CopyTable(self.conversion)
 
   for i = 1, 2 do
     for point = 1, #data.caps[i].points do
@@ -363,7 +362,7 @@ end
 
 function ReforgeLite:ComputeReforgeCore(reforgeOptions)
   local char, floor = string.char, floor
-  local TABLE_SIZE = 10000
+  local TABLE_SIZE = 750
   local scores, codes = {0}, {""}
   for i, opt in ipairs(reforgeOptions) do
     local newscores, newcodes = {}, {}
@@ -439,9 +438,9 @@ function ReforgeLite:ComputeReforge()
     data.method.items[i].src = opt.src
     data.method.items[i].dst = opt.dst
   end
-  self.methodDebug = { data = DeepCopy(data) }
+  self.methodDebug = { data = CopyTable(data) }
   self:FinalizeReforge (data)
-  self.methodDebug.method = DeepCopy(data.method)
+  self.methodDebug.method = CopyTable(data.method)
   if data.method then
     self.pdb.method = data.method
     self.pdb.methodOrigin = addonName

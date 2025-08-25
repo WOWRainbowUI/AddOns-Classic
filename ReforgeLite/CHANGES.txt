@@ -1,22 +1,16 @@
-tag b261fa3f8770a360f47d747c1ff50624b23776c2 v2.1.0
+tag 9642582905d030d4fc9a35617d03674b1f587ac1 v2.1.1a
 Author:	skyler-code <skylerh15@github.com>
-Date:	Fri Aug 15 20:48:47 2025 -0500
+Date:	Thu Aug 21 23:20:20 2025 -0500
 
-commit 00180bc1d295debcdb577bbfae7e278f748ba095
+commit 3eb2069fd0b3d175daf703479f0d059b51872b42
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Aug 15 20:37:37 2025 -0500
+Date:   Thu Aug 21 23:19:54 2025 -0500
 
-    properly attach to ReforgingFrame
+    raise to 750 for accuracy
 
-commit 7d1267d4d472d95dc5b6887b97b31f3e843da979
+commit cc7cdf50a63908c17868cdb52aeaab374291736f
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Aug 15 20:35:17 2025 -0500
+Date:   Thu Aug 21 22:34:07 2025 -0500
 
-    move methodwindow to reforgingframe when using import btn
-
-commit 211a9ea93dce32f63370920eb08ac92bd65be72a
-Author: skyler-code <skylerh15@github.com>
-Date:   Fri Aug 15 20:17:55 2025 -0500
-
-    adjust import button padding
+    idk why i wrote it like that
 
