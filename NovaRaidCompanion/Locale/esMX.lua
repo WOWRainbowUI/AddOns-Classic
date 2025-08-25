@@ -467,3 +467,4 @@ L["Stratholme Holy Water"] = "Agua bendita de Stratholme";
 L["Sanctified"] = "Santificado";
 
 L["Galleon"] = "Galeón";
+L["World Boss"] = "Jefe del mundo";
