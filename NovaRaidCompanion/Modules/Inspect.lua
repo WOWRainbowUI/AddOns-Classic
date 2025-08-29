@@ -335,7 +335,7 @@ local function fallbackUpdate(guid, unit)
 							if (isSOD) then
 								NRC.sanctifiedCache[guid] = getSanctifiedCount(guid);
 							end
-							NRC:updateIssuesCache(guid);
+							NRC:updateIssuesCache(guid, unit);
 						end);
 					elseif (not next(fallbackCache[guid])) then
 						--if (unit ~= "player") then
@@ -346,10 +346,68 @@ local function fallbackUpdate(guid, unit)
 						if (isSOD) then
 							NRC.sanctifiedCache[guid] = getSanctifiedCount(guid);
 						end
-						NRC:updateIssuesCache(guid);
+						NRC:updateIssuesCache(guid, unit);
 						fallbackCache[guid] = nil;
 					end
 				end)
+			end
+		end
+	end
+end
+
+local function updateGemsCache(guid)
+	if (GetItemGem and GetItemNumSockets) then
+		local gear = NRC.gearCache[guid];
+		if (gear) then
+			for k, v in pairs(gear) do
+				if (inspectSlots[k]) then
+					local itemLink = v.itemLink;
+					local gemCount = GetItemNumSockets(itemLink);
+					if (gemCount) then
+						gear[k].gems = {
+							sockets = gemCount,
+						};
+						local equipped = 0;
+						if (k == 6 and checkBeltBuckle) then
+							--GetItemNumSockets() does not include a belt buckle socket so we can use this to check if a buckle is on the gear.
+							for slot = 1, gemCount do
+								local _, gemLink = GetItemGem(itemLink, slot);
+								if (gemLink) then
+									local _, _, _, _, _, _, color = C_Item.GetItemInfo(gemLink)
+									local t = {
+										itemLink = gemLink;
+										color = color,
+									};
+									tinsert(gear[k].gems, t);
+									equipped = equipped + 1;
+									--print(C_Item.GetItemInfo(gemLink))
+								end
+							end
+							--Check extra slot for belt buckle.
+							local _, gemLink = GetItemGem(itemLink, gemCount + 1);
+							--print(UnitName(unit), gemCount, gemLink)
+							if (gemLink) then
+								gear[k].hasBeltBuckle = true;
+							else
+								--If no gemLink is found we need to add tooltip scaning here to check for the empty gem socket texture.
+							end
+						else
+							for slot = 1, gemCount do
+								local _, gemLink = GetItemGem(itemLink, slot);
+								if (gemLink) then
+									local _, _, _, _, _, _, color = C_Item.GetItemInfo(gemLink)
+									local t = {
+										itemLink = gemLink;
+										color = color,
+									};
+									tinsert(gear[k].gems, t);
+									equipped = equipped + 1;
+								end
+							end
+						end
+						gear[k].gems.equipped = equipped;
+					end
+				end
 			end
 		end
 	end
@@ -399,12 +457,14 @@ function NRC:buildInventoryFromInspect(guid, unit, secondTry)
 				gear[k] = {
 					itemLink = itemLink;
 				};
-				if (GetItemGem and GetItemNumSockets) then
+				--[[if (GetItemGem and GetItemNumSockets) then
 					local gemCount = GetItemNumSockets(itemLink);
 					--if (k == 6) then
 					--	print(1, UnitName(unit), gemCount)
 					--end
 					--if (gemCount and gemCount > 0) then
+					
+					
 					if (gemCount) then
 						gear[k].gems = {
 							sockets = gemCount,
@@ -449,7 +509,7 @@ function NRC:buildInventoryFromInspect(guid, unit, secondTry)
 						end
 						gear[k].gems.equipped = equipped;
 					end
-				end
+				end]]
 				--equipCount = equipCount + 1;
 				updated = true;
 			end
@@ -457,6 +517,7 @@ function NRC:buildInventoryFromInspect(guid, unit, secondTry)
 		if (updated) then
 			NRC.gearCache[guid] = gear;
 			NRC.gearCache[guid].updated = GetServerTime();
+			updateGemsCache(guid);
 		end
 		if (not secondTry) then
 			C_Timer.After(0.5, function()
@@ -465,13 +526,27 @@ function NRC:buildInventoryFromInspect(guid, unit, secondTry)
 				end
 			end)
 		end
+		NRC:updateSetBonusCache(guid);
+		NRC:updateEnchantsCache(guid);
+		if (isSOD) then
+			NRC.sanctifiedCache[guid] = getSanctifiedCount(guid);
+		end
+		NRC:updateIssuesCache(guid, unit);
 		C_Timer.After(1, function()
 			NRC:updateSetBonusCache(guid);
 			NRC:updateEnchantsCache(guid);
 			if (isSOD) then
 				NRC.sanctifiedCache[guid] = getSanctifiedCount(guid);
 			end
-			NRC:updateIssuesCache(guid);
+			NRC:updateIssuesCache(guid, unit);
+		end)
+		C_Timer.After(4, function()
+			NRC:updateSetBonusCache(guid);
+			NRC:updateEnchantsCache(guid);
+			if (isSOD) then
+				NRC.sanctifiedCache[guid] = getSanctifiedCount(guid);
+			end
+			NRC:updateIssuesCache(guid, unit);
 		end)
 		--if (equipCount < 12 and guid ~= UnitGUID("player")) then
 			--There seems to be a bug where not all items load.
@@ -523,133 +598,6 @@ function NRC:buildInventoryFromInspect(guid, unit, secondTry)
 	end
 end
 
---This older version almost mostly worked, leaving it here for now.
---[[function NRC:buildInventoryFromInspect(guid, unit, secondTry)
-	--Don't use this for now, we don't want to keep inspecting for gear changes so it would be unreliable.
-	if (guid and not unit) then
-		unit = NRC:getUnitFromGUID(guid);
-		if (not unit) then
-			if (InspectFrame and InspectFrame.unit) then
-				unit = InspectFrame.unit;
-			end
-		end
-	end
-	if (unit and guid) then
-		if (not NRC:inOurGroup(guid)) then
-			return;
-		end
-		--local equipCount = 0;
-		local errorNum = 0;
-		--local _, _, _, _, _, name, realm = GetPlayerInfoByGUID(guid);
-		--local nameRealm = name .. "-" ..  realm;
-		--NRC.gearCache[guid] = nil;
-		local updated;
-		local cachingIssueFound;
-		local gear = {};
-		for k, v in pairs(inspectSlots) do
-			local itemID = GetInventoryItemID(unit, k);
-			if (itemID) then
-				local name = GetItemInfo(itemID);
-			end
-			local itemLink = GetInventoryItemLink(unit, k);
-			--if (not itemLink) then
-				--run loads and wait then rebuild cache
-				
-				--add bare link from itemid without enchant if itemlink not found, and ignore that slot from showing missing enchant by addong id as 1 or something
-				--the try inspect again in a few seconds
-			--end
-			if (itemID and not itemLink and unit ~= "player") then
-				NRC:debug("got itemID but not itemlink from inspect", UnitName(unit), itemID);
-				cachingIssueFound = true;
-				errorNum = errorNum + 1;
-			end
-			if (itemLink) then
-				--if (not NRC.gearCache[guid]) then
-				--	NRC.gearCache[guid] = {};
-				--end
-				--if (unit ~= "player") then
-					--NRC:debug("added gear from inspect", UnitName(unit), itemLink);
-				--end
-				--NRC.gearCache[guid][k] = itemLink;
-				gear[k] = itemLink;
-				--NRC:printRaw(itemLink)
-				--equipCount = equipCount + 1;
-				updated = true;
-			end
-		end
-		if (updated) then
-			--NRC.gearCache[guid] = nil;
-			NRC.gearCache[guid] = gear;
-			NRC.gearCache[guid].updated = GetServerTime();
-		end
-		if (not secondTry) then
-			C_Timer.After(0.5, function()
-				if (currentInspectGUID == guid) then
-					NRC:buildInventoryFromInspect(guid, unit, true);
-				end
-			end)
-			--C_Timer.After(1, function()
-			--	NRC:updateSetBonusCache(guid);
-			--	NRC:updateEnchantsCache(guid);
-			--	if (isSOD) then
-			--		NRC.sanctifiedCache[guid] = nil;
-			--		NRC.sanctifiedCache[guid] = getSanctifiedCount(guid);
-			--	end
-			--	NRC:updateIssuesCache(guid);
-			--end)
-		end
-		C_Timer.After(1, function()
-			NRC:updateSetBonusCache(guid);
-			NRC:updateEnchantsCache(guid);
-			if (isSOD) then
-				NRC.sanctifiedCache[guid] = nil;
-				NRC.sanctifiedCache[guid] = getSanctifiedCount(guid);
-			end
-			NRC:updateIssuesCache(guid);
-		end)
-		--if (equipCount < 12 and guid ~= UnitGUID("player")) then
-			--There seems to be a bug where not all items load.
-			--Not sure if it's becaus I need to continue on load or some other issue.
-			--Probably not a cache issue with GetInventoryItemLink() becaus INSPECT_READY fires before this?
-			--Until I fix it I'll just reschedule another inspect in 10 seconds, or again in 30 if we've tried once already.
-		--	if (inspectAgainQueue[guid]) then
-		--		C_Timer.After(30, function()
-		--			NRC:debug("Low armor count, requeueing inspect for:", UnitName(unit), equipCount, 30);
-		--			NRC:inspect(guid);
-		--		end);
-		--	else
-		--		inspectAgainQueue[guid] = true;
-		--		C_Timer.After(10, function()
-		--			NRC:debug("Low armor count, requeueing inspect for:", UnitName(unit), equipCount, 10);
-		--			NRC:inspect(guid);
-		--		end);
-		--	end
-		--end
-		if (cachingIssueFound and not cachingIssues[guid]) then
-			cachingIssues[guid] = true;
-			--There seems to be a bug where not all item links load, but the itemID does.
-			--Thsis much be a cachie issues and there's no way around it while specting other people that I could find.
-			--Reschedule another inspect in 2 seconds, or again in 30 if we've tried once already.
-			if (inspectAgainQueue[guid]) then
-				C_Timer.After(30, function()
-					NRC:debug("Caching issue found, requeueing inspect for:", UnitName(unit), errorNum, 30);
-					NRC:inspect(guid);
-				end);
-			else
-				inspectAgainQueue[guid] = true;
-				C_Timer.After(2, function()
-					NRC:debug("Caching issue found, requeueing inspect for:", UnitName(unit), errorNum, 2);
-					NRC:inspect(guid, true);
-				end);
-			end
-		end
-		if (not cachingIssueFound) then
-			cachingIssues[guid] = nil;
-		end
-		--NRC:debug("equip inspect complete", UnitName(unit));
-	end
-end]]
-
 hooksecurefunc("ClearInspectPlayer", function(...)
 	currentInspectGUID = nil;
 	--print("inspect end");
@@ -676,7 +624,7 @@ function NRC:updateEnchantsCache(guid)
 			end
 		end
 	end
-	NRC:getEnchantsData(guid)
+	--NRC:getEnchantsData(guid)
 end
 
 function NRC:getEnchantsData(guid)
@@ -708,7 +656,6 @@ end
 function NRC:getGemsData(guid) --/dump NRC:getGemsData(UnitGUID("target")) /dump NRC.gearCache[UnitGUID("target")]
 	if (NRC.gearCache[guid]) then
 		local sockets, equipped = 0, 0;
-		local data = NRC.gearCache[guid];
 		local gearData = NRC.gearCache[guid];
 		for slot, slotData in pairs(gearData) do
 			if (type(slotData) == "table" and slotData.gems) then
@@ -738,14 +685,44 @@ function NRC:getGlyphsData(name)
 	end
 end
 
-function NRC:checkGearForArmorBonus(guid)
+local armorTypes = {
+	["DEATHKNIGHT"] = 4,
+	--["DEMONHUNTER"] = 2,
+	["DRUID"] = 2,
+	--["EVOKER"] = 3,
+	["HUNTER"] = 3,
+	["MAGE"] = 1,
+	["MONK"] = 2,
+	["PALADIN"] = 4,
+	["PRIEST"] = 1,
+	["ROGUE"] = 2,
+	["SHAMAN"] = 3,
+	["WARLOCK"] = 1,
+	["WARRIOR"] = 4,
+};
 
+local function getWrongArmorTypes(class)
+	local data = {};
+	if (class and armorTypes[class]) then
+		local type = armorTypes[class];
+		if (type == 1) then
+			data = {[2] = true, [3] = true, [4] = true};
+		elseif (type == 2) then
+			data = {[1] = true, [3] = true, [4] = true};
+		elseif (type == 3) then
+			data = {[1] = true, [2] = true, [4] = true};
+		elseif (type == 4) then
+			data = {[1] = true, [2] = true, [3] = true};
+		end
+	end
+	return data;
 end
 
 local pvpTrinkets = NRC.pvpTrinkets or {};
-function NRC:updateIssuesCache(guid)
+function NRC:updateIssuesCache(guid, unit)
 	NRC.issuesCache[guid] = nil;
 	if (NRC.gearCache[guid]) then
+		updateGemsCache(guid);
 		local slots = {
 			[1] = "HeadSlot",
 			[2] = "NeckSlot",
@@ -770,10 +747,14 @@ function NRC:updateIssuesCache(guid)
 			slots[18] = nil;
 		end
 		local numSlots = 0;
-		local totalIssues, enchantIssues, glyphIssues, gearMissingIssues, talentsMissing, fishingIssues, gemIssues, beltBuckleIssues = 0, 0, 0, 0, 0, 0, 0, 0;
+		local totalIssues, enchantIssues, glyphIssues, gearMissingIssues, talentsMissing, fishingIssues, gemIssues, beltBuckleIssues, armorBonusIssues = 0, 0, 0, 0, 0, 0, 0, 0, 0;
 		local data = NRC.gearCache[guid];
+		local _, class;
+		if (unit) then
+			_, class = UnitClass(unit);
+		end
 		if (data[16]) then
-			local _, _, _, _, _, _, _, _, equipLoc = C_Item.GetItemInfo(data[16].itemLink);
+			local _, _, _, _, _, _, itemSubType, _, equipLoc = C_Item.GetItemInfo(data[16].itemLink);
 			if (equipLoc == "INVTYPE_2HWEAPON" or ((equipLoc == "INVTYPE_RANGEDRIGHT" or equipLoc == "INVTYPE_RANGED") and expansionNum > 4)) then
 				--If two hander equipped we ignore offhand.
 				slots[17] = nil;
@@ -789,10 +770,23 @@ function NRC:updateIssuesCache(guid)
 				end
 			end
 		end
+		local wrongArmorTypes;
+		if (expansionNum > 3 and class) then
+			wrongArmorTypes = getWrongArmorTypes(class);
+		end
 		for k, v in pairs(slots) do
 			if (not data[k]) then
 				gearMissingIssues = gearMissingIssues + 1;
 				totalIssues = totalIssues + 1;
+			else
+				if (wrongArmorTypes and data[k].itemLink and k ~= 15) then
+					local name, _, _, _, _, _, _, _, _, _, _, itemClassID, itemSubTypeID = C_Item.GetItemInfo(data[k].itemLink);
+					if (itemSubTypeID and wrongArmorTypes[itemSubTypeID] and itemClassID == Enum.ItemClass.Armor) then
+						armorBonusIssues = armorBonusIssues + 1;
+						totalIssues = totalIssues + 1;
+						--NRC:debug("Wrong armor type:", UnitName(unit), name)
+					end
+				end
 			end
 		end
 		if (NRC.enchantsCache[guid]) then
@@ -867,6 +861,7 @@ function NRC:updateIssuesCache(guid)
 			fishingIssues = fishingIssues,
 			gemIssues = gemIssues,
 			beltBuckleIssues = beltBuckleIssues;
+			armorBonusIssues = armorBonusIssues,
 			otherIssues = otherIssues,
 		};
 		NRC.issuesCache[guid] = t;
@@ -934,6 +929,9 @@ function NRC:getIssuesString(guid)
 			if (issues.gearMissingIssues > 5) then
 				text = text .. "\n|cFFFFFF00Possible equip error\nReinspect player|r";
 			end
+		end
+		if (issues.armorBonusIssues and issues.armorBonusIssues > 0) then
+			text = text .. "\n|cFF9CD6DEMissing 5% armor type bonus|r";
 		end
 		text = gsub(text, "^\n", "");
 	end
@@ -1877,6 +1875,9 @@ function NRC:createGlyphStringFromInspect(guid, isInspect)
 		return "";
 	end
 	local unit = NRC:getUnitFromGUID(guid);
+	if (not unit) then
+		return "";
+	end
 	local _, _, classID = UnitClass(unit);
 	local glyphString, glyphString2 = classID, classID;
 	local activeSpec = C_SpecializationInfo.GetActiveSpecGroup(isInspect);
@@ -2191,7 +2192,7 @@ local function buildInventoryFromInspect(guid, unit)
 					if (isSOD) then
 						sanctifiedCache[guid] = getSanctifiedCount(guid);
 					end
-					updateIssuesCache(guid);
+					updateIssuesCache(guid, unit);
 				end
 			end)
 		end
@@ -2261,7 +2262,7 @@ function NRC:buildInventoryFromInspect(guid, unit, secondTry)
 						if (isSOD) then
 							NRC.sanctifiedCache[guid] = getSanctifiedCount(guid);
 						end
-						NRC:updateIssuesCache(guid);
+						NRC:updateIssuesCache(guid, unit);
 					end
 				--end
 			end)

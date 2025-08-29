@@ -929,6 +929,15 @@ NRC.cooldowns = {
 			[16190] = "Mana Tide", --Rank 1.
 		},
 	},
+	["Healing Tide"] = {
+		class = "SHAMAN",
+		icon = 538569,
+		cooldown = 180,
+		minLevel = 90,
+		spellIDs = {
+			[108280] = "Healing Tide", --Rank 1.
+		},
+	},
 	["Spiritwalker Grace"] = {
 		class = "SHAMAN",
 		icon = "Interface\\Icons\\spell_shaman_spiritwalkersgrace",

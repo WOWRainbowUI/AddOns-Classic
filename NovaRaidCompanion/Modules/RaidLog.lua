@@ -35,9 +35,9 @@ local inRaid;
 local lastLooted = {};
 
 function NRC:chatMsgLoot(...)
-	if (not NRC.raid) then
-		return;
-	end
+	--if (not NRC.raid) then
+	--	return;
+	--end
 	local msg = ...;
 	local itemName, itemLink, itemRarity, itemLevel, itemMinLevel, itemType,
 				itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID;
@@ -84,10 +84,14 @@ function NRC:chatMsgLoot(...)
     end
     --Bonus rolls for MoP+.
     if (not itemLink) then
+    	--NRC:debug("Bonus roll check.");
 	    itemLink, amount = strmatch(msg, string.gsub(string.gsub(LOOT_ITEM_BONUS_ROLL_SELF_MULTIPLE, "%%s", "(.+)"), "%%d", "(%%d+)"));
 		if (not itemLink) then
-	 		--Self receive single loot "You receive loot: [Item]"
+	 		--Self receive single loot "You receive bonus loot: %s." --/run local msg = "You receive bonus loot: Test."; local itemLink = msg:match(LOOT_ITEM_BONUS_ROLL_SELF:gsub("%%s", "(.+)")); print(itemLink);
 	    	itemLink = msg:match(LOOT_ITEM_BONUS_ROLL_SELF:gsub("%%s", "(.+)"));
+	    	if (itemLink) then
+	    		NRC:debug("My bonus roll:", itemLink);
+	    	end
 			if (not itemLink) then
 				--Other players.
 				name, itemLink, amount = strmatch(msg, string.gsub(string.gsub(LOOT_ITEM_BONUS_ROLL_MULTIPLE, "%%s", "(.+)"), "%%d", "(%%d+)"));
@@ -122,6 +126,9 @@ function NRC:chatMsgLoot(...)
 			itemLink = "|c" .. color .. "|H" .. item .. "|h|r";
 		end
     end
+    if (not NRC.raid) then
+		return;
+	end
     if (itemLink and name) then
     	--local _, itemID = strsplit(":", itemLink);
     	local itemID = strmatch(itemLink, "item:(%d+)");
@@ -157,9 +164,9 @@ end
 
 local lastEncounterEnd = {};
 function NRC:addLoot(name, itemLink, amount, itemRarity, bonusRoll)
-	if (bonusRoll) then
-		NRC:debug("Bonus Loot:", name, itemLink, amount, itemRarity);
-	end
+	--if (bonusRoll) then
+	--	NRC:debug("Bonus Loot:", name, itemLink, amount, itemRarity);
+	--end
 	--NRC:debug("Loot", name, itemLink, amount, itemRarity);
 	--No need to store amount if it's only 1 for now.
 	--Maybe if we're grouping items together later we'll need the amount.
@@ -407,6 +414,85 @@ function NRC:encounterEndRD(encounterID, encounterName, difficultyID, groupSize,
 	end
 end
 
+--Can accept both unit/guid or only one.
+local function addToGroupData(unit, guid, checkExists)
+	if (not guid) then
+		guid = UnitGUID(unit);
+		if (not guid) then
+			return;
+		end
+	end
+	if (checkExists) then
+		--If this player exists in group db already then return.
+		if (NRC.raid and NRC.raid.group[guid]) then
+			return;
+		end
+	end
+	local class, race, name, realm, level, guildName, guildRankName, guildRankIndex;
+	--Only record english class/race tokens.
+	_, class, _, race, _, name, realm = GetPlayerInfoByGUID(guid);
+	if (unit) then
+		level = UnitLevel(unit);
+		guildName, guildRankName, guildRankIndex = GetGuildInfo(unit);
+	end
+	--if (name == "Unknown") then
+		--Sometimes the game can't get info from a group member.
+	--	return;
+	--end
+	if (guid and name) then
+		if (not NRC.raid.group[guid]) then
+			NRC.raid.group[guid] = {};
+		end
+		if (not NRC.raid.group[guid].name) then
+			NRC.raid.group[guid].name = name;
+		end
+		--Only overwrite things if they are valid and not player out of range.
+		if (realm and not NRC.raid.group[guid].realm) then
+			NRC.raid.group[guid].realm = realm;
+		end
+		if (level and (not NRC.raid.group[guid].level or level > 0)) then
+			NRC.raid.group[guid].level = level;
+		end
+		if (class and (not NRC.raid.group[guid].class or class ~= "")) then
+			NRC.raid.group[guid].class = class;
+		end
+		if (race and (not NRC.raid.group[guid].race or race ~= "")) then
+			NRC.raid.group[guid].race = race;
+		end
+		if (guildName and (not NRC.raid.group[guid].guildName or guildName ~= "")) then
+			NRC.raid.group[guid].guildName = guildName;
+		end
+		if (not NRC.raid.group[guid].trackedItems) then
+			NRC.raid.group[guid].trackedItems = {};
+		end
+		if (not NRC.raid.group[guid].deaths) then
+			NRC.raid.group[guid].deaths = {};
+		end
+	end
+end
+
+--Comabt log event only does certain spells, doesn't fire for spells cast from using items?
+local function addTrackedItem(guid, spellID)
+	local raid = NRC.raid;
+	if (not raid) then
+		return;
+	end
+	local encounterID;
+	if (encounter and encounter.encounterID) then
+		encounterID = encounter.encounterID;
+	end
+	addToGroupData(nil, guid, true);
+	local t = {
+		timestamp = GetServerTime(),
+		getTime = GetTime(),
+		encounterID = encounterID,
+	};
+	if (not raid.group[guid].trackedItems[spellID]) then
+		raid.group[guid].trackedItems[spellID] = {};
+	end
+	tinsert(raid.group[guid].trackedItems[spellID], t);
+end
+
 --Some items don't get a combat log event so we need this instead.
 local castCache, feignCache = {}, {};
 local function unitSpellcastSucceededRD(...)
@@ -419,7 +505,7 @@ local function unitSpellcastSucceededRD(...)
 				--Use a cache to make sure we only record 1 item use when fired from multiple events.
 				--We have to check multiple events because some spells/items only fire 1 type.
 				if (not castCache[guid] or not castCache[guid][spellID] or GetTime() - castCache[guid][spellID] > 0.8) then
-					NRC:addTrackedItem(guid, spellID);
+					addTrackedItem(guid, spellID);
 				end
 				if (not castCache[guid]) then
 					castCache[guid] = {};
@@ -436,28 +522,6 @@ local function unitSpellcastSucceededRD(...)
 	end
 end
 
---Comabt log event only does certain spells, doesn't fire for spells cast from using items?
-function NRC:addTrackedItem(guid, spellID)
-	local raid = NRC.raid;
-	if (not raid) then
-		return;
-	end
-	local encounterID;
-	if (encounter and encounter.encounterID) then
-		encounterID = encounter.encounterID;
-	end
-	NRC:addToGroupData(nil, guid, true);
-	local t = {
-		timestamp = GetServerTime(),
-		getTime = GetTime(),
-		encounterID = encounterID,
-	};
-	if (not raid.group[guid].trackedItems[spellID]) then
-		raid.group[guid].trackedItems[spellID] = {};
-	end
-	tinsert(raid.group[guid].trackedItems[spellID], t);
-end
-
 local overkillCache, deathCache = {}, {};
 local function combatLogEventUnfiltered(...)
 	local timestamp, subEvent, hideCaster, sourceGUID, sourceName, sourceFlags, sourceRaidFlags, destGUID, 
@@ -467,7 +531,7 @@ local function combatLogEventUnfiltered(...)
 			if (NRC.trackedItems[spellID]) then
 				if (NRC:inOurGroup(sourceGUID)) then
 					if (not castCache[sourceGUID] or not castCache[sourceGUID][spellID] or GetTime() - castCache[sourceGUID][spellID] > 0.8) then
-						NRC:addTrackedItem(sourceGUID, spellID);
+						addTrackedItem(sourceGUID, spellID);
 					end
 					if (not castCache[sourceGUID]) then
 						castCache[sourceGUID] = {};
@@ -623,7 +687,7 @@ end
 			if (NRC.trackedItems[spellID]) then
 				if (NRC:inOurGroup(sourceGUID)) then
 					if (not castCache[sourceGUID] or not castCache[sourceGUID][spellID] or GetTime() - castCache[sourceGUID][spellID] > 0.8) then
-						NRC:addTrackedItem(sourceGUID, spellID);
+						addTrackedItem(sourceGUID, spellID);
 					end
 					if (not castCache[sourceGUID]) then
 						castCache[sourceGUID] = {};
@@ -689,7 +753,7 @@ end
 					overkillCache[destName] = nil;
 				--elseif (GetTime() - lastDmgTime < 3) then
 				else
-					NRC:addToGroupData(nil, destGUID, true);
+					addToGroupData(nil, destGUID, true);
 					tinsert(raid.group[destGUID].deaths, t);
 					if (lastEnteringWorld < GetTime() - 5) then
 						--Add scrolling raid event.
@@ -699,7 +763,7 @@ end
 					--NRC:pushDeath(destGUID);
 				end
 				deathCache[destGUID] = GetTime();
-				--NRC:addToGroupData(nil, destGUID, true);
+				--addToGroupData(nil, destGUID, true);
 				--tinsert(raid.group[destGUID].deaths, t);
 			elseif (strfind(destGUID, "Creature")
 					and bitband(destFlags, COMBATLOG_OBJECT_REACTION_HOSTILE) == COMBATLOG_OBJECT_REACTION_HOSTILE) then
@@ -1558,6 +1622,9 @@ local function clearRaidLogFrame(filterUpdate)
 	--raidLogFrame.titleText2:Hide();
 	--raidLogFrame.titleText2.texture:Hide();
 	raidLogFrame.hideAllExtraButtons();
+	if (raidLogFrame.filterFrame) then
+		raidLogFrame.filterFrame:Hide();
+	end
 	if (tradeFilterFrame) then
 		tradeFilterFrame:Hide();
 	end
@@ -1777,7 +1844,114 @@ function NRC:openRaidLogFrame()
 	end
 end
 
-function NRC:recalcRaidLog(clearRaidLog)
+local function loadRaidLogFilter(logID, raidID)
+	if (not tradeFilterFrame) then
+		tradeFilterFrame = NRC:createTextInputOnly("NRCRaidLogTradeFilterFrame", 150, 70, raidLogFrame);
+		tradeFilterFrame.resetButton:SetPoint("LEFT", tradeFilterFrame, "RIGHT", 15, -1);
+		tradeFilterFrame.resetButton:SetSize(55, 18);
+		tradeFilterFrame.resetButton:SetText(L["Reset"] .. " " .. L["Filter"]);
+		tradeFilterFrame.resetButton:Show();
+		--tradeFilterFrame.fs:SetText("|cFFFFFF00" .. string.format(L["logEntryFrameTitle"], "|cFFFF6900" .. logID .. "|r"))
+		tradeFilterFrame.logID = logID;
+		tradeFilterFrame.raidID = raidID;
+		tradeFilterFrame:ClearAllPoints();
+		tradeFilterFrame.tooltip:SetPoint("BOTTOM", tradeFilterFrame, "TOP", 20, -20);
+		--local scale, x, y = tradeFilterFrame:GetEffectiveScale(), GetCursorPosition();
+		--tradeFilterFrame:SetPoint("RIGHT", UIParent, "BOTTOMLEFT", (x / scale) - 2, y / scale);
+		--tradeFilterFrame:SetPoint("TOPLEFT", 75, -15);
+		tradeFilterFrame.OnEnterPressed = function()
+			local text = tradeFilterFrame:GetText();
+			if (text ~= "") then
+				tradeFilterString = string.lower(text);
+				--tradeFilterFrame:SetText("");
+				tradeFilterFrame:ClearFocus();
+				tradeFilterFrame.fs:Hide();
+				NRC:updateTradeFrame(nil, nil, true);
+			else
+				tradeFilterString = nil;
+				tradeFilterFrame:ClearFocus();
+				tradeFilterFrame.fs:Show();
+				NRC:updateTradeFrame(nil, nil, true);
+			end
+		end
+		tradeFilterFrame:SetScript("OnEnterPressed", tradeFilterFrame.OnEnterPressed);
+		tradeFilterFrame.OnTextChanged = function()
+			local text = tradeFilterFrame:GetText();
+			if (text ~= "") then
+				tradeFilterString = string.lower(text);
+				tradeFilterFrame.fs:Hide();
+				NRC:updateTradeFrame(nil, nil, true);
+			else
+				tradeFilterString = nil;
+				tradeFilterFrame.fs:Show();
+				NRC:updateTradeFrame(nil, nil, true);
+			end
+		end
+		tradeFilterFrame:SetScript("OnTextChanged", tradeFilterFrame.OnTextChanged);
+		tradeFilterFrame.resetButton:SetScript("OnClick", function(self, arg)
+			tradeFilterString = nil;
+			tradeFilterFrame:SetText("");
+			tradeFilterFrame:ClearFocus();
+			tradeFilterFrame.fs:Show();
+			NRC:updateTradeFrame(nil, nil, true);
+		end)
+		--[[if (not LOCALE_koKR and not LOCALE_zhCN and not LOCALE_zhTW and not LOCALE_ruRU) then
+			tradeFilterFrame.fs:SetText("F");
+			tradeFilterFrame.fs2:SetText("i");
+			tradeFilterFrame.fs3:SetText("l");
+			tradeFilterFrame.fs4:SetText("t");
+			tradeFilterFrame.fs5:SetText("e");
+			tradeFilterFrame.fs6:SetText("r");
+			tradeFilterFrame.fs:Show();
+			tradeFilterFrame.fs2:Show();
+			tradeFilterFrame.fs3:Show();
+			tradeFilterFrame.fs4:Show();
+			tradeFilterFrame.fs5:Show();
+			tradeFilterFrame.fs6:Show();
+		else]]
+			tradeFilterFrame.fs:SetText(L["Filter"]);
+			tradeFilterFrame.fs:Show();
+		--end
+		--tradeFilterFrame:Show();
+		tradeFilterFrame.tooltipText = L["tradeFilterTooltip"];
+	end
+	if not (tradeFilterFrame:IsShown()) then
+		tradeFilterFrame:Show();
+	end
+	if (logID and raidID) then
+		tradeFilterFrame:SetPoint("TOPLEFT", raidLogFrame.scrollChild, "TOPLEFT", 5, 22);
+		tradeFilterFrame.resetButton:Hide();
+	else
+		tradeFilterFrame:SetPoint("TOPLEFT", raidLogFrame, "TOPLEFT", 75, -13);
+		tradeFilterFrame.resetButton:Show();
+	end
+	--tradeFilterFrame:SetFocus();
+end
+
+local function getRaidLogData()
+	local text = raidLogFrame.filterFrame:GetText();
+	if (not text or text == "") then
+		return NRC.db.global.instances;
+	else
+		text = strlower(text);
+		local data = {};
+		for k, v in ipairs(NRC.db.global.instances) do
+			if (v.instanceName) then
+				if (strmatch(strlower(v.instanceName), text)) then
+					--tinsert(data, v)
+					data[k] = v;
+				end
+			end
+		end
+		return data;
+	end
+end
+
+local function updateRaidLogFilter()
+	 NRC:recalcRaidLog(nil, true);
+end
+
+function NRC:recalcRaidLog(clearRaidLog, filterUpdate)
 	if (not raidLogFrame) then
 		--Frame hasn't been opened since logon, no need to recalc.
 		return;
@@ -1813,10 +1987,19 @@ function NRC:recalcRaidLog(clearRaidLog)
 	local framesUsed = {};
 	if (raidLogFrame.frameType == "log") then
 		raidLogFrame.backButton:Disable();
+		--Raid log filter frame for matching instances by name.
+		raidLogFrame.filterFrame:SetPoint("TOPLEFT", raidLogFrame, "TOPLEFT", 75, -13);
+		raidLogFrame.filterFrame:Show();
+		raidLogFrame.filterFrame.resetButton:Show();
+		raidLogFrame.filterFrame.updateFunction = updateRaidLogFilter;
+		if (filterUpdate) then
+			raidLogFrame.hideAllLineFrames();
+		end
 		local count = 0;
 		local found;
 		local startOffset, padding, offset = 20, 40, 0;
-		for k, v in ipairs(NRC.db.global.instances) do
+		local raidData = getRaidLogData();
+		for k, v in NRC:pairsByKeys(raidData) do
 			local frame = raidLogFrame.getLineFrame(k, v);
 			if (frame) then
 				found = true;
@@ -2116,6 +2299,47 @@ local function setInstanceTexture(logID)
 	end
 end
 
+local function getRosterString(rosterData)
+	local text = "";
+	if (rosterData and next(rosterData)) then
+		text = "|cFFFFFF00Roster";
+		--text = text .. "\n\n|cFFFFFF00" .. L["groupMembers"] .. " (" .. memberCount .. "):|r\n";
+		local sorted = {};
+		local hasLevels;
+		for k, v in pairs(rosterData) do
+			local t = {
+				name = v.name,
+				class = v.class,
+				guild = v.guild,
+				level = v.level,
+			};
+			tinsert(sorted, t);
+			if (v.level and v.name ~= UnitName("player")) then
+				--To display properly in old logs before we recorded level.
+				hasLevels = true;
+			end
+		end
+		table.sort(sorted, function(a, b) return a.name < b.name end);
+		text = text .. " |cFF9CD6DE(" .. #sorted .. ")|r:|r";
+		for k, v in ipairs(sorted) do
+			local coloredName = v.name;
+			if (v.class) then
+					local _, _, _, classColorHex = NRC.getClassColor(v.class);
+					coloredName = "|c" .. classColorHex .. coloredName .. "|r";
+			end
+			if (hasLevels) then
+				text = text .. "\n|cFFFFFFFF" .. (v.level or 0) .. "|r " .. coloredName;
+			else
+				text = text .. "\n" .. coloredName;
+			end
+			if (v.guild) then
+				text = text .. " |cFF989898(" .. v.guild .. ")|r";
+			end
+		end
+	end
+	return text;
+end
+
 function NRC:loadRaidLogInstance(logID)
 	clearRaidLogFrame();
 	raidLogFrame.frameType = "instance";
@@ -2257,7 +2481,14 @@ function NRC:loadRaidLogInstance(logID)
 			else
 				frame.creature.texture:SetTexture("Interface\\Addons\\NovaRaidCompanion\\Media\\Blizzard\\UI-EJ-BOSS-Default");
 			end
-			frame.fs:SetText(v.encounterName);
+			
+			local nameText = v.encounterName;
+			if (v.difficultyID == 2 or v.difficultyID == 5 or v.difficultyID == 6 or v.difficultyID == 193 or v.difficultyID == 194) then --Heroic.
+				nameText = nameText .. " |cFF9CD6DE(|r|cFFFF2222H|r|cFF9CD6DE)|r";
+			elseif (v.difficultyID == 16 or v.difficultyID == 23 or v.difficultyID == 8) then --Mythic (8 is keystone).
+				nameText = nameText .. " |cFF9CD6DE(|r|cFFa335eeM|r|cFF9CD6DE)|r";
+			end
+			frame.fs:SetText(nameText);
 			
 			local success = "|cFFFF6666" .. L["Wipe"];
 			if (v.success == 1) then
@@ -2431,6 +2662,8 @@ function NRC:loadRaidLogInstance(logID)
 			text = text .. "\n|cFF9CD6DE" .. k .. ":|r " .. v;
 		end
 	end
+	local rosterString = getRosterString(data.group);
+	text = text .. "\n\n" .. rosterString;
 	raidLogFrame.scrollChild.fs3:SetPoint("TOPLEFT", raidLogFrame.scrollChild, "TOPLEFT", 545, -30);
 	raidLogFrame.scrollChild.fs3:Show();
 	raidLogFrame.scrollChild.fs3:SetText(text);
@@ -2983,7 +3216,7 @@ function NRC:loadRaidLogLoot(logID, filterUpdate)
 	setInstanceTexture(logID);
 	local data = NRC.db.global.instances[logID];
 	raidLogFrame.scrollChild.filterFrame.tooltipText = L["lootFilterTooltip"];
-	raidLogFrame.scrollChild.filterFrame:SetPoint("TOPLEFT", raidLogFrame.scrollChild, "TOPLEFT", 120, -5);
+	raidLogFrame.scrollChild.filterFrame:SetPoint("TOPLEFT", raidLogFrame.scrollChild, "TOPLEFT", 120, -25);
 	if (not filterUpdate) then
 		raidLogFrame.scrollChild.filterFrame.resetButton:Hide();
 	end
@@ -3086,7 +3319,8 @@ function NRC:loadRaidLogLoot(logID, filterUpdate)
 				else
 					--encounterText = "|cFF9CD6DE(" .. L["Trash"] .. ")|r";
 				end
-				lootText = lootText .. v.itemLink;
+				local itemLink = NRC:getFancyItemLink(v.itemLink);
+				lootText = lootText .. itemLink;
 				if (v.amount and tonumber(v.amount) > 0) then
 					lootText = lootText .. "x" .. v.amount;
 				end
@@ -3159,7 +3393,8 @@ function NRC:loadRaidLogLoot(logID, filterUpdate)
 				else
 					--encounterText = "|cFF9CD6DE(" .. L["Trash"] .. ")|r";
 				end
-				lootText = lootText .. v.itemLink;
+				local itemLink = NRC:getFancyItemLink(v.itemLink);
+				lootText = lootText .. itemLink;
 				if (v.amount and tonumber(v.amount) > 0) then
 					lootText = lootText .. "x" .. v.amount;
 				end
@@ -3232,7 +3467,8 @@ function NRC:loadRaidLogLoot(logID, filterUpdate)
 				else
 					--encounterText = "|cFF9CD6DE(" .. L["Trash"] .. ")|r";
 				end
-				lootText = lootText .. v.itemLink;
+				local itemLink = NRC:getFancyItemLink(v.itemLink);
+				lootText = lootText .. itemLink;
 				if (v.amount and tonumber(v.amount) > 0) then
 					lootText = lootText .. "x" .. v.amount;
 				end
@@ -6384,77 +6620,20 @@ function NRC:recordGroupInfo()
 		for i = 1, 40 do
 			local guid = UnitGUID("raid" .. i);
 			if (guid) then
-				NRC:addToGroupData(nil, guid);
+				addToGroupData("raid" .. i, guid);
 			end
 		end
 	elseif (IsInGroup()) then
 		for i = 1, 5 do
 			local guid = UnitGUID("party" .. i);
 			if (guid) then
-				NRC:addToGroupData(nil, guid);
+				addToGroupData("party" .. i, guid);
 			end
 		end
 	else
 		return;
 	end
-	NRC:addToGroupData("player");
-end
-
---Can accept both unit/guid or only one.
-function NRC:addToGroupData(unit, guid, checkExists)
-	if (not guid) then
-		guid = UnitGUID(unit);
-		if (not guid) then
-			return;
-		end
-	end
-	if (checkExists) then
-		--If this player exists in group db already then return.
-		if (NRC.raid and NRC.raid.group[guid]) then
-			return;
-		end
-	end
-	local class, race, name, realm, level, guildName, guildRankName, guildRankIndex;
-	--Only record english class/race tokens.
-	_, class, _, race, _, name, realm = GetPlayerInfoByGUID(guid);
-	if (unit) then
-		level = UnitLevel(unit);
-		guildName, guildRankName, guildRankIndex = GetGuildInfo(unit);
-	end
-	--if (name == "Unknown") then
-		--Sometimes the game can't get info from a group member.
-	--	return;
-	--end
-	if (guid and name) then
-		if (not NRC.raid.group[guid]) then
-			NRC.raid.group[guid] = {};
-		end
-		if (not NRC.raid.group[guid].name) then
-			NRC.raid.group[guid].name = name;
-		end
-		--Only overwrite things if they are valid and not player out of range.
-		if (realm and not NRC.raid.group[guid].realm) then
-			NRC.raid.group[guid].realm = realm;
-		end
-		if (level and (not NRC.raid.group[guid].level or level > 0)) then
-			NRC.raid.group[guid].level = level;
-		end
-		if (class and (not NRC.raid.group[guid].class or class ~= "")) then
-			NRC.raid.group[guid].class = class;
-		end
-		if (race and (not NRC.raid.group[guid].race or race ~= "")) then
-			NRC.raid.group[guid].race = race;
-		end
-		if (guildName and (not NRC.raid.group[guid].guildName or guildName ~= "")) then
-			NRC.raid.group[guid].guildName = guildName;
-		end
-		if (not NRC.raid.group[guid].trackedItems) then
-			NRC.raid.group[guid].trackedItems = {};
-		end
-		if (not NRC.raid.group[guid].deaths) then
-			NRC.raid.group[guid].deaths = {};
-		end
-	end
+	addToGroupData("player");
 end
 
 --Delete instance by number, called by confirmation popup.
