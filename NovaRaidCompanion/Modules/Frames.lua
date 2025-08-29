@@ -1702,7 +1702,7 @@ function NRC:createMainFrame(name, width, height, x, y, tabs)
 		--Set this in the frame recalc.
 	--end)
 
-	--[[frame.filterFrame = NRC:createTextInputOnly("NRCRaidLogFilterFrame", 150, 70, frame);
+	frame.filterFrame = NRC:createTextInputOnly("NRCRaidLogFilterFrame", 150, 70, frame);
 	frame.filterFrame.resetButton:SetPoint("LEFT", frame.filterFrame, "RIGHT", 15, -1);
 	frame.filterFrame.resetButton:SetSize(55, 18);
 	frame.filterFrame.resetButton:SetText(L["Reset"] .. " " .. L["Filter"]);
@@ -1757,7 +1757,7 @@ function NRC:createMainFrame(name, width, height, x, y, tabs)
 	end)
 	frame.filterFrame.fs:SetText(L["Filter"]);
 	frame.filterFrame.fs:Show();
-	frame.filterFrame:Hide();]]
+	frame.filterFrame:Hide();
 	
 	local icon = frame:CreateTexture("$parentIcon", "OVERLAY", nil, -8);
 	icon:SetSize(60, 60);
@@ -1848,7 +1848,7 @@ function NRC:createMainFrame(name, width, height, x, y, tabs)
 	scrollChild:SetScript("OnHyperlinkClick", ChatFrame_OnHyperlinkShow);
 	frame.scrollChild = scrollChild;
 	
-	frame.scrollChild.filterFrame = NRC:createTextInputOnly("NRCRaidLogFilterFrame", 150, 70, frame.scrollChild);
+	frame.scrollChild.filterFrame = NRC:createTextInputOnly("NRCRaidLogFilterFrame", 150, 30, frame.scrollChild);
 	frame.scrollChild.filterFrame.resetButton:SetPoint("LEFT", frame.scrollChild.filterFrame, "RIGHT", 15, -1);
 	frame.scrollChild.filterFrame.resetButton:SetSize(55, 18);
 	frame.scrollChild.filterFrame.resetButton:SetText(L["Reset"] .. " " .. L["Filter"]);

@@ -1022,3 +1022,99 @@ function NRC:selectGossipOption(id)
 		SelectGossipOption(id);
 	--end
 end
+
+--Big thanks to Plusmouse for this tier token func.
+--I'll need to modify this later to suit here so items get cached first, for now just using item names.
+--[[local classRestrictionsPattern = ITEM_CLASSES_ALLOWED:gsub("%%s", ".+")
+local multipleUniquesPattern = ITEM_UNIQUE_MULTIPLE:gsub("%%d", ".+")
+-- Check for items with the appropriate item class (which have a lot of
+-- variation), not common (to exclude glyphs) and have a class restriction.
+local function TierTokenCheck(details)
+  GetInvType(details)
+  GetClassSubClass(details)
+
+  if details.quality <= 1 or details.invType ~= "INVTYPE_NON_EQUIP_IGNORE" or (details.classID ~= Enum.ItemClass.Consumable and details.classID ~= Enum.ItemClass.Armor and details.classID ~= Enum.ItemClass.Weapon and details.classID ~= Enum.ItemClass.Miscellaneous and details.classID ~= Enum.ItemClass.Reagent) then
+    return false
+  end
+
+  if not C_Item.IsItemDataCachedByID(details.itemID) then
+    C_Item.RequestLoadItemDataByID(details.itemID)
+    return nil
+  end
+
+  if (C_Item.IsDressableItemByID or IsDressableItem)(details.itemID) then
+    return false
+  end
+
+  GetTooltipInfoLink(details)
+
+  if details.tooltipInfoLink then
+    for _, row in ipairs(details.tooltipInfoLink.lines) do
+      if row.leftText == ITEM_UNIQUE or row.leftText:match(multipleUniquesPattern) then
+        return false
+      elseif row.leftText:match(classRestrictionsPattern) then
+        return true
+      end
+    end
+    return false
+  end
+end]]
+
+--Will only display for english for now.
+--Not sure if there's a better way to detect tier tokens.
+local tierTokenMatches = {
+	["Conqueror"] = true,
+	["Vanquisher"] = true,
+	["Protector"] = true,
+	
+	["Shadowy Conqueror"] = true,
+	["Shadowy Vanquisher"] = true,
+	["Shadowy Protector"] = true,
+	
+	["Crackling Conqueror"] = true,
+	["Crackling Vanquisher"] = true,
+	["Crackling Protector"] = true,
+	
+	["Cursed Conqueror"] = true,
+	["Cursed Vanquisher"] = true,
+	["Cursed Protector"] = true,
+};
+
+--This was inspired by an addon called ItemLinkLevel.
+function NRC:getFancyItemLink(itemLink, showIcon)
+	--local itemName, _, quality, _, _, _, itemSubType, _, itemEquipLoc, icon, _, itemClassID, itemSubClassID = C_Item.GetItemInfo(itemLink);
+	local itemID, itemType, itemSubType, itemEquipLoc, icon, itemClassID, itemSubClassID = C_Item.GetItemInfoInstant(itemLink);
+	local itemName = strmatch(itemLink, "%|h%[(.+)%]%|h");
+	if (itemName) then
+		for k, v in pairs(tierTokenMatches) do
+			if (strmatch(itemLink, k)) then
+				local itemDetailsString = itemName .. " (Tier Token)";
+				itemLink = gsub(itemLink, "%[(.+)%]", "[" .. itemDetailsString .. "]");
+				return itemLink;
+			end
+		end
+		if (itemClassID == Enum.ItemClass.Weapon or itemClassID == Enum.ItemClass.Gem or itemClassID == Enum.ItemClass.Armor) then
+			local realItemLevel = C_Item.GetDetailedItemLevelInfo(itemLink);
+			if (realItemLevel) then
+				local itemDetails = {};
+				if (itemClassID == Enum.ItemClass.Armor and itemSubClassID == 0) then
+					-- don't display Miscellaneous for rings, necks and trinkets
+				elseif (itemClassID == Enum.ItemClass.Armor and itemEquipLoc == "INVTYPE_CLOAK") then
+					-- don't display Cloth for cloaks
+				else
+					tinsert(itemDetails, itemSubType);
+				end
+				if (itemEquipLoc and _G[itemEquipLoc]) then
+					tinsert(itemDetails, _G[itemEquipLoc]);
+				end
+				tinsert(itemDetails, realItemLevel);
+				local itemDetailsString = itemName .. " (" .. table.concat(itemDetails, " ") .. ")";
+				itemLink = gsub(itemLink, "%[(.+)%]", "[" .. itemDetailsString .. "]");
+			end
+			if (showIcon) then
+				itemLink = "|T" .. icon .. ":0|t" .. itemLink;
+			end
+		end
+	end
+	return itemLink;
+end

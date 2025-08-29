@@ -34,10 +34,22 @@ local pvpTrinketIcon = NRC.faction == "Horde" and 133453 or 133452;
 local checkGammaBuffs;
 local gammaBuffs = {};
 if (NRC.isCata) then
+	--Twilight.
 	gammaBuffs[1224930] = {name = "Gift of the Blue Dragonflight", icon = 134155}; --Blue.
 	gammaBuffs[1224926] = {name = "Gift of the Red Dragonflight", icon = 134153}; --Red.
 	gammaBuffs[1224932] = {name = "Gift of the Green Dragonflight", icon = 134157}; --Green.
 	gammaBuffs[1224928] = {name = "Gift of the Bronze Dragonflight", icon = 134156}; --Bronze.
+end
+if (NRC.isMOP) then
+	--Celestial. Why are there 2?
+	gammaBuffs[1244204] = {name = "Blessing of Yu'lon", icon = 620831};
+	gammaBuffs[1244218] = {name = "Blessing of Yu'lon", icon = 620831};
+	gammaBuffs[1244203] = {name = "Blessing of Niuzao", icon = 615340};
+	gammaBuffs[1244217] = {name = "Blessing of Niuzao", icon = 615340};
+	gammaBuffs[1243285] = {name = "Blessing of Chi-Ji", icon = 877514};
+	gammaBuffs[1243293] = {name = "Blessing of Chi-Ji", icon = 877514};
+	gammaBuffs[1243315] = {name = "Blessing of Xuen", icon = 620832};
+	gammaBuffs[1243316] = {name = "Blessing of Xuen", icon = 620832};
 end
 if (next(gammaBuffs)) then
 	checkGammaBuffs = true;
@@ -1194,7 +1206,7 @@ end
 
 local armorTypes = {
 	["PRIEST"] = 132691, ["MAGE"] = 132691, ["WARLOCK"] = 132691, --inv_chest_cloth_50
-	["ROGUE"] = 132722, ["DRUID"] = 132722, ["MONK"] = 132722, --[[["Demon Hunter"] = 132722,]] --inv_chest_leather_07
+	["ROGUE"] = 132722, ["DRUID"] = 132722, ["MONK"] = 132722, --[[["DEMONHUNTER"] = 132722,]] --inv_chest_leather_07
 	["HUNTER"] = 132630, ["SHAMAN"] = 132630, --[[["EVOKER"] = 132630,]] --inv_chest_chain_08
 	["WARRIOR"] = 132739, ["PALADIN"] = 132739, ["DEATHKNIGHT"] = 132739, --inv_chest_plate04
 };

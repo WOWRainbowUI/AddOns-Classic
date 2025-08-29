@@ -5840,18 +5840,19 @@ end
 
 function NRC:checkNewVersion()
 	--NRC.db.global.versions = {};
-	local newVersionNotes = 1.75;
+	local newVersionNotes = 1.77;
 	if (NRC.version and NRC.version == newVersionNotes) then
 		if (not NRC.db.global.versions[NRC.version]) then
 			if (NRC.isMOP) then
 				local notes = {
 					--"|cFF00FF00[Version 1.73]|r",
-					"Fixed the \"Don't Release\" safety warning during encounters in MoP raids so cooldowns can be reset.",
-					"Fixed the resurrection timer that NRC adds to res/bres popups in MoP.",
-					"Added missing stamina food to raid status.",
-					"Added world bosses to the lockouts display for alts.",
-					"Removed legendary quest items from the loot log.",
-					"Added bonus roll loot tracking to the raid log, you can type \"bonus\" in the filter to only show bonus roll also (untested but should work, will test during raid this week).",
+					"Added a filter box in the raid log so you can filter raids by name.",
+					"Added checking of correct armor type for 5% stats bonus to issues column, it will display if a plate wearer has leather etc (MoP only).",
+					"Added more item details to the loot log links (and fixed first item mouseover tooltip not working).",
+					"Added a difficulty indicator beside heroic bosses in the log.",
+					"Added a list of players (raid roster) in the raid log.",
+					"Added healing tide totem to cooldowns list for mop.",
+					"Fixed some lua errors.",
 				};
 				loadNewVersionFrame(NRC.version, notes, "Nova Raid Companion", "Interface\\AddOns\\NovaRaidCompanion\\Media\\nrc_icon2", 0, 300);
 			end
