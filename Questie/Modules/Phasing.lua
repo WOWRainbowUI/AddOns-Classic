@@ -278,7 +278,7 @@ local phases = {
     HIGH_ELDER_CLOUDFALL_AT_BANQUET = 1206,
     MALIK_AT_PILLAR = 1207,
     MALIK_NEXT_TO_ZIKK = 1208,
-    KIL_RUK_AT_PILLAR = 1209,
+    KIL_RUK_AT_PILLAR_1 = 1209,
     KIL_RUK_NEXT_TO_ZIKK = 1210,
     SOGGY_IN_HUT = 1211,
     SOGGY_OUTSIDE = 1212,
@@ -405,6 +405,37 @@ local phases = {
     CHEN_AT_STORMSTOUT_BREWERY_CLEANED_HOUSE = 1333,
     FARMER_YOON_HOUSE = 1334,
     FARM_HAS_4_SLOTS = 1335,
+    KANG_AT_THE_INCURSION_OUTSIDE = 1336,
+    KANG_AT_THE_INCURSION_INSIDE = 1337,
+    VAELDRIN_AT_THE_INCURSION = 1338,
+    VAELDRIN_SHATTERED_CONVOY = 1339,
+    VAELDRIN_AT_SENTINEL_BASECAMP = 1340,
+    MUDMUG_AT_STONEPLOW = 1341,
+    BO_TSULAN_YAUNGOL_ROAD = 1342,
+    BO_TSULAN_WESTWIND_REST_1 = 1343,
+    BO_TSULAN_WESTWIND_REST_2 = 1344,
+    GORAI_EDGE = 1345,
+    GORAI_LIGHTPOLE = 1346,
+    GORAI_RITUAL = 1347,
+    GOLDEN_LOTUS_RUINS_PEACE = 1348,
+    GOLDEN_LOTUS_RUINS_ATTACK = 1349,
+    BAN_BEARHEART_AT_WINTERS_BLOSSOM = 1350,
+    BAN_BEARHEART_ON_THE_GROUND = 1351,
+    BAN_BEARHEART_AT_SHADO_PAN_MONASTERY = 1352,
+    SUNA_SILENTSTRIKE_AT_THE_WALL = 1353,
+    SUNA_SILENTSTRIKE_ON_THE_GROUND = 1354,
+    BROTHER_RABBITSFOOT_AT_BURLAP_WAYSTATION = 1355,
+    BROTHER_YAKSHOE_AT_BURLAP_WAYSTATION_2 = 1356,
+    CHO_SEEKERS_POINT_1 = 1357,
+    CHO_SEEKERS_POINT_2 = 1358,
+    BURBERRY_IN_CAVE = 1359,
+    BURBERRY_AT_CAMP = 1360,
+    TARAN_ZHU_WATCHPOST_1 = 1361,
+    TARAN_ZHU_WATCHPOST_2 = 1362,
+    TAI_HO_AT_GARRISON = 1363,
+    TAI_HO_IN_CATACOMBS = 1364,
+    LUSSHAN_PEARLS = 1365,
+    KIL_RUK_AT_PILLAR_2 = 1366,
 }
 Phasing.phases = phases
 
@@ -1321,8 +1352,12 @@ function Phasing.IsSpawnVisible(phase)
         return complete[31010] and true or false
     end
 
-    if phase == phases.KIL_RUK_AT_PILLAR then
-        return (not complete[31066]) and (not questLog[31066] or questLog[31066].isComplete == 0) or false
+    if phase == phases.KIL_RUK_AT_PILLAR_1 then
+        return not complete[31006] or false
+    end
+
+    if phase == phases.KIL_RUK_AT_PILLAR_2 then
+        return complete[31006] and (not complete[31066]) and (not questLog[31066] or questLog[31066].isComplete == 0) or false
     end
 
     if phase == phases.KIL_RUK_NEXT_TO_ZIKK then
@@ -1506,15 +1541,19 @@ function Phasing.IsSpawnVisible(phase)
     end
 
     if phase == phases.BROTHER_YAKSHOE_AT_KNUCKLETHUMP_HOLE then
-        return (not complete[30612]) and (not questLog[30612]) and (not complete[30610]) and ((not questLog[30610]) or questLog[30610].isComplete == 0) and (not complete[30607]) and ((not questLog[30607]) or questLog[30607].isComplete == 0) or false
+        return not (complete[30607] or (questLog[30607] and questLog[30607].isComplete == 1)) or false
     end
 
     if phase == phases.BROTHER_YAKSHOE_AT_BURLAP_WAYSTATION then
-        return (complete[30612] or questLog[30612] and true) or ((not complete[30610]) and ((not questLog[30610]) or questLog[30610].isComplete == 0) and (complete[30607] or (questLog[30607] and questLog[30607].isComplete == 1))) or false
+        return ((complete[30607] or (questLog[30607] and questLog[30607].isComplete == 1)) and not (complete[30610] or (questLog[30610] and questLog[30610].isComplete == 1))) or false
     end
 
     if phase == phases.BROTHER_YAKSHOE_AT_THE_DOOKER_DOME then
-        return (not complete[30612]) and (not questLog[30612]) and (complete[30610] or (questLog[30610] and questLog[30610].isComplete == 1)) or false
+        return (complete[30610] or (questLog[30610] and questLog[30610].isComplete == 1)) and not (complete[30612] or (questLog[30612] and questLog[30612].isComplete == 1)) or false
+    end
+
+    if phase == phases.BROTHER_YAKSHOE_AT_BURLAP_WAYSTATION_2 then
+        return complete[30612] or (questLog[30612] and questLog[30612].isComplete == 1) or false
     end
 
     if phase == phases.SULLY_BELOW_SKYFIRE then
@@ -1625,7 +1664,7 @@ function Phasing.IsSpawnVisible(phase)
     end
 
     if phase == phases.ZIN_AT_PAGODA then
-        return not complete[30642] or false
+        return complete[30638] and not complete[30642] or false
     end
 
     if phase == phases.PAGODA_UNDER_ATTACK then
@@ -1842,6 +1881,118 @@ function Phasing.IsSpawnVisible(phase)
 
     if phase == phases.FARMER_YOON_MARKET then
         return complete[32682] or false
+    end
+
+    if phase == phases.KANG_AT_THE_INCURSION_OUTSIDE then
+        return (questLog[30274] and questLog[30274].isComplete == 0) or false
+    end
+
+    if phase == phases.KANG_AT_THE_INCURSION_INSIDE then
+        return complete[30274] and not complete[30363] or false
+    end
+
+    if phase == phases.VAELDRIN_AT_THE_INCURSION then
+        return complete[30465] and not complete[30363] or false
+    end
+
+    if phase == phases.VAELDRIN_SHATTERED_CONVOY then
+        return complete[30363] and not (complete[30359] or (questLog[30359] and questLog[30359].isComplete == 1))or false
+    end
+
+    if phase == phases.VAELDRIN_AT_SENTINEL_BASECAMP then
+        return complete[30359] or (questLog[30359] and questLog[30359].isComplete == 1) or false
+    end
+
+    if phase == phases.MUDMUG_AT_STONEPLOW then
+        return complete[30360] or complete[30376] or false
+    end
+
+    if phase == phases.BO_TSULAN_YAUNGOL_ROAD then
+        return complete[30508] and not (questLog[30514] and questLog[30514].isComplete == 1) and not complete[30514] or false
+    end
+
+    if phase == phases.BO_TSULAN_WESTWIND_REST_1 then
+        return questLog[30514] and questLog[30514].isComplete == 1 or false
+    end
+
+    if phase == phases.BO_TSULAN_WESTWIND_REST_2 then
+        return complete[30514] or false
+    end
+
+    if phase == phases.GORAI_EDGE then
+        return not complete[30496] and not (questLog[30496] and questLog[30496].isComplete == 1) or false
+    end
+
+    if phase == phases.GORAI_LIGHTPOLE then
+        return (complete[30496] or (questLog[30496] and questLog[30496].isComplete == 1)) and not (complete[30480] or (questLog[30480] and questLog[30480].isComplete == 1)) or false
+    end
+
+    if phase == phases.GORAI_RITUAL then
+        return complete[30480] or (questLog[30480] and questLog[30480].isComplete == 1) or false
+    end
+
+    if phase == phases.GOLDEN_LOTUS_RUINS_PEACE then
+        return complete[31240] or complete[31248] or complete[31294] or complete[31296] or questLog[31240] or questLog[31248] or questLog[31294] or questLog[31296] or false
+    end
+
+    if phase == phases.GOLDEN_LOTUS_RUINS_ATTACK then
+        return complete[31244] or complete[31295] or questLog[31244] or questLog[31295] or false
+    end
+
+    if phase == phases.BAN_BEARHEART_AT_WINTERS_BLOSSOM then
+        return not complete[30715] or false
+    end
+
+    if phase == phases.BAN_BEARHEART_ON_THE_GROUND then
+        return complete[30715] and (not questLog[30993] or questLog[30993].isComplete == 0) and not complete[30993] or false
+    end
+
+    if phase == phases.BAN_BEARHEART_AT_SHADO_PAN_MONASTERY then
+        return complete[30993] or (questLog[30993] and questLog[30993].isComplete == 1) or false
+    end
+
+    if phase == phases.SUNA_SILENTSTRIKE_AT_THE_WALL then
+        return not (complete[30994] or (questLog[30994] and questLog[30994].isComplete == 1)) or false
+    end
+
+    if phase == phases.SUNA_SILENTSTRIKE_ON_THE_GROUND then
+        return complete[30994] or (questLog[30994] and questLog[30994].isComplete == 1) or false
+    end
+
+    if phase == phases.BROTHER_RABBITSFOOT_AT_BURLAP_WAYSTATION then
+        return (complete[30602] or (questLog[30602] and questLog[30602].isComplete == 1)) and not (complete[30610] or (questLog[30610] and questLog[30610].isComplete == 1)) or false
+    end
+
+    if phase == phases.CHO_SEEKERS_POINT_1 then
+        return not (complete[30829] or (questLog[30829] and questLog[30829].isComplete == 1)) or false
+    end
+
+    if phase == phases.CHO_SEEKERS_POINT_2 then
+        return complete[30829] or (questLog[30829] and questLog[30829].isComplete == 1) or false
+    end
+
+    if phase == phases.BURBERRY_IN_CAVE then
+        return not complete[30746] or false
+    end
+
+    if phase == phases.BURBERRY_AT_CAMP then
+        return complete[30746] or false
+    end
+
+    if phase == phases.TARAN_ZHU_WATCHPOST_1 then
+        return not complete[30979] or false
+    end
+
+    if phase == phases.TARAN_ZHU_WATCHPOST_2 then
+        return complete[30979] or false
+    end
+
+    if phase == phases.TAI_HO_AT_GARRISON then
+        return not (complete[30924] or questLog[30924]) or false
+    end
+
+    if phase == phases.TAI_HO_IN_CATACOMBS then
+        return complete[30924] or questLog[30924] or false
     end
 
     return false

@@ -7,6 +7,7 @@ local Expansions = QuestieLoader:ImportModule("Expansions")
 
 ---@return table<QuestId, boolean>
 function QuestieQuestBlacklist:Load()
+    local locale = GetLocale()
     local questsToBlacklist = {
         [7462] = true, -- Duplicate of 7877. See #1583
         [5663] = true, -- Touch of Weakness of Dark Cleric Beryl - Fixing #730
@@ -1514,8 +1515,8 @@ function QuestieQuestBlacklist:Load()
         --[26013] = true, -- Assault on the Sanctum
 
         --- Chinese servers wotlk only
-        [78752] = Expansions.Current >= Expansions.Cata, -- Proof of Demise: Titan Rune Protocol Gamma
-        [78753] = Expansions.Current >= Expansions.Cata, -- Proof of Demise: Threats to Azeroth
+        [78752] = (locale == "zhCN" or locale == "zhTW") and Expansions.Current >= Expansions.Cata, -- Proof of Demise: Titan Rune Protocol Gamma
+        [78753] = (locale == "zhCN" or locale == "zhTW") and Expansions.Current >= Expansions.Cata, -- Proof of Demise: Threats to Azeroth
         [83713] = Expansions.Current >= Expansions.Wotlk, -- Proof of Demise: Titan Rune Protocol Alpha (new version to reward correct emblems)
         [83714] = Expansions.Current >= Expansions.Wotlk, -- Proof of Demise: Threats to Azeroth (new version to reward correct emblems)
         [83717] = Expansions.Current >= Expansions.Wotlk, -- Proof of Demise: Titan Rune Protocol Gamma (not available anymore)
@@ -3977,6 +3978,7 @@ function QuestieQuestBlacklist:Load()
         [5802] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [5803] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [5804] = Expansions.Current >= Expansions.Cata, -- Removed with cata
+        [5821] = Expansions.Current >= Expansions.MoP, -- Removed with mop
         [5845] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [5846] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [5848] = Expansions.Current >= Expansions.Cata, -- Removed with cata
@@ -4012,6 +4014,7 @@ function QuestieQuestBlacklist:Load()
         [5932] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [5941] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [5942] = Expansions.Current >= Expansions.Cata, -- Removed with cata
+        [5943] = Expansions.Current >= Expansions.MoP, -- Removed with mop
         [5944] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [5961] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [5981] = Expansions.Current >= Expansions.Cata, -- Removed with cata
@@ -4591,6 +4594,7 @@ function QuestieQuestBlacklist:Load()
         [8785] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [8786] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [8787] = Expansions.Current >= Expansions.Cata, -- Removed with cata
+        [8798] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [8800] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [8804] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [8805] = Expansions.Current >= Expansions.Cata, -- Removed with cata
@@ -5892,9 +5896,10 @@ function QuestieQuestBlacklist:Load()
         [30173] = true, -- Not in the game
         [30454] = true, -- Not in the game
         [30455] = true, -- Not in the game
-        [30461] = Expansions.Current >= Expansions.MoP, -- Believe this is duplicate and not actually in game
-        [30462] = Expansions.Current >= Expansions.MoP, -- Believe this is duplicate and not actually in game
-        [30464] = Expansions.Current >= Expansions.MoP, -- Believe this is duplicate and not actually in game
+        [30461] = true, -- Believe this is duplicate and not actually in game
+        [30462] = true, -- Believe this is duplicate and not actually in game
+        [30464] = true, -- Believe this is duplicate and not actually in game
+        [30465] = true, -- Believe this is duplicate and not actually in game
         [30537] = true, -- Not in the game
         [30538] = true, -- Not in the game
         [30539] = true, -- Hidden quest
@@ -5953,6 +5958,7 @@ function QuestieQuestBlacklist:Load()
         [31425] = true, -- Not in the game
         [31426] = true, -- Not in the game
         [31427] = true, -- Not in the game
+        [31428] = true, -- Not in the game
         [31429] = true, -- Not in the game
         [31430] = true, -- Not in the game
         [31431] = true, -- Not in the game
