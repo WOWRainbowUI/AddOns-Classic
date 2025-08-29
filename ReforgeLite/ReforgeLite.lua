@@ -7,8 +7,6 @@ addonTable.ReforgeLite = ReforgeLite
 local L = addonTable.L
 local GUI = addonTable.GUI
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
-addonTable.MAX_LOOPS = 200000
-local MIN_LOOPS = 1000
 
 local GetItemStats = addonTable.GetItemStatsUp
 
@@ -19,6 +17,7 @@ end
 addonTable.print = print
 
 local ITEM_SIZE = 24
+addonTable.MAX_SPEED = 20
 
 local DefaultDB = {
   global = {
@@ -28,7 +27,7 @@ local DefaultDB = {
     methodWindowLocation = false,
     openOnReforge = true,
     updateTooltip = false,
-    speed = addonTable.MAX_LOOPS * 0.8,
+    accuracy = addonTable.MAX_SPEED,
     activeWindowTitle = {0.6, 0, 0},
     inactiveWindowTitle = {0.5, 0.5, 0.5},
     specProfiles = false,
@@ -39,6 +38,7 @@ local DefaultDB = {
     ilvlCap = 0,
     meleeHaste = true,
     spellHaste = true,
+    mastery = false,
     weights = {0, 0, 0, 0, 0, 0, 0, 0},
     caps = {
       {
@@ -165,6 +165,16 @@ if addonTable.playerClass == "HUNTER" then
   CR_HIT, CR_CRIT, CR_HASTE = CR_HIT_RANGED, CR_CRIT_RANGED, CR_HASTE_RANGED
 end
 
+local StatAdditives = {
+  [CR_HIT] = function(rating) return rating - GetFireSpirit() end,
+  [CR_MASTERY] = function(rating)
+    if ReforgeLite.pdb.mastery and not ReforgeLite:PlayerHasMasteryBuff() then
+      rating = rating + (addonTable.MASTERY_BY_LEVEL[UnitLevel('player')] or 0)
+    end
+    return rating
+  end
+}
+
 local function RatingStat (i, name_, tip_, long_, id_)
   return {
     name = name_,
@@ -172,8 +182,8 @@ local function RatingStat (i, name_, tip_, long_, id_)
     long = long_,
     getter = function ()
       local rating = GetCombatRating(id_)
-      if id_ == CR_HIT then
-        rating = rating - GetFireSpirit()
+      if StatAdditives[id_] then
+        rating = StatAdditives[id_](rating)
       end
       return rating
     end,
@@ -1134,20 +1144,23 @@ function ReforgeLite:CreateOptionList ()
   self.statWeightsCategory:AddFrame(self.buffsContextMenu)
   self:SetAnchor(self.buffsContextMenu, "TOPLEFT", self.targetLevel, "TOPRIGHT", 0 , 5)
 
+  local buffsContextValues = {
+    spellHaste = { text = addonTable.CreateIconMarkup(136092) .. L["Spell Haste"], selected = self.PlayerHasSpellHasteBuff },
+    meleeHaste = { text = addonTable.CreateIconMarkup(133076) .. L["Melee Haste"], selected = self.PlayerHasMeleeHasteBuff },
+    mastery = { text = addonTable.CreateIconMarkup(136046) .. STAT_MASTERY, selected = self.PlayerHasMasteryBuff },
+  }
+
   self.buffsContextMenu:SetupMenu(function(dropdown, rootDescription)
     local function IsSelected(value)
-        return self.pdb[value]
+        return self.pdb[value] or buffsContextValues[value].selected(self)
     end
     local function SetSelected(value)
         self.pdb[value] = not self.pdb[value]
-        self:RefreshCaps()
+        self:QueueUpdate()
     end
-    local buffsContextValues = {
-      { text = CreateSimpleTextureMarkup(136092, 20, 20) .. " " .. L["Spell Haste"], key = "spellHaste"},
-      { text = CreateSimpleTextureMarkup(133076, 20, 20) .. " " .. L["Melee Haste"], key = "meleeHaste"}
-    }
-    for _, box in ipairs(buffsContextValues) do
-        rootDescription:CreateCheckbox(box.text, IsSelected, SetSelected, box.key)
+    for key, box in pairs(buffsContextValues) do
+        local checkbox = rootDescription:CreateCheckbox(box.text, IsSelected, SetSelected, key)
+        checkbox.IsEnabled = function(chkbox) return not buffsContextValues[chkbox.data].selected(self) end
     end
   end)
 
@@ -1240,36 +1253,32 @@ function ReforgeLite:CreateOptionList ()
     GUI:Lock()
     GUI:ClearFocus()
     btn:RenderText(IN_PROGRESS)
+    addonTable.pauseRoutine = nil
+    self.pauseButton:Enable()
+    self.pauseButton:RenderText(KEY_PAUSE)
   end)
+
+  self.pauseButton = GUI:CreatePanelButton (self.content, KEY_PAUSE, function(btn)
+    if addonTable.pauseRoutine then
+      addonTable.pauseRoutine = 'kill'
+      self:EndCompute(addonTable.pauseRoutine)
+    else
+      addonTable.pauseRoutine = 'pause'
+      btn:RenderText(CANCEL)
+      self.computeButton:RenderText(CONTINUE)
+      addonTable.GUI:UnlockFrame(self.computeButton)
+    end
+  end, {preventLock = true})
+  self:SetAnchor (self.pauseButton, "LEFT", self.computeButton, "RIGHT", 4, 0)
+  self.pauseButton:Disable()
 
   self:UpdateStatWeightList ()
 
-  self.quality = CreateFrame ("Slider", nil, self.content, "UISliderTemplateWithLabels")
-  self:SetAnchor (self.quality, "LEFT", self.computeButton, "RIGHT", 10, 0)
-  self.quality:SetSize(150, 15)
-  self.quality:SetMinMaxValues (MIN_LOOPS, addonTable.MAX_LOOPS)
-  self.quality:SetValueStep ((addonTable.MAX_LOOPS - MIN_LOOPS) / 20)
-  self.quality:SetObeyStepOnDrag(true)
-  self.quality:SetValue (self.db.speed)
-  self.quality:EnableMouseWheel (false)
-  self.quality:SetScript ("OnValueChanged", function (slider)
-    self.db.speed = slider:GetValue ()
-  end)
-
-  self.quality.Text:SetText (SPEED)
-  self.quality.Low:SetText (SLOW)
-  self.quality.High:SetText (FAST)
-
-  self.quality.helpButton = CreateFrame("Button",nil,self.quality,"MainHelpPlateButton")
-  self.quality.helpButton:SetPoint("BOTTOMLEFT",self.quality.Text, "BOTTOMRIGHT",0,-20)
-  self.quality.helpButton:SetScale(0.45)
-  GUI:SetTooltip(self.quality.helpButton, L["Slide to the left if the calculation slows your game too much."])
-
   self.settingsCategory = self:CreateCategory (SETTINGS)
   self:SetAnchor (self.settingsCategory, "TOPLEFT", self.computeButton, "BOTTOMLEFT", 0, -10)
-  self.settings = GUI:CreateTable (7, 1, nil, 200)
+  self.settings = GUI:CreateTable (8, 1, nil, 200)
   self.settingsCategory:AddFrame (self.settings)
-  self:SetAnchor (self.settings, "TOPLEFT", self.settingsCategory, "BOTTOMLEFT", 0, -5)
+  self:SetAnchor (self.settings, "TOPLEFT", self.settingsCategory, "BOTTOMLEFT", 0, -10)
   self.settings:SetPoint ("RIGHT", self.content, -10, 0)
   self.settings:SetRowHeight (ITEM_SIZE + 2)
 
@@ -1314,6 +1323,26 @@ function ReforgeLite:GetInactiveWindows()
 end
 
 function ReforgeLite:FillSettings()
+  local accuracySlider = CreateFrame ("Slider", nil, self.settings, "UISliderTemplateWithLabels")
+  accuracySlider:SetSize(150, 15)
+  accuracySlider:SetMinMaxValues (1, addonTable.MAX_SPEED)
+  accuracySlider:SetValueStep (1)
+  accuracySlider:SetObeyStepOnDrag(true)
+  accuracySlider:SetValue (self.db.accuracy)
+  accuracySlider:EnableMouseWheel (false)
+  accuracySlider:SetScript ("OnValueChanged", function (slider)
+    self.db.accuracy = slider:GetValue ()
+  end)
+
+  accuracySlider.Text:SetText (L["Accuracy"])
+  accuracySlider.Low:SetText (LOW)
+  accuracySlider.High:SetText (HIGH)
+  self.accuracySlider = accuracySlider
+
+  GUI:SetTooltip(accuracySlider, L["Setting to Low will result in lower accuracy but faster results! Set this back to High if you're not getting the results you expect."])
+
+  self.settings:SetCell (getOrderId('settings'), 0, accuracySlider, "LEFT", 8)
+
   self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Open window when reforging"],
     self.db.openOnReforge, function (val) self.db.openOnReforge = val end), "LEFT")
 
@@ -1608,13 +1637,18 @@ local queueUpdateEvents = {
   PLAYER_EQUIPMENT_CHANGED = true,
   FORGE_MASTER_ITEM_CHANGED = true,
   UNIT_AURA = "player",
+  UNIT_SPELL_HASTE = "player",
 }
 
 local queueEventsRegistered = false
 function ReforgeLite:RegisterQueueUpdateEvents()
   if queueEventsRegistered then return end
-  for event in pairs(queueUpdateEvents) do
-    self:RegisterEvent(event)
+  for event, unitID in pairs(queueUpdateEvents) do
+    if unitID == true then
+      self:RegisterEvent(event)
+    else
+      self:RegisterUnitEvent(event, unitID)
+    end
   end
   queueEventsRegistered = true
 end
@@ -2014,10 +2048,7 @@ function ReforgeLite:OnEvent(event, ...)
     self[event](self, ...)
   end
   if queueUpdateEvents[event] then
-    local arg1 = ...
-    if queueUpdateEvents[event] == true or queueUpdateEvents[event] == arg1 then
       self:QueueUpdate()
-    end
   end
 end
 

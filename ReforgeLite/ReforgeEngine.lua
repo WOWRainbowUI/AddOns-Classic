@@ -362,12 +362,12 @@ end
 
 function ReforgeLite:ComputeReforgeCore(reforgeOptions)
   local char, floor = string.char, floor
-  local TABLE_SIZE = 750
+  local TABLE_SIZE = floor(10000 * (self.db.accuracy / addonTable.MAX_SPEED))
   local scores, codes = {0}, {""}
   for i, opt in ipairs(reforgeOptions) do
     local newscores, newcodes = {}, {}
     for k, score in pairs(scores) do
-      self:RunYieldCheck()
+      self:RunYieldCheck(200000)
       local s1, s2 = k % TABLE_SIZE, floor(k / TABLE_SIZE)
       for j = 1, #opt do
         local nscore = score + opt[j].score
@@ -387,7 +387,7 @@ function ReforgeLite:ChooseReforgeClassic (data, reforgeOptions, scores, codes)
   local bestCode = {nil, nil, nil, nil}
   local bestScore = {0, 0, 0, 0}
   for k, score in pairs(scores) do
-    self:RunYieldCheck()
+    self:RunYieldCheck(500000)
     local s1 = data.caps[1].init
     local s2 = data.caps[2].init
     local code = codes[k]
@@ -414,6 +414,8 @@ function ReforgeLite:ChooseReforgeClassic (data, reforgeOptions, scores, codes)
   return bestCode[1] or bestCode[2] or bestCode[3] or bestCode[4]
 end
 
+local chooseLoops = 0
+
 function ReforgeLite:ComputeReforge()
   local data = self:InitReforgeClassic()
   local reforgeOptions = {}
@@ -421,13 +423,14 @@ function ReforgeLite:ComputeReforge()
     reforgeOptions[i] = self:GetItemReforgeOptions(data.method.items[i], data, i)
   end
 
-  self.__chooseLoops = nil
+  chooseLoops = 0
 
   local scores, codes = self:ComputeReforgeCore(reforgeOptions)
 
+  chooseLoops = 0
+
   local code = self:ChooseReforgeClassic(data, reforgeOptions, scores, codes)
-  scores, codes = nil, nil
-  collectgarbage ("collect")
+
   for i = 1, #data.method.items do
     local opt = reforgeOptions[i][code:byte(i)]
     if data.conv[addonTable.statIds.SPIRIT] and data.conv[addonTable.statIds.SPIRIT][addonTable.statIds.HIT] == 1 then
@@ -448,11 +451,6 @@ function ReforgeLite:ComputeReforge()
   end
 end
 
-function ReforgeLite:Compute()
-  self:ComputeReforge()
-  self:EndCompute()
-end
-
 local NORMAL_STATUS_CODES = { suspended = true, running = true }
 local routine
 
@@ -467,22 +465,35 @@ function ReforgeLite:ResumeComputeNextFrame()
   RunNextFrame(function() self:ResumeCompute() end)
 end
 
-function ReforgeLite:RunYieldCheck()
-  if (self.__chooseLoops or 0) >= self.db.speed then
-    self.__chooseLoops = nil
-    self:ResumeComputeNextFrame()
+function ReforgeLite:RunYieldCheck(maxLoops)
+  if addonTable.pauseRoutine then
+    chooseLoops = 0
     coroutine.yield()
   else
-    self.__chooseLoops = (self.__chooseLoops or 0) + 1
+    if chooseLoops >= maxLoops then
+      chooseLoops = 0
+      self:ResumeComputeNextFrame()
+      coroutine.yield()
+    else
+      chooseLoops = chooseLoops + 1
+    end
   end
 end
 
 function ReforgeLite:StartCompute()
-  routine = coroutine.create(function() self:Compute() end)
+  if routine and addonTable.pauseRoutine == 'pause' and NORMAL_STATUS_CODES[coroutine.status(routine)]  then
+    coroutine.resume(routine)
+  else
+    routine = coroutine.create(function() self:ComputeReforge() end)
+  end
   self:ResumeComputeNextFrame()
 end
 
 function ReforgeLite:EndCompute()
   self.computeButton:RenderText(L["Compute"])
   addonTable.GUI:Unlock()
+  self.pauseButton:RenderText(KEY_PAUSE)
+  self.pauseButton:Disable()
+  routine = nil
+  collectgarbage('collect')
 end

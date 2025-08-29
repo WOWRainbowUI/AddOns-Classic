@@ -1,16 +1,58 @@
-tag 9642582905d030d4fc9a35617d03674b1f587ac1 v2.1.1a
+tag c48b2b3cafd83c1f5834389f073518d55bc89800 v2.1.3
 Author:	skyler-code <skylerh15@github.com>
-Date:	Thu Aug 21 23:20:20 2025 -0500
+Date:	Wed Aug 27 19:46:23 2025 -0500
 
-commit 3eb2069fd0b3d175daf703479f0d059b51872b42
+commit 18b43fc697d686e31cdcf50b9f0e105c810f3bfd
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Aug 21 23:19:54 2025 -0500
+Date:   Tue Aug 26 12:57:32 2025 -0500
 
-    raise to 750 for accuracy
+    Properly kill routine with garbage collection
 
-commit cc7cdf50a63908c17868cdb52aeaab374291736f
+commit fe6c6c061e69639178d48ffe51e04920be5d5fcc
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Aug 21 22:34:07 2025 -0500
+Date:   Tue Aug 26 01:29:57 2025 -0500
 
-    idk why i wrote it like that
+    fixed error when finishing routine
+
+commit f84b2ba7128d623db5a2b4e2c90df6a219a148d2
+Author: skyler-code <skylerh15@github.com>
+Date:   Tue Aug 26 01:12:51 2025 -0500
+
+    Added pause/cancel button
+
+commit 50928bf1758411c33d211d6afee12420405cfb98
+Author: skyler-code <skylerh15@github.com>
+Date:   Tue Aug 26 01:08:34 2025 -0500
+
+    add preventLock to button
+
+commit 41b21f8264b8b857de5079a91ec00c1c224335f0
+Author: skyler-code <skylerh15@github.com>
+Date:   Tue Aug 26 01:08:21 2025 -0500
+
+    extract unlockframe
+
+commit 621c000db937382bb12afee995a5f1db5d4bc9da
+Author: skyler-code <skylerh15@github.com>
+Date:   Tue Aug 26 00:11:17 2025 -0500
+
+    Enable fitTextWidthPadding custom setting
+
+commit b896396533b3fd748994efc66bba6ba7aadcb0dd
+Author: skyler-code <skylerh15@github.com>
+Date:   Mon Aug 25 23:14:21 2025 -0500
+
+    Speed -> Accuracy
+
+commit c34113bcbaddef290d6859843b23cb6c74cffe74
+Author: skyler-code <skylerh15@github.com>
+Date:   Mon Aug 25 22:57:53 2025 -0500
+
+    Rename variable and force all users to 1 accuracy
+
+commit 17dd9928f6f4a572c4963c64866a7b8133ea2335
+Author: skyler-code <skylerh15@github.com>
+Date:   Sat Aug 23 14:42:37 2025 -0500
+
+    better speed formula
 
