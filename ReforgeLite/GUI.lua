@@ -25,7 +25,7 @@ end
 function GUI:Lock()
   for _, frames in ipairs({self.panelButtons, self.imgButtons, self.editBoxes, self.checkButtons}) do
     for _, frame in pairs(frames) do
-      if frame:IsEnabled() then
+      if frame:IsEnabled() and not frame.preventLock then
         frame.locked = true
         frame:Disable()
         if frame:IsMouseEnabled() then
@@ -50,24 +50,28 @@ function GUI:Lock()
   end
 end
 
+function GUI:UnlockFrame(frame)
+  if frame.locked then
+    frame:Enable()
+    frame.locked = nil
+    if frame.mouseDisabled then
+      frame:EnableMouse(true)
+      frame.mouseDisabled = nil
+    elseif frame.mouseMotionDisabled then
+      frame:SetMouseMotionEnabled(true)
+      frame.mouseMotionDisabled = nil
+    end
+    if frame.prevColor then
+      frame:SetTextColor (unpack(frame.prevColor))
+      frame.prevColor = nil
+    end
+  end
+end
+
 function GUI:Unlock()
   for _, frames in ipairs({self.panelButtons, self.imgButtons, self.editBoxes, self.checkButtons}) do
     for _, frame in pairs(frames) do
-      if frame.locked then
-        frame:Enable()
-        frame.locked = nil
-        if frame.mouseDisabled then
-          frame:EnableMouse(true)
-          frame.mouseDisabled = nil
-        elseif frame.mouseMotionDisabled then
-          frame:SetMouseMotionEnabled(true)
-          frame.mouseMotionDisabled = nil
-        end
-        if frame.prevColor then
-          frame:SetTextColor (unpack(frame.prevColor))
-          frame.prevColor = nil
-        end
-      end
+      self:UnlockFrame(frame)
     end
   end
   for _, dropdown in pairs(self.dropdowns) do
@@ -316,12 +320,13 @@ end
 
 GUI.panelButtons = {}
 GUI.unusedPanelButtons = {}
-function GUI:CreatePanelButton(parent, text, handler)
+function GUI:CreatePanelButton(parent, text, handler, opts)
   local btn
   if #self.unusedPanelButtons > 0 then
     btn = tremove(self.unusedPanelButtons)
     btn:SetParent(parent)
     btn:Show()
+    btn:Enable()
     self.panelButtons[btn:GetName()] = btn
   else
     local name = self:GenerateWidgetName ()
@@ -341,7 +346,10 @@ function GUI:CreatePanelButton(parent, text, handler)
       f:SetText(...)
       f:FitToText()
     end
+    btn.originalFitTextWidthPadding = btn.fitTextWidthPadding
   end
+  btn.fitTextWidthPadding = (opts or {}).fitTextWidthPadding or btn.originalFitTextWidthPadding
+  btn.preventLock = (opts or {}).preventLock
   btn:RenderText(text)
   btn:SetScript("OnClick", handler)
   return btn

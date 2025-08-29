@@ -10,22 +10,29 @@ local StatHaste = addonTable.statIds.HASTE
 local StatExp = addonTable.statIds.EXP
 
 local SPELL_HASTE_BUFFS = {
-  24907, -- Moonkin Aura
-  49868, -- Mind Quickening
-  51470, -- Elemental Oath
+  24907,  -- Moonkin Aura
+  49868,  -- Mind Quickening
+  51470,  -- Elemental Oath
   135678, -- Energizing Spores
 }
 
 local MELEE_HASTE_BUFFS = {
-  55610, -- Unholy Aura
+  55610,  -- Unholy Aura
   128432, -- Cackling Howl
   128433, -- Serpent's Swiftness
   113742, -- Swiftblade's Cunning
-  30809, -- Unleashed Rage
+  30809,  -- Unleashed Rage
+}
+
+local MASTERY_BUFFS = {
+  93435,  -- Roar of Courage
+  128997, -- Spirit Beast Blessing
+  19740,  -- Blessing of Might
+  116956, -- Grace of Air
 }
 
 function ReforgeLite:PlayerHasSpellHasteBuff()
-  for _,v in ipairs(SPELL_HASTE_BUFFS) do
+  for _, v in ipairs(SPELL_HASTE_BUFFS) do
     if C_UnitAuras.GetPlayerAuraBySpellID(v) then
       return true
     end
@@ -33,7 +40,15 @@ function ReforgeLite:PlayerHasSpellHasteBuff()
 end
 
 function ReforgeLite:PlayerHasMeleeHasteBuff()
-  for _,v in ipairs(MELEE_HASTE_BUFFS) do
+  for _, v in ipairs(MELEE_HASTE_BUFFS) do
+    if C_UnitAuras.GetPlayerAuraBySpellID(v) then
+      return true
+    end
+  end
+end
+
+function ReforgeLite:PlayerHasMasteryBuff()
+  for _, v in ipairs(MASTERY_BUFFS) do
     if C_UnitAuras.GetPlayerAuraBySpellID(v) then
       return true
     end
@@ -94,28 +109,29 @@ function ReforgeLite:CalcHasteWithBonuses(haste)
 end
 
 function ReforgeLite:GetNeededMeleeHit ()
-  return math.max(0, 3 + 1.5 * self.pdb.targetLevel)
+  return max(0, 3 + 1.5 * self.pdb.targetLevel)
 end
 function ReforgeLite:GetNeededSpellHit ()
   local diff = self.pdb.targetLevel
   if diff <= 3 then
-    return math.max(0, 6 + 3 * diff)
+    return max(0, 6 + 3 * diff)
   else
     return 11 * diff - 18
   end
 end
 
 function ReforgeLite:GetNeededExpertiseSoft()
-  return math.max(0, 3 + 1.5 * self.pdb.targetLevel)
+  return max(0, 3 + 1.5 * self.pdb.targetLevel)
 end
 
 function ReforgeLite:GetNeededExpertiseHard()
-  return math.max(0, 6 + 3 * self.pdb.targetLevel)
+  return max(0, 6 + 3 * self.pdb.targetLevel)
 end
 
 local function CreateIconMarkup(icon)
   return CreateSimpleTextureMarkup(icon, 16, 16) .. " "
 end
+addonTable.CreateIconMarkup = CreateIconMarkup
 
 local AtLeast = addonTable.StatCapMethods.AtLeast
 local AtMost = addonTable.StatCapMethods.AtMost
@@ -216,8 +232,8 @@ do
     tinsert(ReforgeLite.capPresets, {
       value = CAPS.SecondHasteBreak,
       category = StatHaste,
-      name = nameFormatWithTicks:format(CreateIconMarkup(136081)..CreateIconMarkup(136107), 7.16, 1, C_Spell.GetSpellName(774) .. " / " .. C_Spell.GetSpellName(740)),
-      getter = GetSpellHasteRequired(7.16),
+      name = nameFormatWithTicks:format(CreateIconMarkup(136081)..CreateIconMarkup(136107), 12.52, 1, C_Spell.GetSpellName(774) .. " / " .. C_Spell.GetSpellName(740)),
+      getter = GetSpellHasteRequired(12.52),
     })
   elseif addonTable.playerClass == "PALADIN" then
     local eternalFlame, eternalFlameMarkup = C_Spell.GetSpellName(114163), CreateIconMarkup(135433)
