@@ -345,6 +345,9 @@ function MopItemFixes.Load()
         [79864] = { -- Cindergut Pepper
             [itemKeys.npcDrops] = {59119,59120,59121,59122,59123,59124,59125,59126,59127,59128,59129,59130,59131,59132,59133,59134,59135},
         },
+        [79866] = { -- Kunzen Legend-Book
+            [itemKeys.npcDrops] = {59131,59132,59133,59134,59135},
+        },
         [79867] = { -- Fatty Goatsteak
             [itemKeys.npcDrops] = {59139},
         },
@@ -431,6 +434,7 @@ function MopItemFixes.Load()
         },
         [80227] = { -- Root Vegetable
             [itemKeys.objectDrops] = {211017,211018,211019},
+            [itemKeys.npcDrops] = {59655},
         },
         [80228] = { -- Enormous Cattail Grouper Tooth
             [itemKeys.npcDrops] = {59639},
@@ -455,6 +459,7 @@ function MopItemFixes.Load()
         },
         [80294] = { -- Mogu Relic
             [itemKeys.objectDrops] = {211143},
+            [itemKeys.npcDrops] = {59758,59773},
         },
         [80302] = { -- EZ-Gro Green Cabbage Seeds
             [itemKeys.class] = itemClasses.QUEST,
@@ -475,7 +480,7 @@ function MopItemFixes.Load()
             [itemKeys.npcDrops] = {59833},
         },
         [80315] = { -- Stolen Supplies
-            [itemKeys.objectDrops] = {211266,211268,211269,211270},
+            [itemKeys.objectDrops] = {211266},
         },
         [80316] = { -- Lucky Virmen's Foot
             [itemKeys.npcDrops] = {59693,59967},
@@ -582,6 +587,7 @@ function MopItemFixes.Load()
         },
         [81177] = { -- Pandaren Healing Draught
             [itemKeys.objectDrops] = {211510},
+            [itemKeys.class] = itemClasses.QUEST,
         },
         [81250] = { -- Snarlvine
             [itemKeys.objectDrops] = {211517,211518},
@@ -603,6 +609,10 @@ function MopItemFixes.Load()
             [itemKeys.npcDrops] = {59180},
         },
         [81407] = { -- Four Wind Soju
+            [itemKeys.npcDrops] = {},
+            [itemKeys.vendors] = {64319}, -- This is the closest vendor to Jogu the Drunk
+        },
+        [81415] = { -- Pandaren Plum Wine
             [itemKeys.npcDrops] = {},
             [itemKeys.vendors] = {64319}, -- This is the closest vendor to Jogu the Drunk
         },
@@ -829,6 +839,7 @@ function MopItemFixes.Load()
         },
         [86099] = { -- Wu Kao Scouting Report
             [itemKeys.objectDrops] = {213640},
+            [itemKeys.npcDrops] = {63947,63948,64201},
         },
         [86404] = { -- Old Map
             [itemKeys.npcDrops] = {59639},
@@ -874,6 +885,9 @@ function MopItemFixes.Load()
         [86616] = { -- Dread Amber Focus
             [itemKeys.npcDrops] = {62814},
         },
+        [87210] = { -- Chimera of Fear
+            [itemKeys.npcDrops] = {60999},
+        },
         [87263] = { -- Venom-Coated Mandible
             [itemKeys.npcDrops] = {64831},
         },
@@ -907,6 +921,9 @@ function MopItemFixes.Load()
         [87813] = { -- Zan'thik Shackles
             [itemKeys.npcDrops] = {64970},
         },
+        [87821] = { -- Coagulated Tiger's Blood
+            [itemKeys.npcDrops] = {54988,55238,56198,56272,58070,58221,58432,59102,59116,59534,59753,63537,63767,65612,66184,66187,66668,67085},
+        },
         [87871] = { -- Massive Kyparite Core
             [itemKeys.npcDrops] = {65229},
             [itemKeys.startQuest] = 31598,
@@ -926,6 +943,9 @@ function MopItemFixes.Load()
         [88855] = { -- Stolen Sri-La Stout
             [itemKeys.npcDrops] = {65621,65624,65628},
             [itemKeys.objectDrops] = {214845,214986},
+        },
+        [88895] = { -- Serpent's Scale
+            [itemKeys.objectDrops] = {214843,214844},
         },
         [89053] = { -- Big Bag of Poop
             [itemKeys.npcDrops] = {65711,67084},
@@ -1048,6 +1068,11 @@ function MopItemFixes.Load()
             [itemKeys.name] = "Eternal Blossom",
             [itemKeys.class] = itemClasses.QUEST,
             [itemKeys.objectDrops] = {210537,210538,210539},
+        },
+        [248204] = { -- Chimera of Doubt
+            [itemKeys.name] = "Chimera of Doubt",
+            [itemKeys.class] = itemClasses.QUEST,
+            [itemKeys.npcDrops] = {56439},
         },
     }
 end

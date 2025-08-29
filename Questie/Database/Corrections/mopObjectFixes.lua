@@ -141,12 +141,28 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{73.95,16.88}}},
             [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
         },
+        [210527] = { -- Northeast Oubliette Shackle
+            [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{67.94,31.54}}},
+            [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [210533] = { -- Northwest Oubliette Shackle
+            [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{66.7,31.58}}},
+            [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [210535] = { -- Southwest Oubliette Shackle
+            [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{66.71,33.69}}},
+            [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
         [210565] = { -- Dark Soil
             [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{52.82,47.98}}},
             [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
         },
+        [210680] = { -- Mogu Tent
+            [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{25.19,26.64},{25.69,26.56},{27.2,29.17},{27.43,29.76},{25.85,30.51},{20.63,30.51},{20.96,31.07},{24.48,38.14},{24.7,37.65},{26.34,39.77},{25.91,39.77},{26.21,41.01},{26.59,43.33},{24.84,43.27},{22.82,41.6}}},
+            [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
+        },
         [210931] = { -- Dak Dak's Altar
-            [objectKeys.spawns] = {[zoneIDs.THE_DEEPER] = {{49.56,39.54}}},
+            [objectKeys.spawns] = {[zoneIDs.THE_DEEPER_LOWER_LEVEL] = {{49.66,39.68}}},
             [objectKeys.zoneID] = zoneIDs.THE_DEEPER,
         },
         [210933] = { -- Yaungol Banner
@@ -226,6 +242,10 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{52.82,47.84}}},
             [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
         },
+        [211025] = { -- Goldenfire Orchid
+            [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{47.26,47.73},{46.44,49},{45.11,49.76},{38.28,37.15},{37.84,38.39},{42.06,40.9},{42.4,41.53},{41.77,43.68},{36.65,36.09},{45.65,49.57},{46.1,50.15}}},
+            [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
+        },
         [211112] = { -- Mysterious Whirlpool
             [objectKeys.name] = 'Mysterious Whirlpool',
             [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{34.17,31.69}}},
@@ -239,6 +259,15 @@ function MopObjectFixes.Load()
             [objectKeys.name] = 'Crane Yolk Pool',
             [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{65.03,50.04}}},
             [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [211220] = { -- Mailbox
+            [objectKeys.factionID] = 1732, -- alliance only
+        },
+        [211226] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
+        [211266] = { -- Stolen Supplies
+            [objectKeys.spawns] = {[zoneIDs.HOWLINGWIND_CAVERN] = {{30.94,50.39},{28.8,77.02},{30.8,76.19},{33.45,77.75},{34.94,72.1},{35.64,71.28},{36.54,68.73},{35.99,42.81},{41.63,43.68},{41.71,42.15},{41.27,41.48},{23.72,49.43},{30.95,34.37},{35.29,23.36},{44.28,19.98},{46.86,21.57},{47.13,22.92},{46.02,23.1},{46,23.45},{48.66,23.55},{48.29,21.85},{50.19,22.64},{53.66,26.6},{55.62,28.49},{56.42,31.29},{56.25,33.12},{55.63,33.91},{55.72,34.51},{66.03,50.95},{66,47.8},{70.95,52.33},{70.83,52.04},{71.3,51.24},{66.49,40.91},{65.58,40.32},{48.45,49.58},{48.6,49.3},{54.62,55.68},{53.8,56.71},{46.04,58},{46.52,63.34},{45.45,60.85},{45.23,61.9},{45.6,63.45},{52.64,73.67},{66.31,83.3},{66.21,85.9},{66.81,85.69}}},
         },
         [211275] = { -- Ko Ko's Altar
             [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{52.27,71.44}}},
@@ -256,14 +285,19 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{23.15,30.87},{23.49,33.25},{26.96,32.85},{27.65,29.00},{26.07,28.38},{26.33,25.12},{24.14,27.42},{21.59,28.46},{20.39,30.60},{22.37,30.78},{21.57,31.41},{23.16,30.73},{23.18,26.58},{22.11,27.19}}},
             [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
         },
+        [211307] = { -- Grummle Cage
+            [objectKeys.name] = 'Grummle Cage',
+            [objectKeys.spawns] = {[zoneIDs.KNUCKLETHUMP_HOLE] = {{24.19,11.87},{49.84,19.75},{48.54,23.08},{55.06,50.82},{83.61,45.42}},[zoneIDs.KUN_LAI_SUMMIT] = {{49.8,64},{50.2,62.4},{50.4,63.2},{50.8,62.8},{51,61.4},{51,61.6},{51.6,63.2}}},
+            [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
+        },
         [211312] = { -- Items for Barrels of Fun
             [objectKeys.name] = 'Explosives Barrel',
             [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{51.24,79.33},{49.61,78.99},{49.34,81.06},{47.55,80.08}}},
             [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
         },
         [211365] = { -- Ball and Chain
-            [objectKeys.spawns] = {[6088] = {{38.68,23.02}}},
-            [objectKeys.zoneID] = 6088,
+            [objectKeys.spawns] = {[zoneIDs.KNUCKLETHUMP_HOLE] = {{38.68,23.02}}},
+            [objectKeys.zoneID] = zoneIDs.KNUCKLETHUMP_HOLE,
         },
         [211376] = { -- Items for Build Your Own Raft
             [objectKeys.name] = 'Spare Plank',
@@ -313,13 +347,16 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{66.95,33.33}}},
             [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
         },
+        [211574] = { -- Mailbox
+            [objectKeys.factionID] = 1732, -- alliance only
+        },
         [211596] = { -- Goblin Fishing Raft
             [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{67.43,44.77}}},
             [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
         },
         [211720] = { -- Meeting Stone (Terrace of Endless Spring)
-            [objectKeys.spawns] = {[zoneIDs.THE_VEILED_STAIRS] = {{51.7,69.4}}},
-            [objectKeys.zoneID] = zoneIDs.THE_VEILED_STAIRS,
+            [objectKeys.spawns] = {[zoneIDs.THE_VEILED_STAIR] = {{51.7,69.4}}},
+            [objectKeys.zoneID] = zoneIDs.THE_VEILED_STAIR,
         },
         [211754] = { -- Curious Text
             [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{57.11,47.89}}},
@@ -360,28 +397,31 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.RAGEFIRE_CHASM] = {{36.72,84.38},{36.24,84.61},{35.79,84.91},{-1,-1}}},
             [objectKeys.zoneID] = zoneIDs.RAGEFIRE_CHASM,
         },
+        [211967] = { -- King's Coffer
+            [objectKeys.spawns] = {[zoneIDs.TOMB_OF_CONQUERORS] = {{58.42,72.66}}},
+            [objectKeys.zoneID] = zoneIDs.TOMB_OF_CONQUERORS,
+        },
+        [211968] = { -- Top Fragment of Lei Shen's Tablet
+            [objectKeys.spawns] = {[zoneIDs.TOMB_OF_CONQUERORS] = {{34.13,61.49}}},
+            [objectKeys.zoneID] = zoneIDs.TOMB_OF_CONQUERORS,
+        },
         [212003] = { -- Yaungol Oil Barrel
             [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{26.2, 59.9}, {26.3, 59.1}, {26.6, 59.4}, {27.2, 60.2}, {27.4, 60.8}, {27.7, 61}, {28.4, 61.5}, {28.5, 61.1}, {28.5, 61.5}}},
             [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
+        },
+        [212038] = { -- Ancient Amber Chunk
+            [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{31.92,42.43}}},
+            [objectKeys.zoneID] = zoneIDs.DREAD_WASTES,
         },
         [212131] = { -- Niuzao Food Supply
             [objectKeys.spawns] = {[zoneIDs.TOWNLONG_STEPPES] = {{41.58,61.5},{42.34,62.04},{39.82,63.39},{38.99,64.1},{38.3,63.61},{37.61,64.03},{37.57,63.98},{40.13,56.89},{40.32,58.7},{42.66,58.73},{41.35,62.11},{39.28,61.58},{39.27,61.6},{37.74,62.45},{37.85,61.03},{39.65,57.7},{42.44,57.99},{41.79,61.62},{43.26,58.19},{41.4,63.08},{40.94,63.59},{40.32,64.19},{39.72,64.67},{39.81,60.92},{38.69,60.97},{38.62,61.45},{39.01,60.13}}},
             [objectKeys.zoneID] = zoneIDs.TOWNLONG_STEPPES,
         },
+        [212159] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
         [212294] = { -- Ocean-Worn Rocks
             [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{43.3,63.49}}},
-            [objectKeys.zoneID] = zoneIDs.DREAD_WASTES,
-        },
-        [212744] = { -- Whitepetal Reeds
-            [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{38.4,48.1},{38.4,49.4},{38.4,49.5},{38.5,49.4},{38.5,49.5},{38.6,47.3},{38.6,47.5},{38.8,44.4},{38.8,53.2},{38.9,45.5},{39,44.8},{39.4,52},{39.7,43.9},{40,51.4},{40.4,42.9},{40.4,51.6},{40.5,51.4},{40.5,51.6},{40.7,42.4},{40.7,42.8},{42.3,52.5},{42.4,52.4},{42.5,52.4},{42.5,52.5},{43.3,48.4},{43.3,48.6},{43.3,51},{43.4,47},{43.5,47},{43.6,49.2},{43.6,50.5},{43.8,50.2}}},
-            [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
-        },
-        [214674] = { -- Ancient Amber Chunk
-            [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{44.76,41.66}}},
-            [objectKeys.zoneID] = zoneIDs.DREAD_WASTES,
-        },
-        [212038] = { -- Ancient Amber Chunk
-            [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{31.92,42.43}}},
             [objectKeys.zoneID] = zoneIDs.DREAD_WASTES,
         },
         [212389] = { -- Scroll of Auspice
@@ -399,6 +439,10 @@ function MopObjectFixes.Load()
         },
         [212742] = { -- Fresh Dirt
             [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{37.3,45.4},{37.3,45.5},{38,42.1},{38,46},{38.2,48.1},{38.3,48.8},{38.4,44.9},{38.4,47.4},{38.5,44.4},{38.5,47.5},{38.5,48.9},{38.6,44.7},{38.6,47.4},{39.1,53.5},{39.2,42.4},{39.2,42.5},{39.2,53.3},{40,53.2},{40.2,42},{40.3,41},{40.3,51.7},{40.5,40.9},{40.5,42.1},{41.3,40.2},{41.4,42.6},{41.4,52.2},{41.5,40.1},{41.6,42.6},{41.6,52.4},{42.2,42.1},{42.3,53.3},{42.3,53.5},{42.5,53.6},{42.7,39.4},{42.7,39.5},{42.9,42},{43,51.8},{43,53.1},{43.4,50.8},{43.5,50.8},{43.6,50.4},{44.6,51.4},{44.6,51.5},{44.7,50},{44.9,45.7},{45.4,39.4},{45.4,39.6},{45.5,39.4},{45.5,39.6},{45.8,47.5},{45.9,47.4},{46.1,42.7},{46.4,41.2},{46.8,46.3},{46.8,46.5},{47.1,41.4},{47.1,41.5}}},
+            [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
+        },
+        [212744] = { -- Whitepetal Reeds
+            [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{38.4,48.1},{38.4,49.4},{38.4,49.5},{38.5,49.4},{38.5,49.5},{38.6,47.3},{38.6,47.5},{38.8,44.4},{38.8,53.2},{38.9,45.5},{39,44.8},{39.4,52},{39.7,43.9},{40,51.4},{40.4,42.9},{40.4,51.6},{40.5,51.4},{40.5,51.6},{40.7,42.4},{40.7,42.8},{42.3,52.5},{42.4,52.4},{42.5,52.4},{42.5,52.5},{43.3,48.4},{43.3,48.6},{43.3,51},{43.4,47},{43.5,47},{43.6,49.2},{43.6,50.5},{43.8,50.2}}},
             [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
         },
         [212868] = { -- Ancient Amber Chunk
@@ -419,12 +463,22 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{25.7,50.34}}},
             [objectKeys.zoneID] = zoneIDs.DREAD_WASTES,
         },
+        [213004] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
+        [213250] = { -- Silent Beacon
+            [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{48.16,49.71}}},
+        },
         [213254] = { -- Meeting Stone (Mogu Shan Palace)
             [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{82.9,40.8}}},
             [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
         },
         [213255] = { -- Meeting Stone (Mogu Shan Palace)
             [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{74.8,30.3}}},
+            [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
+        },
+        [213289] = { -- Shao-Tien Cage
+            [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{32.94,34.29},{18.07,32.12},{19.6,28.83},{20.55,30.11},{21.59,28.72},{22.09,29.89},{22.9,26.82},{23.57,33.07},{24.51,28.87},{24.62,26.5},{25.05,26.92},{26.18,30.68},{27.42,30.18},{28.99,30.59},{30.65,32.51},{30.04,29.28},{31.17,33.15},{31.96,29.2},{29.36,24.06},{22.71,41.25},{28.16,37.63},{26.76,39.18},{25.2,39.48},{24.75,39.88},{24.34,38.55},{22.53,38.28}}},
             [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
         },
         [213303] = { -- Sra'thik Idol
@@ -446,6 +500,27 @@ function MopObjectFixes.Load()
         },
         [213508] = { -- Full Crab Pot
             [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{46.28,67.93},{46.7,80.5},{46.8,74.4},{47.55,70.64},{47.8,72.17},{47.9,75.1},{49.1,76}}},
+        },
+        [213654] = { -- Mailbox
+            [objectKeys.factionID] = 1732, -- alliance only
+        },
+        [213655] = { -- Mailbox
+            [objectKeys.factionID] = 1732, -- alliance only
+        },
+        [213682] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
+        [213698] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
+        [213708] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
+        [213727] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
+        [213728] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
         },
         [213744] = { -- Serpent Rod
             [objectKeys.name] = 'Serpent Rod',
@@ -510,6 +585,9 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{15.5,76.7}}},
             [objectKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
         },
+        [214176] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
         [214277] = { -- The Dark Grimoire
             [objectKeys.spawns] = {
                 [zoneIDs.SCHOLOMANCE_MOP_CHAMBER_OF_SUMMONING] = {{47.42,77.3},{50.01,74.97},{47.19,72.34},{49.09,62.91},{43.84,62.95},{54.09,72.29},{53.32,79.51}},
@@ -543,13 +621,30 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.GUO_LAI_HALLS] = {{49.8,30.81}}},
             [objectKeys.zoneID] = zoneIDs.GUO_LAI_HALLS,
         },
+        [214475] = { -- Deactivate First Spirit Wall
+            [objectKeys.name] = "Deactivate First Spirit Wall",
+            [objectKeys.spawns] = {[zoneIDs.GUO_LAI_HALLS] = {{36.3,36.74}}},
+            [objectKeys.zoneID] = zoneIDs.GUO_LAI_HALLS,
+        },
+        [214476] = { -- Deactivate Second Spirit Wall
+            [objectKeys.spawns] = {[zoneIDs.GUO_LAI_HALLS] = {{22.97,28.71}}},
+            [objectKeys.zoneID] = zoneIDs.GUO_LAI_HALLS,
+        },
         [214477] = { -- Deactivate Final Spirit Wall
-            [objectKeys.spawns] = {[zoneIDs.GUO_LAI_HALLS] = {{41.67,18.15}}},
+            [objectKeys.spawns] = {[zoneIDs.GUO_LAI_HALLS] = {{41.92,27.8},{49.29,22.55},{38.13,31.48},{41.67,18.15}}},
             [objectKeys.zoneID] = zoneIDs.GUO_LAI_HALLS,
         },
         [214543] = { -- Dreadspore Bulb
             [objectKeys.name] = "Dreadspore Bulb",
             [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{33.2,85.93}}}, -- there are like 100 more spawns, used one so we can have tooltips
+            [objectKeys.zoneID] = zoneIDs.DREAD_WASTES,
+        },
+        [214572] = { -- Tablet of Thunder
+            [objectKeys.spawns] = {[zoneIDs.TOMB_OF_CONQUERORS] = {{34.13,61.49}}},
+            [objectKeys.zoneID] = zoneIDs.TOMB_OF_CONQUERORS,
+        },
+        [214674] = { -- Ancient Amber Chunk
+            [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{44.76,41.66}}},
             [objectKeys.zoneID] = zoneIDs.DREAD_WASTES,
         },
         [214824] = { -- Ancient Mogu Chest
@@ -567,6 +662,12 @@ function MopObjectFixes.Load()
             [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{35.6,65.6}}},
             [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
         },
+        [214987] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
+        [214988] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
         [215390] = { -- Powder Keg
             [objectKeys.name] = 'Powder Keg',
             [objectKeys.spawns] = {[zoneIDs.THE_JADE_FOREST] = {{45.81,95.12},{46.03,96.11}}},
@@ -576,6 +677,15 @@ function MopObjectFixes.Load()
             [objectKeys.name] = 'Skyfire Parachute',
             [objectKeys.spawns] = {[zoneIDs.THE_JADE_FOREST] = {{42.31,92.81}}},
             [objectKeys.zoneID] = zoneIDs.THE_JADE_FOREST,
+        },
+        [216100] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
+        [216106] = { -- Mailbox
+            [objectKeys.factionID] = 1735, -- horde only
+        },
+        [220068] = { -- Mailbox
+            [objectKeys.factionID] = 1732, -- alliance only
         },
         [221268] = { -- Meeting Stone (Siege of Orgrimmar) TODO: Enable correct spawns, once SoO is available
             [objectKeys.zoneID] = 0,
