@@ -5,6 +5,7 @@ local ReforgeLite = addonTable.ReforgeLite
 local L = addonTable.L
 local playerClass, playerRace = addonTable.playerClass, addonTable.playerRace
 local statIds = addonTable.statIds
+local print = addonTable.print
 
 local GetItemStats = addonTable.GetItemStatsUp
 
@@ -15,15 +16,12 @@ function ReforgeLite:GetStatMultipliers()
   if playerRace == "HUMAN" then
     result[addonTable.statIds.SPIRIT] = (result[addonTable.statIds.SPIRIT] or 1) * 1.03
   end
-  for _, v in ipairs (self.itemData) do
-    if v.itemId then
-      local id, iLvl = addonTable.GetItemInfoUp(v.itemId)
-      if addonTable.AmplificationItems[id] then
-        local factor = 1 + 0.01 * Round(addonTable.GetRandPropPoints(iLvl, 2) / 420)
-        result[addonTable.statIds.HASTE] = (result[addonTable.statIds.HASTE] or 1) * factor
-        result[addonTable.statIds.MASTERY] = (result[addonTable.statIds.MASTERY] or 1) * factor
-        result[addonTable.statIds.SPIRIT] = (result[addonTable.statIds.SPIRIT] or 1) * factor
-      end
+  for _, v in ipairs(self.itemData) do
+    if addonTable.AmplificationItems[v.itemId] then
+      local factor = 1 + 0.01 * Round(addonTable.GetRandPropPoints(v.ilvl, 2) / 420)
+      result[addonTable.statIds.HASTE] = (result[addonTable.statIds.HASTE] or 1) * factor
+      result[addonTable.statIds.MASTERY] = (result[addonTable.statIds.MASTERY] or 1) * factor
+      result[addonTable.statIds.SPIRIT] = (result[addonTable.statIds.SPIRIT] or 1) * factor
     end
   end
   return result
@@ -94,8 +92,8 @@ function ReforgeLite:UpdateMethodStats (method)
   method.items = method.items or {}
   for i = 1, #self.itemData do
     local item = self.itemData[i].item
-    local orgstats = (item and GetItemStats(item) or {})
-    local stats = (item and GetItemStats(item, self.pdb.ilvlCap) or {})
+    local orgstats = (item and GetItemStats(item, self.itemData[i].upgradeLevel) or {})
+    local stats = (item and GetItemStats(item, self.itemData[i].upgradeLevel) or {})
     local reforge = self.itemData[i].reforge
 
     method.items[i] = method.items[i] or {}
@@ -241,7 +239,7 @@ function ReforgeLite:GetItemReforgeOptions (item, data, slot)
       for dst = 1, #self.itemStats do
         if item.stats[dst] == 0 then
           local o = self:MakeReforgeOption (item, data, src, dst)
-          local pos = o.d1 + o.d2 * 10000
+          local pos = o.d1 + o.d2 * self.TABLE_SIZE
           if not aopt[pos] or aopt[pos].score < o.score then
             aopt[pos] = o
           end
@@ -264,8 +262,8 @@ function ReforgeLite:InitializeMethod()
     method.items[i].stats = {}
     orgitems[i] = {}
     local item = self.itemData[i].item
-    local stats = (item and GetItemStats(item, self.pdb.ilvlCap) or {})
-    local orgstats = (item and GetItemStats(item) or {})
+    local stats = (item and GetItemStats(item, self.itemData[i].upgradeLevel) or {})
+    local orgstats = (item and GetItemStats(item, self.itemData[i].upgradeLevel) or {})
     for j, v in ipairs(self.itemStats) do
       method.items[i].stats[j] = (stats[v.name] or 0)
       orgitems[i][j] = (orgstats[v.name] or 0)
@@ -362,16 +360,15 @@ end
 
 function ReforgeLite:ComputeReforgeCore(reforgeOptions)
   local char, floor = string.char, floor
-  local TABLE_SIZE = floor(10000 * (self.db.accuracy / addonTable.MAX_SPEED))
   local scores, codes = {0}, {""}
   for i, opt in ipairs(reforgeOptions) do
     local newscores, newcodes = {}, {}
     for k, score in pairs(scores) do
       self:RunYieldCheck(200000)
-      local s1, s2 = k % TABLE_SIZE, floor(k / TABLE_SIZE)
+      local s1, s2 = k % self.TABLE_SIZE, floor(k / self.TABLE_SIZE)
       for j = 1, #opt do
         local nscore = score + opt[j].score
-        local nk = s1 + opt[j].d1 + (s2 + opt[j].d2) * TABLE_SIZE
+        local nk = s1 + opt[j].d1 + (s2 + opt[j].d2) * self.TABLE_SIZE
         if not newscores[nk] or nscore > newscores[nk] then
           newscores[nk] = nscore
           newcodes[nk] = codes[k] .. char(j)
@@ -417,6 +414,8 @@ end
 local chooseLoops = 0
 
 function ReforgeLite:ComputeReforge()
+  self.TABLE_SIZE = floor(10000 * (self.db.accuracy / addonTable.MAX_SPEED))
+  TABLE_SIZE = floor(10000 * (self.db.accuracy / addonTable.MAX_SPEED))
   local data = self:InitReforgeClassic()
   local reforgeOptions = {}
   for i = 1, #self.itemData do
@@ -441,9 +440,9 @@ function ReforgeLite:ComputeReforge()
     data.method.items[i].src = opt.src
     data.method.items[i].dst = opt.dst
   end
-  self.methodDebug = { data = CopyTable(data) }
+  addonTable.methodDebug = { data = CopyTable(data) }
   self:FinalizeReforge (data)
-  self.methodDebug.method = CopyTable(data.method)
+  addonTable.methodDebug.method = CopyTable(data.method)
   if data.method then
     self.pdb.method = data.method
     self.pdb.methodOrigin = addonName

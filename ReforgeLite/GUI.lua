@@ -3,6 +3,17 @@ local GUI = {}
 
 local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 
+addonTable.FONTS = {
+  grey = INACTIVE_COLOR,
+  lightgrey = TUTORIAL_FONT_COLOR,
+  white = WHITE_FONT_COLOR,
+  green = CreateColor(0.6, 1, 0.6),
+  red = CreateColor(1, 0.4, 0.4),
+  panel = PANEL_BACKGROUND_COLOR,
+  gold = GOLD_FONT_COLOR,
+  darkyellow = DARKYELLOW_FONT_COLOR
+}
+
 GUI.widgetCount = 0
 function GUI:GenerateWidgetName ()
   self.widgetCount = self.widgetCount + 1
@@ -37,7 +48,7 @@ function GUI:Lock()
         end
         if frame.SetTextColor then
           frame.prevColor = {frame:GetTextColor()}
-          frame:SetTextColor (0.5, 0.5, 0.5)
+          frame:SetTextColor(addonTable.FONTS.grey:GetRGB())
         end
       end
     end
@@ -62,7 +73,7 @@ function GUI:UnlockFrame(frame)
       frame.mouseMotionDisabled = nil
     end
     if frame.prevColor then
-      frame:SetTextColor (unpack(frame.prevColor))
+      frame:SetTextColor(unpack(frame.prevColor))
       frame.prevColor = nil
     end
   end
@@ -88,7 +99,7 @@ function GUI:SetTooltip (widget, tip)
       local tooltipFunc = "AddLine"
       local tipText
       if type(tip) == "function" then
-        tipText = tip()
+        tipText = tip(tipFrame)
       else
         tipText = tip
       end
@@ -116,17 +127,18 @@ GUI.unusedEditBoxes = {}
 function GUI:CreateEditBox (parent, width, height, default, setter)
   local box
   if #self.unusedEditBoxes > 0 then
-    box = tremove (self.unusedEditBoxes)
-    box:SetParent (parent)
-    box:Show ()
-    box:SetTextColor (1, 1, 1)
-    box:EnableMouse (true)
+    box = tremove(self.unusedEditBoxes)
+    box:SetParent(parent)
+    box:Show()
+    box:SetTextColor(addonTable.FONTS.white:GetRGB())
+    box:EnableMouse(true)
     self.editBoxes[box:GetName()] = box
   else
     box = CreateFrame ("EditBox", self:GenerateWidgetName (), parent, "InputBoxTemplate")
     self.editBoxes[box:GetName()] = box
     box:SetAutoFocus (false)
-    box:SetFontObject (ChatFontNormal)
+    box:SetFontObject(ChatFontNormal)
+    box:SetTextColor(addonTable.FONTS.white:GetRGB())
     box:SetNumeric ()
     box:SetTextInsets (0, 0, 3, 3)
     box:SetMaxLetters (8)
@@ -224,6 +236,7 @@ function GUI:CreateDropdown (parent, values, options)
     sel.Middle:SetHeight(50)
     sel.Right:SetHeight(50)
     sel.Text:SetPoint ("LEFT", sel.Left, "LEFT", 27, 1)
+    sel.Text:SetTextColor(addonTable.FONTS.white:GetRGB())
     sel.Button:SetSize(22, 22)
     sel.Button:SetPoint ("TOPRIGHT", sel.Right, "TOPRIGHT", -16, -13)
     sel.Recycle = function (frame)
@@ -365,7 +378,8 @@ function GUI:CreateColorPicker (parent, width, height, color, handler)
   box.glow = box:CreateTexture (nil, "BACKGROUND")
   box.glow:SetPoint ("TOPLEFT", -2, 2)
   box.glow:SetPoint ("BOTTOMRIGHT", 2, -2)
-  box.glow:SetColorTexture (1, 1, 1, 0.3)
+  
+  box.glow:SetColorTexture (addonTable.FONTS.grey:GetRGB())
   box.glow:Hide ()
 
   box:SetScript ("OnEnter", function (b) b.glow:Show() end)
@@ -476,11 +490,7 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
       end
       self.rowHeight[n] = h
       if n == 0 and self.hlines then
-        if h == 0 then
-          self.hlines[-1]:Hide ()
-        else
-          self.hlines[-1]:Show ()
-        end
+        self.hlines[-1]:SetShown(h ~= 0)
       end
     else
       for i = 1, self.rows do
@@ -496,11 +506,7 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
       end
       self.colWidth[n] = w
       if n == 0 and self.vlines then
-        if w == 0 then
-          self.vlines[-1]:Hide ()
-        else
-          self.vlines[-1]:Show ()
-        end
+        self.vlines[-1]:SetShown(w ~= 0)
       end
     else
       for i = 1, self.cols do
@@ -745,7 +751,7 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
   t.textTagPool = {}
   t.SetCellText = function (self, i, j, text, align, color, font)
     align = align or "CENTER"
-    color = color or {1, 1, 1}
+    color = color or {addonTable.FONTS.white:GetRGB()}
     font = font or "GameFontNormalSmall"
 
     if self.cells[i][j] and not self.cells[i][j].istag then
@@ -772,7 +778,7 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
       end
     end
     self.cells[i][j].istag = true
-    self.cells[i][j]:SetTextColor (unpack(color))
+    self.cells[i][j]:SetTextColor(unpack(color))
     self.cells[i][j]:SetText (text)
     self.cells[i][j].align = align
     self:AlignCell (i, j)
@@ -781,46 +787,53 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
   return t
 end
 
+local function GetStaticPopupEditBox(popup)
+  if popup.GetEditBox then
+    return popup:GetEditBox()
+  end
+  return popup.editBox or popup.EditBox
+end
+
+local function GetStaticPopupButton1(popup)
+  if popup.GetButton1 then
+    return popup:GetButton1()
+  end
+  return popup.button1
+end
+
 function GUI.CreateStaticPopup(name, text, options)
   StaticPopupDialogs[name] = {
     text = text,
     button1 = ACCEPT,
     button2 = CANCEL,
     hasEditBox = true,
-    editBoxWidth = 350,
     OnAccept = function (self)
-      options.func(self.editBox:GetText ())
+      options.func(GetStaticPopupEditBox(self):GetText())
     end,
     EditBoxOnEnterPressed = function (self)
-      local importStr = self:GetParent ().editBox:GetText ()
+      local importStr = self:GetText()
       if importStr ~= "" then
         options.func(importStr)
-        self:GetParent ():Hide ()
+        self:GetParent():Hide()
       end
     end,
-    EditBoxOnTextChanged = function (self, data)
-      if data ~= "" then
-        self:GetParent ().button1:Enable ()
-      else
-        self:GetParent ().button1:Disable ()
-      end
+    EditBoxOnTextChanged = function (self)
+      GetStaticPopupButton1(self:GetParent()):SetEnabled(self:GetText() ~= "")
     end,
-    EditBoxOnEscapePressed = function(self)
-      self:GetParent():Hide();
-    end,
+    EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,
     OnShow = function (self)
       LibDD:CloseDropDownMenus()
-      self.editBox:SetText ("")
-      self.button1:Disable ()
-      self.editBox:SetFocus ()
+      local editBox = GetStaticPopupEditBox(self)
+      editBox:SetText("")
+      editBox:SetFocus()
+      RunNextFrame(function() GetStaticPopupButton1(self):Disable() end)
     end,
     OnHide = function (self)
       ChatEdit_FocusActiveWindow()
-      self.editBox:SetText ("")
+      GetStaticPopupEditBox(self):SetText("")
     end,
     timeout = 0,
     whileDead = true,
-    hideOnEscape = true
   }
 end
 

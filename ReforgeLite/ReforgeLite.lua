@@ -10,11 +10,35 @@ local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 
 local GetItemStats = addonTable.GetItemStatsUp
 
-local gprint = print
+addonTable.printLog = {}
 local function print(...)
-    gprint("|cff33ff99"..addonName.."|r:",...)
+    tinsert(addonTable.printLog, (" "):join(date("[%X]:"), tostringall(...)))
+    getprinthandler()(TRANSMOGRIFY_FONT_COLOR:WrapTextInColorCode(addonName)..":",...)
 end
 addonTable.print = print
+
+local ITEM_SLOTS = {
+  "HEADSLOT",
+  "NECKSLOT",
+  "SHOULDERSLOT",
+  "BACKSLOT",
+  "CHESTSLOT",
+  "WRISTSLOT",
+  "HANDSSLOT",
+  "WAISTSLOT",
+  "LEGSSLOT",
+  "FEETSLOT",
+  "FINGER0SLOT",
+  "FINGER1SLOT",
+  "TRINKET0SLOT",
+  "TRINKET1SLOT",
+  "MAINHANDSLOT",
+  "SECONDARYHANDSLOT",
+}
+ReforgeLite.itemSlots = ITEM_SLOTS
+local ITEM_SLOT_COUNT = #ITEM_SLOTS
+
+local ignoredSlots = { [INVSLOT_TABARD] = true, [INVSLOT_BODY] = true }
 
 local ITEM_SIZE = 24
 addonTable.MAX_SPEED = 20
@@ -66,7 +90,7 @@ local DefaultDB = {
     },
     methodOrigin = addonName,
     itemsLocked = {},
-    categoryStates = { [SETTINGS] = false },
+    categoryStates = {},
   },
   class = {
     customPresets = {}
@@ -75,9 +99,23 @@ local DefaultDB = {
 
 local RFL_FRAMES = { ReforgeLite }
 
-local function ReforgeFrameIsVisible()
+local function ReforgingFrameIsVisible()
   return ReforgingFrame and ReforgingFrame:IsShown()
 end
+
+local PLAYER_ITEM_DATA = setmetatable({}, {
+  __index = function(t, k)
+    if type(k) == "number" and k >= INVSLOT_FIRST_EQUIPPED and k <= INVSLOT_LAST_EQUIPPED then
+      rawset(t, k, Item:CreateFromEquipmentSlot(k))
+      return t[k]
+    elseif tContains(ITEM_SLOTS, k) then
+      local slotId = GetInventorySlotInfo(k)
+      rawset(t, k, t[slotId])
+      return t[slotId]
+    end
+  end
+})
+ReforgeLite.playerData = PLAYER_ITEM_DATA
 
 addonTable.localeClass, addonTable.playerClass, addonTable.playerClassID = UnitClass("player")
 addonTable.playerRace = select(2, UnitRace("player"))
@@ -122,28 +160,8 @@ GUI.CreateStaticPopup("REFORGE_LITE_SAVE_PRESET", L["Enter the preset name"], { 
     weights = CopyTable(ReforgeLite.pdb.weights)
   }
   ReforgeLite:InitCustomPresets()
-  ReforgeLite.deletePresetButton:Enable()
+  ReforgeLite.deletePresetButton:ToggleStatus()
 end })
-
-ReforgeLite.itemSlots = {
-  "HEADSLOT",
-  "NECKSLOT",
-  "SHOULDERSLOT",
-  "BACKSLOT",
-  "CHESTSLOT",
-  "WRISTSLOT",
-  "HANDSSLOT",
-  "WAISTSLOT",
-  "LEGSSLOT",
-  "FEETSLOT",
-  "FINGER0SLOT",
-  "FINGER1SLOT",
-  "TRINKET0SLOT",
-  "TRINKET1SLOT",
-  "MAINHANDSLOT",
-  "SECONDARYHANDSLOT",
-}
-local ignoredSlots = { [INVSLOT_TABARD] = true, [INVSLOT_BODY] = true }
 
 local statIds = {
   SPIRIT = 1, DODGE = 2, PARRY = 3, HIT = 4, CRIT = 5, HASTE = 6, EXP = 7, MASTERY = 8, SPELLHIT = 9
@@ -193,7 +211,7 @@ local function RatingStat (i, name_, tip_, long_, id_)
   }
 end
 
-ReforgeLite.itemStats = {
+local ITEM_STATS = {
     {
       name = "ITEM_MOD_SPIRIT_SHORT",
       tip = SPELL_STAT5_NAME,
@@ -232,6 +250,8 @@ ReforgeLite.itemStats = {
     RatingStat (statIds.EXP,     "ITEM_MOD_EXPERTISE_RATING",     EXPERTISE_ABBR, STAT_EXPERTISE,       CR_EXPERTISE),
     RatingStat (statIds.MASTERY, "ITEM_MOD_MASTERY_RATING_SHORT", STAT_MASTERY,   STAT_MASTERY,         CR_MASTERY),
 }
+ReforgeLite.itemStats = ITEM_STATS
+local ITEM_STAT_COUNT = #ITEM_STATS
 
 local REFORGE_TABLE_BASE = 112
 local reforgeTable = {
@@ -277,28 +297,49 @@ end
 
 addonTable.WoWSimsOriginTag = "WoWSims"
 
-function ReforgeLite:ValidateWoWSimsString(importStr)
-  local success, wowsims = pcall(function () return C_EncodingUtil.DeserializeJSON(importStr) end)
-  if success and (wowsims or {}).player then
-    local newItems = CopyTable((self.pdb.method or self:InitializeMethod()).items)
-    for slot,item in ipairs(newItems) do
-      local simItemInfo = wowsims.player.equipment.items[slot] or {}
-      local equippedItemInfo = self.itemData[slot]
-      if simItemInfo.id ~= equippedItemInfo.itemId then
-        local _, importItemLink = C_Item.GetItemInfo(simItemInfo.id)
-        return L["%s does not match your currently equipped %s. ReforgeLite only supports equipped items."]:format(importItemLink or ("item:"..simItemInfo.id), equippedItemInfo.item)
-      end
-      if simItemInfo.reforging then
-        item.src, item.dst = unpack(self.reforgeTable[simItemInfo.reforging - REFORGE_TABLE_BASE])
-      else
-        item.src, item.dst = nil, nil
-      end
-    end
-    return newItems
+local function IsItemSwapped(slot, wowsims)
+  local SWAPPABLE_SLOTS = {
+    [INVSLOT_FINGER1] = INVSLOT_FINGER2,
+    [INVSLOT_FINGER2] = INVSLOT_FINGER1,
+    [INVSLOT_TRINKET1] = INVSLOT_TRINKET2,
+    [INVSLOT_TRINKET2] = INVSLOT_TRINKET1
+  }
+  local oppositeSlotId = SWAPPABLE_SLOTS[GetInventorySlotInfo(ITEM_SLOTS[slot])]
+  if not oppositeSlotId then return end
+  local slotItemId = (wowsims.player.equipment.items[slot] or {}).id or 0
+  local oppositeSlotItemId = (wowsims.player.equipment.items[oppositeSlotId] or {}).id or 0
+  if C_Item.IsEquippedItem(slotItemId) and C_Item.IsEquippedItem(oppositeSlotItemId) then
+    return oppositeSlotId
   end
 end
 
-function ReforgeLite:ApplyWoWSimsImport(newItems)
+function ReforgeLite:ValidateWoWSimsString(importStr)
+  local success, wowsims = pcall(function () return C_EncodingUtil.DeserializeJSON(importStr) end)
+  if not success or type(wowsims) ~= "table" then return false, wowsims end
+  if not (wowsims.player or {}).equipment then
+    return false, L['This import is missing player equipment data! Please make sure "Gear" is selected when exporting from WoWSims.']
+  end
+  local newItems = CopyTable((self.pdb.method or self:InitializeMethod()).items)
+  for slot, item in ipairs(newItems) do
+    local simItemInfo = wowsims.player.equipment.items[slot] or {}
+    if simItemInfo.id ~= self.itemData[slot].itemId then
+      local swappedSlotId = IsItemSwapped(slot, wowsims)
+      if swappedSlotId then
+        simItemInfo = wowsims.player.equipment.items[swappedSlotId]
+      else
+        return false, { itemId = simItemInfo.id, slot = slot }
+      end
+    end
+    if simItemInfo.reforging then
+      item.src, item.dst = unpack(self.reforgeTable[simItemInfo.reforging - REFORGE_TABLE_BASE])
+    else
+      item.src, item.dst = nil, nil
+    end
+  end
+  return true, newItems
+end
+
+function ReforgeLite:ApplyWoWSimsImport(newItems, attachToReforge)
   if not self.pdb.method then
     self.pdb.method = { items = newItems }
   else
@@ -307,6 +348,7 @@ function ReforgeLite:ApplyWoWSimsImport(newItems)
   self.pdb.methodOrigin = addonTable.WoWSimsOriginTag
   self:FinalizeReforge(self.pdb)
   self:UpdateMethodCategory()
+  self:ShowMethodWindow(attachToReforge)
 end
 
 --[===[@debug@
@@ -321,11 +363,11 @@ end
 function ReforgeLite:ValidatePawnString(importStr)
   local pos, _, version, name, values = strfind (importStr, "^%s*%(%s*Pawn%s*:%s*v(%d+)%s*:%s*\"([^\"]+)\"%s*:%s*(.+)%s*%)%s*$")
   version = tonumber (version)
-  if version and version > 1 then return end
+  if version and version > 1 then return false end
   if not (pos and version and name and values) or name == "" or values == "" then
-    return
+    return false
   end
-  return values
+  return true, values
 end
 
 function ReforgeLite:ParsePawnString(values)
@@ -373,11 +415,11 @@ function ReforgeLite:CreateCategory (name)
   local c = CreateFrame ("Frame", nil, self.content)
   c:ClearAllPoints ()
   c:SetSize(16,16)
-  c.expanded = self.pdb.categoryStates[name] ~= false
+  c.expanded = self.pdb.categoryStates[name] ~= 1
   c.name = c:CreateFontString (nil, "OVERLAY", "GameFontNormal")
   c.catname = c.name
   c.name:SetPoint ("TOPLEFT", c, "TOPLEFT", 18, -1)
-  c.name:SetTextColor (1, 1, 1)
+  c.name:SetTextColor(addonTable.FONTS.white:GetRGB())
   c.name:SetText (name)
 
   c.button = CreateFrame ("Button", nil, c)
@@ -419,24 +461,13 @@ function ReforgeLite:CreateCategory (name)
   end
 
   c.Toggle = function (category)
-    category.expanded = not category.expanded
-    self.pdb.categoryStates[name] = category.expanded
-    if c.expanded then
-      for k, v in pairs (category.frames) do
-        if not v.chidden then
-          v:Show ()
-        end
-      end
-      for k, v in pairs (category.anchors) do
-        v.frame:SetPoint (v.point, v.rel, v.relPoint, v.x, v.y)
-      end
-    else
-      for k, v in pairs (category.frames) do
-        v:Hide ()
-      end
-      for k, v in pairs (category.anchors) do
-        v.frame:SetPoint (v.point, category.button, v.relPoint, v.x, v.y)
-      end
+    category.expanded = not category.expanded or nil
+    self.pdb.categoryStates[name] = not category.expanded and 1 or nil
+    for _, v in ipairs(category.frames) do
+      v:SetShown(category.expanded and not v.chidden)
+    end
+    for _, v in ipairs(category.anchors) do
+      v.frame:SetPoint(v.point, category.expanded and v.rel or category.button, v.relPoint, v.x, v.y)
     end
     category.button:UpdateTexture ()
     self:UpdateContentSize ()
@@ -487,13 +518,13 @@ end
 local function SetTextDelta (text, value, cur, override)
   override = override or (value - cur)
   if override == 0 then
-    text:SetTextColor (0.7, 0.7, 0.7)
+    text:SetTextColor(addonTable.FONTS.grey:GetRGB())
   elseif override > 0 then
-    text:SetTextColor (0.6, 1, 0.6)
+    text:SetTextColor(addonTable.FONTS.green:GetRGB())
   else
-    text:SetTextColor (1, 0.4, 0.4)
+    text:SetTextColor(addonTable.FONTS.red:GetRGB())
   end
-  text:SetFormattedText(value - cur >= 0 and "+%s" or "%s", value - cur)
+  text:SetFormattedText(value - cur > 0 and "+%s" or "%s", value - cur)
 end
 
 ------------------------------------------------------------------------
@@ -575,8 +606,8 @@ function ReforgeLite:CreateFrame()
     insets = { left = 3, right = 3, top = 22, bottom = 3 }
   }
   self:ApplyBackdrop()
-  self:SetBackdropBorderColor (0.1,0.1,0.1)
-  self:SetBackdropColor (0.1, 0.1, 0.1)
+  self:SetBackdropColor(addonTable.FONTS.panel:GetRGB())
+  self:SetBackdropBorderColor(addonTable.FONTS.panel:GetRGB())
 
   self.titlebar = self:CreateTexture(nil,"BACKGROUND")
   self.titlebar:SetPoint("TOPLEFT", 3, -3)
@@ -621,7 +652,7 @@ function ReforgeLite:CreateFrame()
 
   self.title = self:CreateFontString (nil, "OVERLAY", "GameFontNormal")
   self.title:SetText (addonTitle)
-  self.title:SetTextColor (1, 1, 1)
+  self.title:SetTextColor (addonTable.FONTS.white:GetRGB())
   self.title:SetPoint ("BOTTOMLEFT", self.titleIcon, "BOTTOMRIGHT", 2, 1)
 
   self.close = CreateFrame ("Button", nil, self, "UIPanelCloseButtonNoScripts")
@@ -729,14 +760,14 @@ function ReforgeLite:CreateItemTable ()
 
   self:UpdatePlayerSpecInfo()
 
-  self.itemTable = GUI:CreateTable (#self.itemSlots + 1, #self.itemStats, ITEM_SIZE, ITEM_SIZE + 4, {0.5, 0.5, 0.5, 1}, self)
+  self.itemTable = GUI:CreateTable (ITEM_SLOT_COUNT + 1, ITEM_STAT_COUNT, ITEM_SIZE, ITEM_SIZE + 4, {0.5, 0.5, 0.5, 1}, self)
   self.itemTable:SetPoint ("TOPLEFT", self.playerSpecTexture, "BOTTOMLEFT", 0, -6)
   self.itemTable:SetPoint ("BOTTOM", 0, 10)
   self.itemTable:SetWidth (400)
 
   self.itemLevel = self:CreateFontString (nil, "OVERLAY", "GameFontNormal")
-  ReforgeLite.itemLevel:SetPoint ("BOTTOMRIGHT", ReforgeLite.itemTable, "TOPRIGHT", 0, 8)
-  self.itemLevel:SetTextColor (1, 1, 0.8)
+  self.itemLevel:SetPoint ("BOTTOMRIGHT", self.itemTable, "TOPRIGHT", 0, 8)
+  self.itemLevel:SetTextColor(addonTable.FONTS.gold:GetRGB())
   self:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE")
   self:PLAYER_AVG_ITEM_LEVEL_UPDATE()
 
@@ -747,11 +778,11 @@ function ReforgeLite:CreateItemTable ()
 
   self.itemTable:SetCell(0, 0, self.itemLockHelpButton, "TOPLEFT", -5, 10)
 
-  for i, v in ipairs (self.itemStats) do
+  for i, v in ipairs (ITEM_STATS) do
     self.itemTable:SetCellText (0, i, v.tip)
   end
   self.itemData = {}
-  for i, v in ipairs (self.itemSlots) do
+  for i, v in ipairs (ITEM_SLOTS) do
     self.itemData[i] = CreateFrame ("Frame", nil, self.itemTable)
     self.itemData[i].slot = v
     self.itemData[i]:ClearAllPoints ()
@@ -771,11 +802,7 @@ function ReforgeLite:CreateItemTable ()
     self.itemData[i]:SetScript ("OnMouseDown", function (frame)
       if not frame.itemGUID then return end
       self.pdb.itemsLocked[frame.itemGUID] = not self.pdb.itemsLocked[frame.itemGUID] and 1 or nil
-      if self.pdb.itemsLocked[frame.itemGUID] then
-        frame.locked:Show ()
-      else
-        frame.locked:Hide ()
-      end
+      frame.locked:SetShown(self.pdb.itemsLocked[frame.itemGUID] ~= nil)
     end)
     self.itemData[i].slotId, self.itemData[i].slotTexture = GetInventorySlotInfo (v)
     self.itemData[i].texture = self.itemData[i]:CreateTexture (nil, "ARTWORK")
@@ -792,20 +819,22 @@ function ReforgeLite:CreateItemTable ()
     self.itemData[i].quality:SetPoint ("CENTER", self.itemData[i])
 
     self.itemData[i].stats = {}
-    for j, s in ipairs (self.itemStats) do
-      self.itemData[i].stats[j] = self.itemTable:CreateFontString (nil, "OVERLAY", "GameFontNormalSmall")
-      self.itemTable:SetCell (i, j, self.itemData[i].stats[j])
-      self.itemData[i].stats[j]:SetTextColor (0.8, 0.8, 0.8)
-      self.itemData[i].stats[j]:SetText ("-")
+    for j, s in ipairs (ITEM_STATS) do
+      local statFontString = self.itemTable:CreateFontString (nil, "OVERLAY", "GameFontNormalSmall")
+      self.itemData[i].stats[j] = statFontString
+      self.itemTable:SetCell (i, j, statFontString)
+      statFontString.fontColors = { grey = addonTable.FONTS.lightgrey, red = addonTable.FONTS.red, green = addonTable.FONTS.green, white = addonTable.FONTS.white  }
+      statFontString:SetTextColor(statFontString.fontColors.grey:GetRGB())
+      statFontString:SetText ("-")
     end
   end
   self.statTotals = {}
-  self.itemTable:SetCellText (#self.itemSlots + 1, 0, L["Sum"], "CENTER", {1, 0.8, 0})
-  for i, v in ipairs (self.itemStats) do
+  self.itemTable:SetCellText (ITEM_SLOT_COUNT + 1, 0, L["Sum"], "CENTER", {addonTable.FONTS.darkyellow:GetRGB()})
+  for i, v in ipairs (ITEM_STATS) do
     self.statTotals[i] = self.itemTable:CreateFontString (nil, "OVERLAY", "GameFontNormalSmall")
-    self.itemTable:SetCell (#self.itemSlots + 1, i, self.statTotals[i])
-    self.statTotals[i]:SetTextColor (1, 0.8, 0)
-    self.statTotals[i]:SetText ("0")
+    self.itemTable:SetCell (ITEM_SLOT_COUNT + 1, i, self.statTotals[i])
+    self.statTotals[i]:SetTextColor (addonTable.FONTS.darkyellow:GetRGB())
+    self.statTotals[i]:SetText("0")
   end
 end
 
@@ -884,7 +913,7 @@ function ReforgeLite:AddCapPoint (i, loading)
       end
     elseif cap.stat == statIds.HASTE then
       local meleeHaste, rangedHaste, spellHaste = self:CalcHasteWithBonuses(rating)
-      rating = ("%s: %.2f\n%s: %.2f\n%s: %.2f"):format(MELEE, meleeHaste, RANGED, rangedHaste, STAT_CATEGORY_SPELL, spellHaste)
+      rating = ("%s: %.2f%%\n%s: %.2f%%\n%s: %.2f%%"):format(MELEE, meleeHaste, RANGED, rangedHaste, STAT_CATEGORY_SPELL, spellHaste)
     else
       rating = ("%.2f"):format(rating)
     end
@@ -983,7 +1012,7 @@ end
 function ReforgeLite:SetStatWeights (weights, caps)
   if weights then
     self.pdb.weights = CopyTable (weights)
-    for i = 1, #self.itemStats do
+    for i = 1, ITEM_STAT_COUNT do
       if self.statWeights.inputs[i] then
         self.statWeights.inputs[i]:SetText (self.pdb.weights[i])
       end
@@ -1032,30 +1061,21 @@ function ReforgeLite:CapUpdater ()
   self:UpdateCapPoints (1)
   self:UpdateCapPoints (2)
 end
-function ReforgeLite:CustomPresetsExist()
-  return next(ReforgeLite.cdb.customPresets) ~= nil
-end
 function ReforgeLite:UpdateStatWeightList ()
-  local stats = self.itemStats
-  local rows = 0
-  for i, v in pairs (stats) do
-    rows = rows + 1
-  end
+  local rows = ITEM_STAT_COUNT
   local extraRows = 0
   self.statWeights:ClearCells ()
   self.statWeights.inputs = {}
-  rows = ceil (rows / 2) + extraRows
+  rows = ceil(rows / 2) + extraRows
   while self.statWeights.rows > rows do
     self.statWeights:DeleteRow (1)
   end
   if self.statWeights.rows < rows then
     self.statWeights:AddRow (1, rows - self.statWeights.rows)
   end
-  local pos = 0
-  for i, v in pairs (stats) do
-    pos = pos + 1
-    local col = floor ((pos - 1) / (self.statWeights.rows - extraRows))
-    local row = pos - col * (self.statWeights.rows - extraRows) + extraRows
+  for i, v in ipairs (ITEM_STATS) do
+    local col = floor ((i - 1) / (self.statWeights.rows - extraRows))
+    local row = i - col * (self.statWeights.rows - extraRows) + extraRows
     col = 1 + 2 * col
 
     self.statWeights:SetCellText (row, col, v.long, "LEFT")
@@ -1102,9 +1122,10 @@ function ReforgeLite:CreateOptionList ()
   end)
   self.statWeightsCategory:AddFrame (self.deletePresetButton)
   self:SetAnchor (self.deletePresetButton, "LEFT", self.savePresetButton, "RIGHT", 5, 0)
-  if not self:CustomPresetsExist() then
-    self.deletePresetButton:Disable()
+  self.deletePresetButton.ToggleStatus = function(btn)
+    btn:SetEnabled(TableHasAnyEntries(self.cdb.customPresets))
   end
+  self.deletePresetButton:ToggleStatus()
 
   --[===[@debug@
   self.exportPresetButton = GUI:CreatePanelButton (self.content, L["Export"], function(btn)
@@ -1164,7 +1185,7 @@ function ReforgeLite:CreateOptionList ()
     end
   end)
 
-  self.statWeights = GUI:CreateTable (ceil (#self.itemStats / 2), 4)
+  self.statWeights = GUI:CreateTable (ceil (ITEM_STAT_COUNT / 2), 4)
   self:SetAnchor (self.statWeights, "TOPLEFT", self.targetLevel.text, "BOTTOMLEFT", 0, -8)
   self.statWeights:SetPoint ("RIGHT", -5, 0)
   self.statWeightsCategory:AddFrame (self.statWeights)
@@ -1179,7 +1200,7 @@ function ReforgeLite:CreateOptionList ()
   self.statCaps:SetColumnWidth (3, 50)
   self.statCaps:SetColumnWidth (4, 50)
   local statList = {{value = 0, name = NONE}}
-  for i, v in ipairs (self.itemStats) do
+  for i, v in ipairs (ITEM_STATS) do
     tinsert (statList, {value = i, name = v.long})
   end
   self.statCaps.ToggleStatDropdownToCorrectState = function(caps)
@@ -1346,7 +1367,7 @@ function ReforgeLite:FillSettings()
   self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Open window when reforging"],
     self.db.openOnReforge, function (val) self.db.openOnReforge = val end), "LEFT")
 
-  self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Summarize reforged stats"],
+  self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Summarize reforged stats on tooltip"],
     self.db.updateTooltip,
     function (val)
       self.db.updateTooltip = val
@@ -1398,6 +1419,9 @@ function ReforgeLite:FillSettings()
 
 --[===[@debug@
   self.settings:AddRow()
+  self.settings:SetCell (getOrderId('settings'), 0, GUI:CreatePanelButton (self.settings, "Print Log", function(btn) self:PrintLog () end), "LEFT")
+
+  self.settings:AddRow()
   self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton(
     self.settings,
     "Debug Mode",
@@ -1426,25 +1450,25 @@ function ReforgeLite:UpdateMethodCategory()
     self.methodCategory = self:CreateCategory (L["Result"])
     self:SetAnchor (self.methodCategory, "TOPLEFT", self.computeButton, "BOTTOMLEFT", 0, -10)
 
-    self.methodStats = GUI:CreateTable (#self.itemStats - 1, 2, ITEM_SIZE, 60, {0.5, 0.5, 0.5, 1})
+    self.methodStats = GUI:CreateTable (ITEM_STAT_COUNT - 1, 2, ITEM_SIZE, 60, {0.5, 0.5, 0.5, 1})
     self.methodCategory:AddFrame (self.methodStats)
     self:SetAnchor (self.methodStats, "TOPLEFT", self.methodCategory, "BOTTOMLEFT", 0, -5)
     self.methodStats:SetRowHeight (ITEM_SIZE + 2)
     self.methodStats:SetColumnWidth (60)
 
-    for i, v in ipairs (self.itemStats) do
+    for i, v in ipairs (ITEM_STATS) do
       self.methodStats:SetCellText (i - 1, 0, v.tip, "LEFT")
 
       self.methodStats[i] = {}
 
       self.methodStats[i].value = self.methodStats:CreateFontString (nil, "OVERLAY", "GameFontNormalSmall")
       self.methodStats:SetCell (i - 1, 1, self.methodStats[i].value)
-      self.methodStats[i].value:SetTextColor (1, 1, 1)
+      self.methodStats[i].value:SetTextColor(addonTable.FONTS.white:GetRGB())
       self.methodStats[i].value:SetText ("0")
 
       self.methodStats[i].delta = self.methodStats:CreateFontString (nil, "OVERLAY", "GameFontNormalSmall")
       self.methodStats:SetCell (i - 1, 2, self.methodStats[i].delta)
-      self.methodStats[i].delta:SetTextColor (0.7, 0.7, 0.7)
+      self.methodStats[i].delta:SetTextColor(addonTable.FONTS.grey:GetRGB())
       self.methodStats[i].delta:SetText ("+0")
     end
 
@@ -1472,7 +1496,7 @@ function ReforgeLite:RefreshMethodStats()
   end
   if self.pdb.method then
     if self.methodStats then
-      for i, v in ipairs (self.itemStats) do
+      for i, v in ipairs (ITEM_STATS) do
         local mvalue = v.mgetter (self.pdb.method)
         if v.percent then
           self.methodStats[i].value:SetFormattedText("%.2f%%", mvalue)
@@ -1530,12 +1554,12 @@ end
 
 local function GetReforgeID(slotId)
   if ignoredSlots[slotId] then return end
-  return GetReforgeIDFromString(GetInventoryItemLink('player', slotId))
+  return GetReforgeIDFromString(PLAYER_ITEM_DATA[slotId]:GetItemLink())
 end
 
 function ReforgeLite:UpdateItems()
   for _, v in ipairs (self.itemData) do
-    local item = Item:CreateFromEquipmentSlot(v.slotId)
+    local item = PLAYER_ITEM_DATA[v.slotId]
     local stats = {}
     local reforgeSrc, reforgeDst
     if not item:IsItemEmpty() then
@@ -1543,16 +1567,17 @@ function ReforgeLite:UpdateItems()
       v.itemId = item:GetItemID()
       v.ilvl = item:GetCurrentItemLevel()
       v.itemGUID = item:GetItemGUID()
+      v.upgradeLevel = v.ilvl >= 458 and addonTable.GetUpgradeIdForInventorySlot(v.slotId) or 0
       v.texture:SetTexture(item:GetItemIcon())
       v.qualityColor = item:GetItemQualityColor()
       v.quality:SetVertexColor(v.qualityColor.r, v.qualityColor.g, v.qualityColor.b)
       v.quality:Show()
-      stats = GetItemStats(v.item, self.pdb.ilvlCap)
+      stats = GetItemStats(v.item, v.upgradeLevel)
       v.reforge = GetReforgeID(v.slotId)
       if v.reforge then
         local srcId, dstId = unpack(reforgeTable[v.reforge])
-        reforgeSrc, reforgeDst = self.itemStats[srcId].name, self.itemStats[dstId].name
-        local amount = floor ((stats[reforgeSrc] or 0) * 0.4)
+        reforgeSrc, reforgeDst = ITEM_STATS[srcId].name, ITEM_STATS[dstId].name
+        local amount = floor ((stats[reforgeSrc] or 0) * addonTable.REFORGE_COEFF)
         stats[reforgeSrc] = (stats[reforgeSrc] or 0) - amount
         stats[reforgeDst] = (stats[reforgeDst] or 0) + amount
       end
@@ -1563,8 +1588,9 @@ function ReforgeLite:UpdateItems()
       v.reforge = nil
       v.itemGUID = nil
       v.qualityColor = nil
+      v.upgradeLevel = nil
       v.texture:SetTexture (v.slotTexture)
-      v.quality:SetVertexColor(1,1,1)
+      v.quality:SetVertexColor(addonTable.FONTS.white:GetRGB())
       v.quality:Hide()
     end
     if self.pdb.itemsLocked[v.itemGUID] then
@@ -1572,23 +1598,24 @@ function ReforgeLite:UpdateItems()
     else
       v.locked:Hide()
     end
-    for j, s in ipairs (self.itemStats) do
+    for j, s in ipairs (ITEM_STATS) do
       if stats[s.name] and stats[s.name] ~= 0 then
         v.stats[j]:SetText (stats[s.name])
         if s.name == reforgeSrc then
-          v.stats[j]:SetTextColor (1, 0.4, 0.4)
+          v.stats[j]:SetTextColor(v.stats[j].fontColors.red:GetRGB())
+          
         elseif s.name == reforgeDst then
-          v.stats[j]:SetTextColor (0.6, 1, 0.6)
+          v.stats[j]:SetTextColor(v.stats[j].fontColors.green:GetRGB())
         else
-          v.stats[j]:SetTextColor (1, 1, 1)
+          v.stats[j]:SetTextColor(v.stats[j].fontColors.white:GetRGB())
         end
       else
-        v.stats[j]:SetText ("-")
-        v.stats[j]:SetTextColor (0.8, 0.8, 0.8)
+        v.stats[j]:SetText("-")
+        v.stats[j]:SetTextColor(v.stats[j].fontColors.grey:GetRGB())
       end
     end
   end
-  for i, v in ipairs (self.itemStats) do
+  for i, v in ipairs (ITEM_STATS) do
     self.statTotals[i]:SetText(v.getter())
   end
 
@@ -1665,10 +1692,10 @@ function ReforgeLite:QueueUpdate()
   local time = GetTime()
   if self.lastRan == time then return end
   self.lastRan = time
-  RunNextFrame(function() self:UpdateItems() end)
-  if self.methodWindow then
-    RunNextFrame(function() self:UpdateMethodChecks() end)
-  end
+  RunNextFrame(function()
+    self:UpdateItems()
+    self:RefreshMethodWindow()
+  end)
 end
 
 --------------------------------------------------------------------------
@@ -1694,8 +1721,8 @@ function ReforgeLite:CreateMethodWindow()
   self.methodWindow.SetFrameActive = self.SetFrameActive
   self.methodWindow:SetFrameActive(true)
 
-  self.methodWindow:SetBackdropColor (0.1, 0.1, 0.1)
-  self.methodWindow:SetBackdropBorderColor (0, 0, 0)
+  self.methodWindow:SetBackdropColor(self:GetBackdropColor())
+  self.methodWindow:SetBackdropBorderColor(self:GetBackdropBorderColor())
 
   self.methodWindow:EnableMouse (true)
   self.methodWindow:SetMovable (true)
@@ -1718,7 +1745,7 @@ function ReforgeLite:CreateMethodWindow()
   tinsert(RFL_FRAMES, self.methodWindow)
 
   self.methodWindow.title = self.methodWindow:CreateFontString (nil, "OVERLAY", "GameFontNormal")
-  self.methodWindow.title:SetTextColor (1, 1, 1)
+  self.methodWindow.title:SetTextColor(addonTable.FONTS.white:GetRGB())
   self.methodWindow.title.RefreshText = function(frame)
     frame:SetFormattedText(L["Apply %s Output"], self.pdb.methodOrigin)
   end
@@ -1731,6 +1758,11 @@ function ReforgeLite:CreateMethodWindow()
   self.methodWindow.close:SetScript ("OnClick", function (btn)
     btn:GetParent():Hide()
   end)
+  self.methodWindow:SetScript ("OnShow", function (frame)
+    self:SetNewTopWindow(frame)
+    self:RefreshMethodWindow()
+    self:RegisterQueueUpdateEvents()
+  end)
   self.methodWindow:SetScript ("OnHide", function (frame)
     local activeWindow = self:GetActiveWindow()
     if activeWindow then
@@ -1739,14 +1771,8 @@ function ReforgeLite:CreateMethodWindow()
       self:UnregisterQueueUpdateEvents()
     end
   end)
-  self.methodWindow:SetScript ("OnShow", function (frame)
-    self:SetNewTopWindow(frame)
-    self:RefreshMethodWindow()
-    self:RegisterQueueUpdateEvents()
-  end)
 
-  self.methodWindow.itemTable = GUI:CreateTable (#self.itemSlots + 1, 3, 0, 0, nil, self.methodWindow)
-  self.methodWindow:ClearAllPoints ()
+  self.methodWindow.itemTable = GUI:CreateTable (ITEM_SLOT_COUNT + 1, 3, 0, 0, nil, self.methodWindow)
   self.methodWindow.itemTable:SetPoint ("TOPLEFT", 12, -28)
   self.methodWindow.itemTable:SetRowHeight (26)
   self.methodWindow.itemTable:SetColumnWidth (1, ITEM_SIZE)
@@ -1754,12 +1780,12 @@ function ReforgeLite:CreateMethodWindow()
   self.methodWindow.itemTable:SetColumnWidth (3, 274 - ITEM_SIZE * 2)
 
   self.methodOverride = {}
-  for i = 1, #self.itemSlots do
+  for i = 1, ITEM_SLOT_COUNT do
     self.methodOverride[i] = 0
   end
 
   self.methodWindow.items = {}
-  for i, v in ipairs (self.itemSlots) do
+  for i, v in ipairs (ITEM_SLOTS) do
     self.methodWindow.items[i] = CreateFrame ("Frame", nil, self.methodWindow.itemTable)
     self.methodWindow.items[i].slot = v
     self.methodWindow.items[i]:ClearAllPoints ()
@@ -1778,7 +1804,7 @@ function ReforgeLite:CreateMethodWindow()
     end)
     self.methodWindow.items[i]:SetScript ("OnLeave", GameTooltip_Hide)
     self.methodWindow.items[i]:SetScript ("OnDragStart", function (itemSlot)
-      if itemSlot.item and ReforgeFrameIsVisible() then
+      if itemSlot.item and ReforgingFrameIsVisible() then
         PickupInventoryItem(itemSlot.slotId)
       end
     end)
@@ -1796,25 +1822,20 @@ function ReforgeLite:CreateMethodWindow()
 
     self.methodWindow.items[i].reforge = self.methodWindow.itemTable:CreateFontString (nil, "OVERLAY", "GameFontNormal")
     self.methodWindow.itemTable:SetCell (i, 3, self.methodWindow.items[i].reforge, "LEFT")
-    self.methodWindow.items[i].reforge:SetTextColor (1, 1, 1)
+    self.methodWindow.items[i].reforge:SetTextColor(addonTable.FONTS.white:GetRGB())
     self.methodWindow.items[i].reforge:SetText ("")
 
     self.methodWindow.items[i].check = GUI:CreateCheckButton (self.methodWindow.itemTable, "", false,
       function (val) self.methodOverride[i] = (val and 1 or -1) self:UpdateMethodChecks () end, true)
     self.methodWindow.itemTable:SetCell (i, 1, self.methodWindow.items[i].check)
   end
-  self.methodWindow.reforge = GUI:CreatePanelButton (self.methodWindow, REFORGE, function(btn) self:DoReforge() end)
-  self.methodWindow.reforge:SetSize(114, 22)
-  self.methodWindow.reforge:SetPoint ("BOTTOMLEFT", 12, 12)
-  self.methodWindow.reforgeTip = CreateFrame ("Frame", nil, self.methodWindow)
-  self.methodWindow.reforgeTip:SetAllPoints (self.methodWindow.reforge)
-  self.methodWindow.reforgeTip:EnableMouse (true)
-  GUI:SetTooltip (self.methodWindow.reforgeTip, L["Reforging window must be open"])
-  self.methodWindow.reforgeTip:SetFrameLevel (self.methodWindow.reforge:GetFrameLevel () + 5)
-  self.methodWindow.reforgeTip:Hide ()
 
-  self.methodWindow.cost = CreateFrame ("Frame", "ReforgeLiteReforgeCost", self.methodWindow, "SmallMoneyFrameTemplate")
-  MoneyFrame_SetType (self.methodWindow.cost, "REFORGE")
+  self.methodWindow.reforge = GUI:CreatePanelButton(self.methodWindow, REFORGE, function(btn) self:DoReforge() end)
+  self.methodWindow.reforge:SetPoint("BOTTOMLEFT", 12, 12)
+  GUI:SetTooltip (self.methodWindow.reforge, function() return not ReforgingFrameIsVisible() and L["Reforging window must be open"] end)
+
+  self.methodWindow.cost = CreateFrame("Frame", "ReforgeLiteReforgeCost", self.methodWindow, "SmallMoneyFrameTemplate")
+  MoneyFrame_SetType(self.methodWindow.cost, "REFORGE")
   self.methodWindow.cost:SetPoint ("LEFT", self.methodWindow.reforge, "RIGHT", 5, 0)
 
   self.methodWindow.AttachToReforgingFrame = function(frame)
@@ -1830,12 +1851,12 @@ function ReforgeLite:RefreshMethodWindow()
   if not self.methodWindow then
     return
   end
-  for i = 1, #self.itemSlots do
+  for i = 1, ITEM_SLOT_COUNT do
     self.methodOverride[i] = 0
   end
 
   for i, v in ipairs (self.methodWindow.items) do
-    local item = Item:CreateFromEquipmentSlot(v.slotId)
+    local item = PLAYER_ITEM_DATA[v.slotId]
     if not item:IsItemEmpty() then
       v.item = item:GetItemLink()
       v.texture:SetTexture(item:GetItemIcon())
@@ -1846,29 +1867,36 @@ function ReforgeLite:RefreshMethodWindow()
       v.item = nil
       v.texture:SetTexture (v.slotTexture)
       v.qualityColor = nil
-      v.quality:SetVertexColor(1,1,1)
+      v.quality:SetVertexColor(addonTable.FONTS.white:GetRGB())
       v.quality:Hide()
     end
     local slotInfo = self.pdb.method.items[i]
-    if slotInfo.reforge then
-      v.reforge:SetFormattedText("%d %s > %s", slotInfo.amount, self.itemStats[slotInfo.src].long, self.itemStats[slotInfo.dst].long)
-      v.reforge:SetTextColor (1, 1, 1)
+    if slotInfo.reforge and not item:IsItemEmpty() then
+      v.reforge:SetFormattedText("%d %s > %s", slotInfo.amount, ITEM_STATS[slotInfo.src].long, ITEM_STATS[slotInfo.dst].long)
+      v.reforge:SetTextColor(addonTable.FONTS.white:GetRGB())
     else
       v.reforge:SetText (L["No reforge"])
-      v.reforge:SetTextColor (0.7, 0.7, 0.7)
+      v.reforge:SetTextColor(addonTable.FONTS.grey:GetRGB())
     end
   end
   self.methodWindow.title:RefreshText()
   self:UpdateMethodChecks ()
 end
 
-function ReforgeLite:ShowMethodWindow()
+function ReforgeLite:ShowMethodWindow(attachToReforge)
   if not self.methodWindow then
     self:CreateMethodWindow()
   end
 
   GUI:ClearFocus()
-  self.methodWindow:Show()
+  if self.methodWindow:IsShown() then
+    self:SetNewTopWindow(self.methodWindow)
+  else
+    self.methodWindow:Show()
+  end
+  if attachToReforge then
+      self.methodWindow:AttachToReforgingFrame()
+  end
 end
 
 local function IsReforgeMatching (slotId, reforge, override)
@@ -1878,36 +1906,24 @@ end
 function ReforgeLite:UpdateMethodChecks ()
   if self.methodWindow and self.pdb.method then
     local cost = 0
-    local anyDiffer = false
+    local anyDiffer
     for i, v in ipairs (self.methodWindow.items) do
-      local item = Item:CreateFromEquipmentSlot(v.slotId)
+      local item = PLAYER_ITEM_DATA[v.slotId]
       v.item = item:GetItemLink()
       v.texture:SetTexture (item:GetItemIcon() or v.slotTexture)
-      if item:IsItemEmpty() or IsReforgeMatching(v.slotId, self.pdb.method.items[i].reforge, self.methodOverride[i]) then
-        v.check:SetChecked (true)
-      else
-        anyDiffer = true
-        v.check:SetChecked (false)
-        if self.pdb.method.items[i].reforge then
-          local itemCost = select (11, C_Item.GetItemInfo (v.item)) or 0
-          cost = cost + (itemCost > 0 and itemCost or 100000)
-        end
+      local isMatching = item:IsItemEmpty() or IsReforgeMatching(v.slotId, self.pdb.method.items[i].reforge, self.methodOverride[i])
+      v.check:SetChecked(isMatching)
+      anyDiffer = anyDiffer or not isMatching
+      if not isMatching and self.pdb.method.items[i].reforge then
+        local itemCost = select (11, C_Item.GetItemInfo(v.item)) or 0
+        cost = cost + (itemCost > 0 and itemCost or 100000)
       end
     end
-    self.methodWindow.reforge:Disable()
-    self.methodWindow.reforgeTip:Hide()
-    self.methodWindow.cost:Hide()
-    if anyDiffer then
-      local enoughMoney = GetMoney() >= cost
-      SetMoneyFrameColorByFrame(self.methodWindow.cost, enoughMoney and "white" or "red")
-      if not ReforgeFrameIsVisible() then
-        self.methodWindow.reforgeTip:Show()
-      elseif enoughMoney then
-        self.methodWindow.reforge:Enable()
-      end
-      self.methodWindow.cost:Show()
-    end
-    MoneyFrame_Update (self.methodWindow.cost, cost)
+    self.methodWindow.cost:SetShown(anyDiffer)
+    local enoughMoney = anyDiffer and GetMoney() >= cost
+    self.methodWindow.reforge:SetEnabled(enoughMoney)
+    SetMoneyFrameColorByFrame(self.methodWindow.cost, enoughMoney and "white" or "red")
+    MoneyFrame_Update(self.methodWindow.cost, cost)
   end
 end
 
@@ -1942,7 +1958,7 @@ end
 local reforgeCo
 
 function ReforgeLite:DoReforge()
-  if self.pdb.method and self.methodWindow and ReforgeFrameIsVisible() then
+  if self.pdb.method and self.methodWindow and ReforgingFrameIsVisible() then
     if reforgeCo then
       self:StopReforging()
     else
@@ -1966,7 +1982,7 @@ function ReforgeLite:StopReforging()
 end
 
 function ReforgeLite:ContinueReforge()
-  if not (self.pdb.method and self.methodWindow and self.methodWindow:IsShown() and ReforgeFrameIsVisible()) then
+  if not (self.pdb.method and self.methodWindow and self.methodWindow:IsShown() and ReforgingFrameIsVisible()) then
     self:StopReforging()
     return
   end
@@ -1984,10 +2000,10 @@ function ReforgeLite:DoReforgeUpdate()
         C_Reforge.SetReforgeFromCursorItem()
         if newReforge then
           local id = UNFORGE_INDEX
-          local stats = GetItemStats (slotInfo.item, self.pdb.ilvlCap)
+          local stats = GetItemStats (slotInfo.item, self.itemData[slotId].upgradeLevel)
           for s, reforgeInfo in ipairs(reforgeTable) do
             local srcstat, dststat = unpack(reforgeInfo)
-            if (stats[self.itemStats[srcstat].name] or 0) ~= 0 and (stats[self.itemStats[dststat].name] or 0) == 0 then
+            if (stats[ITEM_STATS[srcstat].name] or 0) ~= 0 and (stats[ITEM_STATS[dststat].name] or 0) == 0 then
               id = id + 1
             end
             if srcstat == self.pdb.method.items[slotId].src and dststat == self.pdb.method.items[slotId].dst then
@@ -2122,11 +2138,9 @@ function ReforgeLite:ACTIVE_TALENT_GROUP_CHANGED(curr)
   end
 end
 
-function ReforgeLite:PLAYER_SPECIALIZATION_CHANGED(unitId)
-  if unitId == 'player' then
-    self:GetConversion()
-    self:UpdatePlayerSpecInfo()
-  end
+function ReforgeLite:PLAYER_SPECIALIZATION_CHANGED()
+  self:GetConversion()
+  self:UpdatePlayerSpecInfo()
 end
 
 function ReforgeLite:PLAYER_ENTERING_WORLD()
@@ -2161,7 +2175,7 @@ function ReforgeLite:ADDON_LOADED (addon)
   self:RegisterEvent("FORGE_MASTER_CLOSED")
   self:RegisterEvent("PLAYER_REGEN_DISABLED")
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
-  self:RegisterEvent("PLAYER_SPECIALIZATION_CHANGED")
+  self:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
   if self.db.specProfiles then
     self:RegisterEvent("ACTIVE_TALENT_GROUP_CHANGED")
   end
