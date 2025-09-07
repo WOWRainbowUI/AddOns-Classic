@@ -436,6 +436,12 @@ local phases = {
     TAI_HO_IN_CATACOMBS = 1364,
     LUSSHAN_PEARLS = 1365,
     KIL_RUK_AT_PILLAR_2 = 1366,
+    KAZTIK_AT_THE_BRINY_MUCK = 1367,
+    KAZTIK_AT_KLAXXIVESS = 1368,
+    RIKKAL_AT_KLAXXIVESS = 1369,
+    XARIL_AT_HEART_OF_FEAR = 1370,
+    XARIL_AT_KLAXXIVESS = 1371,
+    FARM_HAS_2_SLOTS = 1372,
 }
 Phasing.phases = phases
 
@@ -1377,7 +1383,7 @@ function Phasing.IsSpawnVisible(phase)
     end
 
     if phase == phases.ARIE_AT_DOCK then
-        return complete[31190] or (questLog[31190] and questLog[31190].isComplete == 1) and true or false
+        return (complete[31190] or (questLog[31190] and questLog[31190].isComplete == 1)) and not complete[30354] or false
     end
 
     if phase == phases.JU_LIEN_AT_COAST then
@@ -1397,7 +1403,7 @@ function Phasing.IsSpawnVisible(phase)
     end
 
     if phase == phases.CHEN_62779_AT_BREWGARDEN then
-        return (not complete[31076]) and (not complete[31129]) and (not complete[31078]) or false
+        return not complete[31078] and not questLog[31078] or false
     end
 
     if phase == phases.CHEN_62779_INSIDE_KOR_VESS then
@@ -1608,6 +1614,10 @@ function Phasing.IsSpawnVisible(phase)
         return complete[31338] or false
     end
 
+    if phase == phases.FARM_HAS_2_SLOTS then
+        return complete[30535] or (questLog[30535] and questLog[30535].isComplete == 1) or false
+    end
+
     if phase == phases.FARM_HAS_4_SLOTS then
         return complete[30256] or false
     end
@@ -1792,7 +1802,11 @@ function Phasing.IsSpawnVisible(phase)
     end
 
     if phase == phases.RIKKAL_AT_ZANVESS then
-        return not complete[31606] or false
+        return not complete[31606] and questLog[31606] or false
+    end
+
+    if phase == phases.RIKKAL_AT_KLAXXIVESS then
+        return complete[31606] or questLog[31606] or false
     end
 
     if phase == phases.HE_SOFTFOOT_DAILY then
@@ -1820,11 +1834,11 @@ function Phasing.IsSpawnVisible(phase)
     end
 
     if phase == phases.CHEN_AT_SHANGS_STEAD then
-        return complete[29918] and not (complete[29919] or questLog[29919]) or false
+        return complete[29918] and not (complete[29919] or (questLog[29919] and questLog[29919].isComplete == 1)) or false
     end
 
     if phase == phases.CHEN_AT_MUDMUGS_PLACE then
-        return (complete[29919] or questLog[29919]) and not (complete[29949] or questLog[29949]) or false
+        return (complete[29919] or (questLog[29919] and questLog[29919].isComplete == 1)) and not (complete[29949] or questLog[29949]) or false
     end
 
     if phase == phases.CHEN_AT_MUDMUGS_PLACE_LEGACY then
@@ -1993,6 +2007,22 @@ function Phasing.IsSpawnVisible(phase)
 
     if phase == phases.TAI_HO_IN_CATACOMBS then
         return complete[30924] or questLog[30924] or false
+    end
+
+    if phase == phases.KAZTIK_AT_THE_BRINY_MUCK then
+        return not (questLog[31092] and questLog[31359]) and not complete[31092] and not complete[31359] or false
+    end
+
+    if phase == phases.KAZTIK_AT_KLAXXIVESS then
+        return (questLog[31092] and questLog[31359]) or complete[31092] or complete[31359] or false
+    end
+
+    if phase == phases.XARIL_AT_HEART_OF_FEAR then
+        return not (complete[31211] or (questLog[31211] and questLog[31211].isComplete == 1)) or false
+    end
+
+    if phase == phases.XARIL_AT_KLAXXIVESS then
+        return complete[31211] or (questLog[31211] and questLog[31211].isComplete == 1) or false
     end
 
     return false
