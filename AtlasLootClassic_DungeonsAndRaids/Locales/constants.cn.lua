@@ -317,3 +317,9 @@ AL["XT-002 Deconstructor"] = "XT-002拆解者"
 AL["Yogg-Saron"] = "尤格-萨隆"
 
 -- DungeonsAndRaidsCata
+AL["Akma'hat"] = "阿卡玛哈特"
+AL["Julak-Doom"] = "厄运尤拉克"
+AL["Mobus"] = "魔布斯"
+AL["Poseidus"] = "波塞冬斯"
+AL["Shared Boss Loot"] = "共享Boss掉落"
+AL["Xariona"] = "埃克萨妮奥娜"

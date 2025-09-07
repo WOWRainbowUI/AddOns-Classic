@@ -9,9 +9,6 @@ AL["'%s %s' Vendor"] = "Vendedor de '%s %s'"
 --[[ AL["%s Replica Sets"] = "% Replica Sets"--]] 
 AL["%s Sets"] = "Conjuntos de %s"
 AL["'%s' Vendor"] = "'%s' Vendedor"
-AL["Abyssal Dukes"] = "Duques abisales"
-AL["Abyssal Lords"] = "Lords abisales"
-AL["Abyssal Templars"] = "Templarios abisales"
 --[[Translation missing --]]
 --[[ AL["Accessories"] = "Accessories"--]] 
 --[[Translation missing --]]
@@ -29,10 +26,14 @@ AL["Badge of Justice"] = "Distintivo de justicia"
 AL["Baron Charr"] = "Barón Charr"
 AL["Baron Kazum"] = "Barón Kazum"
 --[[Translation missing --]]
+--[[ AL["Barrel of Banana Infused Rum"] = "Barrel of Banana Infused Rum"--]] 
+--[[Translation missing --]]
 --[[ AL["BC"] = "BC"--]] 
 AL["Box of Chocolates"] = "Caja de bombones"
 AL["Brewfest"] = "Fiesta de la Cerveza"
 AL["Brightly Colored Egg"] = "Huevo de colores vivos"
+--[[Translation missing --]]
+--[[ AL["Cache of Pilfered Goods"] = "Cache of Pilfered Goods"--]] 
 --[[Translation missing --]]
 --[[ AL["Calling the Ancients"] = "Calling the Ancients"--]] 
 AL["Capitals"] = "Capitales"
@@ -80,10 +81,20 @@ AL["Festive Gift"] = "Obsequio festivo"
 --[[Translation missing --]]
 --[[ AL["Firelands"] = "Firelands"--]] 
 AL["First Prize"] = "Primer precio"
+--[[Translation missing --]]
+--[[ AL["Fixxul Lonelyheart"] = "Fixxul Lonelyheart"--]] 
 AL["Food"] = "Comida"
+--[[Translation missing --]]
+--[[ AL["Frozen Trail Packer"] = "Frozen Trail Packer"--]] 
 AL["Gaily Wrapped Present"] = "Regalo con envoltorio alegre"
 AL["Gently Shaken Gift"] = "Regalo ligeramente agitado"
+--[[Translation missing --]]
+--[[ AL["Ghostly Pandaren Craftsman"] = "Ghostly Pandaren Craftsman"--]] 
+--[[Translation missing --]]
+--[[ AL["Ghostly Pandaren Fisherman"] = "Ghostly Pandaren Fisherman"--]] 
 AL["Gift of Adoration"] = "Ofrenda de adoración"
+--[[Translation missing --]]
+--[[ AL["Glinting Rapana Whelk"] = "Glinting Rapana Whelk"--]] 
 --[[Translation missing --]]
 --[[ AL["Guild"] = "Guild"--]] 
 AL["Gurubashi Arena"] = "Arena Gurubashi"
@@ -93,19 +104,29 @@ AL["Harvest Festival"] = "Festival de la Cosecha"
 --[[ AL["Heirlooms"] = "Heirlooms"--]] 
 AL["High Marshal Whirlaxis"] = "Alto mariscal Eje Torbellino"
 AL["Hoary Templar"] = "Templario vetusto"
+--[[Translation missing --]]
+--[[ AL["Huggalon the Heart Watcher"] = "Huggalon the Heart Watcher"--]] 
 AL["Idols"] = "Ídolos"
+--[[Translation missing --]]
+--[[ AL["Jade Warrior Statue"] = "Jade Warrior Statue"--]] 
 --[[Translation missing --]]
 --[[ AL["Legendaries"] = "Legendaries"--]] 
 AL["Librams"] = "Tratados"
+--[[Translation missing --]]
+--[[ AL["Lorbu Sadsummon"] = "Lorbu Sadsummon"--]] 
 AL["Lord Skwol"] = "Lord Skwol"
 AL["Love is in the Air"] = "Amor en el aire"
 AL["Lucky Red Envelope"] = "Sobre rojo de la suerte"
 AL["Lunar Festival"] = "Festival Lunar"
 AL["Lunar Festival Fireworks Pack"] = "Paquete de fuegos artificiales del Festival Lunar"
+--[[Translation missing --]]
+--[[ AL["Martar the Not-So-Smart"] = "Martar the Not-So-Smart"--]] 
 AL["Masks"] = "Máscaras"
 AL["Midsummer Festival"] = "Festival de Fuego del Solsticio de Verano"
 --[[Translation missing --]]
 --[[ AL["Molten Front"] = "Molten Front"--]] 
+--[[Translation missing --]]
+--[[ AL["Nice Sprite"] = "Nice Sprite"--]] 
 AL["Noblegarden"] = "Jardín Noble"
 AL["One-Handed Weapons"] = "Armas de una mano"
 --[[Translation missing --]]
@@ -115,7 +136,11 @@ AL["One-Handed Weapons"] = "Armas de una mano"
 --[[Translation missing --]]
 --[[ AL["P4"] = "P4"--]] 
 --[[Translation missing --]]
+--[[ AL["Pengsong"] = "Pengsong"--]] 
+--[[Translation missing --]]
 --[[ AL["Pilgrim's Bounty"] = "Pilgrim's Bounty"--]] 
+--[[Translation missing --]]
+--[[ AL["Plankwalking Greaves"] = "Plankwalking Greaves"--]] 
 AL["Prince Skaldrenox"] = "Príncipe Skaldrenox"
 AL["Princess Tempestria"] = "Princesa Tempestria"
 --[[Translation missing --]]
@@ -124,13 +149,21 @@ AL["Ranged Weapons"] = "Armas a distancia"
 AL["Rare Fish"] = "Pescados raros"
 AL["Rare Fish Rewards"] = "Recompensas raras de pesca"
 AL["Scarlet Monastery - Graveyard"] = "Monasterio Escarlata - Cementerio"
+--[[Translation missing --]]
+--[[ AL["Scotty"] = "Scotty"--]] 
 AL["Scourge Invasion"] = "Invasión de la Plaga"
+--[[Translation missing --]]
+--[[ AL["Shared Zone Loot"] = "Shared Zone Loot"--]] 
 AL["Silithus Abyssal"] = "Abisal Silithus"
 AL["Smokywood Pastures"] = "Pastos de Bosquehumeante"
 AL["Smokywood Pastures Special Gift"] = "Obsequio especial de Pastos de Bosquehumeante"
 --[[Translation missing --]]
+--[[ AL["Sprite's Cloth Chest"] = "Sprite's Cloth Chest"--]] 
+--[[Translation missing --]]
 --[[ AL["Stolen Present"] = "Stolen Present"--]] 
 AL["Stranglethorn Fishing Extravaganza"] = "Gran espectáculo de pesca de Tuercespina"
+--[[Translation missing --]]
+--[[ AL["Sungraze Behemoth"] = "Sungraze Behemoth"--]] 
 AL["Sunmote"] = "Mota de sol"
 AL["The Duke of Cynders"] = "Duque de las Brasas"
 AL["The Duke of Fathoms"] = "Duque de las Profundidades"
@@ -146,7 +179,13 @@ AL["Unobtainable"] = "Inobtenible"
 --[[Translation missing --]]
 --[[ AL["Unobtainable Tabards"] = "Unobtainable Tabards"--]] 
 AL["Wands"] = "Varitas"
+--[[Translation missing --]]
+--[[ AL["Wild Onyx Serpent"] = "Wild Onyx Serpent"--]] 
 AL["World Epics"] = "Épicos del Mundo"
 AL["World Events"] = "Eventos del Mundo"
 --[[Translation missing --]]
 --[[ AL["Wrath"] = "Wrath"--]] 
+--[[Translation missing --]]
+--[[ AL["Zandalari Warbringer"] = "Zandalari Warbringer"--]] 
+--[[Translation missing --]]
+--[[ AL["Zhing"] = "Zhing"--]] 
