@@ -13,17 +13,15 @@ local IMAGE_PATH = ALPrivate.IMAGE_PATH
 --- NOTE:
 --- Update Text
 ---
-local update_version = 5.02
+local update_version = 5.04
 local update_text = {
-    "Welcome to the first week of AtlasLootClassic |cFF33FFBDMoP|r! Thanks for your patience and support!\nNew Changes:",
-    "Added/Updated |cFF33FFBDMoP|r and |cFFFF8000Classic|r Dungeons and Raids + Crafting item |cFF00CCFFSource Info (Tooltip)|r",
-    "Added |cFF33FFBDMoP|r Tier Token data, (Click on |cFFA335EETokens|r)",
-    "Added Phase data for items released in later phases, items will have a |T"..IMAGE_PATH.."P3:24:24:0:12|t on top of them indicating in which phase they are relevant",
-    "Fix issue where |cFF33FFBDDungeons and Raids|r weren't automatically selected when inside an instance",
-    "MoP factions data re-organized for visibility",
-    "Small fixes and cleanup as usual",
-    "|cFFFF8000HELP|r: If you think some things could be better organized or find any issues, let me know or better yet, contribute on GitHub (|cFF3366CCgithub.com/snowflame0/AtlasLootClassic_MoP/issues|r)",
-    "Finally, if you appreciate all of the hard work, feel free to donate at the link below (click, CTRL+A, and CTRL+C to copy)"
+    "Welcome to AtlasLootClassic |cFF33FFBDMoP|r v5.0.4!",
+    "Added New |cFFA335EEHeart of Fear|r |cFF33FFBDCelestial|r drops in |cFF00CCFFDungeons and Raids|r.",
+    "Added |cFFA335EETransmog Tracking|r feature from AtlasLoot retail (SL?), may be buggy since some of the APIs don't currently work as expected in MoP.\n\n"
+    .."      Click |TInterface\\Icons\\INV_Arcane_Orb:24:24:0:12|t next to the Class icon to toggle on/off.",
+    "|cFFA335EETier 14|r items tooltip should have a source now.",
+    "|cFFFF8000HELP|r: If you find something missing in |cFF33FFBDCelestial|r drops (struggled to find data! Had to farm a bunch myself to find the drops), let me know on GitHub ( |cFF3366CCgithub.com/snowflame0/AtlasLootClassic_MoP/issues|r )",
+    "Again, if you appreciate all the work, feel free to support me in my goal to upgrade my GTX 1000 series card to something... of this era (don't even ask about CPU :/)\n... at the link below (click, CTRL+A, and CTRL+C to copy)"
 }
 local donation_link = "buymeacoffee.com/snowflame0"
 

@@ -1,6 +1,6 @@
 ## Interface: 50500
 ## Author: Snowflame0
-## Version: v5.0.2
+## Version: v5.0.4
 ## SavedVariables: AtlasLootClassicDB
 ## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, LibDBIcon-1.0, LibDataBroker-1.1
 ## DefaultState: Enabled
@@ -62,6 +62,7 @@ Core\TooltipScan.lua
 Core\ItemQuery.lua
 Core\ItemString.lua
 Core\TargetScan.lua
+Core\Transmog.lua
 
 MiniMapButton.lua
 

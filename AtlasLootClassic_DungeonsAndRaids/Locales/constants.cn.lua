@@ -628,6 +628,12 @@ AL["Yogg-Saron"] = "尤格-萨隆"
 AL["Zuramat the Obliterator"] = "湮灭者祖拉玛特"
 
 -- DungeonsAndRaidsCata
+AL["Akma'hat"] = "阿卡玛哈特"
+AL["Julak-Doom"] = "厄运尤拉克"
+AL["Mobus"] = "魔布斯"
+AL["Poseidus"] = "波塞冬斯"
+AL["Shared Boss Loot"] = "共享Boss掉落"
+AL["Xariona"] = "埃克萨妮奥娜"
 AL["\"Captain\" Cookie"] = "“船长”曲奇"
 AL["Admiral Ripsnarl"] = "撕心狼将军"
 AL["Akil'zon"] = "埃基尔松"

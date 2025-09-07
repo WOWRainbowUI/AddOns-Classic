@@ -1,3 +1,13 @@
+# 5.0.4 (September 4, 2025)
+- Added Transmog tracker feature from AtlasLoot v8+ (Shadowlands version?)
+- Added new Celestial dungeon drops (HoF)
+- Added source tooltip for T14 items
+
+# 5.0.3 (August 27, 2025)
+- Added Celestial Dungeon drops
+- Added Rare mobs and items to Collections
+- Added rest of S12 PvP gear
+
 # 5.0.2 (July 24, 2025)
 - Added Dungeons and Raids + Crafting item sources
 - Added MoP Tier token data
@@ -31,23 +41,27 @@
 - Noblegarden items added
 - Several small fixes to old world loot
 - Change order of expansions to put newest one on top first
-(2025-07-24)
+(2025-09-04)
 
-[Full Changelog](https://github.com/snowflame0/AtlasLootClassic_MoP/compare/v5.0.1...v5.0.2)
+[Full Changelog](https://github.com/snowflame0/AtlasLootClassic_MoP/compare/v5.0.3...v5.0.4)
 
 ## Commits
 
+Adal (1):
+
+- Phase correction
+
 Snowflame (11):
 
-- Fix tab/space issue
-- Update release notes, todo, update notifier
-- Redo Sources for Cata and Classic + profs after making changes
-- Add all MoP tier tokens, need to check, may be misplaced items
-- Fix item set missing locale issue
-- Add content phase data for MoP
-- Add item sources data for dungeons/raids and professions
-- Organize gathering profs, remove some grey items, remove rogue poisons
-- Add Siege of Orgrimmar, add MoP instanceIDs for auto select
-- Fix auto select not working, instanceIDs were removed in a PR for some reason
-- Organize Factions MoP module
+- Update release notes and update panel
+- Added new (HoF) Celestial dungeon drops
+- no change
+- Fix global variable issue
+- Fix global variable issue
+- Update sources for T14 pieces, fix some duplication issues
+- Add tier tokens to celestial diff in dungeons and raids
+- Fixed celestial loot source raid, lots of misplaced items
+- Whitespace clean
+- Transmog nil check
+- Port Transmog feature from retail AL
 
