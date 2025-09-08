@@ -13,7 +13,7 @@ local format, sfind, slower = string.format, string.find, string.lower
 
 -- WoW
 local GetTime = GetTime
-local Transmog = AtlasLoot.Transmog:New()
+local Transmog = AtlasLoot.Transmog and AtlasLoot.Transmog:New() or nil -- 暫時修正 for SoD
 
 local LastRefresh = GetTime()
 local PAGE_NAME_PAGE = "%s [%d/%d]"
