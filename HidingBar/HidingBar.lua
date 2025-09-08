@@ -585,8 +585,8 @@ function hb:addToIgnoreFrameList(name)
 	local frame = self:getFrameFromPath(name)
 	if frame then
 		ignoreFrameList[frame] = true
-	else
-		print(addon..":", name, "not found")
+	-- else
+		-- print(addon..":", name, "not found")
 	end
 end
 
