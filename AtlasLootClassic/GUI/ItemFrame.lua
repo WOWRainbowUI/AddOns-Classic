@@ -150,7 +150,8 @@ local function TransmogCallback(button, collected)
 end
 
 function ItemFrame.OnTransMogUpdate()
-    if AtlasLoot.db.GUI.transmogHighlighter then
+    if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then return end -- 暫時修正 for SoD
+	if AtlasLoot.db.GUI.transmogHighlighter then
         Transmog:Clear()
         local button
         for i = 1,30 do
