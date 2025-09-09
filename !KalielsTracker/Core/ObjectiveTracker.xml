@@ -319,7 +319,7 @@
 		</Scripts>
 	</Frame>
 
-	<Frame name="ObjectiveTrackerFrame" parent="UIParent" frameStrata="LOW">
+	<Frame name="KT_ObjectiveTrackerFrame" parent="UIParent" frameStrata="LOW">
 		<Size x="235" y="140"/>
 		<Anchors>
 			<Anchor point="TOPRIGHT" relativeTo="MinimapCluster" relativePoint="BOTTOMRIGHT"/>

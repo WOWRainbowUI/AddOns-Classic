@@ -4,6 +4,8 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
+local Noop = function() end
+
 if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then
     -- Classic (WotLK)
     GetSuperTrackedQuestID = function()  -- R ... TODO: Test after every WoW update
@@ -19,6 +21,9 @@ if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then
             WatchFrame_OpenAchievementFrame(_, achievementID)
         end
     end
+
+    -- MoP Classic
+    WorldStateChallengeMode_CheckTimers = Noop
 elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
     -- Classic Era
     WatchFrame = QuestWatchFrame
@@ -41,19 +46,19 @@ elseif WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
     end
 
     if not QuestPOI_Initialize then
-        QuestPOI_Initialize = function() end
+        QuestPOI_Initialize = Noop
     end
 
     if not QuestPOI_ResetUsage then
-        QuestPOI_ResetUsage = function() end
+        QuestPOI_ResetUsage = Noop
     end
 
     if not QuestPOI_SelectButtonByQuestID then
-        QuestPOI_SelectButtonByQuestID = function() end
+        QuestPOI_SelectButtonByQuestID = Noop
     end
 
     if not QuestPOI_HideUnusedButtons then
-        QuestPOI_HideUnusedButtons = function() end
+        QuestPOI_HideUnusedButtons = Noop
     end
 
     if not GetNumAutoQuestPopUps then

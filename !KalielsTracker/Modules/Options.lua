@@ -4,11 +4,12 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
+---@type KT
 local addonName, KT = ...
 
+---@class Options
 local M = KT:NewModule("Options")
 KT.Options = M
-KT.forcedUpdate = false
 
 local ACD = LibStub("MSA-AceConfigDialog-3.0")
 local ACR = LibStub("AceConfigRegistry-3.0")
@@ -33,6 +34,7 @@ local strata = { "LOW", "MEDIUM", "HIGH" }
 local flags = { [""] = "無", ["OUTLINE"] = "外框", ["OUTLINE, MONOCHROME"] = "無消除鋸齒外框" }
 local textures = { "無", "預設 (暴雪)", "單線", "雙線" }
 local modifiers = { [""] = "無", ["ALT"] = "Alt", ["CTRL"] = "Ctrl", ["ALT-CTRL"] = "Alt + Ctrl" }
+local ICON_HEART = "|T"..KT.MEDIA_PATH.."Help\\help_patreon:14:14:0:0:256:32:174:190:0:16|t"
 
 local cTitle = " "..NORMAL_FONT_COLOR_CODE
 local cBold = "|cff00ffe3"
@@ -41,7 +43,7 @@ local beta = "|cffff7fff[Beta]|r"
 local warning = cWarning.."注意:|r 將會重新載入介面!"
 
 local KTF = KT.frame
-local OTF = ObjectiveTrackerFrame
+local OTF = KT_ObjectiveTrackerFrame
 
 local overlay
 local overlayShown = false
@@ -115,9 +117,12 @@ local defaults = {
 		tooltipShowRewards = true,
 		tooltipShowID = false,
 
+		pettrackerHeaderTitleAppend = true,
+
 		modulesOrder = KT.BLIZZARD_MODULES,
 
-		addonQuestie = false, -- 更改預設值
+		addonQuestie = false,
+		addonPetTracker = false,
 	},
 	char = {
 		collapsed = false,
@@ -157,7 +162,7 @@ local options = {
 							order = 0.12,
 						},
 						slashCmd = {
-							name = cBold.." /kt|r  |cff808080...............|r  切換 (展開/收起) 任務追蹤清單\n"..
+							name = cBold.." /kt|r  |cff808080...............|r  切換 (展開/收合) 任務追蹤清單\n"..
 									cBold.." /kt config|r  |cff808080...|r  顯示設定選項視窗\n",
 							type = "description",
 							width = "double",
@@ -185,14 +190,15 @@ local options = {
 							end,
 							order = 0.4,
 						},
-						supportersSpacer = {
-							name = " ",
+						about = {
+							name = " Made with "..ICON_HEART.." since 2012\n"..
+									" |cff999999by "..KT.AUTHOR,
 							type = "description",
 							width = "normal",
 							order = 0.51,
 						},
 						supportersLabel = {
-							name = "                |cff00ff00成為贊助者",
+							name = "                   |cff00ff00成為贊助者",
 							type = "description",
 							width = "normal",
 							fontSize = "medium",
@@ -477,9 +483,7 @@ local options = {
 							values = WidgetLists.statusbar,
 							set = function(_, value)
 								db.progressBar = value
-								KT.forcedUpdate = true
-								ObjectiveTracker_Update()
-								KT.forcedUpdate = false
+								KT:SendSignal("OPTIONS_CHANGED", true)
 							end,
 							order = 2.9,
 						},
@@ -498,10 +502,8 @@ local options = {
 							values = WidgetLists.font,
 							set = function(_, value)
 								db.font = value
-								KT.forcedUpdate = true
-								KT:SetText()
-								ObjectiveTracker_Update()
-								KT.forcedUpdate = false
+								KT:SetText(true)
+								KT:SendSignal("OPTIONS_CHANGED")
 							end,
 							order = 3.1,
 						},
@@ -513,10 +515,8 @@ local options = {
 							step = 1,
 							set = function(_, value)
 								db.fontSize = value
-								KT.forcedUpdate = true
-								KT:SetText()
-								ObjectiveTracker_Update()
-								KT.forcedUpdate = false
+								KT:SetText(true)
+								KT:SendSignal("OPTIONS_CHANGED")
 							end,
 							order = 3.2,
 						},
@@ -533,10 +533,8 @@ local options = {
 							end,
 							set = function(_, value)
 								db.fontFlag = value
-								KT.forcedUpdate = true
-								KT:SetText()
-								ObjectiveTracker_Update()
-								KT.forcedUpdate = false
+								KT:SetText(true)
+								KT:SendSignal("OPTIONS_CHANGED")
 							end,
 							order = 3.3,
 						},
@@ -571,10 +569,8 @@ local options = {
 							type = "toggle",
 							set = function()
 								db.textWordWrap = not db.textWordWrap
-								KT.forcedUpdate = true
-								ObjectiveTracker_Update()
-								ObjectiveTracker_Update()
-								KT.forcedUpdate = false
+								KT:SendSignal("OPTIONS_CHANGED", true)
+								KT:SendSignal("OPTIONS_CHANGED")
 							end,
 							order = 3.6,
 						},
@@ -1130,6 +1126,28 @@ local options = {
 						},
 					},
 				},
+				sec4 = {
+					name = "插件 - 戰寵助手 PetTracker",
+					type = "group",
+					inline = true,
+					order = 4,
+					args = {
+						pettrackerHeaderTitleAppend = {
+							name = "顯示已擁有的寵物數量",
+							desc = "在 PetTracker 標題列中顯示已擁有的寵物數量。",
+							type = "toggle",
+							width = "normal+half",
+							disabled = function()
+								return not KT.AddonPetTracker.isLoaded
+							end,
+							set = function()
+								db.pettrackerHeaderTitleAppend = not db.pettrackerHeaderTitleAppend
+								KT.AddonPetTracker:SetPetsHeaderText(true)
+							end,
+							order = 4.1,
+						},
+					},
+				},
 			},
 		},
 		modules = {
@@ -1179,12 +1197,37 @@ local options = {
 							order = 1.11,
 						},
 						addonQuestieDesc = {
-							name = "任務位置提示支援性會加入:\n"..
-									"- 右鍵選單項目"..cBold.."在地圖上顯示|r 和 "..cBold.."開始 TomTom 導航|r，\n"..
-									"- "..cBold.."任務物品按鈕|r 給有使用物品的任務。",
+							name = "在任務右鍵選單啟用 "..cBold.."在地圖上顯示|r 和 "..cBold.."開始 TomTom 導航|r，"..
+									"並且為有使用物品的任務加入任務物品按鈕。",
 							type = "description",
 							width = "double",
 							order = 1.12,
+						},
+						addonPetTracker = {
+							name = "戰寵助手 PetTracker",
+							desc = "版本: %s",
+							descStyle = "inline",
+							type = "toggle",
+							width = 1.05,
+							confirm = true,
+							confirmText = warning,
+							disabled = function()
+								return not C_AddOns.IsAddOnLoaded("PetTracker")
+							end,
+							set = function()
+								db.addonPetTracker = not db.addonPetTracker
+								if PetTracker.sets then
+									PetTracker.sets.zoneTracker = db.addonPetTracker
+								end
+								ReloadUI()
+							end,
+							order = 1.21,
+						},
+						addonPetTrackerDesc = {
+							name = "啟用在追蹤清單中顯示追蹤區域寵物，並修正部分視覺問題。",
+							type = "description",
+							width = "double",
+							order = 1.22,
 						},
 					},
 				},
@@ -1284,7 +1327,7 @@ function GetModulesOptionsTable()
 			order = 0.1,
 		},
 		descDefOrder = {
-			name = "|T:1:42|t"..cTitle.."預設順序",
+			name = "|T:1:20|t"..cTitle.."預設順序",
 			type = "description",
 			width = "normal",
 			fontSize = "medium",
@@ -1293,7 +1336,7 @@ function GetModulesOptionsTable()
 	}
 	if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then
 		args.descModules = {
-			name = "\n * "..TRACKER_HEADER_SCENARIO.." / |cffff0000"..TRACKER_HEADER_PROVINGGROUNDS.." (not supported)\n",
+			name = "\n * "..TRACKER_HEADER_SCENARIO.." / "..CHALLENGE_MODE.." / |cffff0000"..TRACKER_HEADER_PROVINGGROUNDS.." (not supported)\n",
 			type = "description",
 			order = 20,
 		}
@@ -1305,7 +1348,7 @@ function GetModulesOptionsTable()
 			text = text.." *"
 		end
 
-		defaultModule = OTF.MODULES_UI_ORDER[i]
+		defaultModule = OTF.MODULES[i]
 		defaultText = defaultModule.Header.Text:GetText()
 		if defaultModule == SCENARIO_CONTENT_TRACKER_MODULE then
 			defaultText = defaultText.." *"
@@ -1339,7 +1382,7 @@ function GetModulesOptionsTable()
 			order = i + 0.2,
 		}
 		args["pos"..i.."default"] = {
-			name = "|T:1:55|t|cff808080"..defaultText,
+			name = "|T:1:24|t|cff808080"..defaultText,
 			type = "description",
 			width = "normal",
 			fontSize = "medium",
@@ -1409,16 +1452,17 @@ local function Setup()
 	end
 	options.args.profiles.plugins[addonName] = {
 		clearTrackerDataDesc1 = {
-			name = "Clear the data (no settings) of the tracked content (Quests, Achievements etc.) for current character.",
+			name = "清除目前角色的追蹤內容資料 (任務、成就等)，不會影響設定。",
 			type = "description",
 			order = 0.1,
 		},
 		clearTrackerData = {
-			name = "Clear Tracker Data",
-			desc = "Clear the data of the tracked content.",
+			name = "清除追蹤清單資料",
+			desc = "清除追蹤內容的資料。",
 			type = "execute",
 			confirm = true,
-			confirmText = "Clear Tracker Data - "..cBold..KT.playerName,
+			confirmText = "清除追蹤清單資料 - "..cBold..KT.playerName,
+
 			func = function()
 				KT.stopUpdate = true
 				local numEntries = GetNumQuestLogEntries()
@@ -1435,6 +1479,11 @@ local function Setup()
 				for i = 1, #db.filterAuto do
 					db.filterAuto[i] = nil
 				end
+				if KT.AddonPetTracker.isLoaded then
+					if PetTracker.sets.zoneTracker then
+						PetTracker.ToggleOption("zoneTracker")
+					end
+				end
 				KT:SetBackground()
 				KT.QuestsCache_Rebuild(true, true)
 				KT.stopUpdate = false
@@ -1443,7 +1492,7 @@ local function Setup()
 			order = 0.2,
 		},
 		clearTrackerDataDesc2 = {
-			name = "Current character: "..cBold..KT.playerName,
+			name = "目前角色: "..cBold..KT.playerName,
 			type = "description",
 			width = "double",
 			order = 0.3,
@@ -1458,11 +1507,11 @@ local function Setup()
 	ACR:RegisterOptionsTable(addonName, options, nil)
 
 	KT.optionsFrame = {}
-	KT.optionsFrame.general = ACD:AddToBlizOptions(addonName, KT.title, nil, "general")
-	KT.optionsFrame.content = ACD:AddToBlizOptions(addonName, options.args.content.name, KT.title, "content")
-	KT.optionsFrame.modules = ACD:AddToBlizOptions(addonName, options.args.modules.name, KT.title, "modules")
-	KT.optionsFrame.addons = ACD:AddToBlizOptions(addonName, options.args.addons.name, KT.title, "addons")
-	KT.optionsFrame.profiles = ACD:AddToBlizOptions(addonName, options.args.profiles.name, KT.title, "profiles")
+	KT.optionsFrame.general = ACD:AddToBlizOptions(addonName, "任務-清單", nil, "general")
+	KT.optionsFrame.content = ACD:AddToBlizOptions(addonName, options.args.content.name, "任務-清單", "content")
+	KT.optionsFrame.modules = ACD:AddToBlizOptions(addonName, options.args.modules.name, "任務-清單", "modules")
+	KT.optionsFrame.addons = ACD:AddToBlizOptions(addonName, options.args.addons.name, "任務-清單", "addons")
+	KT.optionsFrame.profiles = ACD:AddToBlizOptions(addonName, options.args.profiles.name, "任務-清單", "profiles")
 
 	KT.db.RegisterCallback(KT, "OnProfileChanged", "InitProfile")
 	KT.db.RegisterCallback(KT, "OnProfileCopied", "InitProfile")
@@ -1474,6 +1523,10 @@ local function Setup()
 		db.messageAchievement = false
 		content.sec2 = nil
 		db.achievementsHeaderTitleAppend = false
+		content.sec4 = nil
+		db.pettrackerHeaderTitleAppend = false
+		addons.sec1.args.addonPetTracker = nil
+		addons.sec1.args.addonPetTrackerDesc = nil
 	end
 end
 

@@ -4,17 +4,24 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
+---@type KT
 local _, KT = ...
+
+---@class Help
 local M = KT:NewModule("Help")
 KT.Help = M
 
 local T = LibStub("MSA-Tutorials-1.0")
 local _DBG = function(...) if _DBG then _DBG("KT", ...) end end
 
+local HELP_PATH = KT.MEDIA_PATH.."Help\\"
+local ICON_URL = HELP_PATH.."help_icon-url"
+local ICON_HEART = "|T"..HELP_PATH.."help_patreon:14:14:2:0:256:32:174:190:0:16|t"
+
 local db, dbChar
 local helpPath = KT.MEDIA_PATH.."Help\\"
 local helpName = "help"
-local helpNumPages = 9
+local helpNumPages = 10
 local supportersName = "supporters"
 local supportersNumPages = 1
 local cTitle = "|cffffd200"
@@ -22,7 +29,7 @@ local cBold = "|cff00ffe3"
 local cWarning = "|cffff7f00"
 local cDots = "|cff808080"
 local offs = "\n|T:1:8|t"
-local ebSpace = "|T:24:1|t"
+local ebSpace = "|T:16:1|t\n"
 local beta = "|cffff7fff[Beta]|r"
 local new = "|cffff7fff[新功能]|r"
 
@@ -39,7 +46,7 @@ local function AddonInfo(name)
 	else
 		info = info.." |cffff0000未安裝|r。"
 	end
-	info = info.." 可以在設定選項中啟用/停用支援插件。"
+	info = info.." 可以在設定選項中啟用/停用支援插件。\n"..ebSpace
 	return info
 end
 
@@ -78,12 +85,16 @@ local function SetupTutorials()
 		title = KT.title.." |cffffffff"..KT.version.."|r",
 		icon = helpPath.."KT_logo",
 		font = "Fonts\\bLEI00D.ttf",
-		width = 552,
+		width = 582,
+		height = 610,
+		paddingX = 35,
+		paddingTop = 26,
+		paddingBottom = 24,
 		imageWidth = 512,
 		imageHeight = 256,
 		{	-- 1
 			image = helpPath.."help_kaliels-tracker",
-			text = cTitle..KT.title.." (Classic)|r replaces default tracker and adds some features from WoW Retail to WoW Classic.\n\n"..
+			text = cTitle..KT.title.." (經典版)|r 取代預設的追蹤清單，並將部分正式服的功能加入經典版中。\n\n"..
 					"包含下面這些功能:\n"..
 					"- 追蹤任務\n"..
 					"- 追蹤成就 (經典時期不包含此功能)\n"..
@@ -102,8 +113,8 @@ local function SetupTutorials()
 		{	-- 2
 			image = helpPath.."help_header-buttons",
 			imageHeight = 128,
-			text = cTitle.."標題列按鈕|r\n\n"..
-					"最小化按鈕:\n"..
+			heading = "標題列按鈕",
+			text = "最小化按鈕:\n"..
 					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:0:14:209:170:0|t "..cDots.."...|r 展開追蹤清單\n"..
 					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:16:30:209:170:0|t "..cDots.."...|r 收起追蹤清單\n"..
 					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:32:46:209:170:0|t "..cDots.."...|r 追蹤清單是空的時候\n\n"..
@@ -115,7 +126,7 @@ local function SetupTutorials()
 					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:0:2:32:64:16:30:16:30:209:170:0|t 可以在設定選項中停用。\n\n"..
 					"可以設定"..cBold.." [快速鍵]|r 來最小化追蹤清單。\n"..
 					cBold.."Alt+左鍵|r 點擊最小化按鈕會開啟 "..KT.title.."的設定選項。",
-			textY = 16,
+			paddingBottom = 11,
 			shine = KTF.MinimizeButton,
 			shineTop = 13,
 			shineBottom = -14,
@@ -124,8 +135,8 @@ local function SetupTutorials()
 		{	-- 3
 			image = helpPath.."help_quest-title-tags",
 			imageHeight = 128,
-			text = cTitle.."特殊文字標籤|r\n\n"..
-					"任務等級 |cffff8000[42]|r 會顯示在任務標題的前方。\n"..
+			heading = "特殊文字標籤",
+			text = "任務等級 |cffff8000[42]|r 會顯示在任務標題的前方。\n"..
 					"任務類型標籤會在任務標題的最後方。\n\n"..
 					KT.CreateQuestTagIcon(nil, 7, 14, 2, 0, 0.34, 0.425, 0, 0.28125).." "..cDots.."........|r 每日任務|T:14:98|t"..
 						KT.CreateQuestTagIcon(nil, 16, 16, 0, 0, unpack(QUEST_TAG_TCOORDS[Enum.QuestTag.Heroic])).." "..cDots.."......|r 英雄任務\n"..
@@ -138,6 +149,7 @@ local function SetupTutorials()
 					KT.CreateQuestTagIcon(nil, 17, 17, -1, 0, unpack(QUEST_TAG_TCOORDS[Enum.QuestTag.Raid])).." "..cDots.."......|r 團隊任務|T:14:99|t"..
 						KT.CreateQuestTagIcon(nil, 7, 14, 2, 0, 0.055, 0.134, 0.28125, 0.5625).." "..cDots.."........|r 傳說任務\n\n"..
 					cWarning.."備註:|r 經典版並沒有使用到全部的標籤。",
+			paddingBottom = 16,
 			shineTop = 10,
 			shineBottom = -9,
 			shineLeft = -12,
@@ -145,8 +157,8 @@ local function SetupTutorials()
 		},
 		{	-- 4
 			image = helpPath.."help_tracker-filters",
-			text = cTitle.."任務過濾|r\n\n"..
-					"要開啟過濾方式選單請"..cBold.."點一下|r這個按鈕 |T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-2:2:32:64:16:30:32:46:209:170:0|t.\n\n"..
+			heading = "任務過濾",
+			text = "要開啟過濾方式選單請"..cBold.."點一下|r這個按鈕 |T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-2:2:32:64:16:30:32:46:209:170:0|t.\n\n"..
 					"過濾方式分為兩種類型:\n"..
 					cTitle.."固定過濾|r - 依據規則 (例如 \"每日\") 將任務和成就加入到追蹤清單，然後便可以手動新增 / 移除項目。\n"..
 					cTitle.."動態過濾|r - 自動新增任務/成就依據條件 (例如 \"|cff00ff00自動|r區域\") "..
@@ -154,7 +166,7 @@ local function SetupTutorials()
 					"啟用動態過濾時，標題按鈕是綠色 |T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-2:2:32:64:16:30:32:46:0:255:0|t.\n\n"..
 					"更改成就的搜尋類別時，也會影響過濾的結果。\n\n"..
 					"這個選單也會顯示影響追蹤清單內容的其他選項。",
-			textY = 16,
+			paddingBottom = 20,
 			shine = KTF.FilterButton,
 			shineTop = 10,
 			shineBottom = -11,
@@ -163,14 +175,15 @@ local function SetupTutorials()
 		},
 		{	-- 5
 			image = helpPath.."help_quest-item-buttons",
-			text = cTitle.."任務物品按鈕|r\n\n"..
-					"需要 Questie 插件才能支援任務按鈕 (請看第8頁)。 按鈕在追蹤清單的外部，因為暴雪不允許動作按鈕在插件內部。\n\n"..
+			heading = "任務物品按鈕",
+			text = "需要 Questie 插件才能支援任務按鈕 (請看第8頁)。 按鈕在追蹤清單的外部，因為暴雪不允許動作按鈕在插件內部。\n\n"..
 					"|T"..helpPath.."help_quest-item-buttons_2:32:32:1:0:64:32:0:32:0:32|t "..cDots.."...|r  這個標籤代表任務中的任務物品。裡面的數字用來辨別\n"..
 					"                移動後的任務物品按鈕。\n\n"..
 					"|T"..helpPath.."help_quest-item-buttons_2:32:32:0:3:64:32:32:64:0:32|t "..cDots.."...|r  真正的任務物品按鈕已經移動到清單的左/右側\n"..
 					"                (依據所選擇的對齊畫面位置)。標籤數字仍然相同。\n\n"..
 					cWarning.."特別注意:|r\n"..
 					"在某些戰鬥中，任務物品按鈕的動作會被暫停，直到戰鬥結束後才能使用。",
+			paddingBottom = 22,
 			shineTop = 3,
 			shineBottom = -2,
 			shineLeft = -4,
@@ -178,8 +191,8 @@ local function SetupTutorials()
 		},
 		{	-- 6
 			image = helpPath.."help_tracker-modules",
-			text = cTitle.."模組順序|r\n\n"..
-					"允許更改模組在追蹤清單中的順序。支援所有的模組，也包含外部插件 (例如：戰寵助手)。",
+			heading = "模組順序",
+			text = "允許更改模組在追蹤清單中的順序。支援所有的模組，也包含外部插件 (例如：戰寵助手)。",
 			shine = KTF,
 			shineTop = 5,
 			shineBottom = -5,
@@ -188,8 +201,8 @@ local function SetupTutorials()
 		},
 		{	-- 7
 			image = helpPath.."help_quest-log",
-			text = cTitle.."任務日誌|r\n\n"..
-					cWarning.."注意:|r 在遊戲內建的任務日誌和支援的任務日誌插件，已停用點擊任務日誌"..
+			heading = "任務日誌",
+			text = cWarning.."注意:|r 在遊戲內建的任務日誌和支援的任務日誌插件，已停用點擊任務日誌"..
 					"標題 (來收起 / 展開) 的功能。因為收起的部分會把任務追蹤清單增強所包含的任務也隱藏了。\n\n"..
 
 					cTitle.."支援插件|r\n"..
@@ -197,18 +210,21 @@ local function SetupTutorials()
 					"- QuestGuru\n"..ebSpace,
 			editbox = {
 				{
+					icon = ICON_URL,
 					text = "https://www.wowinterface.com/downloads/info24937-ClassicQuestLogforClassic.html",
-					width = 485,
-					left = 9,
-					bottom = 39,
+					width = 500,
+					left = 8,
+					bottom = 40,
 				},
 				{
+					icon = ICON_URL,
 					text = "https://www.curseforge.com/wow/addons/questguru_classic",
-					width = 485,
-					left = 9,
-					bottom = 5,
+					width = 500,
+					left = 8,
+					bottom = 2,
 				}
 			},
+			paddingBottom = 22,
 			shine = KTF,
 			shineTop = 5,
 			shineBottom = -5,
@@ -217,8 +233,8 @@ local function SetupTutorials()
 		},
 		{	-- 8
 			image = helpPath.."help_addon-questie",
-			text = cTitle.."支援插件: Questie|r\n\n"..
-					"加入了一些功能，會使用到任務位置提示插件的任務資料庫。\n\n"..
+			heading = "支援插件 Questie",
+			text = "加入了一些功能，會使用到任務位置提示插件的任務資料庫。\n\n"..
 					cTitle.."區域過濾增強|r\n"..
 					"現在會顯示所有與任務有關的區域 (開始、進行中和結束位置) 中的相關任務。\n\n"..
 					cTitle.."任務物品按鈕|r\n"..
@@ -228,14 +244,16 @@ local function SetupTutorials()
 					"- "..cBold.."開始 TomTom 導航|r - 將 TomTom 導航箭頭指向最近的任務目標。"..
 					offs.."有安裝並載入 TomTom 插件時會顯示這個選項。\n\n"..
 					"如果沒有地圖資料，"..cBold.."在地圖上顯示|r 和 "..cBold.."開始 TomTom 導航|r 選項將會被停用。\n\n"..
-					AddonInfo("Questie").."\n"..ebSpace,
+					AddonInfo("Questie"),
 			editbox = {
 				{
+					icon = ICON_URL,
 					text = "https://www.curseforge.com/wow/addons/questie",
-					width = 450,
-					bottom = 6,
+					width = 510,
+					bottom = 2,
 				}
 			},
+			paddingBottom = 22,
 			shine = KTF,
 			shineTop = 5,
 			shineBottom = -5,
@@ -243,51 +261,96 @@ local function SetupTutorials()
 			shineRight = 6,
 		},
 		{	-- 9
+			image = helpPath.."help_addon-pettracker",
+			heading = "支援插件 PetTracker",
+			text = "PetTracker 支援性會調整在追蹤清單中顯示的追蹤區域寵物。\n同時也修正了一些視覺錯誤。\n\n"..
+					AddonInfo("PetTracker"),
+			editbox = {
+				{
+					icon = ICON_URL,
+					text = "https://www.curseforge.com/wow/addons/pettracker",
+					width = 510,
+					bottom = 2,
+				}
+			},
+			paddingBottom = 22,
+			shine = KTF,
+			shineTop = 5,
+			shineBottom = -5,
+			shineLeft = -6,
+			shineRight = 6,
+		},
+		{	-- 10
 			image = helpPath.."help_whats-new_logo",
 			imageWidth = 192,
 			imageHeight = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and 42 or 22,
 			imageTexCoords = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and { 0, 0.75, 0, 0.65625 } or { 0, 0.75, 0.65625, 1 },
 			imagePoint = "TOPRIGHT",
-			imageX = -20,
-			imageY = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and 3 or 16,
+			imageX = -40,
+			imageY = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and -29 or -43,
 			imageAbsolute = true,
-			text = "           |T"..helpPath.."help_whats-new_title:32:181:0:0:256:32:0:181:0:32|t\n\n"..
-					cTitle.."版本 5.0.1|r\n"..
-					"- 修正 (任務) - 使用自動任務追蹤按區域過濾時出錯\n"..
-					"\n"..
-					cTitle.."版本 5.0.0|r\n"..
+			heading = "     更新資訊",
+			headingFont = "Fonts\\bLEI00D.ttf",
+			headingSize = 26,
+			text = "如果你喜歡 "..KT.title.."，可以考慮在 Patreon 支持它 "..ICON_HEART.."|r\n"..ebSpace.."\n"..
+					(cTitle.."版本 5.1.3|r\n"..
+					"- 修復 - 在冷啟動魔獸世界時偶發的錯誤\n"..
+					"\n")..
+					(cTitle.."版本 5.1.2|r\n"..
+					"- 修復 - 『追蹤後展開』選項對所有任務無法生效的問題\n"..
+					"\n")..
+					(cTitle.."版本 5.1.1|r\n"..
+					"- 修復 (經典版) - 當追蹤清單為空時的錯誤 (沒有 PetTracker 模組)\n"..
+					"\n")..
+					(cTitle.."版本 5.1.0|r\n"..
+					"- 新增 (潘達利亞) - 地城挑戰模式支援 (未測試)\n"..
+					"- 新增 - 插件支援 - PetTracker 11.2\n"..
+					"- 變更 - 插件支援 - Questie 11.3.1\n"..
+					"- 變更 - PetTracker - 改良\n"..
+					"- 修復 - 說明 - 當沒有追蹤任務時的錯誤\n"..
+					"- 修復 - PetTracker - 有時候出現 SetWidth 為 nil 的錯誤\n"..
+					"- 效能 - 區域篩選程式碼優化\n"..
+					"\n")..
+					(cTitle.."版本 5.0.1|r\n"..
+					"- 修復 (任務) - 使用自動任務追蹤時依區域篩選的錯誤\n"..
+					"\n")..
+					(cTitle.."版本 5.0.0|r\n"..
 					"- 新增 - 支援 WoW 1.15.7.61582\n"..
 					"- 新增 - 支援 WoW 5.5.0.62258\n"..
-					"- 變更 (說明) - Active Patrons\n"..
-					"- 變更 (事件) - 不支援試煉場 (可能會導致錯誤)\n"..
-					"- 變更 (任務) - 保持一致 (完整的聲音不再重複播放)\n"..
-					"- 變更 (任務) - 改善區域過濾\n"..
-					"- 變更 (任務) - 任務追蹤管理（內部監視清單）\n"..
-					"- 變更 - 支援插件 - Questie 11.2.11\n"..
-					"- 變更 (任務) - 增強右鍵選單\n"..
-					"- 變更 - WoW 3.4.4 移除的函數\n"..
-					"- 修正 - 取得錯誤的任務資料時出錯\n"..
-					"- 修正 - 登入後，已追蹤的任務將被取消追蹤。\n"..
-					"\n"..
+					"- 變更 (說明) - 感謝贊助者\n"..
+					"- 變更 (事件) - 試煉場景未支援（可能會造成錯誤）\n"..
+					"- 變更 (任務) - 狀態持續（完成音效不會重複播放）\n"..
+					"- 變更 (任務) - 改良區域篩選\n"..
+					"- 變更 (任務) - 任務追蹤管理（內部追蹤清單）\n"..
+					"- 變更 - 插件支援 - Questie 11.2.11\n"..
+					"- 變更 (任務) - 右鍵選單改良\n"..
+					"- 變更 - WoW 3.4.4 中的過時函數\n"..
+					"- 修復 - 取得錯誤的任務資料\n"..
+					"- 修復 - 登入後任務追蹤被移除\n"..
+					"\n")..
+					cTitle.."WoW 5.5.0/1.15.7 - 已知但無法解決的問題|r\n"..
+					"- 戰鬥中點擊已追蹤的任務或成就沒有反應。\n"..
+					"- 戰鬥中 Q 和 A 標題按鈕無法使用。\n"..
+					"- 試煉場景未支援。\n\n"..
+					cTitle.."問題回報|r\n"..
+					"回報問題請使用 "..cBold.."回報單|r，而不是在 CurseForge 留言。\n"..ebSpace.."\n"..
+					cWarning.."在回報錯誤之前，請先停用其他插件，確認不是由與其他插件衝突所導致。|r",
 
-					cTitle.."WoW 5.5.0/1.15.7 - 尚無解決辦法的已知問題|r\n"..
-					"- 不支援試煉場事件。我目前無法測試，並且可能會導致錯誤。\n"..
-					"- 戰鬥中點擊追蹤的任務或成就不會有反應。\n"..
-					"- 戰鬥中標題列的 Q 和 A 按鈕無法運作。\n\n"..
-
-					cTitle.."回報問題|r\n"..
-					"請使用下方的"..cBold.."回報單網址|r而不是在 CurseForge 留言。\n"..ebSpace.."\n\n"..
-
-					cWarning.."回報錯誤之前，請先停用所有其他的插件，以確保此錯誤"..
-					"不是和其他插件相衝突造成的。|r",
-			textY = -20,
 			editbox = {
 				{
+					icon = ICON_URL,
+					text = "https://patreon.com/kalielstracker",
+					width = 510,
+					top = 52,
+				},
+				{
+					icon = ICON_URL,
 					text = "https://www.curseforge.com/wow/addons/kaliels-tracker-classic/issues",
-					width = 450,
-					bottom = 20,
+					width = 510,
+					bottom = 22,
 				}
 			},
+			paddingBottom = 20,
 			shine = KTF,
 			shineTop = 5,
 			shineBottom = -5,
@@ -296,7 +359,7 @@ local function SetupTutorials()
 		},
 		onShow = function(self, i)
 			if dbChar.collapsed then
-				ObjectiveTracker_MinimizeButton_OnClick()
+				KT:MinimizeButton_OnClick()
 			end
 			if i == 2 then
 				local eraMod = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and 0 or 20
@@ -307,13 +370,15 @@ local function SetupTutorials()
 				end
 			elseif i == 3 then
 				local questLogIndex = GetQuestIndexForWatch(1)
-				local questID = GetQuestIDFromLogIndex(questLogIndex)
-				local block = QUEST_TRACKER_MODULE.usedBlocks[questID]
-				if block then
-					self[i].shine = block
+				if questLogIndex then
+					local questID = GetQuestIDFromLogIndex(questLogIndex)
+					local block = QUEST_TRACKER_MODULE.usedBlocks[questID]
+					if block then
+						self[i].shine = block
+					end
+					KTF.Scroll.value = 0
+					ObjectiveTracker_Update()
 				end
-				KTF.Scroll.value = 0
-				ObjectiveTracker_Update()
 			elseif i == 5 then
 				self[i].shine = KTF.Buttons
 			end
@@ -328,15 +393,17 @@ local function SetupTutorials()
 		key = "supportersTutorial",
 		title = KT.title.." |cffffffff"..KT.version.."|r",
 		icon = helpPath.."KT_logo",
-		font = "Fonts\\bLEI00D.ttf",
-		width = 552,
-		imageHeight = 256,
+		font = "Fonts\bLEI00D.ttf",
+		width = 582,
+		height = 610,
+		paddingX = 35,
+		paddingTop = 26,
+		paddingBottom = 24,
 		{	-- 1
-			text = cTitle.."         成為贊助者|r\n\n"..
-					"如果你喜歡 "..KT.title.."，請在 |cfff34a54Patreon|r 贊助我。\n\n"..
-					"在 CurseForge 的插件頁面點一下 |T"..helpPath.."help_patreon:20:173:0:0:256:32:0:173:0:20|t 按鈕。\n\n"..
+			heading = "      成為贊助者",
+			text = "如果你喜歡 "..KT.title.."，請在 Patreon 贊助我。\n\n\n\n"..
 					"經過了 10 年的插件工作後，我啟用了 Patreon，當作是開發插件所需時間的補償。\n\n"..
-					"                                    非常感謝所有贊助者  |T"..helpPath.."help_patreon:16:16:0:0:256:32:157:173:0:16|t\n\n"..
+					"                                    非常感謝所有贊助者 "..ICON_HEART.."\n\n"..
 					cTitle.."Active Patrons|r\n"..
 					SetFormatedPatronName("Epic", "Liothen", "Emerald Dream")..
 					SetFormatedPatronName("Rare", "Ian F")..
@@ -352,7 +419,14 @@ local function SetupTutorials()
 					cTitle.."Testers|r\n"..
 					SetFormatedPlayerName("Asimeria", "Drak'thul")..
 					SetFormatedPlayerName("Torresman", "Drak'thul"),
-			textY = -20,
+			editbox = {
+				{
+					icon = ICON_URL,
+					text = "https://patreon.com/kalielstracker",
+					width = 510,
+					top = 52,
+				}
+			},
 		},
 	})
 end

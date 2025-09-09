@@ -4,7 +4,10 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
+---@type KT
 local _, KT = ...
+
+---@class AddonQuestie
 local M = KT:NewModule("AddonQuestie")
 KT.AddonQuestie = M
 
@@ -330,7 +333,7 @@ end
 function M:OnInitialize()
     _DBG("|cffffff00Init|r - "..self:GetName(), true)
     db = KT.db.profile
-    self.isLoaded = (KT:CheckAddOn("Questie", "11.2.11") and db.addonQuestie)
+    self.isLoaded = (KT:CheckAddOn("Questie", "11.3.1") and db.addonQuestie)
 end
 
 function M:OnEnable()

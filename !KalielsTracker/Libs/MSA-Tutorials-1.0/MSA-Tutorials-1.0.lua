@@ -26,13 +26,20 @@ General Arguments
  icon ........... Default is "?" icon. Image path (tga or blp).
  title .......... Default is "Tutorial".
  width .......... Default is 350. Internal frame width (without borders).
+ height ......... Default is 0. Internal frame height (without borders).
+                  - 0 .... auto height
+                  - >0 ... fixed height with scrollbar
  font ........... Default is game font (empty string).
 
 Frame Arguments
 ---------------
  title .......... Title relative to frame (replace General value).
  width .......... Width relative to frame (replace General value).
+ height ......... Height relative to frame (replace General value).
 Note: All other arguments can be used as a general!
+ paddingX ....... Default is 25. Left and Right padding.
+ paddingTop ..... Default is 20.
+ paddingBottom .. Default is 20.
  image .......... [optional] Image path (tga or blp).
  imageWidth ..... Default is 256.
  imageHeight .... Default is 128.
@@ -42,16 +49,15 @@ Note: All other arguments can be used as a general!
  imageAbsolute .. Default is false. The image is not part of the content flow and no place is created for it.
  imageTexCoords . [optional] Sets the coordinates for cropping or transforming the texture.
  text ........... Text string.
- textHeight ..... Default is 0 (auto height).
- textX .......... Default is 25. Left and Right margin.
- textY .......... Default is 20 (top margin).
  editbox ........ [optional] Table of edit boxes. Edit box is out of content flow.
                   One table keys:
-                  - text ..... [required]
-                  - width .... Default is 400
-                  - left ..... Default is 0
-                  - top ...... Default is 0
-                  - bottom ... Default is 0
+                  - icon ....... Left icon
+                  - text ....... [required]
+                  - width ...... Default is 400
+                  - left ....... Default is 0
+                  - top ........ Default is 0
+                  - bottom ..... Default is 0
+                  - showHint ... Default is true
  button ......... [optional] Button text string (directing value). Button is out of content flow.
  buttonWidth .... Default is 100.
  buttonClick .... Function with button's click action.
@@ -71,7 +77,7 @@ local format = string.format
 local strfind = string.find
 local round = function(n) return floor(n + 0.5) end
 
-local Lib = LibStub:NewLibrary('MSA-Tutorials-1.0', 14)
+local Lib = LibStub:NewLibrary('MSA-Tutorials-1.0', 17)
 if Lib then
 	Lib.NewFrame, Lib.NewButton, Lib.UpdateFrame = nil
 	Lib.numFrames = Lib.numFrames or 1
@@ -82,21 +88,28 @@ end
 
 local BUTTON_TEX = 'Interface\\Buttons\\UI-SpellbookIcon-%sPage-%s'
 local Frames = Lib.frames
+local frameBorderLeft = 7
+local frameBorderRight = 9
+local frameBorderTop = 26
+local frameBorderBottom = 28
 local freeEditboxes = {}
 
 local default = {
 	title = "Tutorial",
 	width = 350,
+	height = 0,
 	font = "",
+	paddingX = 25,
+	paddingTop = 20,
+	paddingBottom = 20,
 	imageWidth = 256,
 	imageHeight = 128,
 	imagePoint = "TOP",
 	imageX = 0,
-	imageY = 20,
+	imageY = 0,
+	headingFont = "Fonts\\bLEI00D.ttf",
+	headingSize = 16,
 	imageFloat = false,
-	textHeight = 0,
-	textX = 25,
-	textY = 20,
 	buttonWidth = 100,
 	point = "CENTER",
 	anchor = UIParent,
@@ -112,19 +125,100 @@ local function ConvertPixelsToUI(pixels, frameScale)
 	return (pixels * 768.0)/(physicalScreenHeight * frameScale);
 end
 
-local function NewEditbox(frame, width)
+local function EditboxSetWidth(editbox, maxWidth)
+	local width = editbox._textLength + editbox.inset + 2
+	if width > 0 and width < maxWidth then
+		editbox:SetWidth(width)
+	else
+		editbox:SetWidth(maxWidth)
+	end
+end
+
+local function NewEditbox(frame)
 	local numFreeEditboxes = #freeEditboxes
 	local editbox
 	if numFreeEditboxes > 0 then
 		editbox = tremove(freeEditboxes, numFreeEditboxes)
 		editbox:SetParent(frame)
 	else
-		editbox = CreateFrame('EditBox', nil, frame, 'InputBoxTemplate')
+		editbox = CreateFrame('EditBox', nil, frame)
+		editbox:SetFontObject(GameFontHighlight)
+		editbox:SetTextColor(0, 0.5, 1)
 		editbox:SetAutoFocus(false)
+		editbox:SetAltArrowKeyMode(true)
+		editbox.measurer = editbox:CreateFontString(nil, "ARTWORK", "GameFontHighlight")
+		local icon = editbox:CreateTexture(nil, "ARTWORK")
+		icon:SetSize(16, 16)
+		icon:SetVertexColor(0.93, 0.76, 0)
+		icon:SetPoint("LEFT")
+		editbox.icon = icon
+		local hint = editbox:CreateFontString(nil, "ARTWORK", "GameFontNormalSmall")
+		hint:SetPoint("LEFT", editbox, "RIGHT", 4, -1)
+		hint:SetText("CTRL+C to copy")
+		hint:SetTextColor(0.93, 0.76, 0)
+		hint:Hide()
+		editbox.hint = hint
+		editbox.hintWidth = hint:GetWidth()
+		editbox:SetScript("OnEditFocusGained", function(self)
+			self:SetTextColor(1, 1, 1)
+			self:HighlightText()
+			if self.showHint then
+				if self._textLength + self.hintWidth + 4 > self.maxWidth then
+					self:SetWidth(self.maxWidth - self.hintWidth - 4)
+				end
+				self.hint:Show()
+			end
+		end)
+		editbox:SetScript("OnEditFocusLost", function(self)
+			self:SetTextColor(0, 0.5, 1)
+			self:HighlightText(0, 0)
+			if self.showHint then
+				EditboxSetWidth(self, self.maxWidth)
+				self.hint:Hide()
+			end
+		end)
+		editbox:SetScript("OnMouseDown", function(self)
+			if self:HasFocus() then
+				C_Timer.After(0, function()
+					self:HighlightText()
+				end)
+			end
+		end)
+		editbox:SetScript("OnMouseUp", function(self)
+			if self:HasFocus() then
+				self:SetCursorPosition(0)
+				self:HighlightText()
+			end
+		end)
+		editbox:SetScript("OnTextChanged", function(self, user)
+			if user then
+				self:SetText(self._text)
+				self:SetCursorPosition(0)
+				self:HighlightText()
+			end
+		end)
+		editbox:SetScript("OnEnterPressed", function(self)
+			self:ClearFocus()
+			ChatFrame_OpenChat("")
+		end)
+		editbox:SetScript("OnEscapePressed", function(self)
+			self:ClearFocus()
+		end)
+		editbox:SetScript("OnEnter", function(self)
+			if not self:HasFocus() then
+				self:SetTextColor(0.48, 0.73, 1)
+			end
+		end)
+		editbox:SetScript("OnLeave", function(self)
+			if not self:HasFocus() then
+				self:SetTextColor(0, 0.5, 1)
+			end
+		end)
 	end
-	editbox:SetWidth(width)
-	editbox:SetHeight(20)
-	editbox:Show()
+	editbox.icon:SetTexture()
+	editbox:SetTextInsets(0, 0, 0, 0)
+	editbox.inset = 0
+	editbox.showHint = true
 	return editbox
 end
 
@@ -142,9 +236,6 @@ local function UpdateFrame(frame, i)
 		return
 	end
 
-	if (not data.image or data.imageAbsolute) and not data.textY then
-		data.textY = 0
-	end
 	for k, v in pairs(default) do
 		if not data[k] then
 			if not frame.data[k] then
@@ -160,14 +251,6 @@ local function UpdateFrame(frame, i)
 		frame.data.onShow(frame.data, i)
 	end
 
-	-- Frame
-	frame:ClearAllPoints()
-	frame:SetPoint(data.point, data.anchor, data.relPoint, data.x, data.y)
-	frame:SetWidth(data.width + 16)
-    local titleText = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE and frame.TitleContainer.TitleText or frame.TitleText
-	titleText:SetPoint('TOP', 0, -5)
-	titleText:SetText(data.title)
-	
 	-- Cache inline texture
 	local j, idx = 1, 1
 	local lastTex
@@ -187,7 +270,25 @@ local function UpdateFrame(frame, i)
 			break
 		end
 	end
-	
+
+	-- Frame
+	frame:ClearAllPoints()
+	frame:SetPoint(data.point, data.anchor, data.relPoint, data.x, data.y)
+	frame:SetWidth(data.width + frameBorderLeft + frameBorderRight)
+	local titleText = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE and frame.TitleContainer.TitleText or frame.TitleText
+	titleText:SetPoint('TOP', 0, -5)
+	titleText:SetText(data.title)
+
+	frame.scroll:SetPoint('TOPLEFT', frameBorderLeft + data.paddingX, (frameBorderTop + data.paddingTop) * -1)
+	frame.scroll:SetPoint('BOTTOMRIGHT', (frameBorderRight + 23) * -1, frameBorderBottom + data.paddingBottom)
+	frame.scroll:SetVerticalScroll(0)
+	frame.scroll.ScrollBar:SetPoint("TOPLEFT", frame.scroll, "TOPRIGHT", 5, -1 * (default.paddingTop - data.paddingTop - 2))
+	frame.scroll.ScrollBar:SetPoint("BOTTOMLEFT", frame.scroll, "BOTTOMRIGHT", 5, default.paddingBottom - data.paddingBottom - 3)
+	frame.content:SetWidth(data.width - data.paddingX - max(data.paddingX, 25))
+
+	local height = 0
+	local textPaddingTop = 0
+
 	-- Image
 	for _, image in pairs(frame.images) do
 		image:Hide()
@@ -195,55 +296,100 @@ local function UpdateFrame(frame, i)
 	if data.image then
 		local img = frame.images[i]
 		if not img then
-			img = CreateFrame("Frame", nil, frame)
+			img = CreateFrame("Frame")
 			img:SetFrameLevel(1)
 			img.texture = img:CreateTexture()
 			img.texture:SetAllPoints()
 		end
+		img:SetParent(data.imageAbsolute and frame or frame.content)
 		img.texture:SetTexture(data.image)
 		if data.imageTexCoords then
 			img.texture:SetTexCoord(unpack(data.imageTexCoords))
 		end
 		img:SetSize(data.imageWidth, data.imageHeight)
-		img:SetPoint(data.imagePoint, frame, data.imageX - 1, -(25 + data.imageY))
+		img:SetPoint(data.imagePoint, data.imageX, data.imageY)
 		img:Show()
 		frame.images[i] = img
+		if not data.imageAbsolute then
+			textPaddingTop = data.imageY + data.imageHeight + 20
+			height = height + textPaddingTop
+		end
 	end
-	
+
+	-- Heading
+	if data.heading then
+		frame.heading:SetPoint('TOPLEFT', 0, textPaddingTop * -1)
+		if data.headingFont then
+			frame.heading:SetFont(data.headingFont, data.headingSize)
+		end
+		frame.heading:SetText(data.heading)
+		height = height + frame.heading:GetHeight()
+		frame.heading:Show()
+	else
+		frame.heading:Hide()
+	end
+
 	-- Text
-	frame.text:SetPoint('TOP', frame, 0, -(((data.image and not data.imageAbsolute) and 26 + data.imageY + data.imageHeight or 60) + data.textY))
-	frame.text:SetWidth(data.width - (2 * data.textX))
+	if data.heading then
+		frame.text:SetPoint('TOPLEFT', frame.heading, 'BOTTOMLEFT', 0, -16)
+		height = height + 16
+	else
+		frame.text:SetPoint('TOPLEFT', 0, textPaddingTop * -1)
+	end
 	frame.text:SetText(data.text)
-	
-	local textHeight = round(frame.text:GetHeight())
-	if data.textHeight > textHeight then
-		textHeight = data.textHeight
-	end 
-	textHeight = textHeight - fmod(textHeight, 2)
-	frame:SetHeight(((data.image and not data.imageAbsolute) and 56 + data.imageY + data.imageHeight or 90) + (data.text and data.textY + textHeight or 0) + 18)
+
+	local textHeight = round(frame.text:GetHeight() + 3)
+	textHeight = textHeight + fmod(textHeight, 2)
+	height = height + textHeight
+	frame.content:SetHeight(height)
+
+	height = height + data.paddingTop + data.paddingBottom
+	if data.height > 0 and height > data.height then
+		height = data.height
+	end
+	height = height + frameBorderTop + frameBorderBottom
+	frame:SetHeight(height)
+
 	frame.i = i
 	frame:Show()
 
 	-- EditBox
 	RemoveEditboxes(frame)
 	if data.editbox then
-		for i = 1, #data.editbox do
-			frame.editboxes[i] = NewEditbox(frame, data.editbox[i].width or 400)
-			frame.editboxes[i]:ClearFocus()
-			frame.editboxes[i]:ClearAllPoints()
-			if data.editbox[i].top then
-				frame.editboxes[i]:SetPoint('TOPLEFT', 14 + data.textX + (data.editbox[i].left or 0), -(60 + data.textY + (data.editbox[i].top or 0)))
-			elseif data.editbox[i].bottom then
-				frame.editboxes[i]:SetPoint('BOTTOMLEFT', 14 + data.textX + (data.editbox[i].left or 0), 28 + 18 + (data.editbox[i].bottom or 0))
+		for k = 1, #data.editbox do
+			local editbox = NewEditbox(frame.content)
+			editbox:ClearFocus()
+			editbox:ClearAllPoints()
+			if data.editbox[k].top then
+				editbox:SetPoint('TOPLEFT', (data.editbox[k].left or 0), (data.editbox[k].top or 0) * -1)
+			elseif data.editbox[k].bottom then
+				editbox:SetPoint('BOTTOMLEFT', (data.editbox[k].left or 0), data.editbox[k].bottom or 0)
 			end
-			frame.editboxes[i]:SetText(data.editbox[i].text)
+			editbox._text = data.editbox[k].text
+			editbox:SetText(editbox._text)
+			editbox:SetCursorPosition(0)
+			editbox.measurer:SetText(editbox._text)
+			editbox._textLength = editbox.measurer:GetStringWidth()
+			if data.editbox[k].icon then
+				editbox.icon:SetTexture(data.editbox[k].icon)
+				editbox.inset = 17
+			end
+			if data.editbox[k].showHint ~= nil then
+				editbox.showHint = data.editbox[k].showHint
+			end
+			editbox.maxWidth = data.editbox[k].width or 400
+			EditboxSetWidth(editbox, editbox.maxWidth)
+			editbox:SetHeight(20)
+			editbox:Show()
+			editbox:SetTextInsets(editbox.inset, 0, 0, 0)
+			frame.editboxes[k] = editbox
 		end
 	end
 
 	-- Button
 	if data.button then
 		frame.button:SetWidth(data.buttonWidth)
-		frame.button:SetPoint('BOTTOMLEFT', 8 + data.textX + (data.buttonLeft or 0), 28 + 18 + (data.buttonBottom or 0))
+		frame.button:SetPoint('BOTTOMLEFT', 8 + data.paddingX + (data.buttonLeft or 0), 28 + 18 + (data.buttonBottom or 0))
 		frame.button:SetText(data.button)
 		frame.button:SetScript('OnClick', data.buttonClick)
 		frame.button:Show()
@@ -311,8 +457,23 @@ local function NewFrame(data)
 	frame.Inset:SetPoint('TOPLEFT', 4, -23)
 	frame.Inset.Bg:SetColorTexture(0, 0, 0)
 
+	local template = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE and "ScrollFrameTemplate" or "UIPanelScrollFrameTemplate"
+	frame.scroll = CreateFrame("ScrollFrame", nil, frame, template)
+	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+		frame.scroll.ScrollBar:SetHideIfUnscrollable(true)
+	end
+
+	frame.content = CreateFrame("Frame", nil, frame.scroll)
+	frame.content:SetHeight(1)  -- for correct init height
+	frame.scroll:SetScrollChild(frame.content)
+
 	frame.images = {}
-	frame.text = frame:CreateFontString(nil, nil, 'GameFontHighlight')
+	frame.heading = frame.content:CreateFontString(nil, nil, 'GameFontNormal')
+	frame.heading:SetPoint('RIGHT')
+	frame.heading:SetJustifyH('LEFT')
+	frame.heading:Hide()
+	frame.text = frame.content:CreateFontString(nil, nil, 'GameFontHighlight')
+	frame.text:SetPoint('RIGHT')
 	if data.font then
 		frame.text:SetFont(data.font, 12)
 	end
@@ -336,13 +497,6 @@ local function NewFrame(data)
 			frame.data.onHide()
 		end
 	end)
-	frame:SetScript("OnEvent", function(self, event)
-		if event == "PLAYER_ENTERING_WORLD" then
-			UpdateFrame(self, self.i)  -- for update textHeight (UI Scale)
-			self:UnregisterEvent(event)
-		end
-	end)
-	frame:RegisterEvent("PLAYER_ENTERING_WORLD")
 
 	frame.button = CreateFrame('Button', nil, frame, 'UIPanelButtonTemplate')
 	frame.button:SetSize(100, 22)
@@ -366,6 +520,12 @@ local function NewFrame(data)
 
 	frame.data = data
 	Lib.numFrames = Lib.numFrames + 1
+
+	-- for update height
+	hooksecurefunc(UIParent, "SetScale", function(self)
+		UpdateFrame(frame, frame.i)
+	end)
+
 	return frame
 end
 

@@ -385,7 +385,7 @@
 						</Scripts>
 					</Frame>
 					<Frame name="ScenarioChallengeModeBlock" hidden="true">
-						<Size x="251" y="87"/>
+						<Size x="244" y="87"/>  <!-- MSA -->
 						<Layers>
 							<Layer level="BACKGROUND">
 								<Texture parentKey="TimerBGBack" atlas="ChallengeMode-TimerBG-Back" useAtlasSize="true">
@@ -403,6 +403,21 @@
 							</Layer>
 							<Layer level="OVERLAY">
 								<Texture atlas="challengemode-timer" setAllPoints="true"/>
+								<!-- MSA -->
+								<Texture parentKey="medalIcon" alphaMode="ADD">
+									<Size x="48" y="48"/>
+									<Anchors>
+										<Anchor point="RIGHT" x="-20" y="3"/>
+									</Anchors>
+								</Texture>
+								<Texture parentKey="noMedal" file="Interface\Challenges\challenges-main" hidden="true">
+									<Size x="9" y="10"/>
+									<Anchors>
+										<Anchor point="LEFT" x="24" y="-2"/>
+									</Anchors>
+									<TexCoords left="0.93847656" right="0.94726563" top="0.00195313" bottom="0.02148438"/>
+								</Texture>
+								<!---->
 								<FontString parentKey="Level" inherits="GameFontNormalMed2" justifyH="LEFT">
 									<Anchors>
 										<Anchor point="TOPLEFT" x="28" y="-18"/>
@@ -416,6 +431,45 @@
 							</Layer>
 						</Layers>
 						<Frames>
+							<!-- MSA -->
+							<Frame parentKey="GlowFrame">
+								<Layers>
+									<Layer level="OVERLAY">
+										<Texture parentKey="MedalGlow" file="Interface\Challenges\challenges-metalglow">
+											<Size x="150" y="150"/>
+											<Anchors>
+												<Anchor point="CENTER" relativeKey="$parent.$parent.medalIcon" />
+											</Anchors>
+										</Texture>
+										<Texture parentKey="MedalIcon" alphaMode="ADD">
+											<Size x="48" y="48"/>
+											<Anchors>
+												<Anchor point="CENTER" relativeKey="$parent.$parent.medalIcon"/>
+											</Anchors>
+										</Texture>
+									</Layer>
+								</Layers>
+								<Scripts>
+									<OnLoad>
+										self.MedalGlow:SetAlpha(0);
+										self.MedalIcon:SetAlpha(0);
+									</OnLoad>
+								</Scripts>
+								<Animations>
+									<AnimationGroup parentKey="MedalGlowAnim">
+										<Alpha targetKey="$parent.$parent.MedalGlow" fromAlpha="0" toAlpha="1" duration="0.4" order="1"/>
+										<Alpha targetKey="$parent.$parent.MedalGlow" fromAlpha="1" toAlpha="0" duration="2" order="2"/>
+									</AnimationGroup>
+									<AnimationGroup parentKey="MedalPulseAnim">
+										<Alpha targetKey="$parent.$parent.MedalIcon" fromAlpha="1" toAlpha="0.1" endDelay="0.15" duration="0.25" order="1"/>
+										<Alpha targetKey="$parent.$parent.MedalIcon" fromAlpha="0.1" toAlpha="1" endDelay="0.35" duration="0.25" order="2"/>
+										<Scripts>
+											<OnFinished function="WorldStateChallengeModeAnim_OnFinished" />
+										</Scripts>
+									</AnimationGroup>
+								</Animations>
+							</Frame>
+							<!---->
 							<Frame parentKey="StartedDepleted" hidden="true" enableMouse="true">
 								<Size x="19" y="20"/>
 								<Anchors>
@@ -545,7 +599,7 @@
 								</FontString>
 								<FontString inherits="GameFontHighlightLarge" parentKey="Wave" text="0">
 									<Anchors>
-										<Anchor point="BOTTOMLEFT" relativeKey="$parent.WaveLabel" relativePoint="BOTTOMRIGHT" x="4" y="-1"/>
+										<Anchor point="BOTTOMLEFT" relativeKey="$parent.WaveLabel" relativePoint="BOTTOMRIGHT" x="4" y="0"/>  <!-- MSA -->
 									</Anchors>
 								</FontString>
 								<FontString inherits="QuestFont_Large" parentKey="ScoreLabel" text="PROVING_GROUNDS_SCORE" hidden="true">

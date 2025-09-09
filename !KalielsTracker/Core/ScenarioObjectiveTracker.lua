@@ -2,7 +2,7 @@
 SCENARIO_CONTENT_TRACKER_MODULE = ObjectiveTracker_GetModuleInfoTable();
 SCENARIO_CONTENT_TRACKER_MODULE.updateReasonModule = OBJECTIVE_TRACKER_UPDATE_MODULE_SCENARIO;
 SCENARIO_CONTENT_TRACKER_MODULE.updateReasonEvents = OBJECTIVE_TRACKER_UPDATE_SCENARIO + OBJECTIVE_TRACKER_UPDATE_SCENARIO_NEW_STAGE + OBJECTIVE_TRACKER_UPDATE_SCENARIO_SPELLS;
-SCENARIO_CONTENT_TRACKER_MODULE:SetHeader(ObjectiveTrackerFrame.BlocksFrame.ScenarioHeader, TRACKER_HEADER_SCENARIO, nil);	-- never anim-in the header
+SCENARIO_CONTENT_TRACKER_MODULE:SetHeader(KT_ObjectiveTrackerFrame.BlocksFrame.ScenarioHeader, TRACKER_HEADER_SCENARIO, nil);	-- never anim-in the header
 SCENARIO_CONTENT_TRACKER_MODULE.blockOffsetX = -20;
 SCENARIO_CONTENT_TRACKER_MODULE.fromHeaderOffsetY = -2;
 SCENARIO_CONTENT_TRACKER_MODULE.ShowCriteria = C_Scenario.ShouldShowCriteria();
@@ -296,10 +296,9 @@ function ScenarioTimer_CheckTimers(...)
 		local timerID = select(i, ...);
 		local _, elapsedTime, type = GetWorldElapsedTime(timerID);
 		if ( type == LE_WORLD_ELAPSED_TIMER_TYPE_CHALLENGE_MODE) then
-			local mapID = C_ChallengeMode.GetActiveChallengeMapID();
-			if ( mapID ) then
-				local _, _, timeLimit = C_ChallengeMode.GetMapUIInfo(mapID);
-				Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, timeLimit);
+			local _, _, _, _, _, _, _, id = GetInstanceInfo()  -- MSA
+			if ( id ) then
+				MoP_Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, C_ChallengeMode.GetChallengeModeMapTimes(id))  -- MSA
 				return;
 			end
 		elseif ( type == LE_WORLD_ELAPSED_TIMER_TYPE_PROVING_GROUND ) then
@@ -405,8 +404,112 @@ function Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, timeLimit)
 	Scenario_ChallengeMode_UpdateTime(block, elapsedTime);
 	ScenarioTimer_Start(block, Scenario_ChallengeMode_UpdateTime);
 	block:Show();
-	ObjectiveTracker_Expand();
+	--ObjectiveTracker_Expand();  -- MSA
 	ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_SCENARIO);
+end
+
+-- MSA
+function MoP_Scenario_ChallengeMode_ShowBlock(timerID, elapsedTime, times)
+	WorldStateChallengeModeTimer.baseTime = elapsedTime
+	WorldStateChallengeModeTimer.timeSinceBase = 0
+	WorldStateChallengeModeTimer.frame = WorldStateChallengeModeFrame
+
+	local block = ScenarioChallengeModeBlock
+	block.timerID = timerID
+	block.lastMedalShown = nil
+	if not block.medalTimes then
+		block.medalTimes = {}
+	end
+	for i = 1, #times do
+		block.medalTimes[i] = times[i]
+	end
+
+	MoP_Scenario_ChallengeMode_UpdateMedal(block, elapsedTime)
+	MoP_Scenario_ChallengeMode_UpdateTime(block, elapsedTime)
+	ScenarioTimer_Start(block, MoP_Scenario_ChallengeMode_UpdateTime)
+	block:Show()
+	--ObjectiveTracker_Expand()  -- MSA
+	ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_SCENARIO)
+end
+
+function MoP_Scenario_ChallengeMode_UpdateMedal(self, elapsedTime)
+	-- find best medal for current time
+	local statusBar = self.StatusBar
+	local prevMedalTime = 0
+	for i = #self.medalTimes, 1, -1 do
+		local currentMedalTime = self.medalTimes[i]
+		if elapsedTime < currentMedalTime then
+			statusBar:SetMinMaxValues(0, currentMedalTime - prevMedalTime)
+			statusBar.medalTime = currentMedalTime
+			if CHALLENGE_MEDAL_TEXTURES[i] then
+				self.medalIcon:SetTexture(CHALLENGE_MEDAL_TEXTURES[i])
+				self.medalIcon:Show()
+				self.GlowFrame.MedalIcon:SetTexture(CHALLENGE_MEDAL_TEXTURES[i])
+				self.GlowFrame.MedalGlowAnim:Play()
+			end
+			self.noMedal:Hide()
+			-- play sound if medal changed
+			if self.lastMedalShown and self.lastMedalShown ~= i then
+				if self.lastMedalShown == CHALLENGE_MEDAL_GOLD then
+					PlaySound(SOUNDKIT.UI_CHALLENGES_MEDALEXPIRE_GOLDTOSILVER)
+				elseif self.lastMedalShown == CHALLENGE_MEDAL_SILVER then
+					PlaySound(SOUNDKIT.UI_CHALLENGES_MEDALEXPIRE_SILVERTOBRONZE)
+				else
+					PlaySound(SOUNDKIT.UI_CHALLENGES_MEDALEXPIRE)
+				end
+			end
+			self.lastMedalShown = i
+			return
+		else
+			prevMedalTime = currentMedalTime
+		end
+	end
+	-- no medal
+	self.TimeLeft:SetTextColor(HIGHLIGHT_FONT_COLOR:GetRGB())
+	self.TimeLeft:SetText(CHALLENGES_TIMER_NO_MEDAL)
+	statusBar:SetValue(0)
+	statusBar.medalTime = nil
+	self.noMedal:Show()
+	self.medalIcon:Hide()
+	-- play sound if medal changed
+	if self.lastMedalShown and self.lastMedalShown ~= 0 then
+		PlaySound(SOUNDKIT.UI_CHALLENGES_MEDALEXPIRE)
+	end
+	self.lastMedalShown = 0
+end
+
+function MoP_Scenario_ChallengeMode_UpdateTime(self, elapsedTime)
+	local statusBar = self.StatusBar
+	if ( statusBar.medalTime ) then
+		local timeLeft = statusBar.medalTime - elapsedTime
+		local anim = self.GlowFrame.MedalPulseAnim
+		if (timeLeft <= 10) then
+			self.medalIcon:Hide()
+			self.TimeLeft:SetTextColor(RED_FONT_COLOR:GetRGB())
+			if (anim:IsPlaying()) then
+				anim.timeLeft = timeLeft
+			else
+				anim:Play()
+			end
+		else
+			self.medalIcon:Show()
+			self.TimeLeft:SetTextColor(HIGHLIGHT_FONT_COLOR:GetRGB())
+		end
+		if (timeLeft == 11) then
+			if (not self.playedSound) then
+				PlaySound(SOUNDKIT.UI_CHALLENGES_WARNING)
+				self.playedSound = true
+			end
+		else
+			self.playedSound = false
+		end
+		if ( timeLeft < 0 ) then
+			MoP_Scenario_ChallengeMode_UpdateMedal(self, elapsedTime)
+		else
+			statusBar:SetValue(timeLeft)
+			self.TimeLeft:SetText(GetTimeStringFromSeconds(timeLeft))
+		end
+	end
 end
 
 ScenarioChallengeModeAffixMixin = {};
@@ -560,7 +663,7 @@ function Scenario_ProvingGrounds_ShowBlock(timerID, elapsedTime, duration, medal
 
 	ScenarioTimer_Start(block, Scenario_ProvingGrounds_UpdateTime);
 	block:Show();
-	ObjectiveTracker_Expand();
+	--ObjectiveTracker_Expand();  -- MSA
 	ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_MODULE_SCENARIO);
 end
 
@@ -1000,7 +1103,7 @@ function SCENARIO_CONTENT_TRACKER_MODULE:Update()
 		ObjectiveTracker_AddBlock(BlocksFrame);
 		BlocksFrame:Show();
 		if ( OBJECTIVE_TRACKER_UPDATE_REASON == OBJECTIVE_TRACKER_UPDATE_SCENARIO_NEW_STAGE and not inChallengeMode ) then
-			if ( ObjectiveTrackerFrame:IsShown() ) then
+			if ( KT_ObjectiveTrackerFrame:IsShown() ) then
 				if ( currentStage == 1 ) then
 					ScenarioBlocksFrame_SlideIn();
 				else

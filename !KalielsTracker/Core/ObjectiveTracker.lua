@@ -162,7 +162,7 @@ function DEFAULT_OBJECTIVE_TRACKER_MODULE:GetBlock(id)
 			tremove(self.freeBlocks, numFreeBlocks);
 		else
 			-- create a new block
-			block = CreateFrame(self.blockType, nil, self.BlocksFrame or ObjectiveTrackerFrame.BlocksFrame, self.blockTemplate);
+			block = CreateFrame(self.blockType, nil, self.BlocksFrame or KT_ObjectiveTrackerFrame.BlocksFrame, self.blockTemplate);
 			block.lines = { };
 		end
 		self.usedBlocks[id] = block;
@@ -704,9 +704,9 @@ function ObjectiveTracker_OnEvent(self, event, ...)
 	elseif ( event == "QUEST_WATCH_LIST_CHANGED" ) then
 		local questID, added = ...;
 		if ( added ) then
-			if ( IsQuestComplete(questID) ) then
+			--if ( IsQuestComplete(questID) ) then  -- MSA
 				ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_QUEST_ADDED, questID);
-			end
+			--end
 		else
 			ObjectiveTracker_Update(OBJECTIVE_TRACKER_UPDATE_QUEST);
 		end
@@ -781,7 +781,7 @@ end
 
 function ObjectiveTracker_MinimizeButton_OnClick(self)
 	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON);
-	if ( ObjectiveTrackerFrame.collapsed ) then
+	if ( KT_ObjectiveTrackerFrame.collapsed ) then
 		ObjectiveTracker_Expand();
 	else
 		ObjectiveTracker_Collapse();
@@ -790,19 +790,19 @@ function ObjectiveTracker_MinimizeButton_OnClick(self)
 end
 
 function ObjectiveTracker_Collapse()
-	ObjectiveTrackerFrame.collapsed = true;
-	ObjectiveTrackerFrame.BlocksFrame:Hide();
-	ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:GetNormalTexture():SetTexCoord(0, 0.5, 0, 0.5);
-	ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:GetPushedTexture():SetTexCoord(0.5, 1, 0, 0.5);
-	ObjectiveTrackerFrame.HeaderMenu.Title:Show();
+	KT_ObjectiveTrackerFrame.collapsed = true;
+	KT_ObjectiveTrackerFrame.BlocksFrame:Hide();
+	KT_ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:GetNormalTexture():SetTexCoord(0, 0.5, 0, 0.5);
+	KT_ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:GetPushedTexture():SetTexCoord(0.5, 1, 0, 0.5);
+	KT_ObjectiveTrackerFrame.HeaderMenu.Title:Show();
 end
 
 function ObjectiveTracker_Expand()
-	ObjectiveTrackerFrame.collapsed = nil;
-	ObjectiveTrackerFrame.BlocksFrame:Show();
-	ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:GetNormalTexture():SetTexCoord(0, 0.5, 0.5, 1);
-	ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:GetPushedTexture():SetTexCoord(0.5, 1, 0.5, 1);
-	ObjectiveTrackerFrame.HeaderMenu.Title:Hide();
+	KT_ObjectiveTrackerFrame.collapsed = nil;
+	KT_ObjectiveTrackerFrame.BlocksFrame:Show();
+	KT_ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:GetNormalTexture():SetTexCoord(0, 0.5, 0.5, 1);
+	KT_ObjectiveTrackerFrame.HeaderMenu.MinimizeButton:GetPushedTexture():SetTexCoord(0.5, 1, 0.5, 1);
+	KT_ObjectiveTrackerFrame.HeaderMenu.Title:Hide();
 end
 
 function ObjectiveTracker_ToggleDropDown(frame, handlerFunc)
@@ -1027,7 +1027,7 @@ function DEFAULT_OBJECTIVE_TRACKER_MODULE:StaticReanchor()
 end
 
 function ObjectiveTracker_Update(reason, id)
-	local tracker = ObjectiveTrackerFrame;
+	local tracker = KT_ObjectiveTrackerFrame;
 	if tracker.isUpdating then
 		-- Trying to update while we're already updating, try again next frame
 		tracker.isUpdateDirty = true;
@@ -1040,7 +1040,7 @@ function ObjectiveTracker_Update(reason, id)
 		return;
 	end
 
-	tracker.BlocksFrame.maxHeight = ObjectiveTrackerFrame.BlocksFrame:GetHeight();
+	tracker.BlocksFrame.maxHeight = KT_ObjectiveTrackerFrame.BlocksFrame:GetHeight();
 	if ( tracker.BlocksFrame.maxHeight == 0 ) then
 		tracker.isUpdating = false;
 		return;
@@ -1113,19 +1113,19 @@ end
 
 function ObjectiveTracker_WatchMoney(watchMoney, reason)
 	if ( watchMoney ) then
-		if ( band(ObjectiveTrackerFrame.watchMoneyReasons, reason) == 0 ) then
-			ObjectiveTrackerFrame.watchMoneyReasons = ObjectiveTrackerFrame.watchMoneyReasons + reason;
+		if ( band(KT_ObjectiveTrackerFrame.watchMoneyReasons, reason) == 0 ) then
+			KT_ObjectiveTrackerFrame.watchMoneyReasons = KT_ObjectiveTrackerFrame.watchMoneyReasons + reason;
 		end
 	else
-		if ( band(ObjectiveTrackerFrame.watchMoneyReasons, reason) > 0 ) then
-			ObjectiveTrackerFrame.watchMoneyReasons = ObjectiveTrackerFrame.watchMoneyReasons - reason;
+		if ( band(KT_ObjectiveTrackerFrame.watchMoneyReasons, reason) > 0 ) then
+			KT_ObjectiveTrackerFrame.watchMoneyReasons = KT_ObjectiveTrackerFrame.watchMoneyReasons - reason;
 		end
 	end
 end
 
 function ObjectiveTracker_ReorderModules()
-	local modules = ObjectiveTrackerFrame.MODULES;
-	local modulesUIOrder = ObjectiveTrackerFrame.MODULES_UI_ORDER;
+	local modules = KT_ObjectiveTrackerFrame.MODULES;
+	local modulesUIOrder = KT_ObjectiveTrackerFrame.MODULES_UI_ORDER;
 	local detachIndex = nil;
 	local anchorBlock = nil;
 	for i = 1, #modules do

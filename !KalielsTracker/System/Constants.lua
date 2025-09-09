@@ -4,9 +4,12 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
+---@type KT
 local addonName, KT = ...
 
 -- Constants
+KT.AUTHOR = C_AddOns.GetAddOnMetadata(addonName, "Author")
+
 KT.MEDIA_PATH = "Interface\\AddOns\\"..addonName.."\\Media\\"
 
 if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then
