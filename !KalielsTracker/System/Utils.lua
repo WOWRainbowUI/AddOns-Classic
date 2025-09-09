@@ -4,7 +4,10 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
+---@type KT
 local addonName, KT = ...
+
+KT.title = C_AddOns.GetAddOnMetadata(addonName, "Title")
 
 -- Lua API
 local floor = math.floor
@@ -21,22 +24,33 @@ local tonumber = tonumber
 -- Version
 function KT.IsHigherVersion(newVersion, oldVersion)
     local result = false
-    local _, _, nV1, nV2, nV3 = strfind(newVersion, "(%d+)%.(%d+)%.(%d+)")
-    local _, _, oV1, oV2, oV3 = strfind(oldVersion, "(%d+)%.(%d+)%.(%d+)")
-    nV1, nV2, nV3 = tonumber(nV1), tonumber(nV2), tonumber(nV3)
-    oV1, oV2, oV3 = tonumber(oV1), tonumber(oV2), tonumber(oV3)
-    if nV1 == oV1 then
-        if nV2 == oV2 then
-            if nV3 > oV3 then
-                result = true
-            end
-        else
-            if nV2 > oV2 then
-                result = true
-            end
-        end
+    if newVersion == "@project-version@" then
+        result = true
     else
-        if nV1 > oV1 then
+        local _, _, nV1, nV2, nV3, nBuild = strfind(newVersion, "(%d+)%.?(%d*)%.?(%d*)(.*)")
+        local _, _, oV1, oV2, oV3, oBuild = strfind(oldVersion, "(%d+)%.?(%d*)%.?(%d*)(.*)")
+        local _, _, nBuildType, nBuildNumber = strfind(nBuild or "", "%-(%w+)%.(%d+)")
+        local _, _, oBuildType, oBuildNumber = strfind(oBuild or "", "%-(%w+)%.(%d+)")
+        nV1, nV2, nV3, nBuildNumber = tonumber(nV1) or 0, tonumber(nV2) or 0, tonumber(nV3) or 0, tonumber(nBuildNumber)
+        oV1, oV2, oV3, oBuildNumber = tonumber(oV1) or 0, tonumber(oV2) or 0, tonumber(oV3) or 0, tonumber(oBuildNumber)
+        if nV1 == oV1 then
+            if nV2 == oV2 then
+                if nV3 == oV3 then
+                    -- no support for alpha vs beta builds
+                    if nBuildType == nil then
+                        result = true
+                    elseif nBuildType == oBuildType then
+                        if nBuildNumber and nBuildNumber >= oBuildNumber then
+                            result = true
+                        end
+                    end
+                elseif nV3 > oV3 then
+                    result = true
+                end
+            elseif nV2 > oV2 then
+                result = true
+            end
+        elseif nV1 > oV1 then
             result = true
         end
     end
@@ -311,6 +325,15 @@ function KT.GameTooltip_AddQuestRewardsToTooltip(tooltip, questID, isBonus)
     SelectQuestLogEntry(bckQuestLogSelection)  -- restore Quest Log selection
 end
 
+-- Combat test
+function KT.InCombatBlocked()
+    local blocked = InCombatLockdown()
+    if blocked then
+        UIErrorsFrame:AddExternalErrorMessage("This operation cannot be completed during combat.")
+    end
+    return blocked
+end
+
 -- Icons
 function KT.CreateQuestTagIcon(tagName, width, height, xOffset, yOffset, left, right, top, bottom)
     if left then
@@ -324,4 +347,198 @@ end
 function KT.ConvertPixelsToUI(pixels, frameScale)
     local physicalScreenHeight = select(2, GetPhysicalScreenSize());
     return (pixels * 768.0)/(physicalScreenHeight * frameScale);
+end
+
+-- ---------------------------------------------------------------------------------------------------------------------
+
+local function StatiPopup_OnShow(self)
+    if self.text.text_arg1 then
+        self.text:SetText(self.text:GetText().." - "..self.text.text_arg1)
+    end
+    if self.text.text_arg2 then
+        if self.data then
+            self.SubText:SetFormattedText(self.text.text_arg2, unpack(self.data))
+        else
+            self.SubText:SetText(self.text.text_arg2)
+        end
+        self.SubText:SetTextColor(1, 1, 1)
+    else
+        self.SubText:Hide()
+    end
+end
+
+StaticPopupDialogs[addonName.."_Info"] = {
+    text = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:0:0|t"..NORMAL_FONT_COLOR_CODE..KT.title.."|r",
+    subText = "...",
+    button2 = CLOSE,
+    OnShow = StatiPopup_OnShow,
+    timeout = 0,
+    whileDead = 1
+}
+
+StaticPopupDialogs[addonName.."_ReloadUI"] = {
+    text = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:0:0|t"..NORMAL_FONT_COLOR_CODE..KT.title.."|r",
+    subText = "...",
+    button1 = RELOADUI,
+    OnShow = StatiPopup_OnShow,
+    OnAccept = function()
+        ReloadUI()
+    end,
+    timeout = 0,
+    whileDead = 1
+}
+
+StaticPopupDialogs[addonName.."_LockUI"] = {
+    text = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:0:0|t"..NORMAL_FONT_COLOR_CODE..KT.title.."|r",
+    subText = "...",
+    button1 = LOCK,
+    OnShow = StatiPopup_OnShow,
+    OnAccept = function()
+        local overlay = KT.frame.ActiveFrame.overlay
+        overlay:Hide()
+    end,
+    timeout = 0,
+    whileDead = 1
+}
+
+StaticPopupDialogs[addonName.."_WowheadURL"] = {
+    text = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:0:-1|t"..NORMAL_FONT_COLOR_CODE..KT.title.."|r - Wowhead URL",
+    button2 = CLOSE,
+    hasEditBox = 1,
+    editBoxWidth = 350,
+    EditBoxOnTextChanged = function(self)
+        self:SetText(self.text)
+        self:HighlightText()
+    end,
+    EditBoxOnEnterPressed = function(self)
+        self:GetParent():Hide()
+    end,
+    EditBoxOnEscapePressed = function(self)
+        self:GetParent():Hide()
+    end,
+    OnShow = function(self)
+        local name = "..."
+        if self.text.text_arg1 == "quest" then
+            name = KT.QuestUtils_GetQuestName(self.text.text_arg2)
+        elseif self.text.text_arg1 == "achievement" then
+            name = select(2, GetAchievementInfo(self.text.text_arg2))
+        elseif self.text.text_arg1 == "spell" then
+            name = C_Spell.GetSpellName(self.text.text_arg2)
+        elseif self.text.text_arg1 == "activity" then
+            local activityInfo = C_PerksActivities.GetPerksActivityInfo(self.text.text_arg2)
+            if activityInfo then
+                name = activityInfo.activityName
+            end
+            param = "trading-post-activity/"..self.text.text_arg2
+        end
+        local url = "https://www.wowhead.com/"
+		if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+			url = url.."classic/"
+		elseif WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
+			url = url.."mop-classic/"
+		elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
+			url = url.."cata/"
+		elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
+			url = url.."wotlk/"
+		elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
+			url = url.."tbc/"
+		end
+        local lang = KT.locale:sub(1, 2)
+        if lang ~= "en" then
+            if lang == "zh" then lang = "cn" end
+            url = url..lang.."/"
+        end
+        local param = self.text.text_arg1.."="..self.text.text_arg2
+        self.text:SetText(self.text:GetText().."\n|cffff7f00"..name.."|r")
+        self.editBox.text = url..param
+        self.editBox:SetText(self.editBox.text)
+        self.editBox:SetFocus()
+    end,
+    timeout = 0,
+    whileDead = 1,
+    hideOnEscape = 1
+}
+
+function KT:Alert_ResetIncompatibleProfiles(version)
+    if self.db.global.version and not self.IsHigherVersion(self.db.global.version, version) then
+        local profile
+        for _, v in ipairs(self.db:GetProfiles()) do
+            profile = self.db.profiles[v]
+            for k, _ in pairs(profile) do
+                profile[k] = nil
+            end
+        end
+        self.db:RegisterDefaults(self.db.defaults)
+        StaticPopup_Show(addonName.."_Info", nil, "All profiles have been reset, because the new version %s is not compatible with stored settings.", { self.version })
+    end
+end
+
+function KT:Alert_IncompatibleAddon(addon, version)
+    if not self.IsHigherVersion(C_AddOns.GetAddOnMetadata(addon, "Version"), version) then
+        self.db.profile["addon"..addon] = false
+        StaticPopup_Show(addonName.."_ReloadUI", nil, "|cff00ffe3%s|r support has been disabled. Please install version |cff00ffe3%s|r or later and enable addon support.", { C_AddOns.GetAddOnMetadata(addon, "Title"), version })
+    end
+end
+
+function KT:Alert_WowheadURL(type, id)
+    StaticPopup_Show(addonName.."_WowheadURL", type, id)
+end
+
+-- Sanitize
+function KT.ReconcileOrder(defaultList, savedList)
+    KT.Assert(defaultList, "defaultList", "table")
+    KT.Assert(savedList, "savedList", "table")
+
+    local n = #defaultList
+    local out = {}
+
+    local allowed = {}
+    for i = 1, n do
+        local name = defaultList[i]
+        KT.Assert(name, "defaultList["..i.."]", "string", type(name) == "string" and name ~= "")
+        allowed[name] = true
+    end
+
+    local savedSeq, used = {}, {}
+    for i = 1, n do
+        local name = rawget(savedList, i)
+        if type(name) == "string" and allowed[name] and not used[name] then
+            savedSeq[#savedSeq + 1] = name
+            used[name] = true
+        end
+    end
+
+    local nextIdx = 1
+    local function nextFreeDefault()
+        while nextIdx <= n do
+            local name = defaultList[nextIdx]
+            nextIdx = nextIdx + 1
+            if not used[name] then
+                return name
+            end
+        end
+        return nil
+    end
+
+    for i = 1, #savedSeq do
+        local name = savedSeq[i]
+        out[i] = name
+    end
+    for i = #savedSeq + 1, n do
+        local name = nextFreeDefault()
+        if name then
+            out[i] = name
+            used[name] = true
+        end
+    end
+
+    return out
+end
+
+-- Debug
+function KT.Assert(value, varName, expType, condition)
+    if (condition ~= nil and not condition) or type(value) ~= expType then
+        local message = "[KT-ASSERT] '%s' must be a %s ('%s')"
+        error(message:format(varName, expType, tostring(value)), 3)
+    end
 end

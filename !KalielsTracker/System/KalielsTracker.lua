@@ -5,6 +5,8 @@
 --- This file is part of addon Kaliel's Tracker.
 
 local addonName, addon = ...
+
+---@class KT
 local KT = LibStub("MSA-AceAddon-3.0"):NewAddon(addon, addonName, "LibSink-2.0", "MSA-Event-1.0", "MSA-ProtRouter-1.0")
 KT:SetDefaultModuleState(false)
 KT.title = C_AddOns.GetAddOnMetadata(addonName, "Title")
@@ -53,7 +55,7 @@ local KTF = CreateFrame("Frame", addonName.."Frame", UIParent, "BackdropTemplate
 KT.frame = KTF
 
 -- Blizzard frame
-local OTF = ObjectiveTrackerFrame
+local OTF = KT_ObjectiveTrackerFrame
 local OTFHeader = OTF.HeaderMenu
 
 AUTO_QUEST_WATCH = GetCVar("autoQuestWatch")
@@ -63,34 +65,36 @@ QUEST_TRACKER_MODULE.buttonOffsets.groupFinder = { 2, 4 }
 if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then
 	SCENARIO_CONTENT_TRACKER_MODULE.blockOffsetX = -16
 	SCENARIO_CONTENT_TRACKER_MODULE.fromHeaderOffsetY = -9
-	SCENARIO_TRACKER_MODULE.blockOffsetY = 6
 end
 
---------------
--- Internal --
---------------
+-- Prototype -----------------------------------------------------------------------------------------------------------
 
-local function ResetIncompatibleProfiles(version)
-	if KT.db.global.version and KT.IsHigherVersion(version, KT.db.global.version) then
-		local profile
-		for _, v in ipairs(KT.db:GetProfiles()) do
-			profile = KT.db.profiles[v]
-            for k, _ in pairs(profile) do
-                profile[k] = nil
-            end
-		end
-		StaticPopup_Show(addonName.."_Info", nil, "All profiles was reseted, because new version %s is not compatible with the stored settings.", {KT.version})
+---@type KT|Options|Filters|QuestLog|AddonQuestie|AddonPetTracker|AddonOthers|Help
+local prototype = {}
+
+---SetForced (prototype)
+function prototype:SetForced(forced)
+	if forced then
+		KT.skinID = KT.skinID + 1
 	end
 end
 
-local function ResetIncompatibleData(version)
-	if KT.db.global.version and KT.IsHigherVersion(version, KT.db.global.version) then
-		for _, char in pairs(KT.db.sv.char) do
-			for k, _ in pairs(char) do
-				char[k] = nil
-			end
-		end
+local mt = getmetatable(KT)
+mt.__index = prototype
+setmetatable(KT, mt)
+KT:SetDefaultModulePrototype(prototype)
+
+-- Internal ------------------------------------------------------------------------------------------------------------
+
+local Noop = function() end
+
+local function ObjectiveTracker_Toggle()
+	if OTF.collapsed then
+		ObjectiveTracker_Expand()
+	else
+		ObjectiveTracker_Collapse()
 	end
+	ObjectiveTracker_Update()
 end
 
 local function SetHeaders(type)
@@ -157,7 +161,7 @@ local function SlashHandler(msg, editbox)
 	if cmd == "config" then
 		KT:OpenOptions()
 	else
-		ObjectiveTracker_MinimizeButton_OnClick()
+		KT:MinimizeButton_OnClick()
 	end
 end
 
@@ -178,7 +182,7 @@ local function GetTaskTimeLeftData(questID)
 	return timeString, timeColor
 end
 
--- Setup ---------------------------------------------------------------------------------------------------------------
+-- Init ----------------------------------------------------------------------------------------------------------------
 
 local function Init()
 	if db.keyBindMinimize ~= "" then
@@ -192,14 +196,14 @@ local function Init()
 
 	KT:MoveTracker()
 	KT:SetBackground()
-	KT:SetText()
+	KT:SetText(true)
 
 	C_Timer.After(0, function()
 		KT.stopUpdate = false
 		KT.inWorld = true
 
 		if dbChar.collapsed then
-			ObjectiveTracker_MinimizeButton_OnClick()
+			ObjectiveTracker_Toggle()
 		else
 			ObjectiveTracker_Update()
 		end
@@ -228,7 +232,7 @@ local function SetFrames()
 			KT.inWorld = true
 			KT.inInstance = IsInInstance()
 			if db.collapseInInstance and KT.inInstance and not dbChar.collapsed then
-				ObjectiveTracker_MinimizeButton_OnClick()
+				ObjectiveTracker_Toggle()
 			end
 		elseif event == "PLAYER_LEAVING_WORLD" then
 			KT.inWorld = false
@@ -324,7 +328,7 @@ local function SetFrames()
 		if IsAltKeyDown() then
 			KT:OpenOptions()
 		elseif not KT:IsTrackerEmpty() and not KT.locked then
-			ObjectiveTracker_MinimizeButton_OnClick()
+			KT:MinimizeButton_OnClick()
 		end
 	end)
 	button:SetScript("OnEnter", function(self)
@@ -387,8 +391,8 @@ local function SetFrames()
 	OTF:KTSetPoint("TOPLEFT")
 	OTF:KTSetParent(Child)
 	OTFHeader:Show()
-	OTFHeader.Hide = function() end
-	OTFHeader.SetShown = function() end
+	OTFHeader.Hide = Noop
+	OTFHeader.SetShown = Noop
 	OTFHeader:SetSize(10, 21)
 	OTFHeader:ClearAllPoints()
 	OTFHeader:SetPoint("TOPLEFT", -20, -1)
@@ -565,18 +569,18 @@ local function SetHooks()
 				end
 				line.dashStyle = dashStyle;
 			end
-			if not line.Dash.KTskinned or KT.forcedUpdate then
+			if line.Dash.KTskinID ~= KT.skinID then
 				line.Dash:SetFont(KT.font, db.fontSize, db.fontFlag)
 				line.Dash:SetShadowColor(0, 0, 0, db.fontShadow)
-				line.Dash.KTskinned = true
+				line.Dash.KTskinID = KT.skinID
 			end
 		end
 		-- check
-		if line.Check and (not line.Check.KTskinned or KT.forcedUpdate) then
+		if line.Check and line.Check.KTskinID ~= KT.skinID then
 			line.Check:SetSize(db.fontSize-2.5, db.fontSize-2.5)
 			line.Check:ClearAllPoints()
 			line.Check:SetPoint("TOPLEFT", -db.fontSize*0.2+(db.fontFlag == "" and 0 or 1), -2)
-			line.Check.KTskinned = true
+			line.Check.KTskinID = KT.skinID
 		end
 		-- set the text
 		local textHeight = self:SetStringText(line.Text, text, useFullHeight, colorStyle, block.isHighlighted);
@@ -630,11 +634,11 @@ local function SetHooks()
 	end
 
 	function DEFAULT_OBJECTIVE_TRACKER_MODULE:SetStringText(fontString, text, useFullHeight, colorStyle, useHighlight)  -- RO
-		if not fontString.KTskinned or KT.forcedUpdate then
+		if fontString.KTskinID ~= KT.skinID then
 			fontString:SetFont(KT.font, db.fontSize, db.fontFlag)
 			fontString:SetShadowColor(0, 0, 0, db.fontShadow)
 			fontString:SetWordWrap(db.textWordWrap)
-			fontString.KTskinned = true
+			fontString.KTskinID = KT.skinID
 		end
 		if self == QUEST_TRACKER_MODULE and not useHighlight then
 			useHighlight = fontString:GetParent().isHighlighted		-- Fix Blizz bug
@@ -931,7 +935,7 @@ local function SetHooks()
 	end
 
 	local function SetProgressBarStyle(progressBar)
-		if not progressBar.KTskinned or KT.forcedUpdate then
+		if progressBar.KTskinID ~= KT.skinID then
 			local block = progressBar.block
 			block.height = block.height - progressBar.height
 
@@ -973,7 +977,7 @@ local function SetHooks()
 			progressBar.Bar.Label:SetPoint("CENTER", 0, 0.5)
 			progressBar.Bar.Label:SetFont(LSM:Fetch("font", "Arial Narrow"), 13, "")
 			progressBar.Bar:SetStatusBarTexture(LSM:Fetch("statusbar", db.progressBar))
-			progressBar.KTskinned = true
+			progressBar.KTskinID = KT.skinID
 			progressBar.isSkinned = true	-- ElvUI hack
 
 			block.height = block.height + progressBar.height
@@ -1188,7 +1192,7 @@ local function SetHooks()
 			if ( IsModifiedClick("QUESTWATCHTOGGLE") ) then
 				QuestObjectiveTracker_UntrackQuest(nil, block.id);
 			elseif IsModifiedClick(db.menuWowheadURLModifier) then
-				KT:ShowPopup("quest", block.id)
+				KT:Alert_WowheadURL("quest", block.id)
 			else
 				local questLogIndex = GetQuestLogIndexByID(block.id);
 				if ( IsQuestComplete(block.id) and GetQuestLogIsAutoComplete(questLogIndex) ) then
@@ -1251,7 +1255,7 @@ local function SetHooks()
 
 		if db.menuWowheadURL then
 			info.text = "|cff33ff99Wowhead|r URL";
-			info.func = KT.ShowPopup;
+			info.func = KT.Alert_WowheadURL;
 			info.arg1 = "quest";
 			info.arg2 = block.id;
 			info.checked = false;
@@ -1276,7 +1280,7 @@ local function SetHooks()
 				if ( IsModifiedClick("QUESTWATCHTOGGLE") ) then
 					AchievementObjectiveTracker_UntrackAchievement(_, block.id);
 				elseif IsModifiedClick(db.menuWowheadURLModifier) then
-					KT:ShowPopup("achievement", block.id)
+					KT:Alert_WowheadURL("achievement", block.id)
 				elseif ( not AchievementFrame:IsShown() ) then
 					AchievementFrame_ToggleAchievementFrame();
 					AchievementFrame_SelectAchievement(block.id);
@@ -1322,7 +1326,7 @@ local function SetHooks()
 
 			if db.menuWowheadURL then
 				info.text = "|cff33ff99Wowhead|r URL";
-				info.func = KT.ShowPopup;
+				info.func = KT.Alert_WowheadURL;
 				info.arg1 = "achievement";
 				info.arg2 = block.id;
 				info.checked = false;
@@ -1335,6 +1339,15 @@ end
 --------------
 -- External --
 --------------
+
+function KT:Update(forced)
+	self:SetForced(forced)
+	ObjectiveTracker_Update()
+end
+
+function KT:MinimizeButton_OnClick()
+	ObjectiveTracker_MinimizeButton_OnClick()
+end
 
 function KT:SetSize()
 	local height = 33
@@ -1502,7 +1515,11 @@ function KT:SetBackground()
     OTFHeader.Title:SetJustifyH(db.bgr == "None" and "RIGHT" or "LEFT")
 end
 
-function KT:SetText()
+function KT:SetText(forced)
+	if forced then
+		self.skinID = self.skinID + 1
+	end
+
 	self.font = LSM:Fetch("font", db.font)
 
 	KT.OBJECTIVE_TRACKER_DOUBLE_LINE_HEIGHT = (2 * db.fontSize) + 1
@@ -1512,10 +1529,16 @@ function KT:SetText()
 
 	-- Others
 	if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then
-		ScenarioStageBlock.Stage:SetFont(self.font, db.fontSize+5, db.fontFlag)
-		ScenarioStageBlock.Name:SetFont(self.font, db.fontSize, db.fontFlag)
-		ScenarioStageBlock.CompleteLabel:SetFont(self.font, db.fontSize+5, db.fontFlag)
-		ScenarioBonusHeader.Label:SetFont(self.font, db.fontSize, db.fontFlag)
+		if ScenarioBlocksFrame.KTskinID ~= KT.skinID then
+			ScenarioStageBlock.Stage:SetFont(self.font, db.fontSize+5, db.fontFlag)
+			ScenarioStageBlock.Name:SetFont(self.font, db.fontSize, db.fontFlag)
+			ScenarioStageBlock.CompleteLabel:SetFont(self.font, db.fontSize+5, db.fontFlag)
+			ScenarioBonusHeader.Label:SetFont(self.font, db.fontSize, db.fontFlag)
+			ScenarioChallengeModeBlock.TimeLeft:SetFont(LSM:Fetch("font", "Arial Narrow"), 19, "")
+			ScenarioProvingGroundsBlock.WaveLabel:SetFont(self.font, db.fontSize+2, db.fontFlag)
+			ScenarioProvingGroundsBlock.Wave:SetFont(self.font, db.fontSize+2, db.fontFlag)
+			ScenarioBlocksFrame.KTskinID = KT.skinID
+		end
 	end
 end
 
@@ -1741,6 +1764,11 @@ function KT:IsTrackerEmpty(noaddon)
 		GetNumAutoQuestPopUps() == 0 and
 		GetNumTrackedAchievements() == 0 and
 		not self.inScenario)
+	if not noaddon then
+		if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then
+			result = (result and not self.AddonPetTracker:IsShown())
+		end
+	end
 	return result
 end
 
@@ -1809,74 +1837,6 @@ function KT:UpdateHotkey()
 	end
 end
 
-StaticPopupDialogs[addonName.."_Info"] = {
-	text = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:0:0|t"..NORMAL_FONT_COLOR_CODE..KT.title.."|r",
-	subText = "...",
-	button2 = CLOSE,
-	OnShow = function(self)
-		if self.text.text_arg1 then
-			self.text:SetText(self.text:GetText().." - "..self.text.text_arg1)
-		end
-		self.SubText:SetFormattedText(self.text.text_arg2, unpack(self.data))
-		self.SubText:SetTextColor(1, 1, 1)
-	end,
-	timeout = 0,
-	whileDead = 1
-}
-
-StaticPopupDialogs[addonName.."_WowheadURL"] = {
-	text = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:0:-1|t"..NORMAL_FONT_COLOR_CODE..KT.title.."|r - Wowhead URL",
-	button2 = CLOSE,
-	hasEditBox = 1,
-	editBoxWidth = 350,
-	EditBoxOnTextChanged = function(self)
-		self:SetText(self.text)
-		self:HighlightText()
-	end,
-	EditBoxOnEnterPressed = function(self)
-		self:GetParent():Hide()
-	end,
-	EditBoxOnEscapePressed = function(self)
-		self:GetParent():Hide()
-	end,
-	OnShow = function(self)
-		local name = "..."
-		if self.text.text_arg1 == "quest" then
-			name = KT.QuestUtils_GetQuestName(self.text.text_arg2)
-		elseif self.text.text_arg1 == "achievement" then
-			name = select(2, GetAchievementInfo(self.text.text_arg2))
-		end
-		local url = "https://www.wowhead.com/"
-		if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-			url = url.."classic/"
-		elseif WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
-			url = url.."mop-classic/"
-		elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
-			url = url.."cata/"
-		elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
-			url = url.."wotlk/"
-		elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
-			url = url.."tbc/"
-		end
-		local lang = KT.locale:sub(1, 2)
-		if lang ~= "en" then
-			if lang == "zh" then lang = "cn" end
-			url = url..lang.."/"
-		end
-		self.text:SetText(self.text:GetText().."\n|cffff7f00"..name.."|r")
-		self.editBox.text = url..self.text.text_arg1.."="..self.text.text_arg2
-		self.editBox:SetText(self.editBox.text)
-		self.editBox:SetFocus()
-	end,
-	timeout = 0,
-	whileDead = 1,
-	hideOnEscape = 1
-}
-
-function KT:ShowPopup(type, id)
-	StaticPopup_Show(addonName.."_WowheadURL", type, id)
-end
-
 -- Load ----------------------------------------------------------------------------------------------------------------
 
 function KT:OnInitialize()
@@ -1899,6 +1859,7 @@ function KT:OnInitialize()
 	self.borderColor = {}
 	self.headerBtnColor = {}
 	self.fixedButtons = {}
+	self.skinID = 0
 	self.inWorld = false
 	self.inInstance = IsInInstance()
 	self.inScenario = C_Scenario.IsInScenario() and not self.IsScenarioHidden()
@@ -1910,44 +1871,45 @@ function KT:OnInitialize()
 
 	-- Blizzard frame resets
 	WatchFrame:Hide()
-	WatchFrame.Show = function() end
+	WatchFrame.Show = Noop
 	OTF.IsUserPlaced = function() return true end
 	OTF.KTSetParent = OTF.SetParent
-	OTF.SetParent = function() end
-	OTF.SetFrameStrata = function() end
-	OTF.SetFrameLevel = function() end
+	OTF.SetParent = Noop
+	OTF.SetFrameStrata = Noop
+	OTF.SetFrameLevel = Noop
 	OTF:SetClampedToScreen(false)
-	OTF.SetClampedToScreen = function() end
+	OTF.SetClampedToScreen = Noop
 	OTF:EnableMouse(false)
-	OTF.EnableMouse = function() end
+	OTF.EnableMouse = Noop
 	OTF:SetMovable(false)
-	OTF.SetMovable = function() end
+	OTF.SetMovable = Noop
 	OTF:ClearAllPoints()
-	OTF.ClearAllPoints = function() end
-	OTF.SetAllPoints = function() end
+	OTF.ClearAllPoints = Noop
+	OTF.SetAllPoints = Noop
 	OTF.KTSetPoint = OTF.SetPoint
-	OTF.SetPoint = function() end
+	OTF.SetPoint = Noop
 	OTF:Show()
-	OTF.Show = function() end
-	OTF.Hide = function() end
-	OTF.SetShown = function() end
+	OTF.Show = Noop
+	OTF.Hide = Noop
+	OTF.SetShown = Noop
 end
 
 function KT:OnEnable()
 	_DBG("|cff00ff00Enable|r - "..self:GetName(), true)
 	db = self.db.profile
 	dbChar = self.db.char
-	ResetIncompatibleProfiles("3.1.0")
-	ResetIncompatibleData("3.1.0")
+	self:Alert_ResetIncompatibleProfiles("3.1.0")
 
 	self.QuestsCache_Init(dbChar.quests.cache)
 
+	self.initCollapsed = dbChar.collapsed
 	self.screenWidth = round(GetScreenWidth())
 	self.screenHeight = round(GetScreenHeight())
 
 	SetFrames()
 	SetHooks()
 
+	self:RegSignal("OPTIONS_CHANGED", "Update")
 	self:RegEvent("PLAYER_ENTERING_WORLD", function(eventID)
 		ObjectiveTracker_Initialize(OTF)
 		Init()
@@ -1957,10 +1919,15 @@ function KT:OnEnable()
 	self.Options:Enable()
 	self.Filters:Enable()
 	if self.AddonQuestie.isLoaded then self.AddonQuestie:Enable() end
+	if WOW_PROJECT_ID > WOW_PROJECT_CLASSIC then
+		if self.AddonPetTracker.isLoaded then self.AddonPetTracker:Enable() end
+	end
 	self.AddonOthers:Enable()
 	self.Help:Enable()
 
 	if self.db.global.version ~= self.version then
 		self.db.global.version = self.version
 	end
+
+	db.modulesOrder = self.ReconcileOrder(self.BLIZZARD_MODULES, db.modulesOrder)
 end

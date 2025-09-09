@@ -4,7 +4,10 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
+---@type KT
 local addonName, KT = ...
+
+---@class AddonOthers
 local M = KT:NewModule("AddonOthers")
 KT.AddonOthers = M
 
@@ -14,20 +17,9 @@ local _DBG = function(...) if _DBG then _DBG("KT", ...) end end
 local _G = _G
 
 local db
-local OTF = ObjectiveTrackerFrame
+local OTF = KT_ObjectiveTrackerFrame
 
 local KTwarning = "  |cff00ffffAddon "..KT.title.." is active.  "
-
-StaticPopupDialogs[addonName.."_ReloadUI"] = {
-    text = KTwarning,
-    button1 = "Reload UI",
-    OnAccept = function()
-        ReloadUI()
-    end,
-    timeout = 0,
-    whileDead = true,
-    preferredIndex = 3,
-}
 
 --------------
 -- Internal --

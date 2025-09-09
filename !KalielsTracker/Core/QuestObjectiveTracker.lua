@@ -1,3 +1,4 @@
+---@type KT
 local _, KT = ...
 
 QUEST_TRACKER_MODULE = ObjectiveTracker_GetModuleInfoTable();
@@ -13,7 +14,7 @@ QUEST_TRACKER_MODULE.buttonOffsets = {
 QUEST_TRACKER_MODULE.paddingBetweenButtons = 2;
 
 -- because this header is shared, on finishing its anim it has to update all the modules that use it
-QUEST_TRACKER_MODULE:SetHeader(ObjectiveTrackerFrame.BlocksFrame.QuestHeader, TRACKER_HEADER_QUESTS, OBJECTIVE_TRACKER_UPDATE_QUEST_ADDED);
+QUEST_TRACKER_MODULE:SetHeader(KT_ObjectiveTrackerFrame.BlocksFrame.QuestHeader, TRACKER_HEADER_QUESTS, OBJECTIVE_TRACKER_UPDATE_QUEST_ADDED);
 
 function QUEST_TRACKER_MODULE:OnFreeBlock(block)
 	QuestObjectiveReleaseBlockButton_Item(block);
@@ -240,6 +241,7 @@ local function EnumQuestWatchData(func)
 	--cache the questWatchInfo
 	for i = 1, GetNumQuestWatches() do
 		local questLogIndex = GetQuestIndexForWatch(i)
+		if not questLogIndex then return end
 		questWatchInfoList[i] = { KT_GetQuestWatchInfo(questLogIndex) }
 	end
 
@@ -350,12 +352,12 @@ function QUEST_TRACKER_MODULE:Update()
 	QUEST_TRACKER_MODULE.lastBlock = nil;
 
 	local numPOINumeric = 0;
-	QuestPOI_ResetUsage(ObjectiveTrackerFrame.BlocksFrame);
+	QuestPOI_ResetUsage(KT_ObjectiveTrackerFrame.BlocksFrame);
 
 	local _, instanceType = IsInInstance();
 	if ( instanceType == "arena" ) then
 		-- no quests in arena
-		QuestPOI_HideUnusedButtons(ObjectiveTrackerFrame.BlocksFrame);
+		QuestPOI_HideUnusedButtons(KT_ObjectiveTrackerFrame.BlocksFrame);
 		QUEST_TRACKER_MODULE:EndLayout();
 		return;
 	end
@@ -452,13 +454,13 @@ function QUEST_TRACKER_MODULE:Update()
 						local poiButton;
 						if ( hasLocalPOI ) then
 							if ( isComplete ) then
-								poiButton = QuestPOI_GetButton(ObjectiveTrackerFrame.BlocksFrame, questID, "completed", nil);
+								poiButton = QuestPOI_GetButton(KT_ObjectiveTrackerFrame.BlocksFrame, questID, "completed", nil);
 							else
 								numPOINumeric = LOCAL_MAP_POI_NUMBERS[questID] or numPOINumeric + 1;
-								poiButton = QuestPOI_GetButton(ObjectiveTrackerFrame.BlocksFrame, questID, "numeric", numPOINumeric);
+								poiButton = QuestPOI_GetButton(KT_ObjectiveTrackerFrame.BlocksFrame, questID, "numeric", numPOINumeric);
 							end
 						elseif ( isComplete ) then
-							poiButton = QuestPOI_GetButton(ObjectiveTrackerFrame.BlocksFrame, questID, "completed", nil);
+							poiButton = QuestPOI_GetButton(KT_ObjectiveTrackerFrame.BlocksFrame, questID, "completed", nil);
 						end
 						if ( poiButton ) then
 							poiButton:SetParent(block);
@@ -475,7 +477,7 @@ function QUEST_TRACKER_MODULE:Update()
 	);
 
 	ObjectiveTracker_WatchMoney(watchMoney, OBJECTIVE_TRACKER_UPDATE_MODULE_QUEST);
-	QuestPOI_SelectButtonByQuestID(ObjectiveTrackerFrame.BlocksFrame, GetSuperTrackedQuestID());
-	QuestPOI_HideUnusedButtons(ObjectiveTrackerFrame.BlocksFrame);
+	QuestPOI_SelectButtonByQuestID(KT_ObjectiveTrackerFrame.BlocksFrame, GetSuperTrackedQuestID());
+	QuestPOI_HideUnusedButtons(KT_ObjectiveTrackerFrame.BlocksFrame);
 	QUEST_TRACKER_MODULE:EndLayout();
 end

@@ -1,0 +1,14 @@
+## Interface: 50500
+## Title: Kaliel's Tracker
+## Notes: |nMoP Classic Objective Tracker|n|cff999999by Kaliel (Marouan Sabbagh)|n|n
+## Version: 5.1.3
+## Author: Kaliel (Marouan Sabbagh)
+
+## SavedVariables: KalielsTrackerDB
+## Dependencies: Blizzard_UIWidgets
+## OptionalDeps: Ace3, LibSharedMedia-3.0, AceGUI-3.0-SharedMediaWidgets, LibSink-2.0, MSA-DropDownMenu-1.0, Questie, PetTracker
+
+Core\Core.xml
+Libs\Libs.xml
+System\System.xml
+Modules\Modules.xml

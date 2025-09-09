@@ -4,7 +4,10 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
+---@type KT
 local addonName, KT = ...
+
+---@class Filters
 local M = KT:NewModule("Filters")
 KT.Filters = M
 
@@ -25,7 +28,7 @@ local _G = _G
 local db, dbChar
 
 local KTF = KT.frame
-local OTF = ObjectiveTrackerFrame
+local OTF = KT_ObjectiveTrackerFrame
 local OTFHeader = OTF.HeaderMenu
 
 local continents = KT.GetMapContinents()
@@ -416,6 +419,7 @@ local function Filter_Achievements(spec)
 												((strfind(name, zoneName) or strfind(aText, zoneName)) and strfind(aText, instanceSize)) then
 											if instanceDifficulty == "Normal" then
 												if not (strfind(aText, "Heroic") or
+														strfind(aText, "Challenge Mode") or
 														strfind(aText, "Mythic")) then
 													track = true
 												end
@@ -697,6 +701,45 @@ function DropDown_Initialize(self, level)
 			info.checked = (db.filterAuto[info.arg1] == info.arg2)
 			info.func = DropDown_Filter_AutoTrack
 			MSA_DropDownMenu_AddButton(info)
+
+			-- Addon - PetTracker
+			if KT.AddonPetTracker.isLoaded then
+				MSA_DropDownMenu_AddSeparator(info)
+
+				info.text = PETS
+				info.isTitle = true
+				MSA_DropDownMenu_AddButton(info)
+
+				info.isTitle = false
+				info.disabled = false
+				info.notCheckable = false
+
+				info.text = KT.AddonPetTracker.Texts.TrackPets
+				info.checked = (PetTracker.sets.zoneTracker)
+				info.func = function()
+					PetTracker.ToggleOption("zoneTracker")
+					if dbChar.collapsed and PetTracker.sets.zoneTracker then
+						KT:MinimizeButton_OnClick()
+					end
+				end
+				MSA_DropDownMenu_AddButton(info)
+
+				info.text = KT.AddonPetTracker.Texts.CapturedPets
+				info.checked = (PetTracker.sets.capturedPets)
+				info.func = function()
+					PetTracker.ToggleOption("capturedPets")
+				end
+				MSA_DropDownMenu_AddButton(info)
+
+				info.notCheckable = true
+
+				info.text = KT.AddonPetTracker.Texts.DisplayCondition
+				info.keepShownOnClick = true
+				info.hasArrow = true
+				info.value = 4
+				info.func = nil
+				MSA_DropDownMenu_AddButton(info)
+			end
 		end
 	elseif level == 2 then
 		info.notCheckable = true
@@ -809,6 +852,29 @@ function DropDown_Initialize(self, level)
 					MSA_DropDownMenu_AddButton(info, level)
 				end
 			end
+		elseif MSA_DROPDOWNMENU_MENU_VALUE == 4 then
+			-- Addon - PetTracker
+			info.notCheckable = false
+			info.isNotRadio = false
+			info.func = function(_, arg)
+				PetTracker.SetOption("targetQuality", arg)
+				DropDown_Toggle()
+			end
+
+			info.text = KT.AddonPetTracker.Texts.DisplayAlways
+			info.arg1 = PetTracker.MaxQuality
+			info.checked = (PetTracker.sets.targetQuality == info.arg1)
+			MSA_DropDownMenu_AddButton(info, level)
+
+			info.text = KT.AddonPetTracker.Texts.DisplayMissingRares
+			info.arg1 = PetTracker.MaxPlayerQuality
+			info.checked = (PetTracker.sets.targetQuality == info.arg1)
+			MSA_DropDownMenu_AddButton(info, level)
+
+			info.text = KT.AddonPetTracker.Texts.DisplayMissingPets
+			info.arg1 = 1
+			info.checked = (PetTracker.sets.targetQuality == info.arg1)
+			MSA_DropDownMenu_AddButton(info, level)
 		end
 	end
 end
@@ -822,6 +888,19 @@ local function SetFrames()
 			if event == "ADDON_LOADED" and arg1 == "Blizzard_AchievementUI" then
 				SetHooks_AchievementUI()
 				self:UnregisterEvent(event)
+			elseif event == "PLAYER_ENTERING_WORLD" then
+				local isInitialLogin, isReloadingUi = arg1, ...
+				if not isInitialLogin and isReloadingUi then
+					if db.filterAuto[1] == "zone" then
+						KT.questStateStopUpdate = true
+						Filter_Quests("zone")
+						KT.questStateStopUpdate = false
+					end
+					if db.filterAuto[2] == "zone" then
+						Filter_Achievements("zone")
+					end
+					self:UnregisterEvent(event)
+				end
 			elseif event == "QUEST_ACCEPTED" or
 					event == "ZONE_CHANGED" or
 					event == "ZONE_CHANGED_INDOORS" then
@@ -843,6 +922,7 @@ local function SetFrames()
 		end)
 	end
 	eventFrame:RegisterEvent("ADDON_LOADED")
+	eventFrame:RegisterEvent("PLAYER_ENTERING_WORLD")
 	eventFrame:RegisterEvent("QUEST_ACCEPTED")
 	eventFrame:RegisterEvent("ZONE_CHANGED")
 	eventFrame:RegisterEvent("ZONE_CHANGED_INDOORS")

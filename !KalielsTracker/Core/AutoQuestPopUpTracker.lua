@@ -7,8 +7,8 @@ AUTO_QUEST_POPUP_TRACKER_MODULE.blockType = "ScrollFrame";
 AUTO_QUEST_POPUP_TRACKER_MODULE.freeBlocks = { };
 AUTO_QUEST_POPUP_TRACKER_MODULE.usedBlocks = { };
 -- MSA
-ObjectiveTrackerFrame.BlocksFrame.PopupQuestHeader = CreateFrame("Frame", "PopupQuestHeader", ObjectiveTrackerFrame.BlocksFrame, "ObjectiveTrackerHeaderTemplate")
-AUTO_QUEST_POPUP_TRACKER_MODULE:SetHeader(ObjectiveTrackerFrame.BlocksFrame.PopupQuestHeader, "Popup "..TRACKER_HEADER_QUESTS)
+KT_ObjectiveTrackerFrame.BlocksFrame.PopupQuestHeader = CreateFrame("Frame", "PopupQuestHeader", KT_ObjectiveTrackerFrame.BlocksFrame, "ObjectiveTrackerHeaderTemplate")
+AUTO_QUEST_POPUP_TRACKER_MODULE:SetHeader(KT_ObjectiveTrackerFrame.BlocksFrame.PopupQuestHeader, "Popup "..TRACKER_HEADER_QUESTS)
 AUTO_QUEST_POPUP_TRACKER_MODULE.blockOffsetX = -26;
 AUTO_QUEST_POPUP_TRACKER_MODULE.blockOffsetY = -6;
 

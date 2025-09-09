@@ -4,6 +4,7 @@
 	<Script file="QuestLog.lua"/>
 	<Script file="Filters.lua"/>
 	<Script file="Addon_Questie.lua"/>
+	<Script file="Addon_PetTracker.lua"/>
 	<Script file="Addon_Others.lua"/>
 	<Script file="Help.lua"/>
 </Ui>

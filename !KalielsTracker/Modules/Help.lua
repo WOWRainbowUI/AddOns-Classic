@@ -4,17 +4,24 @@
 ---
 --- This file is part of addon Kaliel's Tracker.
 
+---@type KT
 local _, KT = ...
+
+---@class Help
 local M = KT:NewModule("Help")
 KT.Help = M
 
 local T = LibStub("MSA-Tutorials-1.0")
 local _DBG = function(...) if _DBG then _DBG("KT", ...) end end
 
+local HELP_PATH = KT.MEDIA_PATH.."Help\\"
+local ICON_URL = HELP_PATH.."help_icon-url"
+local ICON_HEART = "|T"..HELP_PATH.."help_patreon:14:14:2:0:256:32:174:190:0:16|t"
+
 local db, dbChar
 local helpPath = KT.MEDIA_PATH.."Help\\"
 local helpName = "help"
-local helpNumPages = 9
+local helpNumPages = 10
 local supportersName = "supporters"
 local supportersNumPages = 1
 local cTitle = "|cffffd200"
@@ -22,7 +29,7 @@ local cBold = "|cff00ffe3"
 local cWarning = "|cffff7f00"
 local cDots = "|cff808080"
 local offs = "\n|T:1:8|t"
-local ebSpace = "|T:24:1|t"
+local ebSpace = "|T:16:1|t\n"
 local beta = "|cffff7fff[Beta]|r"
 local new = "|cffff7fff[NEW]|r"
 
@@ -39,7 +46,7 @@ local function AddonInfo(name)
 	else
 		info = info.." |cffff0000is not installed|r."
 	end
-	info = info.." Support you can enable / disable in Options."
+	info = info.." Support you can enable / disable in Options.\n"..ebSpace
 	return info
 end
 
@@ -78,7 +85,11 @@ local function SetupTutorials()
 		title = KT.title.." |cffffffff"..KT.version.."|r",
 		icon = helpPath.."KT_logo",
 		font = "Fonts\\FRIZQT__.TTF",
-		width = 552,
+		width = 582,
+		height = 610,
+		paddingX = 35,
+		paddingTop = 26,
+		paddingBottom = 24,
 		imageWidth = 512,
 		imageHeight = 256,
 		{	-- 1
@@ -102,8 +113,8 @@ local function SetupTutorials()
 		{	-- 2
 			image = helpPath.."help_header-buttons",
 			imageHeight = 128,
-			text = cTitle.."Header buttons|r\n\n"..
-					"Minimize button:\n"..
+			heading = "Header buttons",
+			text = "Minimize button:\n"..
 					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:0:14:209:170:0|t "..cDots.."...|r Expand Tracker\n"..
 					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:16:30:209:170:0|t "..cDots.."...|r Collapse Tracker\n"..
 					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-1:2:32:64:0:14:32:46:209:170:0|t "..cDots.."...|r when is tracker empty\n\n"..
@@ -115,7 +126,7 @@ local function SetupTutorials()
 					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:0:2:32:64:16:30:16:30:209:170:0|t you can disable in Options.\n\n"..
 					"You can set "..cBold.."[key bind]|r for Minimize button.\n"..
 					cBold.."Alt+Click|r on Minimize button opens "..KT.title.." Options.",
-			textY = 16,
+			paddingBottom = 11,
 			shine = KTF.MinimizeButton,
 			shineTop = 13,
 			shineBottom = -14,
@@ -124,8 +135,8 @@ local function SetupTutorials()
 		{	-- 3
 			image = helpPath.."help_quest-title-tags",
 			imageHeight = 128,
-			text = cTitle.."Quest title tags|r\n\n"..
-					"Quest level |cffff8000[42]|r is at the beginning of the quest title.\n"..
+			heading = "Quest title tags",
+			text = "Quest level |cffff8000[42]|r is at the beginning of the quest title.\n"..
 					"Quest type tags are at the end of quest title.\n\n"..
 					KT.CreateQuestTagIcon(nil, 7, 14, 2, 0, 0.34, 0.425, 0, 0.28125).." "..cDots.."........|r Daily quest|T:14:121|t"..
 						KT.CreateQuestTagIcon(nil, 16, 16, 0, 0, unpack(QUEST_TAG_TCOORDS[Enum.QuestTag.Heroic])).." "..cDots.."......|r Heroic quest\n"..
@@ -138,6 +149,7 @@ local function SetupTutorials()
 					KT.CreateQuestTagIcon(nil, 17, 17, -1, 0, unpack(QUEST_TAG_TCOORDS[Enum.QuestTag.Raid])).." "..cDots.."......|r Raid quest|T:14:125|t"..
 						KT.CreateQuestTagIcon(nil, 7, 14, 2, 0, 0.055, 0.134, 0.28125, 0.5625).." "..cDots.."........|r Legendary quest\n\n"..
 					cWarning.."Note:|r Not all of these tags are used in Classic.",
+			paddingBottom = 16,
 			shineTop = 10,
 			shineBottom = -9,
 			shineLeft = -12,
@@ -145,8 +157,8 @@ local function SetupTutorials()
 		},
 		{	-- 4
 			image = helpPath.."help_tracker-filters",
-			text = cTitle.."Tracker Filters|r\n\n"..
-					"For open Filters menu "..cBold.."Click|r on the button |T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-2:1:32:64:16:30:32:46:209:170:0|t.\n\n"..
+			heading = "Tracker Filters",
+			text = "For open Filters menu "..cBold.."Click|r on the button |T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-2:1:32:64:16:30:32:46:209:170:0|t.\n\n"..
 					"There are two types of filters:\n"..
 					cTitle.."Static filter|r - adds quests/achievements to tracker by criterion (e.g. \"Daily\") and then you can add / remove items by hand.\n"..
 					cTitle.."Dynamic filter|r - automatically adding quests/achievements to tracker by criterion (e.g. \"|cff00ff00Auto|r Zone\") "..
@@ -154,7 +166,7 @@ local function SetupTutorials()
 					"When is some Dynamic filter active, header button is green |T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:-2:1:32:64:16:30:32:46:0:255:0|t.\n\n"..
 					"For Achievements can change searched categories, it will affect the outcome of the filter.\n\n"..
 					"This menu displays other options affecting the content of the tracker.",
-			textY = 16,
+			paddingBottom = 20,
 			shine = KTF.FilterButton,
 			shineTop = 10,
 			shineBottom = -11,
@@ -163,14 +175,15 @@ local function SetupTutorials()
 		},
 		{	-- 5
 			image = helpPath.."help_quest-item-buttons",
-			text = cTitle.."Quest Item buttons|r\n\n"..
-					"For support Quest Items you need Questie addon (see page 8). Buttons are out of the tracker, because Blizzard doesn't allow to work with the action buttons inside addons.\n\n"..
+			heading = "Quest Item buttons",
+			text = "For support Quest Items you need Questie addon (see page 8). Buttons are out of the tracker, because Blizzard doesn't allow to work with the action buttons inside addons.\n\n"..
 					"|T"..helpPath.."help_quest-item-buttons_2:32:32:1:0:64:32:0:32:0:32|t "..cDots.."...|r  This tag indicates quest item in quest. The number inside is for\n"..
 					"              identification moved quest item button.\n\n"..
 					"|T"..helpPath.."help_quest-item-buttons_2:32:32:0:3:64:32:32:64:0:32|t "..cDots.."...|r  Real quest item button is moved out of the tracker to the left/right\n"..
 					"              side (by selected anchor point). The number is the same as for the tag.\n\n"..
 					cWarning.."Warning:|r\n"..
 					"In some situation during combat, actions around the quest item buttons paused and carried it up after a player is out of combat.",
+			paddingBottom = 22,
 			shineTop = 3,
 			shineBottom = -2,
 			shineLeft = -4,
@@ -178,8 +191,8 @@ local function SetupTutorials()
 		},
 		{	-- 6
 			image = helpPath.."help_tracker-modules",
-			text = cTitle.."Order of Modules|r\n\n"..
-					"Allows to change the order of modules inside the tracker. Supports all modules including external (e.g. PetTracker).",
+			heading = "Order of Modules",
+			text = "Allows to change the order of modules inside the tracker. Supports all modules including external (e.g. PetTracker).",
 			shine = KTF,
 			shineTop = 5,
 			shineBottom = -5,
@@ -188,27 +201,30 @@ local function SetupTutorials()
 		},
 		{	-- 7
 			image = helpPath.."help_quest-log",
-			text = cTitle.."Quest Log|r\n\n"..
-					cWarning.."Note:|r In Blizzard's Quest Log and supported Quest Log addons is disabled click on Quest Log "..
+			heading = "Quest Log",
+			text = cWarning.."Note:|r In Blizzard's Quest Log and supported Quest Log addons is disabled click on Quest Log "..
 					"headers (for collapse / expand). This is because collapsed sections hide contained quests for "..KT.title..".\n\n"..
 
-					cTitle.."Supported addons|r\n"..
+					cTitle.."Supported addons|r\n\n"..
 					"- Classic Quest Log\n"..ebSpace.."\n"..
 					"- QuestGuru\n"..ebSpace,
 			editbox = {
 				{
+					icon = ICON_URL,
 					text = "https://www.wowinterface.com/downloads/info24937-ClassicQuestLogforClassic.html",
-					width = 485,
-					left = 9,
-					bottom = 39,
+					width = 500,
+					left = 8,
+					bottom = 40,
 				},
 				{
+					icon = ICON_URL,
 					text = "https://www.curseforge.com/wow/addons/questguru_classic",
-					width = 485,
-					left = 9,
-					bottom = 5,
+					width = 500,
+					left = 8,
+					bottom = 2,
 				}
 			},
+			paddingBottom = 22,
 			shine = KTF,
 			shineTop = 5,
 			shineBottom = -5,
@@ -217,8 +233,8 @@ local function SetupTutorials()
 		},
 		{	-- 8
 			image = helpPath.."help_addon-questie",
-			text = cTitle.."Support addon Questie|r\n\n"..
-					"Questie support adds some features that use this addon's quest database.\n\n"..
+			heading = "Support addon Questie",
+			text = "Questie support adds some features that use this addon's quest database.\n\n"..
 					cTitle.."Zone filtering improvements|r\n"..
 					"Improved zone filtering now shows relevant quests in all quest-related zones (start, progress and end locations).\n\n"..
 					cTitle.."Quest Item buttons|r\n"..
@@ -228,14 +244,16 @@ local function SetupTutorials()
 					"- "..cBold.."Set TomTom Waypoint|r - sets TomTom arrow for closest quest objective. This"..
 					offs.."option is shown, if addon TomTom is installed.\n\n"..
 					"Options "..cBold.."Show on Map|r and "..cBold.."Set TomTom Waypoint|r are disabled, if no map data exists.\n\n"..
-					AddonInfo("Questie").."\n"..ebSpace,
+					AddonInfo("Questie"),
 			editbox = {
 				{
+					icon = ICON_URL,
 					text = "https://www.curseforge.com/wow/addons/questie",
-					width = 450,
-					bottom = 6,
+					width = 510,
+					bottom = 2,
 				}
 			},
+			paddingBottom = 22,
 			shine = KTF,
 			shineTop = 5,
 			shineBottom = -5,
@@ -243,19 +261,66 @@ local function SetupTutorials()
 			shineRight = 6,
 		},
 		{	-- 9
+			image = helpPath.."help_addon-pettracker",
+			heading = "Support addon PetTracker",
+			text = "PetTracker support adjusts display of zone pet tracking inside "..KT.title..".\nIt also fix some visual bugs.\n\n"..
+					AddonInfo("PetTracker"),
+			editbox = {
+				{
+					icon = ICON_URL,
+					text = "https://www.curseforge.com/wow/addons/pettracker",
+					width = 510,
+					bottom = 2,
+				}
+			},
+			paddingBottom = 22,
+			shine = KTF,
+			shineTop = 5,
+			shineBottom = -5,
+			shineLeft = -6,
+			shineRight = 6,
+		},
+		{	-- 10
 			image = helpPath.."help_whats-new_logo",
 			imageWidth = 192,
 			imageHeight = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and 42 or 22,
 			imageTexCoords = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and { 0, 0.75, 0, 0.65625 } or { 0, 0.75, 0.65625, 1 },
 			imagePoint = "TOPRIGHT",
-			imageX = -20,
-			imageY = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and 3 or 16,
+			imageX = -40,
+			imageY = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and -29 or -43,
 			imageAbsolute = true,
-			text = "           |T"..helpPath.."help_whats-new_title:32:181:0:0:256:32:0:181:0:32|t\n\n"..
-					cTitle.."Version 5.0.1|r\n"..
+			heading = "     What's New",
+			headingFont = "Fonts\\MORPHEUS.ttf",
+			headingSize = 26,
+			text = "If you like "..KT.title..", consider supporting it on Patreon "..ICON_HEART.."|r\n"..ebSpace.."\n"..
+
+					(cTitle.."Version 5.1.3|r\n"..
+					"- FIXED - occasional error when cold starting WoW\n"..
+					"\n")..
+
+					(cTitle.."Version 5.1.2|r\n"..
+					"- FIXED - Expand after track option not working for all quests\n"..
+					"\n")..
+
+					(cTitle.."Version 5.1.1|r\n"..
+					"- FIXED (Era) - error when tracker is empty (no PetTracker module)\n"..
+					"\n")..
+
+					(cTitle.."Version 5.1.0|r\n"..
+					"- ADDED (MoP) - dungeon Challenge Mode support (untested)\n"..
+					"- ADDED - addon support - PetTracker 11.2\n"..
+					"- CHANGED - addon support - Questie 11.3.1\n"..
+					"- CHANGED - PetTracker - improvement\n"..
+					"- FIXED - Help - error if no quest is being tracked\n"..
+					"- FIXED - PetTracker - sometimes SetWidth nil value error\n"..
+					"- PERFORMANCE - optimization of zone filtering code\n"..
+					"\n")..
+
+					(cTitle.."Version 5.0.1|r\n"..
 					"- FIXED (quests) - error when filtering by zone with Auto Quest tracking\n"..
-					"\n"..
-					cTitle.."Version 5.0.0|r\n"..
+					"\n")..
+
+					(cTitle.."Version 5.0.0|r\n"..
 					"- ADDED - support for WoW 1.15.7.61582\n"..
 					"- ADDED - support for WoW 5.5.0.62258\n"..
 					"- CHANGED (help) - Active Patrons\n"..
@@ -268,26 +333,33 @@ local function SetupTutorials()
 					"- CHANGED - deprecated functions in WoW 3.4.4\n"..
 					"- FIXED - error getting incorrect quest data\n"..
 					"- FIXED - tracked quests are untracked after login\n"..
-					"\n"..
+					"\n")..
 
 					cTitle.."WoW 5.5.0/1.15.7 - Known issues w/o solution|r\n"..
-					"- Scenario Proving Grounds is not supported. I currently have no way to test it, and it may cause errors.\n"..
 					"- Clicking on tracked quests or achievements has no response during combat.\n"..
-					"- Header buttons Q and A don't work during combat.\n\n"..
+					"- Header buttons Q and A don't work during combat.\n"..
+					"- Scenario Proving Grounds is not supported.\n\n"..
 
 					cTitle.."Issue reporting|r\n"..
-					"For reporting please use "..cBold.."Tickets|r instead of Comments on CurseForge.\n"..ebSpace.."\n\n"..
+					"For reporting please use "..cBold.."Tickets|r instead of Comments on CurseForge.\n"..ebSpace.."\n"..
 
 					cWarning.."Before reporting of errors, please deactivate other addons and make sure the bug is not caused "..
 					"by a collision with another addon.|r",
-			textY = -20,
 			editbox = {
 				{
+					icon = ICON_URL,
+					text = "https://patreon.com/kalielstracker",
+					width = 510,
+					top = 52,
+				},
+				{
+					icon = ICON_URL,
 					text = "https://www.curseforge.com/wow/addons/kaliels-tracker-classic/issues",
-					width = 450,
-					bottom = 41,
+					width = 510,
+					bottom = 40,
 				}
 			},
+			paddingBottom = 20,
 			shine = KTF,
 			shineTop = 5,
 			shineBottom = -5,
@@ -296,7 +368,7 @@ local function SetupTutorials()
 		},
 		onShow = function(self, i)
 			if dbChar.collapsed then
-				ObjectiveTracker_MinimizeButton_OnClick()
+				KT:MinimizeButton_OnClick()
 			end
 			if i == 2 then
 				local eraMod = WOW_PROJECT_ID > WOW_PROJECT_CLASSIC and 0 or 20
@@ -307,13 +379,15 @@ local function SetupTutorials()
 				end
 			elseif i == 3 then
 				local questLogIndex = GetQuestIndexForWatch(1)
-				local questID = GetQuestIDFromLogIndex(questLogIndex)
-				local block = QUEST_TRACKER_MODULE.usedBlocks[questID]
-				if block then
-					self[i].shine = block
+				if questLogIndex then
+					local questID = GetQuestIDFromLogIndex(questLogIndex)
+					local block = QUEST_TRACKER_MODULE.usedBlocks[questID]
+					if block then
+						self[i].shine = block
+					end
+					KTF.Scroll.value = 0
+					ObjectiveTracker_Update()
 				end
-				KTF.Scroll.value = 0
-				ObjectiveTracker_Update()
 			elseif i == 5 then
 				self[i].shine = KTF.Buttons
 			end
@@ -329,15 +403,17 @@ local function SetupTutorials()
 		title = KT.title.." |cffffffff"..KT.version.."|r",
 		icon = helpPath.."KT_logo",
 		font = "Fonts\\FRIZQT__.TTF",
-		width = 552,
-		imageHeight = 256,
+		width = 582,
+		height = 610,
+		paddingX = 35,
+		paddingTop = 26,
+		paddingBottom = 24,
 		{	-- 1
-			text = cTitle.."         Become a Patron|r\n\n"..
-					"If you like "..KT.title..", support me on |cfff34a54Patreon|r.\n\n"..
-					"Click on button  |T"..helpPath.."help_patreon:20:173:0:0:256:32:0:173:0:20|t  on CurseForge addon page.\n\n"..
-					"After 10 years of working on an addon, I started Patreon. It's created as\na compensation for the amount "..
-					"of time that addon development requires.\n\n"..
-					"                                    Many thanks to all supporters  |T"..helpPath.."help_patreon:16:16:0:0:256:32:174:190:0:16|t\n\n"..
+			heading = "      Become a Patron",
+			text = "If you like "..KT.title..", consider supporting it on Patreon.\n\n\n\n"..
+					"After 10 years of working on an addon, I started Patreon. It's created as\na compensation for "..
+					"the amount of time that addon development requires.\n\n"..
+					"                                    Many thanks to all supporters "..ICON_HEART.."\n\n"..
 					cTitle.."Active Patrons|r\n"..
 					SetFormatedPatronName("Epic", "Liothen", "Emerald Dream")..
 					SetFormatedPatronName("Rare", "Ian F")..
@@ -353,7 +429,14 @@ local function SetupTutorials()
 					cTitle.."Testers|r\n"..
 					SetFormatedPlayerName("Asimeria", "Drak'thul")..
 					SetFormatedPlayerName("Torresman", "Drak'thul"),
-			textY = -20,
+			editbox = {
+				{
+					icon = ICON_URL,
+					text = "https://patreon.com/kalielstracker",
+					width = 510,
+					top = 52,
+				}
+			},
 		},
 	})
 end
