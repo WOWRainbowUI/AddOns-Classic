@@ -710,6 +710,9 @@ function MopQuestFixes.Load()
         [28731] = { -- Teldrassil: Passing Awareness
             [questKeys.requiredClasses] = classIDs.WARRIOR + classIDs.HUNTER + classIDs.MAGE + classIDs.DRUID + classIDs.ROGUE + classIDs.PRIEST + classIDs.MONK, -- night elf DKs don't get these quests
         },
+        [28732] = { -- This Can Only Mean One Thing...
+            [questKeys.objectives] = {{{49456,nil,Questie.ICON_TYPE_EVENT}}},
+        },
         [28756] = { -- Aberrations of Bone
             [questKeys.objectives] = {{{59153}}},
             [questKeys.zoneOrSort] = zoneIDs.SCHOLOMANCE_MOP,
@@ -1070,7 +1073,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestSingle] = {29749},
         },
         [29753] = { -- Back to Nature
-            [questKeys.preQuestGroup] = {29750,29752},
+            [questKeys.preQuestSingle] = {29750},
             [questKeys.extraObjectives] = {{{[zoneIDs.THE_JADE_FOREST] = {{39.42,13.13},{40.36,12.34},{41.11,10.94},{37.92,8.02},{38.84,10}}},Questie.ICON_TYPE_EVENT,l10n("Smash the Spirit Bottles")}},
         },
         [29754] = { -- To Bridge Earth and Sky
@@ -1471,7 +1474,7 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {{{56527,nil,Questie.ICON_TYPE_MOUNT_UP}}},
         },
         [29931] = { -- The Serpent's Heart
-            [questKeys.preQuestGroup] = {29926,29930},
+            [questKeys.preQuestSingle] = {29930},
         },
         [29932] = { -- The Temple of the Jade Serpent
             [questKeys.objectives] = {{{57242,nil,Questie.ICON_TYPE_TALK}}},
@@ -1636,7 +1639,7 @@ function MopQuestFixes.Load()
         },
         [30032] = { -- The Quest for Better Barley
             [questKeys.preQuestSingle] = {},
-            [questKeys.preQuestGroup] = {30029,30031},
+            [questKeys.preQuestGroup] = {30029,30030,30031},
         },
         [30033] = { -- The Lesson of the Iron Bough
             [questKeys.requiredLevel] = 1,
@@ -1743,7 +1746,7 @@ function MopQuestFixes.Load()
         [30055] = { -- Stormstout's Hops
             [questKeys.startedBy] = {{56133}},
             [questKeys.preQuestSingle] = {},
-            [questKeys.preQuestGroup] = {30047,30050,30052,30053,30054,30057,30028,30172}, -- 30028,30053 not super certain, but high probability. turn those in last to check
+            [questKeys.preQuestGroup] = {30047,30050,30052,30053,30054,30057,30172},
         },
         [30056] = { -- The Farmer's Daughter
             [questKeys.preQuestSingle] = {30046},
@@ -2292,6 +2295,8 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {{{58967,nil,Questie.ICON_TYPE_EVENT}}},
         },
         [30241] = { -- Warn Stoneplow [Horde]
+            [questKeys.preQuestSingle] = {},
+            [questKeys.preQuestGroup] = {30174,30273},
             [questKeys.exclusiveTo] = {30376},
         },
         [30242] = { -- Survival Ring: Blades
@@ -2316,7 +2321,7 @@ function MopQuestFixes.Load()
         [30244] = { -- Along the Serpent's Spine
             [questKeys.startedBy] = {{58920}},
             [questKeys.finishedBy] = {{58920}},
-            [questKeys.preQuestSingle] = {30243}, -- check if 31652 needed/related/involved
+            [questKeys.preQuestSingle] = {30243},
             [questKeys.objectives] = {nil,nil,nil,nil,{{{63974,63976},63974}}},
             [questKeys.requiredMinRep] = {factionIDs.GOLDEN_LOTUS,9000},
             [questKeys.questFlags] = questFlags.DAILY,
@@ -2552,7 +2557,6 @@ function MopQuestFixes.Load()
             [questKeys.startedBy] = {{58911}},
             [questKeys.finishedBy] = {{58911}},
             [questKeys.objectives] = {{{245153}}},
-            [questKeys.preQuestGroup] = {30288,30246}, -- needs daily module, only offered if mistfall is 3rd hub
             [questKeys.exclusiveTo] = {30297,31297,31296},
             [questKeys.questFlags] = questFlags.DAILY,
         },
@@ -2560,7 +2564,6 @@ function MopQuestFixes.Load()
             [questKeys.startedBy] = {{58911}},
             [questKeys.finishedBy] = {{58911}},
             [questKeys.objectives] = {{{245163}}},
-            [questKeys.preQuestGroup] = {30288,30246}, -- needs daily module, only offered if mistfall is 3rd hub
             [questKeys.exclusiveTo] = {30296,31297,31296},
             [questKeys.questFlags] = questFlags.DAILY,
         },
@@ -2842,6 +2845,8 @@ function MopQuestFixes.Load()
             [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Lyalia"),0,{{"monster",58976}}}},
         },
         [30360] = { -- Warn Stoneplow [Alliance]
+            [questKeys.preQuestSingle] = {},
+            [questKeys.preQuestGroup] = {30273,30445},
             [questKeys.exclusiveTo] = {30376},
         },
         [30361] = { -- The Mantid
@@ -3196,7 +3201,6 @@ function MopQuestFixes.Load()
             [questKeys.startedBy] = {{58470}},
             [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.exclusiveTo] = {31136,31248,31249,31250},
-            [questKeys.requiredMaxRep] = {factionIDs.GOLDEN_LOTUS,9000},
         },
         [30484] = { -- Gauging Our Progress
             [questKeys.objectives] = {nil,nil,{{80013,nil,Questie.ICON_TYPE_TALK},{80014,nil,Questie.ICON_TYPE_TALK},{80015,nil,Questie.ICON_TYPE_TALK},{80061,nil,Questie.ICON_TYPE_TALK}}}, -- why is there item with icon correction? - Cheeq
@@ -3220,7 +3224,7 @@ function MopQuestFixes.Load()
         },
         [30492] = { -- Back in Yak
             [questKeys.preQuestSingle] = {},
-            [questKeys.preQuestGroup] = {30489,30491,30587},
+            [questKeys.preQuestGroup] = {30491,30587},
             [questKeys.objectives] = {},
             [questKeys.triggerEnd] = {"Bring Yak Herd to Lucky Eightcoins", {[zoneIDs.KUN_LAI_SUMMIT] = {{65.38,61.45}}}},
         },
@@ -3239,7 +3243,7 @@ function MopQuestFixes.Load()
             [questKeys.breadcrumbForQuestId] = 30466,
         },
         [30502] = { -- Jaded Heart
-            [questKeys.objectives] = {nil,nil,nil,nil,{{{59434,59454},59454,nil,Questie.ICON_TYPE_INTERACT}}},
+            [questKeys.objectives] = {nil,nil,nil,nil,{{{59434,59454},59454}}},
             [questKeys.preQuestSingle] = {31303},
             [questKeys.requiredSourceItems] = {80074},
         },
@@ -3429,6 +3433,7 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {nil,nil,nil,nil,{{{60382,59818},59818,nil,Questie.ICON_TYPE_INTERACT}}},
         },
         [30602] = { -- The Rabbitsfoot
+            [questKeys.startedBy] = {{59701,59703}},
             [questKeys.objectives] = {{{59806,nil,Questie.ICON_TYPE_TALK}}},
         },
         [30603] = { -- The Broketooth Ravage
@@ -3468,6 +3473,7 @@ function MopQuestFixes.Load()
         [30612] = { -- The Leader Hozen
             [questKeys.preQuestSingle] = {},
             [questKeys.preQuestGroup] = {30610,30611},
+            [questKeys.objectives] = {nil,nil,nil,nil,{{{59419,60217},59419,nil,Questie.ICON_TYPE_EVENT},{{60188,60598},60188}}},
         },
         [30613] = { -- Armored Carp
             [questKeys.questFlags] = questFlags.DAILY,
@@ -3509,10 +3515,11 @@ function MopQuestFixes.Load()
         },
         [30627] = { -- The Savior of Stoneplow
             [questKeys.preQuestSingle] = {30626},
-            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_INTERACT,l10n("Talk to Miss Fanny"),0,{{"monster",59857}}}},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Miss Fanny"),0,{{"monster",59857}}}},
         },
         [30631] = { -- The Shrine of Seven Stars
             [questKeys.startedBy] = {{58468}},
+            [questKeys.finishedBy] = {{58468,64031}},
             [questKeys.preQuestSingle] = {31512},
             [questKeys.objectives] = {{{59908,nil,Questie.ICON_TYPE_TALK},{59961,nil,Questie.ICON_TYPE_TALK},{64149,nil,Questie.ICON_TYPE_TALK},{64029,nil,Questie.ICON_TYPE_TALK}}},
         },
@@ -3523,6 +3530,7 @@ function MopQuestFixes.Load()
         },
         [30633] = { -- Out with the Scouts
             [questKeys.startedBy] = {{58465}},
+            [questKeys.objectives] = {{{59914}}},
         },
         [30634] = { -- Barring Entry
             [questKeys.startedBy] = {{58471}},
@@ -3548,7 +3556,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestGroup] = {30635,30636,30637},
         },
         [30639] = { -- The Secrets of Guo-Lai
-            [questKeys.startedBy] = {{58408}},
+            [questKeys.startedBy] = {{58408,59332,59340}},
             [questKeys.requiredMinRep] = {factionIDs.GOLDEN_LOTUS,9000},
             [questKeys.objectives] = {{{64647,nil,Questie.ICON_TYPE_TALK},{64663,nil,Questie.ICON_TYPE_EVENT}}},
         },
@@ -3570,7 +3578,7 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {{{60376,nil,Questie.ICON_TYPE_EVENT}},nil,{{80807}}},
         },
         [30643] = { -- The Mogu's Message
-            [questKeys.startedBy] = {{58408}},
+            [questKeys.startedBy] = {{58408,59332,59340}},
             [questKeys.requiredMinRep] = {factionIDs.GOLDEN_LOTUS,42000},
             [questKeys.preQuestSingle] = {30642},
         },
@@ -3595,7 +3603,7 @@ function MopQuestFixes.Load()
         },
         [30649] = { -- The Shrine of Two Moons
             [questKeys.startedBy] = {{58468}},
-            [questKeys.finishedBy] = {{58468}},
+            [questKeys.finishedBy] = {{58468,64007}},
             [questKeys.objectives] = {{{59908,nil,Questie.ICON_TYPE_TALK},{59959,nil,Questie.ICON_TYPE_TALK},{62996,nil,Questie.ICON_TYPE_TALK},{63996,nil,Questie.ICON_TYPE_TALK}}},
             [questKeys.preQuestSingle] = {31511},
         },
@@ -4543,7 +4551,6 @@ function MopQuestFixes.Load()
         },
         [31083] = { -- Promises of Gold
             [questKeys.startedBy] = {{62767}},
-            [questKeys.preQuestSingle] = {31075},
         },
         [31084] = { -- Bind the Glamour
             [questKeys.triggerEnd] = {"Allow Chief Rikkitun to enchant the forked blade", {[zoneIDs.DREAD_WASTES] = {{39.42,23.15}}}},
@@ -5080,7 +5087,7 @@ function MopQuestFixes.Load()
         },
         [31249] = { -- Mistfall Village -- Lake Attack to Mistfall Peace
             [questKeys.startedBy] = {{58408}},
-            [questKeys.finishedBy] = {{58503}},
+            [questKeys.finishedBy] = {{59338}},
             [questKeys.exclusiveTo] = {31248,31250,31245}, -- funny stuff might happen because 31245 is here
             [questKeys.preQuestGroup] = {-30281,-30282,-30283,30292},
             [questKeys.requiredMinRep] = {factionIDs.GOLDEN_LOTUS,9000},
@@ -5103,9 +5110,11 @@ function MopQuestFixes.Load()
         },
         [31254] = { -- The Road to Kun-Lai [Alliance]
             [questKeys.objectives] = {{{62738,nil,Questie.ICON_TYPE_TALK},{63367,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.nextQuestInChain] = 0,
         },
         [31255] = { -- The Road to Kun-Lai [Horde]
             [questKeys.objectives] = {{{62738,nil,Questie.ICON_TYPE_TALK},{63367,nil,Questie.ICON_TYPE_TALK}}},
+            [questKeys.nextQuestInChain] = 0,
         },
         [31256] = { -- Round 'Em Up
             [questKeys.preQuestSingle] = {30515},
@@ -5307,6 +5316,9 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {nil,{{213652}}},
             [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Talk to Mishi"),0,{{"monster",64475}}}},
         },
+        [31363] = { -- Lighting the Way
+            [questKeys.objectives] = {nil,{{211129}}},
+        },
         [31367] = { -- The Lorewalkers
             [questKeys.preQuestSingle] = {31003}, -- not entirely sure. could be 31001+31002 instead OR 30259 OR Tillers halfway honored
             [questKeys.breadcrumbForQuestId] = 31015,
@@ -5320,10 +5332,12 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {{{65716,nil,Questie.ICON_TYPE_TALK}}},
         },
         [31369] = { -- The Anglers
-            [questKeys.requiredSkill] = {profKeys.FISHING,1}, -- could also need actual prequest (31026 31092 31357 31398)
+            [questKeys.preQuestGroup] = {30635,30636,30637},
+            [questKeys.requiredSkill] = {profKeys.FISHING,1},
         },
         [31370] = { -- The Anglers
-            [questKeys.requiredSkill] = {profKeys.FISHING,1}, -- could also need actual prequest (31026 31092 31357 31398)
+            [questKeys.preQuestGroup] = {30635,30636,30637},
+            [questKeys.requiredSkill] = {profKeys.FISHING,1},
         },
         [31372] = { -- The Tillers
             [questKeys.breadcrumbForQuestId] = 30252,
@@ -5388,12 +5402,12 @@ function MopQuestFixes.Load()
             [questKeys.breadcrumbForQuestId] = 30814,
         },
         [31390] = { -- The Klaxxi
-            [questKeys.preQuestGroup] = {30650,30651,30660}, -- not entirely sure, but seems plausible
+            [questKeys.preQuestSingle] = {31512}, -- not entirely sure, but seems plausible
             [questKeys.breadcrumbForQuestId] = 31001,
             [questKeys.exclusiveTo] = {31000,31391,31656,31847,31886,31895},
         },
         [31391] = { -- The Klaxxi
-            [questKeys.preQuestGroup] = {30655,30656,30661}, -- not entirely sure, but seems plausible
+            [questKeys.preQuestSingle] = {31511}, -- not entirely sure, but seems plausible
             [questKeys.breadcrumbForQuestId] = 31001,
             [questKeys.exclusiveTo] = {31000,31390,31656,31847,31886,31895},
         },
@@ -6209,7 +6223,7 @@ function MopQuestFixes.Load()
         },
         [31735] = { -- The Right Tool For The Job
             [questKeys.preQuestGroup] = {30069,31734},
-            [questKeys.objectives] = {nil,{{215390},{215390}},nil,nil,{{{66396},66396,nil,Questie.ICON_TYPE_EVENT}}},
+            [questKeys.objectives] = {nil,{{215390},{215390}},nil,nil,{{{66396,66406},66396,nil,Questie.ICON_TYPE_EVENT}}},
         },
         [31736] = { -- Envoy of the Alliance
             [questKeys.preQuestSingle] = {31735},
@@ -6375,11 +6389,13 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {{{63765,nil,Questie.ICON_TYPE_MOUNT_UP}},nil,nil,nil,{{{67030,67033,67035,67036,67037,67039,67034},67034}}},
         },
         [31810] = { -- Riding the Skies (Azure Cloud Serpent)
+            [questKeys.startedBy] = {}, -- hiding 2 of the 3 due to blizzard returning true to all versions
             [questKeys.requiredMinRep] = {factionIDs.ORDER_OF_THE_CLOUD_SERPENT,42000},
             [questKeys.preQuestGroup] = {30139,30187},
             [questKeys.exclusiveTo] = {30188,31811},
         },
         [31811] = { -- Riding the Skies (Golden Cloud Serpent)
+            [questKeys.startedBy] = {}, -- hiding 2 of the 3 due to blizzard returning true to all versions
             [questKeys.requiredMinRep] = {factionIDs.ORDER_OF_THE_CLOUD_SERPENT,42000},
             [questKeys.preQuestGroup] = {30141,30187},
             [questKeys.exclusiveTo] = {30188,31810},
@@ -7541,7 +7557,7 @@ function MopQuestFixes.Load()
             [questKeys.requiredSpell] = -28675, -- ok this is a clusterfuck, we need logic change for this field
             [questKeys.objectivesText] = {"Bring a large supply of potions to an alchemy trainer in any capital city."},
             [questKeys.objectives] = {nil,nil,{{76097},{76098},{93351}}},
-            [questKeys.exclusiveTo] = {92237,92238},
+            [questKeys.exclusiveTo] = {92337,92338},
             [questKeys.zoneOrSort] = -181,
         },
         [92337] = { -- Elixir Master
@@ -7555,7 +7571,7 @@ function MopQuestFixes.Load()
             [questKeys.requiredSpell] = -28677, -- ok this is a clusterfuck, we need logic change for this field
             [questKeys.objectivesText] = {"Bring a variety of flasks to an alchemy trainer in any capital city."},
             [questKeys.objectives] = {nil,nil,{{76088},{76087},{76085},{76084}}},
-            [questKeys.exclusiveTo] = {92236,92238},
+            [questKeys.exclusiveTo] = {92336,92338},
             [questKeys.zoneOrSort] = -181,
         },
         [92338] = { -- Transmutation Master
@@ -7569,7 +7585,7 @@ function MopQuestFixes.Load()
             [questKeys.requiredSpell] = -28672, -- ok this is a clusterfuck, we need logic change for this field
             [questKeys.objectivesText] = {"Bring the requested materials to an alchemy trainer in any capital city."},
             [questKeys.objectives] = {nil,nil,{{72104}}},
-            [questKeys.exclusiveTo] = {92236,92237},
+            [questKeys.exclusiveTo] = {92336,92337},
             [questKeys.zoneOrSort] = -181,
         },
     }
@@ -7581,7 +7597,7 @@ function MopQuestFixes:LoadFactionFixes()
     local questFixesHorde = {
         [30376] = { -- Hope Springs Eternal
             [questKeys.preQuestSingle] = {},
-            [questKeys.preQuestGroup] = {30174,30273}, -- From wowhead this has complicated requirements. It is not only 30273 as DB indicates (confirmed in game). At this point I had also completed all of the Four Winds quest hubs and most of Krasarang working east to west
+            [questKeys.preQuestGroup] = {30174,30273},
             [questKeys.exclusiveTo] = {30241},
         },
         [31695] = { -- Beyond The Wall
@@ -7596,7 +7612,7 @@ function MopQuestFixes:LoadFactionFixes()
     local questFixesAlliance = {
         [30376] = { -- Hope Springs Eternal
             [questKeys.preQuestSingle] = {},
-            [questKeys.preQuestGroup] = {30359,30273}, -- From wowhead this has complicated requirements. It is not only 30273 as DB indicates (confirmed in game). At this point I had also completed all of the Four Winds quest hubs and most of Krasarang working east to west
+            [questKeys.preQuestGroup] = {30273,30445},
             [questKeys.exclusiveTo] = {30360},
         },
         [31695] = { -- Beyond The Wall
