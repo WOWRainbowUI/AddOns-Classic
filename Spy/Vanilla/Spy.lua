@@ -7,7 +7,7 @@ local fonts = SM:List("font")
 local _
 
 Spy = LibStub("AceAddon-3.0"):NewAddon("Spy", "AceConsole-3.0", "AceEvent-3.0", "AceComm-3.0", "AceTimer-3.0")
-Spy.Version = "1.3.5"
+Spy.Version = "1.3.6"
 Spy.DatabaseVersion = "1.1"
 Spy.Signature = "[Spy]"
 Spy.ButtonLimit = 15
@@ -128,12 +128,26 @@ Spy.options = {
 						Spy.db.profile.EnabledInWintergrasp = value
 						Spy:ZoneChangedEvent()
 					end,
+				}, 
+				EnabledInSanctuaries = {
+					name = L["EnabledInSanctuaries"],
+					desc = L["EnabledInSanctuariesDescription"],
+					type = "toggle",
+					order = 5,
+					width = "full",
+					get = function(info)
+						return Spy.db.profile.EnabledInSanctuaries
+					end,
+					set = function(info, value)
+						Spy.db.profile.EnabledInSanctuaries = value
+						Spy:ZoneChangedEvent()
+					end,
 				}, ]]--
 				DisableWhenPVPUnflagged = {
 					name = L["DisableWhenPVPUnflagged"],
 					desc = L["DisableWhenPVPUnflaggedDescription"],
 					type = "toggle",
-					order = 5,
+					order = 6,
 					width = "full",
 					get = function(info)
 						return Spy.db.profile.DisableWhenPVPUnflagged
@@ -147,7 +161,7 @@ Spy.options = {
 					name = L["DisabledInZones"],
 					desc = L["DisabledInZonesDescription"],
 					type = "multiselect",
-					order = 6,
+					order = 7,
 					get = function(info, key) 
 						return Spy.db.profile.FilteredZones[key] 
 					end,
@@ -160,26 +174,32 @@ Spy.options = {
 						["Gadgetzan"] = L["Gadgetzan"],
 						["Ratchet"] = L["Ratchet"],
 						["The Salty Sailor Tavern"] = L["The Salty Sailor Tavern"],
+						["Cenarion Hold"] = L["Cenarion Hold"],
 --						["Shattrath City"] = L["Shattrath City"],
 --						["Area 52"] = L["Area 52"],
 --						["Dalaran"] = L["Dalaran"],
 --						["Bogpaddle"] = L["Bogpaddle"],
---						["Dalaran (Northrend)"] = L["Dalaran (Northrend)"],
 --						["The Vindicaar"] = L["The Vindicaar"],
 --						["Krasus' Landing"] = L["Krasus' Landing"],
 --						["The Violet Gate"] = L["The Violet Gate"],
 --						["Magni's Encampment"] = L["Magni's Encampment"],
+--						["Chamber of Heart"] = L["Chamber of Heart"],
+--						["Hall of Ancient Paths"] = L["Hall of Ancient Paths"],
+--						["Sanctum of the Sages"] = L["Sanctum of the Sages"],
 --						["Rustbolt"] = L["Rustbolt"],
 --						["Oribos"] = L["Oribos"],
 --						["Valdrakken"] = L["Valdrakken"],
 --						["The Roasted Ram"] = L["The Roasted Ram"],
+--						["Dornogal"] = L["Dornogal"],						
+--						["Stonelight Rest"] = L["Stonelight Rest"],
+--						["Delver's Headquarters"] = L["Delver's Headquarters"],
 					},
 				},
 				ShowOnDetection = {
 					name = L["ShowOnDetection"],
 					desc = L["ShowOnDetectionDescription"],
 					type = "toggle",
-					order = 7,
+					order = 8,
 					width = "full",
 					get = function(info)
 						return Spy.db.profile.ShowOnDetection
@@ -192,7 +212,7 @@ Spy.options = {
 					name = L["HideSpy"],
 					desc = L["HideSpyDescription"],
 					type = "toggle",
-					order = 8,
+					order = 9,
 					width = "full",
 					get = function(info)
 						return Spy.db.profile.HideSpy
@@ -221,7 +241,7 @@ Spy.options = {
 					name = L["ShowKoSButton"],
 					desc = L["ShowKoSButtonDescription"],
 					type = "toggle",
-					order = 9,
+					order = 10,
 					width = "full",
 					get = function(info)
 						return Spy.db.profile.ShowKoSButton
@@ -773,6 +793,7 @@ Spy.options = {
 --								["Kul Tiran"] = L["Kul Tiran"],
 --								["Mechagnome"] = L["Mechagnome"],
 --								["Dracthyr"] = L["Dracthyr"],
+--								["Earthen"] = L["Earthen"],
 							},
 							Horde = {
 								["None"] = L["None"],
@@ -789,6 +810,7 @@ Spy.options = {
 --								["Zandalari Troll"] = L["Zandalari Troll"],
 --								["Vulpera"] = L["Vulpera"],
 --								["Dracthyr"] = L["Dracthyr"],
+--								["Earthen"] = L["Earthen"],
 							},
 						}
 						if Spy.EnemyFactionName == "Alliance" then
@@ -1286,6 +1308,19 @@ Spy.optionsSlash = {
 				Spy:AlertStealthPlayer("Bazzalan")
 			end
 		},
+--[[		sanc = {
+			name = L["Sanctuary"],
+			desc = L["SanctuaryDescription"],
+			type = 'execute',
+			order = 11,
+			func = function()
+				Spy.db.profile.EnabledInSanctuaries = not Spy.db.profile.EnabledInSanctuaries
+				Spy:ZoneChangedEvent()
+	--			Spy:UpdateMainWindow()
+	--			Spy:EnableSpy(false, true)
+			end,
+			dialogHidden = true
+		}, ]]--
 	},
 }
 
@@ -1393,6 +1428,7 @@ local Default_Profile = {
 		Scaling=1,
 		Enabled=true,
 		EnabledInBattlegrounds=true,
+		EnabledInSanctuaries=false,
 		EnabledInArenas=true,
 		EnabledInWintergrasp=true,
 		DisableWhenPVPUnflagged=true,
@@ -1443,19 +1479,25 @@ local Default_Profile = {
 			["Ratchet"] = false,
 			["Everlook"] = false,
 			["The Salty Sailor Tavern"] = false,
+			["Cenarion Hold"] = false,
 --			["Shattrath City"] = false,
 --			["Area 52"] = false,
 --			["Dalaran"] = false,
 --			["Bogpaddle"] = false,
---			["Dalaran (Northrend)"] = false,
 --			["The Vindicaar"] = false,
 --			["Krasus' Landing"] = false,
 --			["The Violet Gate"] = false,
 --			["Magni's Encampment"] = false,
+--			["Chamber of Heart"] = false,
+--			["Hall of Ancient Paths"] = false,
+--			["Sanctum of the Sages"] = false,
 --			["Rustbolt"] = false,
 --			["Oribos"] = false,
 --			["Valdrakken"] = false,
 --			["The Roasted Ram"] = false,
+--			["Dornogal"] = false,
+--			["Stonelight Rest"] = false,
+--			["Delver's Headquarters"] = false,
 		},
 	},
 }
@@ -1562,6 +1604,7 @@ function Spy:CheckDatabase()
 	if Spy.db.profile.Scaling == nil then Spy.db.profile.Scaling = Default_Profile.profile.Scaling end
 	if Spy.db.profile.Enabled == nil then Spy.db.profile.Enabled = Default_Profile.profile.Enabled end
 	if Spy.db.profile.EnabledInBattlegrounds == nil then Spy.db.profile.EnabledInBattlegrounds = Default_Profile.profile.EnabledInBattlegrounds end
+	if Spy.db.profile.EnabledInSanctuaries == nil then Spy.db.profile.EnabledInSanctuaries = Default_Profile.profile.EnabledInSanctuaries end
 	if Spy.db.profile.EnabledInArenas == nil then Spy.db.profile.EnabledInArenas = Default_Profile.profile.EnabledInArenas end
 	if Spy.db.profile.EnabledInWintergrasp == nil then Spy.db.profile.EnabledInWintergrasp = Default_Profile.profile.EnabledInWintergrasp end
 	if Spy.db.profile.DisableWhenPVPUnflagged == nil then Spy.db.profile.DisableWhenPVPUnflagged = Default_Profile.profile.DisableWhenPVPUnflagged end
@@ -1816,6 +1859,7 @@ function Spy:OnInitialize()
 --		["Mechagnome"] = true,
 --		["Vulpera"] = true,
 --		["Dracthyr"] = true,
+--		["Earthen"] = true,
 	}
 
 	local acedb = LibStub:GetLibrary("AceDB-3.0")
@@ -1869,9 +1913,6 @@ function Spy:ChannelNoticeEvent(_, chStatus, _, _, Channel)
 		if InFilteredZone then
 			Spy.EnabledInZone = false
 		end
---		if (zone == L["Silithus"] and (subZone == L["Hall of Ancient Paths"] or L["Sanctum of the Sages"]) or zone == L["Chamber of Heart"]) then
---			Spy.EnabledInZone = false
---		end
 	end
 end
 
@@ -1911,24 +1952,29 @@ function Spy:ZoneChanged()
 	local pvpType = GetZonePVPInfo()
  	local zone = GetZoneText()
 	local subZone = GetSubZoneText()
-	local InFilteredZone = Spy:InFilteredZone(subZone)
-	if pvpType == "sanctuary" or zone == "" or InFilteredZone then
+	local InFilteredZone = Spy:InFilteredZone(zone, subZone)
+	if pvpType == "sanctuary" and not Spy.db.profile.EnabledInSanctuaries then
 		Spy.EnabledInZone = false
 	else
 		Spy.EnabledInZone = true
-		local inInstance, instanceType = IsInInstance()
-		if inInstance then
-			Spy.InInstance = true
-			if instanceType == "party" or instanceType == "raid" or (not Spy.db.profile.EnabledInBattlegrounds and instanceType == "pvp") or (not Spy.db.profile.EnabledInArenas and instanceType == "arena") then
+		if zone == "" or InFilteredZone then
+			Spy.EnabledInZone = false
+		else
+			Spy.EnabledInZone = true
+			local inInstance, instanceType = IsInInstance()
+			if inInstance then
+				Spy.InInstance = true
+				if instanceType == "party" or instanceType == "raid" or (not Spy.db.profile.EnabledInBattlegrounds and instanceType == "pvp") or (not Spy.db.profile.EnabledInArenas and instanceType == "arena") then
+					Spy.EnabledInZone = false
+				end
+			elseif pvpType == "combat" then
+				if not Spy.db.profile.EnabledInWintergrasp then
+					Spy.EnabledInZone = false
+				end
+--			elseif (pvpType == "friendly" or pvpType == nil) then
+			elseif UnitIsPVP("player") == false and Spy.db.profile.DisableWhenPVPUnflagged then
 				Spy.EnabledInZone = false
-			end
-		elseif pvpType == "combat" then
-			if not Spy.db.profile.EnabledInWintergrasp then
-				Spy.EnabledInZone = false
-			end
-		elseif (pvpType == "friendly" or pvpType == nil) then
-			if UnitIsPVP("player") == false and Spy.db.profile.DisableWhenPVPUnflagged then
-				Spy.EnabledInZone = false
+--				end
 			end
 		end
 	end
@@ -1944,12 +1990,14 @@ function Spy:ZoneChanged()
 	Spy:UpdateMainWindow()
 end
 
-function Spy:InFilteredZone(subzone)
+function Spy:InFilteredZone(zone, subzone)
 	local InFilteredZone = false
 	for filteredZone, value in pairs(Spy.db.profile.FilteredZones) do
-		if subzone == filteredZone and value then
+		if zone == filteredZone and value then
 			InFilteredZone = true
-			break
+		elseif subzone == filteredZone and value then
+			InFilteredZone = true
+--			break
 		end
 	end
 	return InFilteredZone

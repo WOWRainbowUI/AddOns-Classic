@@ -53,6 +53,8 @@ L["EnabledInArenas"] = "竞技场中启用Spy"
 L["EnabledInArenasDescription"] = "在竞技场中启用或禁用Spy。"
 L["EnabledInWintergrasp"] = "世界战斗区域中启用Spy"
 L["EnabledInWintergraspDescription"] = "在世界战斗区域中启用或禁用Spy，例如诺森德的冬握湖。"
+L["EnabledInSanctuaries"] = "Enable Spy in Sanctuaries."
+L["EnabledInSanctuariesDescription"] = "Enables or disables Spy when you are in a Sanctuary."
 L["DisableWhenPVPUnflagged"] = "非PVP状态时禁用Spy"
 L["DisableWhenPVPUnflaggedDescription"] = "根据PVP状态启用或禁用Spy。"
 L["DisabledInZones"] = "在这些位置时禁用Spy"
@@ -62,10 +64,10 @@ L["Everlook"] = "永望镇"
 L["Gadgetzan"] = "加基森"
 L["Ratchet"] = "棘齿城"
 L["The Salty Sailor Tavern"] = "水手之家旅店"
+L["Cenarion Hold"] = "塞纳里奥要塞"
 L["Shattrath City"] = "沙塔斯城"
 L["Area 52"] = "52区"
 L["Dalaran"] = "达拉然"
-L["Dalaran (Northrend)"] = "达拉然（诺森德）"
 L["Bogpaddle"] = "沼桨镇"
 L["The Vindicaar"] = "维迪卡尔"
 L["Krasus' Landing"] = "克拉苏斯平台"
@@ -79,7 +81,10 @@ L["Rustbolt"] = "锈栓镇"
 L["Oribos"] = "奥利波斯"
 L["Valdrakken"] = "瓦德拉肯"
 L["The Roasted Ram"] = "到脆烤山羊"
- 
+L["Dornogal"] = "多恩诺嘉尔"
+L["Stonelight Rest"] = "石光歇"
+L["Delver's Headquarters"] = "地下堡行者总部"
+
 -- Display
 L["DisplayOptions"] = "显示"
 L["DisplayOptionsDescription"] = [[
@@ -281,7 +286,9 @@ L["Ignore"] = "忽略"
 L["IgnoreDescription"] = "从忽略列表中添加或删除敌对玩家"
 L["Test"] = "Test"
 L["TestDescription"] = "显示警告，以便您可以重新放置它。"
- 
+L["Sanctuary"] = "Sanctuary"
+L["SanctuaryDescription"] = "Show/Hide Spy in a Sanctuary area."
+
 -- Lists
 L["Nearby"] = "附近"
 L["LastHour"] = "最近"
@@ -358,6 +365,7 @@ L["Player"] = " （玩家）"
 L["KOSReason"] = "KOS即视击杀"
 L["KOSReasonIndent"] = "    "
 L["KOSReasonOther"] = "自行输入原因..."
+L["EnterKOSReason"] = "输入 %s 的KOS原因"
 L["KOSReasonClear"] = "清除"
 L["StatsWins"] = "|cff40ff00获胜："
 L["StatsSeparator"] = "  "
@@ -440,25 +448,6 @@ Spy_KOSReasonList = {
         };
     },
 }
- 
-StaticPopupDialogs["Spy_SetKOSReasonOther"] = {
-    preferredIndex=STATICPOPUPS_NUMDIALOGS,  -- http://forums.wowace.com/showthread.php?p=320956
-    text = "输入 %s 的KOS原因:",
-    button1 = "设置",
-    button2 = "取消",
-    timeout = 120,
-    hasEditBox = 1,
-    editBoxWidth = 260,
-    whileDead = 1,
-    hideOnEscape = 1,
-    OnShow = function(self)
-        self.editBox:SetText("");
-    end,
-    OnAccept = function(self)
-        local reason = self.editBox:GetText()
-        Spy:SetKOSReason(self.playerName, "自行输入原因...", reason)
-    end,
-};
 
 -- Class descriptions
 L["UNKNOWN"] = "未知"
@@ -501,6 +490,7 @@ L["Zandalari Troll"] = "赞达拉巨魔"
 L["Mechagnome"] = "机械侏儒"
 L["Vulpera"] = "狐人"
 L["Dracthyr"] = "龙希尔"
+L["Earthen"] = "土灵"
 
 -- Stealth abilities
 L["Stealth"] = "潜行"
