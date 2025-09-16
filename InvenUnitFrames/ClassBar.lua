@@ -908,7 +908,13 @@ elseif playerClass == "DEATHKNIGHT" then
 	end
 
 	local function updateVisible()	-- DEATHKNIGHT
-	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
+
+--	IUF.db.classBar.useBlizzard= true
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard then
 				if TotemFrame and TotemFrame:IsShown() then
@@ -1066,7 +1072,12 @@ elseif playerClass == "DEATHKNIGHT" then
 	end
 
 	function IUF:ClassBarSetup(object)	-- DEATHKNIGHT
-	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
+--	IUF.db.classBar.useBlizzard= true
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard then
 				object.classBar.addOn:Hide()
@@ -1146,7 +1157,14 @@ elseif playerClass == "DEATHKNIGHT" then
 
 elseif playerClass == "PRIEST" then
 	local function updateVisible()	-- PRIEST
-	IUF.db.classBar.useBlizzard= true
+--	IUF.db.classBar.useBlizzard= true
+
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
+
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard then
 				if TotemFrame:IsShown() then
@@ -1260,7 +1278,12 @@ elseif playerClass == "PRIEST" then
 	end
 
 	function IUF:ClassBarSetup(object)	-- PRIEST
-	IUF.db.classBar.useBlizzard= true
+--	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
 
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard then
@@ -1369,7 +1392,13 @@ elseif playerClass == "PRIEST" then
 
 elseif playerClass == "PALADIN" then
 	local function updateVisible()	-- PALADIN
-	IUF.db.classBar.useBlizzard= true
+--	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
+
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard and PaladinPowerBarFrame then
 				if TotemFrame and TotemFrame:IsShown() then
@@ -1476,7 +1505,12 @@ elseif playerClass == "PALADIN" then
 	end
 
 	function IUF:ClassBarSetup(object)	-- PALADIN
-	IUF.db.classBar.useBlizzard= true
+--	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard and PaladinPowerBarFrame then
 				object.classBar.addOn:Hide()
@@ -1598,7 +1632,12 @@ elseif playerClass == "MONK" then
 
 	local function updateVisible()	-- MONK
 
-	IUF.db.classBar.useBlizzard= true
+--	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard then
 				if TotemFrame and TotemFrame:IsShown() then
@@ -1781,7 +1820,12 @@ elseif playerClass == "MONK" then
 	end
 
 	function IUF:ClassBarSetup(object)	-- MONK
-	IUF.db.classBar.useBlizzard= true
+--	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard then
 				object.classBar.addOn:Hide()
@@ -1896,7 +1940,12 @@ elseif playerClass == "MONK" then
  
  elseif playerClass == "WARLOCK" then
  	local function updateVisible()	-- WARLOCK
-	IUF.db.classBar.useBlizzard= true
+--	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
  		if IUF.db.classBar.use then
  			if IUF.db.classBar.useBlizzard then
  				if TotemFrame:IsShown() then
@@ -2134,7 +2183,12 @@ elseif playerClass == "MONK" then
  	end
  	
  	function IUF:ClassBarSetup(object)	-- WARLOCK
-	IUF.db.classBar.useBlizzard= true
+--	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
  		if IUF.db.classBar.use then
  			if IUF.db.classBar.useBlizzard then
  				object.classBar.addOn:Hide()
@@ -2474,7 +2528,12 @@ elseif playerClass == "MONK" then
 	
 elseif playerClass == "ROGUE" then
 	local function updateVisible()	-- ROGUE
-	IUF.db.classBar.useBlizzard= true
+--	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard then
 				if  TotemFrame and TotemFrame:IsShown() then
@@ -2593,7 +2652,12 @@ elseif playerClass == "ROGUE" then
 	end
 	
 	function IUF:ClassBarSetup(object)	-- ROGUE
-	IUF.db.classBar.useBlizzard= true
+--	IUF.db.classBar.useBlizzard= true
+	if wowtocversion and wowtocversion < 50000 then
+		IUF.db.classBar.useBlizzard=false
+	else
+		IUF.db.classBar.useBlizzard= true
+	end
 		if IUF.db.classBar.use then
 			if IUF.db.classBar.useBlizzard then
 				object.classBar.addOn:Hide()

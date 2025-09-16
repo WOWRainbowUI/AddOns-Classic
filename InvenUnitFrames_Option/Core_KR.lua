@@ -2466,7 +2466,7 @@ function Option:CreateClassBarMenu(menu, parent)
 		end
 	)
 	menu.texture:SetPoint("TOPRIGHT", -5, -39)
---[[
+
 	menu.blizzard = LBO:CreateWidget("CheckBox", parent, "와우 기본 직업 특수바 보기", "인벤 유닛 프레임의 직업 특수바 대신 와우 기본 프레임의 직업 특수바를 사용합니다. 다른 애드온에서 직업 특수바의 위치를 변경하는 기능이 포함되어 있을 경우 충돌이 일어 날 수 있습니다.", nil, notActive, nil,
 		function()
 			return IUF.db.classBar.useBlizzard
@@ -2477,7 +2477,7 @@ function Option:CreateClassBarMenu(menu, parent)
 		end
 	)
 	menu.blizzard:SetPoint("TOP", menu.pos, "BOTTOM", 0, -10)
---]]
+
 
 -- 추가된 내용	
 	menu.druidMana = LBO:CreateWidget("CheckBox", parent, "드루이드 야드 변신중 마나 표시 끄기", "마나를 사용하지 않는 변신 폼일 때 마나를 표시 하지 않습니다.", nil, nil, nil,

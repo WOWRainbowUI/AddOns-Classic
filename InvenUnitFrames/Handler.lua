@@ -142,6 +142,7 @@ function IUF:RegisterHandlerEvents()
 	handlers:RegisterEvent("ZONE_CHANGED_NEW_AREA") -- added for resting event adjustment
 	handlers:RegisterEvent("PARTY_LEADER_CHANGED")-- added for leader event adjustment
 	handlers:RegisterEvent("GROUP_LEFT")-- added for leader event adjustment
+	handlers:RegisterEvent("READY_CHECK")
 	handlers:RegisterEvent("PLAYER_TARGET_CHANGED")
 --	handlers:RegisterEvent("PLAYER_FOCUS_CHANGED")
 	handlers:RegisterEvent("PLAYER_UPDATE_RESTING")
@@ -257,6 +258,7 @@ function IUF:RegisterObjectEvents(object)
 	object:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_UPDATE", object.realunit, object.petunit)
 	object:RegisterUnitEvent("UNIT_SPELLCAST_CHANNEL_STOP", object.realunit, object.petunit)
 	object:RegisterUnitEvent("UNIT_HAPPINESS", object.realunit, object.petunit)
+	object:RegisterUnitEvent("READY_CHECK_CONFIRM", object.realunit, object.petunit)
 	object:RegisterUnitEvent("UNIT_THREAT_SITUATION_UPDATE", object.realunit, object.petunit)
 
 --[[
@@ -285,6 +287,7 @@ handlers:SetScript("OnEvent", function(self, event, unit, ...)
 			end
 			unit = unit.."target"
 		end
+		IUF:READY_CHECK()
 	elseif event == "PLAYER_FOCUS_CHANGED" then
 		unit = "focus"
 		for i = 1, 3 do
@@ -296,6 +299,7 @@ handlers:SetScript("OnEvent", function(self, event, unit, ...)
 			end
 			unit = unit.."target"
 		end
+		IUF:READY_CHECK()
 	elseif event == "PLAYER_UPDATE_RESTING" then
 		if IUF.units.player then
 			handlers[event](IUF.units.player)
@@ -312,6 +316,8 @@ handlers:SetScript("OnEvent", function(self, event, unit, ...)
 				IUF:UpdateObject(object)
 			end
 		end
+	elseif event == "READY_CHECK" then
+		IUF:READY_CHECK()
 	elseif event=="PARTY_LEADER_CHANGED" then
 		if IUF.units.player then
 			handlers.GROUP_ROSTER_UPDATE(IUF.units.player)
@@ -517,6 +523,11 @@ end
 function handlers:UNIT_MAXHEALTH()
 	self.values.healthmax = UnitHealthMax(self.unit)
 end
+
+function handlers:READY_CHECK_CONFIRM(isReady)
+	IUF:UpdateReadyCheck(self)
+end
+
 
 
 --if (select(4,GetBuildInfo()) <= 90000) then

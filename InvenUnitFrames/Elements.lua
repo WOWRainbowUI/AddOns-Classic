@@ -287,6 +287,17 @@ function IUF:CreateObjectElements(object)
 		object.pvpTimer:SetScript("OnLeave", object.pvpTimer.OnHide)
 		object.pvpTimer:SetScript("OnHide", object.pvpTimer.OnHide)
 	end
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+	object.readyCheckIcon = object.portrait:CreateTexture(nil, "ARTWORK")
+	object.readyCheckIcon:SetParent(object.portrait)
+	object.readyCheckIcon:SetDrawLayer("OVERLAY", 7)
+	object.readyCheckIcon:ClearAllPoints()
+	object.readyCheckIcon:SetPoint("CENTER", 0, 0)
+	object.readyCheckIcon:SetSize(50, 50)	
+	
+-----------------------------------------------------------------------------------------------------------------------------------------------------------
+	
 end
 
 function IUF:SetFontString(fontString, file, size, attribute, shadow)
