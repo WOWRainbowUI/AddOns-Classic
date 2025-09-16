@@ -26,8 +26,7 @@ L["SpyDescription2"] = [[
 Spy 不會顯示被加入到忽略清單中的玩家。透過滑鼠右鍵選單，或是按住 CTRL 鍵點擊名字將玩家加入清單和移除。
 
 |cffffd000 即殺清單 |cffffffff
-偵測到在即殺清單清單中的玩家時會發出警告。透過滑鼠右鍵選單，或是按住 SHIFT 鍵點擊名字將玩家加入清單和移除。
-滑鼠右鍵選單也可以設定將某人加入到即殺清單的原因。如果你想要輸入不在清單中的原因，請在其他清單中使用 "自行輸入原因..."。
+偵測到在即殺清單清單中的玩家時會發出警告。透過滑鼠右鍵選單，或是按住 SHIFT 鍵點擊名字將玩家加入清單和移除。 滑鼠右鍵選單也可以設定將某人加入到即殺清單的原因。如果你想要輸入不在清單中的原因，請在其他清單中使用 "自行輸入原因..."。
 
 ]]
 
@@ -54,6 +53,8 @@ L["EnabledInArenas"] = "競技場中啟用"
 L["EnabledInArenasDescription"] = "身處在競技場中時啟用或停用 Spy。"
 L["EnabledInWintergrasp"] = "世界戰鬥區域中啟用"
 L["EnabledInWintergraspDescription"] = "身處在世界戰鬥區中時啟用或停用 Spy，例如北裂境的冬握湖。"
+L["EnabledInSanctuaries"] = "Enable Spy in Sanctuaries."
+L["EnabledInSanctuariesDescription"] = "Enables or disables Spy when you are in a Sanctuary."
 L["DisableWhenPVPUnflagged"] = "非 PVP 狀態時停用"
 L["DisableWhenPVPUnflaggedDescription"] = "依據自身的 PVP 狀態啟用或停用 Spy。"
 L["DisabledInZones"] = "在這些位置時禁用Spy"
@@ -63,10 +64,10 @@ L["Everlook"] = "永望镇"
 L["Gadgetzan"] = "加基森"
 L["Ratchet"] = "棘齿城"
 L["The Salty Sailor Tavern"] = "水手之家旅店"
+L["Cenarion Hold"] = "塞納里奧城堡"
 L["Shattrath City"] = "撒塔斯城"
 L["Area 52"] = "52區"
 L["Dalaran"] = "達拉然"
-L["Dalaran (Northrend)"] = "達拉然(北裂境)"
 L["Bogpaddle"] = "沼槳"
 L["The Vindicaar"] = "维迪卡尔"
 L["Krasus' Landing"] = "卡薩斯平臺"
@@ -80,6 +81,9 @@ L["Rustbolt"] = "锈栓镇"
 L["Oribos"] = "奥利波斯"
 L["Valdrakken"] = "瓦德拉肯"
 L["The Roasted Ram"] = "到脆烤山羊"
+L["Dornogal"] = "多恩诺嘉尔"
+L["Stonelight Rest"] = "石光休憩"
+L["Delver's Headquarters"] = "探究者總部"
 
 -- Display
 L["DisplayOptions"] = "顯示"
@@ -282,6 +286,8 @@ L["Ignore"] = "忽略"
 L["IgnoreDescription"] = "從忽略清單加入/移除玩家。"
 L["Test"] = "Test"
 L["TestDescription"] = "顯示警告，以便您可以重新放置它。"
+L["Sanctuary"] = "Sanctuary"
+L["SanctuaryDescription"] = "Show/Hide Spy in a Sanctuary area."
 
 -- Lists
 L["Nearby"] = "附近"
@@ -359,6 +365,7 @@ L["Player"] = " (玩家)"
 L["KOSReason"] = "即殺"
 L["KOSReasonIndent"] = "    "
 L["KOSReasonOther"] = "自行輸入原因..."
+L["EnterKOSReason"] = "輸入 %s 的即殺原因"
 L["KOSReasonClear"] = "明確原因"
 L["StatsWins"] = "|cff40ff00勝："
 L["StatsSeparator"] = "  "
@@ -442,25 +449,6 @@ Spy_KOSReasonList = {
 	},
 }
 
-StaticPopupDialogs["Spy_SetKOSReasonOther"] = {
-	preferredIndex=STATICPOPUPS_NUMDIALOGS,  -- http://forums.wowace.com/showthread.php?p=320956
-	text = "輸入 %s 的即殺原因:",
-	button1 = "設定",
-	button2 = "取消",
-	timeout = 20,
-	hasEditBox = 1,
-	editBoxWidth = 260,		
-	whileDead = 1,
-	hideOnEscape = 1,
-	OnShow = function(self)
-		self.editBox:SetText("");
-	end,
-	OnAccept = function(self)
-		local reason = self.editBox:GetText()
-		Spy:SetKOSReason(self.playerName, "自行輸入原因...", reason)
-	end,
-};
-
 -- Class descriptions
 L["UNKNOWN"] = "未知"
 L["DRUID"] = "德魯伊"
@@ -502,6 +490,7 @@ L["Zandalari Troll"] = "赞达拉巨魔"
 L["Mechagnome"] = "机械侏儒"
 L["Vulpera"] = "狐人"
 L["Dracthyr"] = "龙希尔"
+L["Earthen"] = "土灵"
 
 -- Stealth abilities
 L["Stealth"] = "潜行"

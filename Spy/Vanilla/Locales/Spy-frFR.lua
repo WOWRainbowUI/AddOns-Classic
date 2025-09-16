@@ -53,6 +53,8 @@ L["EnabledInArenas"] = "Activer Spy en arènes"
 L["EnabledInArenasDescription"] = "Active ou désactive Spy lorsque vous êtes dans une arène."
 L["EnabledInWintergrasp"] = "Activer Spy en zone de combat mondiale"
 L["EnabledInWintergraspDescription"] = "Active ou désactive Spy lorsque vous êtes dans des zones de combat mondial comme le Joug-d’Hiver en Northrend."
+L["EnabledInSanctuaries"] = "Enable Spy in Sanctuaries."
+L["EnabledInSanctuariesDescription"] = "Enables or disables Spy when you are in a Sanctuary."
 L["DisableWhenPVPUnflagged"] = "Désactiver Spy lorsque le mode JcJ est désactiver"
 L["DisableWhenPVPUnflaggedDescription"] = "Active ou désactive Spy en fonction de votre statut JcJ."
 L["DisabledInZones"] = "Désactivez Spy lorsque vous vous trouvez dans ces emplacements"
@@ -62,10 +64,10 @@ L["Everlook"] = "Long-Guet"
 L["Gadgetzan"] = "Gadgetzan"
 L["Ratchet"] = "Cabestan"
 L["The Salty Sailor Tavern"] = "La taverne du Loup de mer"
+L["Cenarion Hold"] = "Fort Cénarien"
 L["Shattrath City"] = "Shattrath"
 L["Area 52"] = "Zone 52"
 L["Dalaran"] = "Dalaran"
-L["Dalaran (Northrend)"] = "Dalaran (Norfendre)"
 L["Bogpaddle"] = "Brasse-Tourbe"
 L["The Vindicaar"] = "Le Vindicaar"
 L["Krasus' Landing"] = "Aire de Krasus"
@@ -79,6 +81,9 @@ L["Rustbolt"] = "Mécarouille"
 L["Oribos"] = "Oribos"
 L["Valdrakken"] = "Valdrakken"
 L["The Roasted Ram"] = "Bélier rôti"
+L["Dornogal"] = "Dornogal"
+L["Stonelight Rest"] = "Repos de la Lumière de pierre"
+L["Delver's Headquarters"] = "Quartier général des archéologues"
 
 -- Display
 L["DisplayOptions"] = "Affichage"
@@ -281,6 +286,8 @@ L["Ignore"] = "Ignorer"
 L["IgnoreDescription"] = "Ajouter/retirer un joueur à/de la liste Ignorer."
 L["Test"] = "Test"
 L["TestDescription"] = "Affiche un avertissement afin que vous puissiez le repositionner."
+L["Sanctuary"] = "Sanctuary"
+L["SanctuaryDescription"] = "Show/Hide Spy in a Sanctuary area."
 
 -- Lists
 L["Nearby"] = "Proche"
@@ -358,6 +365,7 @@ L["Player"] = " (Joueur)"
 L["KOSReason"] = "Tuer à Vue"
 L["KOSReasonIndent"] = "    "
 L["KOSReasonOther"] = "Saisir votre propre raison..."
+L["EnterKOSReason"] = "Entrez une raison pour tuer à vue pour %s"
 L["KOSReasonClear"] = "Effacer la raison"
 L["StatsWins"] = "|cff40ff00Victoires: "
 L["StatsSeparator"] = "  "
@@ -441,25 +449,6 @@ Spy_KOSReasonList = {
 	},
 }
 
-StaticPopupDialogs["Spy_SetKOSReasonOther"] = {
-	preferredIndex=STATICPOPUPS_NUMDIALOGS,  -- http://forums.wowace.com/showthread.php?p=320956
-	text = "Entrez une raison pour tuer à vue pour %s:",
-	button1 = "Saisir",
-	button2 = "Annuler",
-	timeout = 120,
-	hasEditBox = 1,
-	editBoxWidth = 260,	
-	whileDead = 1,
-	hideOnEscape = 1,
-	OnShow = function(self)
-		self.editBox:SetText("");
-	end,
-    OnAccept = function(self)
-		local reason = self.editBox:GetText()
-		Spy:SetKOSReason(self.playerName, "Saisir votre propre raison...", reason)
-	end,
-};
-
 -- Class descriptions
 L["UNKNOWN"] = "Inconnu"
 L["DRUID"] = "Druide"
@@ -476,7 +465,7 @@ L["MONK"] = "Moine"
 L["DEMONHUNTER"] = "Chasseur de démons"
 L["EVOKER"] = "Évocateur"
 
---++ Race descriptions
+-- Race descriptions
 L["Human"] = "Humain"
 L["Orc"] = "Orc"
 L["Dwarf"] = "Nain"
@@ -501,6 +490,7 @@ L["Zandalari Troll"] = "Troll zandalari"
 L["Mechagnome"] = "Mécagnome"
 L["Vulpera"] = "Vulpérin"
 L["Dracthyr"] = "Dracthyr"
+L["Earthen"] = "Terrestre"
  
 -- Capacités stealth
 L["Stealth"] = "Camouflage"
