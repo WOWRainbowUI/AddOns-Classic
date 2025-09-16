@@ -2477,7 +2477,7 @@ function Option:CreateClassBarMenu(menu, parent)
 	menu.texture:SetPoint("TOPRIGHT", -5, -39)
  
 --대격변에서 와우 자체 클래스바 없음
---[[
+
 	menu.blizzard = LBO:CreateWidget("CheckBox", parent, "Show Blizzard class bar", "Use Blizzard class bar instead of Inven Unit Frame. Other with frame position change can be conflicted.", nil, notActive, nil,
 		function()
 			return IUF.db.classBar.useBlizzard
@@ -2488,7 +2488,6 @@ function Option:CreateClassBarMenu(menu, parent)
 		end
 	)
 	menu.blizzard:SetPoint("TOP", menu.pos, "BOTTOM", 0, -10)
---]]
 -- 추가된 내용	
 	menu.druidMana = LBO:CreateWidget("CheckBox", parent, "Hide mana while feral form", "Hide mana while non-mana form.", nil, nil, nil,
 		function() return IUF.db.classBar.druidManaDisible end,

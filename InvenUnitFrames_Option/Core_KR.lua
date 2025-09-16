@@ -2466,7 +2466,7 @@ function Option:CreateClassBarMenu(menu, parent)
 		end
 	)
 	menu.texture:SetPoint("TOPRIGHT", -5, -39)
---[[
+
 	menu.blizzard = LBO:CreateWidget("CheckBox", parent, "顯示遊戲內建的職業資源條", "使用魔獸世界預設框架的職業資源條，而不是 InvenUnitFrames 的職業資源條。 如果其他插件也包含變更職業資源條位置的功能，可能會發生衝突。", nil, notActive, nil,
 		function()
 			return IUF.db.classBar.useBlizzard
@@ -2477,7 +2477,7 @@ function Option:CreateClassBarMenu(menu, parent)
 		end
 	)
 	menu.blizzard:SetPoint("TOP", menu.pos, "BOTTOM", 0, -10)
---]]
+
 
 -- 추가된 내용	
 	menu.druidMana = LBO:CreateWidget("CheckBox", parent, "德魯伊野性變身時隱藏法力值", "當使用非消耗法力的變身形態時，不顯示法力值。", nil, nil, nil,
