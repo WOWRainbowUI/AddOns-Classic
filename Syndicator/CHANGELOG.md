@@ -1,6 +1,7 @@
 # Syndicator
 
-## [233](https://github.com/TheMouseNest/Syndicator/tree/233) (2025-09-13)
-[Full Changelog](https://github.com/TheMouseNest/Syndicator/compare/232...233) 
+## [235](https://github.com/TheMouseNest/Syndicator/tree/235) (2025-09-17)
+[Full Changelog](https://github.com/TheMouseNest/Syndicator/compare/234...235) 
 
-- Vanilla: Fix #crafted keyword breaking searches  
+- Rename Main.lua -> Initialize.lua where appropriate  
+- Search: Add check for spell data being uncached, potentially breaking #knowledge  
