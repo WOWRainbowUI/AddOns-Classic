@@ -2,6 +2,8 @@ local tocName,
 ---@class Addon_DungeonData: Addon_Localization
 addon = ...;
 local isClassicEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+
+---@enum ExpansionID
 local Expansion = {
 	Classic = 0,
 	BurningCrusade = 1,
@@ -26,13 +28,14 @@ local DungeonType = isClassicEra and {
     Raid = 2,
     None = 4,
     Battleground = 5, -- in classic, 5 is used for BGs
-    WorldBoss = 6,
+    WorldBoss = 6, -- spoofed
 } or {
 	Dungeon = 1,
 	Raid = 2,
 	Zone = 4,
-	Random = 6,
-	Battleground = 7
+	-- Random = 6, -- unused, kept for consistency with blizzard API, see comment above
+	Battleground = 7,
+	WorldBoss = 8, -- spoofed
 }
 ---@class AddonEnum
 addon.Enum = addon.Enum or {}
@@ -47,12 +50,16 @@ end
 -- For classic it can remain self contained in the `classic.lua` file until tbc refactoring
 if WOW_PROJECT_ID < WOW_PROJECT_CATACLYSM_CLASSIC then return end
 
---see https://wago.tools/db2/GroupFinderCategory?build=5.5.0.61208
+--see https://wago.tools/db2/GroupFinderCategory?build=5.5.1.63364
 local activityCategoryDungeonType  = {
     [2] = DungeonType.Dungeon ,
     [114] = DungeonType.Raid,
     [118] = DungeonType.Battleground,
+    [125] = DungeonType.Battleground,
+    [126] = DungeonType.Battleground,
 }
+
+--todo: can remove typeID from this table and rely solely on activityCategoryDungeonType
 local activityGroupExpansion = {
 	-- Classic Dungeons
 	[285] = { expansionID = Expansion.Classic, typeID = DungeonType.Dungeon },
@@ -164,7 +171,13 @@ local function parseAndCacheActivityInfo(activityID, activityKey, overrides)
     if activityInfo then -- spoofed entries will be nil
         local additionalInfo = activityGroupExpansion[activityInfo.groupFinderActivityGroupID]
         local typeID = activityCategoryDungeonType[activityInfo.categoryID]
-        assert(typeID == additionalInfo.typeID, "Debug Check failed. Mismatch TypeID needs to be handled for activity", activityID, typeID, additionalInfo.typeID)
+        assert(typeID, [[Runtime check failed. Activity missing DungeonType ID, check `activityCategoryDungeonType` table]], {
+			activityID = activityID,
+			activity = activityInfo.fullName,
+			typeIDFromCategory = typeID or "nil",
+			categoryID = activityInfo.categoryID,
+		})
+
         local minLevel, maxLevel = getBestActivityLevelRange(activityKey, activityInfo)
         info = { ---@type DungeonInfo
             name = getBestActivityName(activityInfo, typeID, additionalInfo.expansionID),

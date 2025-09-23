@@ -943,7 +943,7 @@ local dungeonTags = {
 
 	-- Mists of Pandaria specific dungeons/raids
 	MSV = { -- "Mogu'shan Vaults"
-		enGB = "msv vaults",
+		enGB = "mgsv msv vaults elegon",
     },
     NIUZAO_TEMPLE = { -- "Siege of Niuzao Temple"
 		enGB = "niu niuzao temple nt",
@@ -955,16 +955,16 @@ local dungeonTags = {
 		enGB = "scarlet halls sh",
     },
     TOT = { -- "Throne of Thunder"
-		enGB = "tot tot10 tot25",
+		enGB = "tot tot10 tot25 thunder",
     },
     MSP = { -- "Mogu'shan Palace"
-		enGB = "palace msp",
+		enGB = "mogu palace msp",
     },
     TOTJS = { -- "Temple of the Jade Serpent"
 		enGB = "jade serpent totjs",
     },
     SPM = { -- "Shado-Pan Monastery"
-		enGB = "monastery spm",
+		enGB = "shadopan monastery spm",
     },
     BREWERY = { -- "Stormstout Brewery"
 		enGB = "brewery stormstout sb brew",
@@ -975,6 +975,26 @@ local dungeonTags = {
     HEART_OF_FEAR = { -- "Heart of Fear"
 		enGB = "heart hof",
     },
+
+	-- Mists of Pandaria World Bosses
+	SHA_OF_ANGER = { -- Sha of Anger
+		enGB = "sha shanger",
+	},
+	GALLEON = { -- Galleon
+		enGB = "galleon gal",
+	},
+	NALAK = { -- Nalak
+		enGB = "nalak nal",
+	},
+	OONDASTA = { -- Oondasta
+		enGB = "oondasta ond oond",
+	},
+	ORDOS = { -- Ordos
+		enGB = "ordos ord",
+	},
+	-- FOUR_CELESTIALS = { -- Four Celestials (Unused)
+	-- 	enGB = "chiji xuen yulon niuzao celestials",
+	-- },
 
 	-- PvP
 	RBG = { -- 10v10 Rated Battleground
