@@ -26,6 +26,80 @@ NWB.options = {
 			fontSize = "medium",
 			order = 2,
 		},
+		layersHeader = {
+			type = "header",
+			name = NWB.prefixColor .. L["layersHeaderDesc"],
+			order = 80,
+		},
+		minimapLayerFrame = {
+			type = "toggle",
+			name = L["minimapLayerFrameTitle"],
+			desc = L["minimapLayerFrameDesc"],
+			order = 81,
+			get = "getMinimapLayerFrame",
+			set = "setMinimapLayerFrame",
+		},
+		minimapLayerHover = {
+			type = "toggle",
+			name = L["minimapLayerHoverTitle"],
+			desc = L["minimapLayerHoverDesc"],
+			order = 82,
+			get = "getMinimapLayerHover",
+			set = "setMinimapLayerHover",
+		},
+		minimapLayerFrameReset = {
+			type = "execute",
+			name = L["minimapLayerFrameResetTitle"],
+			desc = L["minimapLayerFrameResetDesc"],
+			func = "resetMinimapLayerFrame",
+			order = 83,
+		},
+		minimapLayerZoneID = {
+			type = "toggle",
+			name = L["minimapLayerZoneIDTitle"],
+			desc = L["minimapLayerZoneIDDesc"],
+			order = 84,
+			get = "getMinimapLayerZoneID",
+			set = "setMinimapLayerZoneID",
+		},
+		minimapLayerZoneIDTooltip = {
+			type = "toggle",
+			name = L["minimapLayerZoneIDTooltipTitle"],
+			desc = L["minimapLayerZoneIDTooltipDesc"],
+			order = 85,
+			get = "getMinimapLayerZoneIDTooltip",
+			set = "setMinimapLayerZoneIDTooltip",
+			width = 2,
+		},
+		minimapLayerFont = {
+			type = "select",
+			name = L["minimapLayerFontTitle"],
+			desc = L["minimapLayerFontDesc"],
+			values = NWB.LSM:HashTable("font"),
+			dialogControl = "LSM30_Font",
+			order = 86,
+			get = "getMinimapLayerFont",
+			set = "setMinimapLayerFont",
+		},
+		minimapLayerFontSize = {
+			type = "range",
+			name = L["minimapLayerFontSizeTitle"],
+			desc = L["minimapLayerFontSizeDesc"],
+			order = 87,
+			get = "getMinimapLayerFontSize",
+			set = "setMinimapLayerFontSize",
+			min = 6,
+			max = 20,
+			softMin = 6,
+			softMax = 20,
+			step = 1,
+			width = 1.5,
+		},
+		generalHeader = {
+			type = "header",
+			name = NWB.prefixColor .. L["generalHeaderDesc"],
+			order = 100,
+		},
 		mainText = {
 			type = "description",
 			name = "|cFF9CD6DE" .. L["mainTextDesc"],
@@ -55,11 +129,6 @@ NWB.options = {
 			func = "openBuffListFrame",
 			order = 106,
 			width = 1,
-		},
-		generalHeader = {
-			type = "header",
-			name = NWB.prefixColor .. L["generalHeaderDesc"],
-			order = 100,
 		},
 		showWorldMapMarkers = {
 			type = "toggle",
@@ -167,14 +236,6 @@ NWB.options = {
 			get = "getMinimapButton",
 			set = "setMinimapButton",
 		},
-		minimapLayerHover = {
-			type = "toggle",
-			name = L["minimapLayerHoverTitle"],
-			desc = L["minimapLayerHoverDesc"],
-			order = 122,
-			get = "getMinimapLayerHover",
-			set = "setMinimapLayerHover",
-		},
 		showBuffStats = {
 			type = "toggle",
 			name = L["showBuffStatsTitle"],
@@ -280,30 +341,7 @@ NWB.options = {
 			set = "setShowNaxxMinimapMarkers",
 		},
 		--Shat world markers TBC order = 133.
-		minimapLayerFont = {
-			type = "select",
-			name = L["minimapLayerFontTitle"],
-			desc = L["minimapLayerFontDesc"],
-			values = NWB.LSM:HashTable("font"),
-			dialogControl = "LSM30_Font",
-			order = 134,
-			get = "getMinimapLayerFont",
-			set = "setMinimapLayerFont",
-		},
-		minimapLayerFontSize = {
-			type = "range",
-			name = L["minimapLayerFontSizeTitle"],
-			desc = L["minimapLayerFontSizeDesc"],
-			order = 135,
-			get = "getMinimapLayerFontSize",
-			set = "setMinimapLayerFontSize",
-			min = 6,
-			max = 20,
-			softMin = 6,
-			softMax = 20,
-			step = 1,
-			width = 1.5,
-		},
+		
 		--This needs further work since changing the scale messes up the position.
 		--[[minimapLayerScale = {
 			type = "range",
@@ -1646,23 +1684,6 @@ function NWB:loadSpecificOptions()
 			set = "setGuildNpcWalking",
 		};
 	end
-	if (NWB.isLayered) then
-		NWB.options.args["minimapLayerFrame"] = {
-			type = "toggle",
-			name = L["minimapLayerFrameTitle"],
-			desc = L["minimapLayerFrameDesc"],
-			order = 118,
-			get = "getMinimapLayerFrame",
-			set = "setMinimapLayerFrame",
-		};
-		NWB.options.args["minimapLayerFrameReset"] = {
-			type = "execute",
-			name = L["minimapLayerFrameResetTitle"],
-			desc = L["minimapLayerFrameResetDesc"],
-			func = "resetMinimapLayerFrame",
-			order = 119,
-		};
-	end
 	if (NWB.isSOD) then
 		NWB.options.args["sodHeader"] = {
 			type = "header",
@@ -1970,6 +1991,8 @@ NWB.optionDefaults = {
 		showBuffStats = false,
 		showBuffAllStats = false,
 		minimapLayerHover = false,
+		minimapLayerZoneID = false,
+		minimapLayerZoneIDTooltip = true,
 		timerLogShowRend = true,
 		timerLogShowOny = true,
 		timerLogShowNef = true,
@@ -2062,6 +2085,10 @@ NWB.optionDefaults = {
 		printBlackrockHonor = true,
 	},
 };
+
+if (NWB.classic) then
+	NWB.optionDefaults.global.minimapLayerZoneIDTooltip = true;
+end
 
 function NWB:resetMinimapPosition()
 	NWB.db.global.minimapIcon = NWB.optionDefaults.global.minimapIcon;
@@ -2308,18 +2335,19 @@ end
 
 function NWB:checkNewVersion()
 	--NWB.db.global.versions = {};
-	local newVersionNotes = 3.10;
+	local newVersionNotes = 3.14;
 	if (NWB.version and NWB.version == newVersionNotes) then
 		if (not NWB.db.global.versions[NWB.version]) then
-			if (NWB.isMOP) then
+			--if (NWB.isMOP) then
 				--if (NWB:GetCurrentRegion() == 1 and not string.match(NWB.realm, "(AU)")) then
 					local notes = {
-						"Fixed layer detection in MoP, Pandaria layers are seperate than Azeroth now so the addon creates it's layers from the shrine capitals in Vale of Eternal blossoms, the old zones in Azeroth are likely just a permanent single layer (the same as Northrend worked separately in in Wrath).",
-						"There may multiple updates to get the MoP system working correctly with these same patch notes."
+						"Added option to show the current zone ID beside your layer on minimap (|cFFFF0000disabled|r by default).",
+						"Added option to show a list of all layers and zone IDs for your current zone when you mouseover the minimap layer text (|cFF00FF00enabled|r by default).",
+						"Merged layer display options into thier own section at the top of the config page.",
 					};
 					loadNewVersionFrame(NWB.version, notes, "Nova World Buffs", "Interface\\Icons\\inv_misc_head_dragon_01", -50, 350);
 				--end
-			end
+			--end
 			--Wipe old data.
 			NWB.db.global.versions = {};
 			--Set this version has been loaded before.
@@ -2456,7 +2484,8 @@ end
 --Reset colors.
 function NWB:resetMinimapLayerFrame(info)
 	MinimapLayerFrame:ClearAllPoints();
-	MinimapLayerFrame:SetPoint("BOTTOM", Minimap, 2, 4);
+	--MinimapLayerFrame:SetPoint("BOTTOM", Minimap, 2, 4);
+	MinimapLayerFrame:SetPoint("BOTTOM", Minimap, "BOTTOM", 0, 4);
 end
 --Colorize chat prefix in all chat channels.
 function NWB:setColorizePrefixLinks(info, value)
@@ -3544,6 +3573,26 @@ end
 
 function NWB:getMinimapLayerHover(info)
 	return self.db.global.minimapLayerHover;
+end
+
+--Show minimap zoneID.
+function NWB:setMinimapLayerZoneID(info, value)
+	self.db.global.minimapLayerZoneID = value;
+	NWB:updateMinimapLayerFrameTextFromCache();
+end
+
+function NWB:getMinimapLayerZoneID(info)
+	return self.db.global.minimapLayerZoneID;
+end
+
+--Show minimap zoneID tooltip.
+function NWB:setMinimapLayerZoneIDTooltip(info, value)
+	self.db.global.minimapLayerZoneIDTooltip = value;
+	NWB:updateMinimapLayerFrameTextFromCache();
+end
+
+function NWB:getMinimapLayerZoneIDTooltip(info)
+	return self.db.global.minimapLayerZoneIDTooltip;
 end
 
 --Trim data of characters below this level.
