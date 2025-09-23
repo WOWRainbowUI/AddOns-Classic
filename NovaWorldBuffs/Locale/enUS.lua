@@ -1114,3 +1114,13 @@ L["Shadow Labyrinth"] = "Shadow Labyrinth";
 L["Auchindoun"] = "Auchindoun";
 L["Tempest Keep"] = "Tempest Keep";
 L["Caverns of Time"] = "Caverns of Time";
+
+L["layersHeaderDesc"] = "Layer Options";
+
+L["minimapLayerZoneIDTitle"] = "Show Minimap ZoneID";
+L["minimapLayerZoneIDDesc"] = "This will display the zoneID for your current zone beside your current layer number.";
+
+L["minimapLayerZoneIDTooltipTitle"] = "Minimap ZoneIDs Tooltip";
+L["minimapLayerZoneIDTooltipDesc"] = "This will make the mouseover tooltip show all layer zoneID's for your current zone so you can compare it with your alt on another faction or whatever reason.";
+			
+L["Unknown"] = "Unknown";

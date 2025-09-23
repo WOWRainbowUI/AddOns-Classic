@@ -4061,7 +4061,7 @@ function NWB:getTerokkarData()
 										NWB.lastKnownLayerMapID = 0;
 										NWB.lastKnownLayerMapIDBackup = 0;
 										NWB.lastKnownLayerMapID_Mapping = 0;
-										NWB.currentZoneID = 0;
+										NWB.currentZoneIDStrict = 0;
 										NWB.lastTerokNPCID = nil;
 										terokCache = nil;
 									--Make sure a cache exists.

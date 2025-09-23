@@ -3624,8 +3624,8 @@ function NWB:GetLayerNum(zoneID)
 end
 
 function NWB:getCurrentLayerZoneID()
-	if (NWB.currentZoneID and NWB.currentZoneID > 0) then
-		return NWB.currentZoneID;
+	if (NWB.currentZoneIDStrict and NWB.currentZoneIDStrict > 0) then
+		return NWB.currentZoneIDStrict;
 	end
 end
 
@@ -3904,11 +3904,13 @@ function NWB:createBroker()
 		icon = "Interface\\Icons\\inv_misc_head_dragon_01",
 		OnClick = function(self, button)
 			if (button == "LeftButton" and IsShiftKeyDown()) then
-				if (WorldMapFrame and WorldMapFrame:IsShown()) then
-					WorldMapFrame:Hide();
-				else
-					WorldMapFrame:Show();
-					WorldMapFrame:SetMapID(1448);
+				if (NWB.isClassic) then
+					if (WorldMapFrame and WorldMapFrame:IsShown()) then
+						WorldMapFrame:Hide();
+					else
+						WorldMapFrame:Show();
+						WorldMapFrame:SetMapID(1448);
+					end
 				end
 			elseif (NWB.isLayered and button == "LeftButton" and IsControlKeyDown()) then
 				NWB:openLFrame();
@@ -4687,7 +4689,9 @@ function NWB:updateMinimapButton(tooltip, frame)
 	end
 	tooltip:AddLine("|cFF9CD6DE" .. L["Left-Click"] .. "|r " .. L["Timers"]);
 	tooltip:AddLine("|cFF9CD6DE" .. L["Right-Click"] .. "|r " .. L["Buffs"]);
-	tooltip:AddLine("|cFF9CD6DE" .. L["Shift Left-Click"] .. "|r " .. L["Felwood Map"]);
+	if (NWB.isClassic) then
+		tooltip:AddLine("|cFF9CD6DE" .. L["Shift Left-Click"] .. "|r " .. L["Felwood Map"]);
+	end
 	tooltip:AddLine("|cFF9CD6DE" .. L["Shift Right-Click"] .. "|r " .. L["Config"]);
 	if (NWB.isLayered) then
 		tooltip:AddLine("|cFF9CD6DE" .. L["Control Left-Click"] .. "|r " .. L["Guild Layers"]);
@@ -4828,8 +4832,22 @@ function NWB:sendBigWigs(time, msg, type)
 		--This cooldown is checked in the first yell func instead.
 		--if (GetServerTime() - NWB.firstYells[type] > NWB.buffDropSpamCooldown) then
 		if (NWB:isCapitalCityAction(type)) then
-			if (SlashCmdList.localbar) then
-				SlashCmdList.localbar(time .. " " .. msg);
+			local icon;
+			if (type == "ony" or type == "nef") then
+				icon = 134153;
+			elseif (type == "rend" or type == "herald") then
+				icon = 135759;
+			elseif (type == "zan") then
+				icon = 132107;
+			else
+				--An icon is required or lua error.
+				--Use ony as a backup, every call for this func should already have an above type attached but just incase something is added later.
+				icon = 134153;
+			end
+			if (BigWigsAPI and BigWigsAPI.CreateBarFromAddon) then
+				BigWigsAPI.CreateBarFromAddon(addonName, msg, icon, time);
+				--Don't really need a msg at this point, NWB does a msg already and the old way doesn't show a msg when the bar starts only when it ended?
+				--BigWigsAPI.CreateMessageFromAddon(addonName, msg, icon);
 			end
 		end
 		--end
@@ -9618,7 +9636,7 @@ function NWB:recalclayerFrame(isLogon, copyPaste)
 		NWBlayerFrame.fs3:SetText("Out of date version " .. version .. " (New version: "
 				.. NWB.latestRemoteVersion .. ")\nPlease update so your timers are accurate.");
 	end
-	--Add 2 extra blank lines to you can scroll layer data up past text at bottom of the frame.
+	--Add 2 extra blank lines to you can scroll layer data up past text at bottom of the frame.print(
 	NWBlayerFrame.EditBox:Insert("\n\n\n");
 	--Set the bottom text position depending on if there's a scrollable area or not.
 	if (NWBlayerFrame.EditBox:GetHeight() > (NWBlayerFrame:GetHeight() - NWBlayerFrame.fs3:GetHeight())) then
@@ -9663,7 +9681,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 			NWB.lastKnownLayerMapID = 0;
 			NWB.lastKnownLayerMapZoneID = 0;
 			NWB.lastKnownLayerMapID_Mapping = 0;
-			NWB.currentZoneID = 0;
+			NWB.currentZoneIDStrict = 0;
 			--NWB.lastJoinedGroup = GetServerTime();
 		end
 		C_Timer.After(NWB.lastKnownLayerMapIDBackupValidFor, function()
@@ -9671,12 +9689,13 @@ f:SetScript('OnEvent', function(self, event, ...)
 		end)
 	elseif (event == "ZONE_CHANGED_NEW_AREA") then
 		NWB:recalcMinimapLayerFrame();
-		--Check if we just logged on so as not to block setting a new currentZoneID.
+		--Check if we just logged on so as not to block setting a new currentZoneIDStrict.
 		if ((GetServerTime() - logonEnteringWorld) > 5) then
 			--NWB:debug("zone change");
 			NWB.lastZoneChange = GetServerTime();
 		end
 		NWB.currentZoneID = 0;
+		NWB.currentZoneIDStrict = 0;
 		NWB.lastCurrentZoneID = 0;
 		NWB.phaseCheck = 0;
 	elseif (event == "PLAYER_ENTERING_WORLD") then
@@ -9686,10 +9705,11 @@ f:SetScript('OnEvent', function(self, event, ...)
 			NWB.lastZoneChange = GetServerTime();
 		end
 		NWB.currentZoneID = 0;
+		NWB.currentZoneIDStrict = 0;
 		NWB.lastCurrentZoneID = 0;
 	elseif (event == "PLAYER_LEAVING_WORLD") then
 		NWB.lastZoneChange = GetServerTime();
-		NWB.currentZoneID = 0;
+		NWB.currentZoneIDStrict = 0;
 	elseif (event == "UNIT_PHASE") then
 		local unit = ...;
 		--This event fires for team members not for self.
@@ -9702,7 +9722,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 			--end
 			NWB.currentLayer = 0;
 			NWB_CurrentLayer = 0;
-			NWB.currentZoneID = 0;
+			NWB.currentZoneIDStrict = 0;
 			NWB:recalcMinimapLayerFrame(nil, event, unit);
 		end
 	end
@@ -9712,7 +9732,7 @@ function NWB:joinedGroupLayer()
 	NWB.lastKnownLayerMapID = 0;
 	NWB.lastKnownLayerMapZoneID = 0;
 	NWB.lastKnownLayerMapID_Mapping = 0;
-	NWB.currentZoneID = 0;
+	NWB.currentZoneIDStrict = 0;
 	NWB.lastCurrentZoneID = 0;
 	NWB.phaseCheck = nil;
 	NWB.lastKnownLayerID = 0;
@@ -9765,8 +9785,9 @@ NWB.lastKnownLayerMapZoneID = 0;
 NWB.lastKnownLayerMapID_Mapping = 0; --More strict layerMapID, can only be set in capitals and zones with timers can only be mapped by this.
 NWB.lastKnownLayerMapIDBackup = 0; --Only used for songflowers if logging on in a group.
 NWB.lastKnownLayerMapIDBackupValidFor = 120; --How long after logon this can be valid for.
-NWB.currentZoneID = 0;
-NWB.lastCurrentZoneID = 0;
+NWB.currentZoneID = 0; --This is relaxed checking and just updates from the world when it can, not used for any timers etc, just layer display stuff.
+NWB.currentZoneIDStrict = 0; --This is often just 0, it's used for strict timer setting purposes for world buffs and terokker timers.
+NWB.lastCurrentZoneID = 0; --This isn't currently used, was used for testing.
 NWB.phaseCheck = 0;
 NWB.validZoneIDTimer = nil;
 NWB.AllowCurrentZoneID = true;
@@ -9832,7 +9853,7 @@ function NWB:setCurrentLayerText(unit)
 				NWB.lastKnownLayerMapZoneID = tonumber(zoneID);
 			end
 			NWB.lastKnownLayerTime = GetServerTime();
-			NWB:recalcMinimapLayerFrame();
+			NWB:recalcMinimapLayerFrame(k);
 			--Update layer created time any time we target a NPC on this layer in capital city.
 			--To help layers persist better overnight but not after server restarts.
 			--But only if the player has had a valid timer previously.
@@ -9847,8 +9868,8 @@ function NWB:setCurrentLayerText(unit)
 					and (GetServerTime() - NWB.lastJoinedGroup) > 600
 					and (GetServerTime() - NWB.lastZoneChange) > 30) then
 					--and NWB.lastCurrentZoneID ~= tonumber(zoneID)) then
-				NWB.currentZoneID = tonumber(zoneID);
-				--NWB:debug("NWB.currentZoneID update", NWB.currentZoneID);
+				NWB.currentZoneIDStrict = tonumber(zoneID);
+				--NWB:debug("NWB.currentZoneIDStrict update", NWB.currentZoneIDStrict);
 				--NWB.lastCurrentZoneID is not reset when joining group.
 				--So when you join a group you can't get another valid zoneID from the same layer and then phase over after it bringing the wrong zoneID with you.
 				NWB.lastCurrentZoneID = tonumber(zoneID);
@@ -10143,6 +10164,7 @@ function NWB:mapCurrentLayer(unit)
 		return;
 	end
 	zoneID = tonumber(zoneID);
+	NWB.currentZoneID = zoneID;
 	--If in Felwood and within the first few minutes after logon set the backup zoneID for songflowers.
 	if (zone == 1448 and (GetServerTime() - logonEnteringWorld) < NWB.lastKnownLayerMapIDBackupValidFor) then
 		--Most people logon at the songflower in the last few seconds, if they are grouped it will fail before because they had no lastKnownLayerMapID.
@@ -10219,7 +10241,7 @@ function NWB:mapCurrentLayer(unit)
 		end
 	else
 		--Seeing if this fixes a bug with incorrect layer mapping.
-		-- TODO This should be tweaked and set to a sensible group join time after testing this dalaram layer version.
+		-- TODO This should be tweaked and set to a sensible group join time after testing this dalaran layer version.
 		if (NWB.lastJoinedGroup > 0) then
 			--Never map new zones if group has been joined, but still show layer it will almost always still be accurate (just not accurate enough to map layers).
 			NWB:recalcMinimapLayerFrame(zoneID);
@@ -10307,7 +10329,7 @@ function NWB:mapCurrentLayer(unit)
 			--NWB:debug("zoneid already known");
 		end
 	end
-	NWB:recalcMinimapLayerFrame();
+	NWB:recalcMinimapLayerFrame(zoneID);
 end
 
 function NWB:validateZoneID(zoneID, layerID, mapID)
@@ -10769,32 +10791,66 @@ end
 --end
 	
 local MinimapLayerFrame = CreateFrame("Frame", "MinimapLayerFrame", Minimap, "ThinGoldEdgeTemplate");
-MinimapLayerFrame:SetPoint("BOTTOM", 2, 4);
+--MinimapLayerFrame:SetPoint("BOTTOM", 2, 4);
+MinimapLayerFrame:SetPoint("BOTTOM", Minimap, "BOTTOM", 0, 4);
 MinimapLayerFrame:SetFrameStrata("HIGH");
 MinimapLayerFrame:SetFrameLevel(9);
 MinimapLayerFrame:SetMovable(true);
 MinimapLayerFrame.fs = MinimapLayerFrame:CreateFontString("MinimapLayerFrameFS", "ARTWORK");
 MinimapLayerFrame.fs:SetPoint("CENTER", 0, 0);
---MinimapLayerFrame.fs:SetFont("Fonts\\ARIALN.ttf", 10); --No region font here, "Layer" in english always.
 MinimapLayerFrame.fs:SetFont(NWB.regionFont, 10);
 MinimapLayerFrame.fs:SetText(L["No Layer"]);
 MinimapLayerFrame:SetWidth(46);
 MinimapLayerFrame:SetHeight(17);
+MinimapLayerFrame.width = MinimapLayerFrame:GetWidth();
 MinimapLayerFrame:Hide();
 MinimapLayerFrame.tooltip = CreateFrame("Frame", "NWBVersionDragTooltip", MinimapLayerFrame, "TooltipBorderedFrameTemplate");
-MinimapLayerFrame.tooltip:SetPoint("CENTER", MinimapLayerFrame, "TOP", 0, 12);
+MinimapLayerFrame.tooltip:SetPoint("BOTTOM", MinimapLayerFrame, "TOP", 0, 1);
 MinimapLayerFrame.tooltip:SetFrameStrata("TOOLTIP");
 MinimapLayerFrame.tooltip:SetFrameLevel(9);
---MinimapLayerFrame.tooltip:SetAlpha(.9);
+MinimapLayerFrame.tooltip:SetBackdropColor(0, 0, 0, 1);
+--MinimapLayerFrame.tooltip:SetAlpha(1);
 MinimapLayerFrame.tooltip.fs = MinimapLayerFrame.tooltip:CreateFontString("NWBVersionDragTooltipFS", "ARTWORK");
 MinimapLayerFrame.tooltip.fs:SetPoint("CENTER", 0, 0.5);
 MinimapLayerFrame.tooltip.fs:SetFont(NWB.regionFont, 10);
-MinimapLayerFrame.tooltip.fs:SetText(L["Hold Shift to drag"]);
-MinimapLayerFrame.tooltip:SetWidth(MinimapLayerFrame.tooltip.fs:GetStringWidth() + 10);
-MinimapLayerFrame.tooltip:SetHeight(MinimapLayerFrame.tooltip.fs:GetStringHeight() + 10);
+MinimapLayerFrame.tooltip.fs:SetJustifyH("LEFT");
+--MinimapLayerFrame.updateTooltip = function(text)
+--	MinimapLayerFrame.tooltip.fs:SetText(text);
+--	MinimapLayerFrame.tooltip:SetWidth(MinimapLayerFrame.tooltip.fs:GetStringWidth() + 10);
+--	MinimapLayerFrame.tooltip:SetHeight(MinimapLayerFrame.tooltip.fs:GetStringHeight() + 10);
+--end
+--MinimapLayerFrame.updateTooltip(L["Hold Shift to drag"]);
+MinimapLayerFrame.tooltipText = L["Hold Shift to drag"];
+MinimapLayerFrame.updateTooltip = function(text)
+	if (NWB.db.global.minimapLayerZoneIDTooltip) then
+		MinimapLayerFrame.tooltipText = text;
+	else
+		--Otherwise just show the normal tooltip.
+		MinimapLayerFrame.tooltipText = L["Hold Shift to drag"];
+	end
+end
 MinimapLayerFrame:SetScript("OnEnter", function(self)
 	if (NWB.isLayered) then
-		MinimapLayerFrame.tooltip:Show();
+		if (MinimapLayerFrame.tooltipText == L["Hold Shift to drag"]) then
+			--Show tooltip normally.
+			MinimapLayerFrame.tooltip.fs:SetText(MinimapLayerFrame.tooltipText);
+			MinimapLayerFrame.tooltip:SetWidth(MinimapLayerFrame.tooltip.fs:GetStringWidth() + 10);
+			MinimapLayerFrame.tooltip:SetHeight(MinimapLayerFrame.tooltip.fs:GetStringHeight() + 10);
+			MinimapLayerFrame.tooltip:ClearAllPoints();
+			MinimapLayerFrame.tooltip:SetPoint("BOTTOM", MinimapLayerFrame, "TOP", 0, 1);
+			MinimapLayerFrame.tooltip:Show();
+		elseif (MinimapLayerFrame.tooltipText ~= "") then
+			--If we're showing zoneID's then expand the frame upwards to show all layers instead.
+			--MinimapLayerFrame.fs:SetText(MinimapLayerFrame.tooltipText);
+			--MinimapLayerFrame:SetWidth(MinimapLayerFrame.fs:GetStringWidth() + 10);
+			--MinimapLayerFrame:SetHeight(MinimapLayerFrame.fs:GetStringHeight() + 10);
+			MinimapLayerFrame.tooltip.fs:SetText(MinimapLayerFrame.tooltipText);
+			MinimapLayerFrame.tooltip:SetWidth(MinimapLayerFrame.tooltip.fs:GetStringWidth() + 10);
+			MinimapLayerFrame.tooltip:SetHeight(MinimapLayerFrame.tooltip.fs:GetStringHeight() + 10);
+			MinimapLayerFrame.tooltip:ClearAllPoints();
+			MinimapLayerFrame.tooltip:SetPoint("BOTTOM", MinimapLayerFrame, "BOTTOM", 0, 0);
+			MinimapLayerFrame.tooltip:Show();
+		end
 		if (NWB.db.global.minimapLayerHover) then
 			MinimapLayerFrame:Show();
 		end
@@ -10828,6 +10884,92 @@ MinimapLayerFrame:SetScript("OnHide", function(self)
 		self.isMoving = false;
 	end
 end)
+
+local function getMinimapLayerFrameTextZoneIDTooltip(zoneID)
+	--if (not NWB.db.global.minimapLayerZoneIDTooltip) then
+	--	MinimapLayerFrame.updateTooltip(L["Hold Shift to drag"]);
+	--	return;
+	--end
+	local _, _, zone = NWB:GetPlayerZonePosition();
+	if (not zone) then
+		return "";
+	end
+	local zoneName = NWB.dragonLib:GetLocalizedMap(zone);
+	if (not zoneID) then
+		--Backup check, try and match NWB.lastKnownLayerMapID to current zone.
+		for k, v in pairs(NWB.data.layers) do
+			if (v.layerMap and next(v.layerMap)) then
+				for zoneIDFromDB, mapID in pairs(v.layerMap) do
+					if (mapID == zone and zoneIDFromDB == NWB.currentZoneID) then
+						zoneID = NWB.currentZoneID;
+					end
+				end
+			end
+		end
+	end
+	local text = "|cFFFFFF00" .. (zoneName or "Unknown") .. "|r";
+	local count = 0;
+	for k, v in NWB:pairsByKeys(NWB.data.layers) do
+		count = count + 1;
+		local currentLayer;
+		text = text..  "\n";
+		local zoneIDText = " |cFF989898(" .. L["Unknown"] .. ")|r";
+		if (zone == NWB.map) then
+			if (k == zoneID) then
+				zoneIDText = " |cFFFFFFFF(" .. k .. ")|r";
+				currentLayer = true;
+			else
+				zoneIDText = " |cFF989898(" .. k .. ")|r";
+			end
+		else
+			if (v.layerMap and next(v.layerMap)) then
+				for zoneIDFromDB, mapID in pairs(v.layerMap) do
+					if (mapID == zone) then
+						found = true;
+						if (zoneIDFromDB == zoneID) then
+							zoneIDText = " |cFFFFFFFF(" .. zoneIDFromDB .. ")|r";
+							currentLayer = true;
+						else
+							zoneIDText = " |cFF989898(" .. zoneIDFromDB .. ")|r";
+						end
+					end
+				end
+			end
+		end
+		if (currentLayer) then
+			text = text..  "|cffffffff[" .. L["Layer"] .. " " .. count .. "]|r " .. zoneIDText;
+		else
+			text = text..  "|cFF989898[" .. L["Layer"] .. " " .. count .. "]|r " .. zoneIDText;
+		end
+	end
+	return text;
+end
+
+local function updateMinimapLayerFrameText(text, size, zoneID)
+	if (zoneID and NWB.db.global.minimapLayerZoneID) then
+		MinimapLayerFrame.fs:SetText(text .. " |cFF989898(" .. zoneID .. ")|r");
+		MinimapLayerFrame:SetWidth(MinimapLayerFrame.fs:GetWidth() + 12); --Also set in the refresh func.
+	else
+		MinimapLayerFrame.fs:SetText(text);
+		MinimapLayerFrame:SetWidth(MinimapLayerFrame.width);
+	end
+	if (NWB.db.global.minimapLayerZoneIDTooltip) then
+		MinimapLayerFrame.updateTooltip(getMinimapLayerFrameTextZoneIDTooltip(zoneID));
+	else
+		MinimapLayerFrame.updateTooltip(L["Hold Shift to drag"]);
+	end
+end
+
+--This is mainly just called when updating options etc, recalc frame from last known data.
+function NWB:updateMinimapLayerFrameTextFromCache()
+	if (NWB.currentLayer > 0) then
+		updateMinimapLayerFrameText(NWB.mmColor .. L["Layer"] .. " " .. NWB.lastKnownLayer, 12, NWB.currentZoneID);
+		NWB_CurrentLayer = NWB.lastKnownLayer;
+	else
+		updateMinimapLayerFrameText(NWB.mmColor .. L["No Layer"], 10);
+		NWB_CurrentLayer = 0;
+	end
+end
 
 --zoneID only get passed to this function when we're on team join cooldown from NWB:mapCurrentLayer().
 NWB.currentLayer = 0;
@@ -10875,16 +11017,13 @@ function NWB:recalcMinimapLayerFrame(zoneID, event, unit)
 	--		or (NWB.faction == "Alliance" and zone == 1453)) then
 	if (foundLayer or zone == NWB.map) then
 		if (NWB.currentLayer > 0) then
-			MinimapLayerFrame.fs:SetText(NWB.mmColor .. L["Layer"] .. " " .. NWB.lastKnownLayer);
-			MinimapLayerFrame.fs:SetFont("Fonts\\ARIALN.ttf", 12);
+			updateMinimapLayerFrameText(NWB.mmColor .. L["Layer"] .. " " .. NWB.lastKnownLayer, 12, zoneID);
 			NWB_CurrentLayer = NWB.lastKnownLayer;
 		elseif (layerNum > 0) then
-			MinimapLayerFrame.fs:SetText(NWB.mmColor .. L["Layer"] .. " " .. layerNum);
-			MinimapLayerFrame.fs:SetFont("Fonts\\ARIALN.ttf", 12);
+			updateMinimapLayerFrameText(NWB.mmColor .. L["Layer"] .. " " .. layerNum, 12, zoneID);
 			NWB_CurrentLayer = layerNum;
 		else
-			MinimapLayerFrame.fs:SetText(NWB.mmColor .. L["No Layer"]);
-			MinimapLayerFrame.fs:SetFont("Fonts\\ARIALN.ttf", 10);
+			updateMinimapLayerFrameText(NWB.mmColor .. L["No Layer"], 10);
 			NWB_CurrentLayer = 0;
 		end
 		--MinimapLayerFrame:SetWidth(MinimapLayerFrame.fs:GetStringWidth() + 12);
@@ -10904,8 +11043,7 @@ function NWB:recalcMinimapLayerFrame(zoneID, event, unit)
 				if (v.layerMap and next(v.layerMap)) then
 					for zone, map in pairs(v.layerMap) do
 						if (zone == zoneID) then
-							MinimapLayerFrame.fs:SetText(L["Layer"] .. " " .. backupCount);
-							MinimapLayerFrame.fs:SetFont("Fonts\\ARIALN.ttf", 12);
+							updateMinimapLayerFrameText(L["Layer"] .. " " .. backupCount, 12, zoneID);
 							foundBackup = true;
 							NWB_CurrentLayer = backupCount;
 							if (NWB.isClassic and (GetServerTime() - NWB.lastJoinedGroup) > 10) then
@@ -10965,6 +11103,11 @@ end
 function NWB:refreshMinimapLayerFrame()
 	MinimapLayerFrame.fs:SetFont(NWB.LSM:Fetch("font", NWB.db.global.minimapLayerFont), NWB.db.global.minimapLayerFontSize);
 	--MinimapLayerFrame:SetScale(NWB.db.global.minimapLayerScale);
+	if (NWB.db.global.minimapLayerZoneID) then
+		MinimapLayerFrame:SetWidth(MinimapLayerFrame.fs:GetWidth() + 12); --Also set in the updateMinimapLayerFrameText() func.
+	else
+		MinimapLayerFrame:SetWidth(MinimapLayerFrame.width);
+	end
 end
 
 Minimap:HookScript("OnEnter", function(self, arg)
@@ -12263,7 +12406,7 @@ function NWB:heraldFound(sender, layer)
 		--		SlashCmdList.BIGWIGSLOCALBAR(time .. " " .. timerMsg);
 		--	end
 		--end
-		NWB:sendBigWigs(time, timerMsg);
+		NWB:sendBigWigs(time, timerMsg, "herald");
 	end
 end
 
@@ -12287,7 +12430,7 @@ function NWB:heraldYell()
 		if (_G["DBM"] and _G["DBM"].CreatePizzaTimer and NWB.isClassic) then
 			_G["DBM"]:CreatePizzaTimer(time, timerMsg);
 		end
-		NWB:sendBigWigs(time, timerMsg);
+		NWB:sendBigWigs(time, timerMsg, "herald");
 	end
 	NWB.lastHeraldYell = GetServerTime();
 end

@@ -577,11 +577,11 @@ local function combatLogEventUnfiltered(...)
 			local expirationTime = NWB:getBuffDuration(L["Rallying Cry of the Dragonslayer"], 2);
 			local _, _, zone = NWB:GetPlayerZonePosition();
 			if (expirationTime >= (7199.5  - buffLag)) then
-				if (((not NWB.noGUID or NWB.currentZoneID > 0) and (zone == 1453 or zone == 1454))
+				if (((not NWB.noGUID or NWB.currentZoneIDStrict > 0) and (zone == 1453 or zone == 1454))
 						or not NWB.isLayered) then
 					if (NWB.noGUID) then
-						NWB:debug("bufftest4", "self", UnitName("player"), NWB.currentZoneID, "noSourceGUID");
-						NWB:setNefBuff("self", UnitName("player"), NWB.currentZoneID, "noSourceGUID");
+						NWB:debug("bufftest4", "self", UnitName("player"), NWB.currentZoneIDStrict, "noSourceGUID");
+						NWB:setNefBuff("self", UnitName("player"), NWB.currentZoneIDStrict, "noSourceGUID");
 					elseif ((GetServerTime() - NWB.lastJoinedGroup) > 180) then
 						NWB:setNefBuff("self", UnitName("player"), zoneID, sourceGUID);
 					end
@@ -618,11 +618,11 @@ local function combatLogEventUnfiltered(...)
 			local expirationTime = NWB:getBuffDuration(L["Rallying Cry of the Dragonslayer"], 2);
 			local _, _, zone = NWB:GetPlayerZonePosition();
 			if (expirationTime >= (7199.5 - buffLag)) then
-				if (((not NWB.noGUID or NWB.currentZoneID > 0) and (zone == 1453 or zone == 1454))
+				if (((not NWB.noGUID or NWB.currentZoneIDStrict > 0) and (zone == 1453 or zone == 1454))
 					or not NWB.isLayered) then
 					if (NWB.noGUID) then
-						NWB:debug("bufftest4", "self", UnitName("player"), NWB.currentZoneID, "noSourceGUID");
-						NWB:setOnyBuff("self", UnitName("player"), NWB.currentZoneID, "noSourceGUID");
+						NWB:debug("bufftest4", "self", UnitName("player"), NWB.currentZoneIDStrict, "noSourceGUID");
+						NWB:setOnyBuff("self", UnitName("player"), NWB.currentZoneIDStrict, "noSourceGUID");
 					elseif ((GetServerTime() - NWB.lastJoinedGroup) > 180) then
 						NWB:setOnyBuff("self", UnitName("player"), zoneID, sourceGUID);
 					end
