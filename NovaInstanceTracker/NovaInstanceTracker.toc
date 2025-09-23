@@ -6,7 +6,7 @@
 ## Notes-ptBR: Rastreamento de bloqueios de instâncias com contagem de mobs/exp/oro/registros de comércio, registros de campos de batalha/arenas e muito mais.
 ## Title: Nova Instance Tracker
 ## Author: Novaspark-Arugal OCE
-## Version: 2.06
+## Version: 2.07
 ## SavedVariables: NITdatabase
 
 embeds.xml
