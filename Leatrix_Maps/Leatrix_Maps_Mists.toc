@@ -1,4 +1,4 @@
-## Interface: 50500
+## Interface: 50500, 50501
 
 ## Title: Leatrix Maps
 
@@ -16,9 +16,10 @@
 ## Notes-zhTW: curseforge.com/wow/addons/leatrix-maps
 ## Notes-zhCN: curseforge.com/wow/addons/leatrix-maps
 
-## Version: 5.0.06
+## Version: 5.0.09
 ## Author: Leatrix
 ## SavedVariables: LeaMapsDB
+## LoadSavedVariablesFirst: true
 
 ## OptionalDeps: Leatrix_enUS, ElvUI
 

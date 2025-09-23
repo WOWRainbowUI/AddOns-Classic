@@ -1,6 +1,6 @@
 ﻿
 	----------------------------------------------------------------------
-	-- 	Leatrix Maps 5.0.06 (27th August 2025)
+	-- 	Leatrix Maps 5.0.09 (17th September 2025)
 	----------------------------------------------------------------------
 
 	-- 10:Func, 20:Comm, 30:Evnt, 40:Panl
@@ -12,7 +12,7 @@
 	local LeaMapsLC, LeaMapsCB, LeaDropList, LeaConfigList, LeaLockList = {}, {}, {}, {}, {}
 
 	-- Version
-	LeaMapsLC["AddonVer"] = "5.0.06"
+	LeaMapsLC["AddonVer"] = "5.0.09"
 
 	-- Get locale table
 	local void, Leatrix_Maps = ...
@@ -2941,6 +2941,7 @@
 		or	(LeaMapsLC["ShowPointsOfInterest"] ~= LeaMapsDB["ShowPointsOfInterest"])	-- Show unexplored areas
 		or	(LeaMapsLC["HideTownCityIcons"] ~= LeaMapsDB["HideTownCityIcons"])			-- Hide town and city icons
 		or	(LeaMapsLC["EnhanceBattleMap"] ~= LeaMapsDB["EnhanceBattleMap"])			-- Enhance battlefield map
+		or	(LeaMapsLC["UseEnglishLanguage"] ~= LeaMapsDB["UseEnglishLanguage"])		-- Use English language
 		then
 			-- Enable the reload button
 			LeaMapsLC:LockItem(LeaMapsCB["ReloadUIButton"], false)
@@ -3361,6 +3362,7 @@
 				LeaMapsDB["ZoneMapMenu"] = 1
 				LeaMapsDB["ShowMinimapIcon"] = "On"
 				LeaMapsDB["minimapPos"] = 204 -- LeaMapsDB
+				LeaMapsDB["UseEnglishLanguage"] = "On"
 
 				ReloadUI()
 			elseif str == "help" then
@@ -3468,6 +3470,7 @@
 
 			LeaMapsLC:LoadVarNum("ZoneMapMenu", 1, 1, 3)				-- Zone map dropdown menu
 			LeaMapsLC:LoadVarChk("ShowMinimapIcon", "Off")				-- Show minimap button
+			LeaMapsLC:LoadVarChk("UseEnglishLanguage", "Off")			-- Use English language
 
 			-- Panel
 			LeaMapsLC:LoadVarAnc("MainPanelA", "CENTER")				-- Panel anchor
@@ -3578,6 +3581,7 @@
 
 			LeaMapsDB["ZoneMapMenu"] = LeaMapsLC["ZoneMapMenu"]
 			LeaMapsDB["ShowMinimapIcon"] = LeaMapsLC["ShowMinimapIcon"]
+			LeaMapsDB["UseEnglishLanguage"] = LeaMapsLC["UseEnglishLanguage"]
 
 			-- Panel
 			LeaMapsDB["MainPanelA"] = LeaMapsLC["MainPanelA"]
@@ -3703,6 +3707,7 @@
 	LeaMapsLC:MakeTx(PageF, "More", 225, -292)
 	LeaMapsLC:MakeCB(PageF, "EnhanceBattleMap", "Enhance battlefield map", 225, -312, true, "If checked, you will be able to customise the battlefield map.")
 	LeaMapsLC:MakeCB(PageF, "ShowMinimapIcon", "Show minimap button", 225, -332, false, "If checked, the minimap button will be shown.")
+	LeaMapsLC:MakeCB(PageF, "UseEnglishLanguage", "Use English language", 225, -352, true, "If checked, text used throughout the addon will be shown in English regardless of your game locale.")
 
 	LeaMapsLC:CfgBtn("IncreaseZoomBtn", LeaMapsCB["IncreaseZoom"])
 	LeaMapsLC:CfgBtn("RevTintBtn", LeaMapsCB["RevealMap"])
