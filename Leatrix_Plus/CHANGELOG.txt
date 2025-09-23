@@ -1,4 +1,13 @@
-﻿5.0.02 - 8th July 2025
+﻿5.0.09 - 17th September 2025
+- Added a new option called 'Use English language' ('Settings').  If enabled, text used throughout the addon will be shown in English regardless of your game locale.
+
+5.0.08 - 10th September 2025
+- PTR (5.5.1): Updated for Mists of Pandaria game patch 5.5.1.
+
+5.0.07 - 3rd September 2025
+- For 'Enhance minimap' ('Interface'), you can now set the square minimap border width.
+
+5.0.02 - 8th July 2025
 - For 'Enhance tooltip' ('Interface'), fixed an anchor to cursor positioning issue.
 - Updates for Mists of Pandaria Classic.
 
