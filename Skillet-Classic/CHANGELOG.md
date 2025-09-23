@@ -1,7 +1,21 @@
 # Skillet-Classic  -Ace3-
 
-## [2.17](https://github.com/b-morgan/Skillet-Classic/tree/2.17) (2025-07-30)
-[Full Changelog](https://github.com/b-morgan/Skillet-Classic/compare/2.16...2.17) [Previous Releases](https://github.com/b-morgan/Skillet-Classic/releases)
+## [2.18](https://github.com/b-morgan/Skillet-Classic/tree/2.18) (2025-09-22)
+[Full Changelog](https://github.com/b-morgan/Skillet-Classic/compare/2.17...2.18) [Previous Releases](https://github.com/b-morgan/Skillet-Classic/releases)
 
-- Update News  
-- Update data for 5.5.0.62258  
+- Fix Vanilla TOC  
+- Add vanilla TOC  
+- Update TOC, remove client specific TOC files  
+- Fix tcopy  
+- Fix LibDialog removal  
+- Merge branch 'master' of https://github.com/b-morgan/Skillet-Classic  
+- Remove LibDialog  
+- Update .pkgmeta  
+- Clean up search  
+- Fix typo  
+- Add options to clear tooltip cache  
+- Add tooltipCache and tooltipCount initialization  
+- Move tooltipCache to global and remove player index.  
+- Use '+' in Search for 'and'  
+- Update Enchanting Detail buttons  
+    Update Tooltip data collection  

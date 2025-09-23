@@ -473,9 +473,11 @@ function Skillet:FlushAllData()
 	Skillet.db.realm.bankData = {}
 	Skillet.db.realm.bankDetails = {}
 	Skillet.db.realm.userIgnoredMats = {}
+	Skillet:FlushPlayerData()
 	Skillet:FlushCustomData()
 	Skillet:FlushQueueData()
 	Skillet:FlushRecipeData()
+	Skillet:FlushDetailData()
 end
 
 --
@@ -532,10 +534,22 @@ function Skillet:FlushRecipeData()
 	Skillet.db.global.recipeDB = {}
 	Skillet.db.global.itemRecipeUsedIn = {}
 	Skillet.db.global.itemRecipeSource = {}
+	Skillet.db.global.tooltipCache = {}
+	Skillet.db.global.tooltipCount = {}
 	Skillet.db.realm.skillDB = {}
 	Skillet.db.realm.subClass = {}
 	Skillet.db.realm.invSlot = {}
 	Skillet:InitializeSkillLevels()
+end
+
+--
+-- Failures when searching for words in the tooltip
+-- can be caused by incomplete data in our cache.
+--
+function Skillet:FlushTooltipData()
+	DA.DEBUG(0,"FlushTooltipData()");
+	Skillet.db.global.tooltipCache = {}
+	Skillet.db.global.tooltipCount = {}
 end
 
 --
