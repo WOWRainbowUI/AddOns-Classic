@@ -476,11 +476,14 @@ function callbacks:Power()
 end
 
 function callbacks:HealthColor()
+
 	if self.vehicleunit and self.values.vehicle then
 		self.healthBar:SetColor(unpack(IUF.colordb.class.PET))
 	elseif self.values.tapped then
 		self.healthBar:SetColor(0.5, 0.5, 0.5)
 	elseif IUF.colordb.class[self.values.faction or ""] then
+
+
 		if self.healthBar.classColor and IUF.colordb.class[self.values.class or ""] and self.values.class ~= "PET" and IUF.db.useEnemyClassColor then
 			self.healthBar:SetColor(unpack(IUF.colordb.class[self.values.class]))
 		else
