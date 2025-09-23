@@ -277,6 +277,7 @@ handlers:SetScript("OnEvent", function(self, event, unit, ...)
 			handlers[event](object)
 		end
 	elseif event == "PLAYER_TARGET_CHANGED" then
+
 		unit = "target"
 		for i = 1, 3 do
 			if IUF.units[unit] then
@@ -453,6 +454,7 @@ end
 local unitName, unitRealm
 
 function handlers:UNIT_NAME_UPDATE()
+
 	if IUF.db.skin == "Blizzard" and self.objectType == "party" then
 		unitName, unitRealm = UnitName(self.unit)
 		if unitName then
@@ -494,13 +496,20 @@ function handlers:UNIT_NAME_UPDATE()
 	else
 		self.values.pvp = nil
 	end
-	if UnitIsFriend("player", self.unit) then
+
+--For certain mobs, UnitIsEnemy("player","target") and UnitReaction("player","target") returns incorrect value.
+--But interestingly, opposite returns correct : UnitIsEnemy("target","player") and UnitReaction("target","player")
+--	if UnitIsFriend("player", self.unit) then
+	if UnitIsFriend(self.unit,"player") then
+
 		if self.values.player then
 			self.values.faction = nil
 		else
 			self.values.faction = "FRIEND"
 		end
-	elseif UnitIsEnemy("player", self.unit) then
+--	elseif UnitIsEnemy("player", self.unit) then
+	elseif UnitIsEnemy(self.unit,"player") then
+
 		self.values.faction = "ENEMY"
 	elseif self.values.player then
 		self.values.faction = nil
