@@ -1,7 +1,7 @@
 ## Interface: 11507, 30405, 50500, 110200
 ## Title: TomTom
 ## Author: Cladhaire, Ludovicus
-## Version: v4.0.15-release
+## Version: v4.0.17-release
 ## License: All Rights Reserved
 ## IconTexture: Interface\AddOns\TomTom\Images\StaticArrow.tga
 ## Notes: Acts as your portable navigation assistant
@@ -23,7 +23,7 @@
 ## X-Category-zhTW: 地圖
 
 libs\LibDataBroker-1.1\LibDataBroker-1.1.lua
-libs\LibDropDown\embed.xml
+
 
 AddonCore.lua
 
