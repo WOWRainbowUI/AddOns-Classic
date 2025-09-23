@@ -5258,10 +5258,10 @@ f:SetScript('OnEvent', function(self, event, ...)
 					NIT:print("Auto getting |cFFEB0000" .. STRING_SCHOOL_PHYSICAL .. "|r buff from " .. UnitName("npc") .. ".");
 				elseif (npcID == "247731") then
 					NIT:selectGossipOption(1);
-					NIT:print("Auto getting |cFF0096FF" .. TANK .. "|r buff from " .. UnitName("npc") .. ".");
+					NIT:print("Auto getting |cFFEFBF04" .. TANK .. "|r buff from " .. UnitName("npc") .. ".");
 				elseif (npcID == "247732") then
 					NIT:selectGossipOption(1);
-					NIT:print("Auto getting |cFFEB0000" .. gsub(SPELL_SCHOOLMAGICAL, "^%l", strupper) .. "|r buff from " .. UnitName("npc") .. ".");
+					NIT:print("Auto getting |cFF0096FF" .. gsub(SPELL_SCHOOLMAGICAL, "^%l", strupper) .. "|r buff from " .. UnitName("npc") .. ".");
 				elseif (npcID == "248115") then
 					--MoP celestial dungeons.
 					if (IsShiftKeyDown()) then
@@ -5303,11 +5303,11 @@ f:SetScript('OnEvent', function(self, event, ...)
 						end
 						local buffNameText = buffName .. roleText;
 						if (buffType == 1) then
-							buffNameText = "|cFFEB0000" .. buffName .. roleText .. "|r";
+							buffNameText = "|cFF50C878" .. buffName .. roleText .. "|r";
 						elseif (buffType == 2) then
 							buffNameText = "|cFFEFBF04" .. buffName .. roleText .. "|r";
 						elseif (buffType == 3) then
-							buffNameText = "|cFF50C878" .. buffName .. roleText .. "|r";
+							buffNameText = "|cFFEB0000" .. buffName .. roleText .. "|r";
 						elseif (buffType == 4) then
 							buffNameText = "|cFF0096FF" .. buffName .. roleText .. "|r";
 						end
@@ -5819,9 +5819,11 @@ function NIT:getCelestialBuffType()
 		end
 	elseif (option == 2) then
 		buffType, buffName, role = 3, STRING_SCHOOL_PHYSICAL, "dps";
+		dmgType = "physical";
 		notAuto = true;
 	elseif (option == 3) then
 		buffType, buffName, role = 4, gsub(SPELL_SCHOOLMAGICAL, "^%l", strupper), "dps";
+		dmgType = "magic";
 		notAuto = true;
 	elseif (option == 4) then
 		buffType, buffName, role = 1, HEALER, "healer";

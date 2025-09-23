@@ -1222,10 +1222,14 @@ function NIT:scanDungeonSubDifficulty()
 				[1224932] = true, --Green.
 				[1224928] = true, --Bronze.
 				--Celestial.
-				[1244204] = true, --Blessing of Yu'lon.
+				[1244204] = true, --Blessing of Yu'lon. --Why are there 2?
+				[1244218] = true, --Blessing of Yu'lon.
+				[1244203] = true, --Blessing of Niuzao.
 				[1244217] = true, --Blessing of Niuzao.
 				[1243285] = true, --Blessing of Chi-Ji.
+				[1243293] = true, --Blessing of Chi-Ji.
 				[1243315] = true, --Blessing of Xuen.
+				[1243316] = true, --Blessing of Xuen.
 			};
 			for i = 1, 32 do
 				local _, _, _, _, _, _, _, _, _, spellID = UnitBuff("player", i);
