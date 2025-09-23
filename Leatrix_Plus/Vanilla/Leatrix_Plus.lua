@@ -1,5 +1,5 @@
 ﻿----------------------------------------------------------------------
--- 	Leatrix Plus 1.15.94 (27th August 2025)
+-- 	Leatrix Plus 1.15.97 (17th September 2025)
 ----------------------------------------------------------------------
 
 --	01:Functions 02:Locks   03:Restart 40:Player   45:Rest
@@ -19,7 +19,7 @@
 	local void
 
 	-- Version
-	LeaPlusLC["AddonVer"] = "1.15.94"
+	LeaPlusLC["AddonVer"] = "1.15.97"
 
 	-- Get locale table
 	local void, Leatrix_Plus = ...
@@ -54,6 +54,7 @@
 	-- Initialise variables
 	LeaPlusLC["ShowErrorsFlag"] = 1
 	LeaPlusLC["NumberOfPages"] = 9
+	LeaPlusLC["MainPanelHeight"] = 370
 
 	-- Class colors
 	do
@@ -335,6 +336,7 @@
 		local footer = LeaPlusLC:MakeTx(frame, text, left, 96)
 		footer:SetWidth(width); footer:SetJustifyH("LEFT"); footer:SetWordWrap(true); footer:ClearAllPoints()
 		footer:SetPoint("BOTTOMLEFT", left, 96)
+		return footer
 	end
 
 	-- Capitalise first character in a string
@@ -2177,7 +2179,7 @@
 							end
 						else
 							-- Select gossip completed quests
-							-- LeaPlusLC.NewPatch: questInfo.isComplete can return false for completed quests with no objectives in Classic Era (test with first quest for level 1 Orc) (does not currently apply to Wrath Classic or Dragonflight)
+							-- questInfo.isComplete can return false for completed quests with no objectives in Classic Era (test with first quest for level 1 Orc) (does not currently apply to Wrath Classic or Dragonflight)
 							if LeaPlusLC["AutoQuestCompleted"] == "On" then
 								local gossipQuests = C_GossipInfo.GetActiveQuests()
 								for titleIndex, questInfo in ipairs(gossipQuests) do
@@ -2323,7 +2325,7 @@
 			LeaPlusLC:CreateHelpButton("SellJunkExcludeHelpButton", SellJunkFrame, titleTX, "Enter item IDs separated by commas.  Item IDs can be found in item tooltips while this panel is showing.|n|nJunk items entered here will not be sold automatically.|n|nWhite items entered here will be sold automatically.|n|nThe editbox tooltip will show you more information about the items you have entered.")
 
 			local eb = CreateFrame("Frame", nil, SellJunkFrame, "BackdropTemplate")
-			eb:SetSize(200, 180)
+			eb:SetSize(200, LeaPlusLC.MainPanelHeight - 180)
 			eb:SetPoint("TOPLEFT", 350, -92)
 			eb:SetBackdrop({
 				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -3736,7 +3738,7 @@
 
 			-- Add large editbox
 			local eb = CreateFrame("Frame", nil, MuteCustomPanel, "BackdropTemplate")
-			eb:SetSize(548, 180)
+			eb:SetSize(548, LeaPlusLC.MainPanelHeight - 180)
 			eb:SetPoint("TOPLEFT", 10, -92)
 			eb:SetBackdrop({
 				bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -3869,11 +3871,11 @@
 			end)
 
 			-- Add mute button
-			local MuteCustomNowButton = LeaPlusLC:CreateButton("MuteCustomNowButton", MuteCustomPanel, "Mute", "TOPLEFT", 16, -292, 0, 25, true, "Click to mute sounds in the list.")
+			local MuteCustomNowButton = LeaPlusLC:CreateButton("MuteCustomNowButton", MuteCustomPanel, "Mute", "BOTTOMLEFT", 16, 53, 0, 25, true, "Click to mute sounds in the list.")
 			LeaPlusCB["MuteCustomNowButton"]:SetScript("OnClick", function() MuteCustomListFunc(false, true) end)
 
 			-- Add unmute button
-			local UnmuteCustomNowButton = LeaPlusLC:CreateButton("UnmuteCustomNowButton", MuteCustomPanel, "Unmute", "TOPLEFT", 16, -72, 0, 25, true, "Click to unmute sounds in the list.")
+			local UnmuteCustomNowButton = LeaPlusLC:CreateButton("UnmuteCustomNowButton", MuteCustomPanel, "Unmute", "BOTTOMLEFT", 16, 53, 0, 25, true, "Click to unmute sounds in the list.")
 			LeaPlusCB["UnmuteCustomNowButton"]:ClearAllPoints()
 			LeaPlusCB["UnmuteCustomNowButton"]:SetPoint("LEFT", MuteCustomNowButton, "RIGHT", 10, 0)
 			LeaPlusCB["UnmuteCustomNowButton"]:SetScript("OnClick", function() MuteCustomListFunc(true, true) end)
@@ -5270,15 +5272,18 @@
 
 			-- Add slider controls
 			LeaPlusLC:MakeTx(SideMinimap, "Scale", 356, -72)
-			LeaPlusLC:MakeSL(SideMinimap, "MinimapScale", "Drag to set the minimap scale.|n|nAdjusting this slider makes the minimap and all the elements bigger.", 0.5, 4, 0.1, 356, -92, "%.2f")
+			LeaPlusLC:MakeSL(SideMinimap, "MinimapScale", "Drag to set the minimap scale.|n|nAdjusting this slider makes the minimap and all the elements bigger.", 0.5, 4, 0.1, 356, -82, "%.2f")
 
-			LeaPlusLC:MakeTx(SideMinimap, "Square size", 356, -132)
-			LeaPlusLC:MakeSL(SideMinimap, "MinimapSize", "Drag to set the square minimap size.|n|nAdjusting this slider makes the minimap bigger but keeps the elements the same size.", 140, 560, 1, 356, -152, "%.0f")
+			LeaPlusLC:MakeTx(SideMinimap, "Square size", 356, -122)
+			LeaPlusLC:MakeSL(SideMinimap, "MinimapSize", "Drag to set the square minimap size.|n|nAdjusting this slider makes the minimap bigger but keeps the elements the same size.", 140, 560, 1, 356, -132, "%.0f")
 
-			LeaPlusLC:MakeTx(SideMinimap, "Cluster scale", 356, -192)
-			LeaPlusLC:MakeSL(SideMinimap, "MiniClusterScale", "Drag to set the cluster scale.|n|nNote: Adjusting the cluster scale affects the entire cluster including frames attached to it such as the quest watch frame.|n|nIt will also cause the default UI right-side action bars to scale when you login.  If you use the default UI right-side action bars, you may want to leave this at 100%.", 1, 2, 0.1, 356, -212, "%.2f")
+			LeaPlusLC:MakeTx(SideMinimap, "Border width", 356, -172)
+			LeaPlusLC:MakeSL(SideMinimap, "MinimapBorderWidth", "Drag to set the square minimap border width.", 1, 10, 1, 356, -182, "%.0f")
 
-			LeaPlusLC:MakeCB(SideMinimap, "MinimapNoScale", "Not minimap", 356, -242, false, "If checked, adjusting the cluster scale will not affect the minimap scale.")
+			LeaPlusLC:MakeTx(SideMinimap, "Cluster scale", 356, -222)
+			LeaPlusLC:MakeSL(SideMinimap, "MiniClusterScale", "Drag to set the cluster scale.|n|nNote: Adjusting the cluster scale affects the entire cluster including frames attached to it such as the quest watch frame.|n|nIt will also cause the default UI right-side action bars to scale when you login.  If you use the default UI right-side action bars, you may want to leave this at 100%.", 1, 2, 0.1, 356, -232, "%.2f")
+
+			LeaPlusLC:MakeCB(SideMinimap, "MinimapNoScale", "Not minimap", 356, -252, false, "If checked, adjusting the cluster scale will not affect the minimap scale.")
 
 			----------------------------------------------------------------------
 			-- Addon buttons editor
@@ -5305,7 +5310,7 @@
 
 				-- Add large editbox
 				local eb = CreateFrame("Frame", nil, ExcludedButtonsPanel, "BackdropTemplate")
-				eb:SetSize(548, 180)
+				eb:SetSize(548, LeaPlusLC.MainPanelHeight - 180)
 				eb:SetPoint("TOPLEFT", 10, -92)
 				eb:SetBackdrop({
 					bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background",
@@ -5762,13 +5767,22 @@
 
 				-- Create black border around map
 				local miniBorder = CreateFrame("Frame", nil, Minimap, "BackdropTemplate")
-				miniBorder:SetPoint("TOPLEFT", -3, 3)
-				miniBorder:SetPoint("BOTTOMRIGHT", 3, -3)
 				miniBorder:SetAlpha(0.8)
-				miniBorder:SetBackdrop({
-					edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
-					edgeSize = 3,
-				})
+
+				-- Adjust border width using slider control
+				local function SetMinimapBorderWidth()
+					miniBorder:ClearAllPoints()
+					miniBorder:SetPoint("TOPLEFT", -LeaPlusLC["MinimapBorderWidth"], LeaPlusLC["MinimapBorderWidth"])
+					miniBorder:SetPoint("BOTTOMRIGHT", LeaPlusLC["MinimapBorderWidth"], -LeaPlusLC["MinimapBorderWidth"])
+					miniBorder:SetBackdrop({
+						edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Background-Dark",
+						edgeSize = LeaPlusLC["MinimapBorderWidth"],
+					})
+				end
+
+				-- Set border width when slider is changed and on startup
+				LeaPlusCB["MinimapBorderWidth"]:HookScript("OnValueChanged", SetMinimapBorderWidth)
+				SetMinimapBorderWidth()
 
 				-- Hide the default border
 				MinimapBorder:Hide()
@@ -5857,6 +5871,10 @@
 				-- Square minimap is disabled so use round shape
 				_G.GetMinimapShape = function() return "ROUND" end
 				Minimap:SetMaskTexture([[Interface\CharacterFrame\TempPortraitAlphaMask]])
+
+				-- Square minimap is disabled so disable border width slider
+				LeaPlusLC:LockItem(LeaPlusCB["MinimapBorderWidth"], true)
+				LeaPlusCB["MinimapBorderWidth"].tiptext = LeaPlusCB["MinimapBorderWidth"].tiptext .. "|cff00AAFF|n|n" .. L["This slider requires 'Square minimap' to be enabled."] .. "|r"
 
 			end
 
@@ -6362,6 +6380,7 @@
 				LeaPlusLC["MinimapScale"] = 1
 				LeaPlusLC["MinimapSize"] = 140; if LeaPlusLC.SetMinimapSize then LeaPlusLC:SetMinimapSize() end
 				LeaPlusLC["MiniClusterScale"] = 1; LeaPlusLC["MinimapNoScale"] = "Off"; SetClusterScale()
+				LeaPlusLC["MinimapBorderWidth"] = 3
 				Minimap:SetScale(1)
 				SetMiniScale()
 				-- Reset map position
@@ -6386,6 +6405,7 @@
 						LeaPlusLC["MinimapScale"] = 1.40
 						LeaPlusLC["MinimapSize"] = 180; if LeaPlusLC.SetMinimapSize then LeaPlusLC:SetMinimapSize() end
 						LeaPlusLC["MiniClusterScale"] = 1; LeaPlusLC["MinimapNoScale"] = "Off"; SetClusterScale()
+						LeaPlusLC["MinimapBorderWidth"] = 3
 						Minimap:SetScale(1)
 						SetMiniScale()
 						-- Map position
@@ -8761,9 +8781,9 @@
 					if sellPrice and count > 0 then
 						if classID and classID == 11 then count = 1 end -- Fix for quiver/ammo pouch so ammo is not included
 						if sellPrice == 4000 and ilink and string.find(ilink, "item:210781:") then
-							-- LeaPlusLC.NewPatch: Bug with Phoenix Bindings (real price is 24 silver 81 copper, but game returns 40 silver)
-							-- GameTooltip:SetHyperlink("item:210781")
-							SetTooltipMoney(tooltip, 2481 * count, "STATIC", SELL_PRICE .. ":")
+							-- Bug with Phoenix Bindings (real price is 24 silver 81 copper, but game returns 40 silver) (seems fixed now)
+							-- Test with GameTooltip:SetHyperlink("item:210781")
+							-- SetTooltipMoney(tooltip, 2481 * count, "STATIC", SELL_PRICE .. ":")
 						else
 							-- Everything else get game price
 							SetTooltipMoney(tooltip, sellPrice * count, "STATIC", SELL_PRICE .. ":")
@@ -11807,7 +11827,7 @@
 			expTitle:ClearAllPoints()
 			expTitle:SetPoint("TOP", 0, -152)
 
-			local subTitle = LeaPlusLC:MakeTx(interPanel, "www.leatrix.com", 0, 0)
+			local subTitle = LeaPlusLC:MakeTx(interPanel, "curseforge.com/wow/addons/leatrix-plus", 0, 0)
 			subTitle:SetFont(subTitle:GetFont(), 20)
 			subTitle:ClearAllPoints()
 			subTitle:SetPoint("BOTTOM", 0, 72)
@@ -11882,7 +11902,7 @@
 			-- Create tables for list data and zone listing
 			local ListData, ZoneList, playlist = {}, {}, {}
 			local scrollFrame, willPlay, musicHandle, ZonePage, LastPlayed, LastFolder, TempFolder, HeadingOfClickedTrack, LastMusicHandle
-			local numButtons = 15
+			local numButtons = math.floor((LeaPlusLC.MainPanelHeight - 110) / 16) - 1
 			local prefol = "|cffffffaa{" .. L["right-click to go back"] .. "}"
 
 			-- These categories will not appear in random track selections
@@ -12056,7 +12076,10 @@
 						button:Hide()
 					end
 				end
-				scrollFrame.child:SetSize(200, #ListData + (14*19.6) - 1) --++ LeaSoundsLC.NewPatch
+
+				local bRoll = ((36 + (LeaPlusLC.MainPanelHeight - 370)) / 16) + 16
+				scrollFrame.child:SetSize(200, #ListData + (math.floor(bRoll * 15)))
+
 			end
 
 			-- Give function file level scope (it's used in SetPlusScale to set the highlight bar scale)
@@ -12188,7 +12211,7 @@
 			scrollFrame:SetScrollChild(scrollFrame.child)
 
 			-- Add stop button
-			local stopBtn = LeaPlusLC:CreateButton("StopMusicBtn", LeaPlusLC["Page9"], "Stop", "TOPLEFT", 146, -292, 0, 25, true, "")
+			local stopBtn = LeaPlusLC:CreateButton("StopMusicBtn", LeaPlusLC["Page9"], "Stop", "BOTTOMLEFT", 146, 53, 0, 25, true, "")
 			stopBtn:Hide(); stopBtn:Show()
 			LeaPlusLC:LockItem(stopBtn, true)
 			stopBtn:SetScript("OnClick", function()
@@ -12264,7 +12287,7 @@
 			end
 
 			-- Create editbox for search
-			local sBox = LeaPlusLC:CreateEditBox("MusicSearchBox", LeaPlusLC["Page9"], 78, 10, "TOPLEFT", 150, -260, "MusicSearchBox", "MusicSearchBox")
+			local sBox = LeaPlusLC:CreateEditBox("MusicSearchBox", LeaPlusLC["Page9"], 78, 10, "TOPLEFT", 150, -(LeaPlusLC.MainPanelHeight - 110), "MusicSearchBox", "MusicSearchBox")
 			sBox:SetMaxLetters(50)
 
 			-- Position search button above editbox
@@ -12572,7 +12595,7 @@
 
 			-- Right-click to go back (from anywhere on the main content area of the panel)
 			LeaPlusLC["PageF"]:HookScript("OnMouseUp", function(self, btn)
-				if LeaPlusLC["Page9"]:IsShown() and LeaPlusLC["Page9"]:IsMouseOver(0, 0, 0, -440) == false and LeaPlusLC["Page9"]:IsMouseOver(-330, 0, 0, 0) == false then
+				if LeaPlusLC["Page9"]:IsShown() and LeaPlusLC["Page9"]:IsMouseOver(0, 0, 0, -440) == false and LeaPlusLC["Page9"]:IsMouseOver(-(LeaPlusLC.MainPanelHeight - 47), 0, 0, 0) == false then
 					if btn == "RightButton" then
 						BackClick()
 					end
@@ -12805,6 +12828,7 @@
 				LeaPlusLC:LoadVarChk("HideMiniLFG", "Off")					-- Hide the Looking for Group button
 				LeaPlusLC:LoadVarNum("MinimapScale", 1, 0.5, 4)				-- Minimap scale slider
 				LeaPlusLC:LoadVarNum("MinimapSize", 140, 140, 560)			-- Minimap size slider
+				LeaPlusLC:LoadVarNum("MinimapBorderWidth", 3, 1, 10)		-- Minimap border width
 				LeaPlusLC:LoadVarNum("MiniClusterScale", 1, 1, 2)			-- Minimap cluster scale
 				LeaPlusLC:LoadVarChk("MinimapNoScale", "Off")				-- Minimap not minimap
 				LeaPlusLC:LoadVarAnc("MinimapA", "TOPRIGHT")				-- Minimap anchor
@@ -13201,6 +13225,7 @@
 			LeaPlusDB["HideMiniLFG"]			= LeaPlusLC["HideMiniLFG"]
 			LeaPlusDB["MinimapScale"]			= LeaPlusLC["MinimapScale"]
 			LeaPlusDB["MinimapSize"]			= LeaPlusLC["MinimapSize"]
+			LeaPlusDB["MinimapBorderWidth"]		= LeaPlusLC["MinimapBorderWidth"]
 			LeaPlusDB["MiniClusterScale"]		= LeaPlusLC["MiniClusterScale"]
 			LeaPlusDB["MinimapNoScale"]			= LeaPlusLC["MinimapNoScale"]
 			LeaPlusDB["MinimapA"]				= LeaPlusLC["MinimapA"]
@@ -13506,7 +13531,7 @@
 
 		-- Set frame parameters
 		Side:Hide();
-		Side:SetSize(570, 370);
+		Side:SetSize(570, LeaPlusLC.MainPanelHeight)
 		Side:SetClampedToScreen(true)
 		Side:SetClampRectInsets(500, -500, -300, 300)
 		Side:SetFrameStrata("FULLSCREEN_DIALOG")
@@ -13523,13 +13548,13 @@
 		Side.c:SetScript("OnClick", function() Side:Hide() end)
 
 		-- Add reset, help and back buttons
-		Side.r = LeaPlusLC:CreateButton("ResetButton", Side, "Reset", "TOPLEFT", 16, -292, 0, 25, true, "Click to reset the settings on this page.")
-		Side.h = LeaPlusLC:CreateButton("HelpButton", Side, "Help", "TOPLEFT", 76, -292, 0, 25, true, "No help is available for this page.")
-		Side.b = LeaPlusLC:CreateButton("BackButton", Side, "Back to Main Menu", "TOPRIGHT", -16, -292, 0, 25, true, "Click to return to the main menu.")
+		Side.r = LeaPlusLC:CreateButton("ResetButton", Side, "Reset", "BOTTOMLEFT", 16, 53, 0, 25, true, "Click to reset the settings on this page.")
+		Side.h = LeaPlusLC:CreateButton("HelpButton", Side, "Help", "BOTTOMLEFT", 76, 53, 0, 25, true, "No help is available for this page.")
+		Side.b = LeaPlusLC:CreateButton("BackButton", Side, "Back to Main Menu", "BOTTOMRIGHT", -16, 53, 0, 25, true, "Click to return to the main menu.")
 
 		-- Reposition help button so it doesn't overlap reset button
-		Side.h:ClearAllPoints()
-		Side.h:SetPoint("LEFT", Side.r, "RIGHT", 10, 0)
+		--Side.h:ClearAllPoints()
+		--Side.h:SetPoint("LEFT", Side.r, "RIGHT", 10, 0)
 
 		-- Remove the click texture from the help button
 		Side.h:SetPushedTextOffset(0, 0)
@@ -13557,7 +13582,7 @@
 
 		-- Set textures
 		LeaPlusLC:CreateBar("FootTexture", Side, 570, 48, "BOTTOM", 0.5, 0.5, 0.5, 1.0, "Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
-		LeaPlusLC:CreateBar("MainTexture", Side, 570, 323, "TOPRIGHT", 0.7, 0.7, 0.7, 0.7,  "Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
+		LeaPlusLC:CreateBar("MainTexture", Side, 570, LeaPlusLC.MainPanelHeight - 47, "TOPRIGHT", 0.7, 0.7, 0.7, 0.7,  "Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
 
 		-- Allow movement
 		Side:EnableMouse(true)
@@ -13604,7 +13629,7 @@
 			Side.backFrame = CreateFrame("FRAME", nil, Side, "BackdropTemplate")
 			Side.backFrame:SetSize(Side:GetSize())
 			Side.backFrame:SetPoint("TOPLEFT", 16, -68)
-			Side.backFrame:SetPoint("BOTTOMRIGHT", -16, 108)
+			Side.backFrame:SetPoint("BOTTOMRIGHT", -16, 98)
 			Side.backFrame:SetBackdrop({bgFile = "Interface\\DialogFrame\\UI-DialogBox-Background"})
 			Side.backFrame:SetBackdropColor(0, 0, 1, 0.5)
 
@@ -13905,7 +13930,7 @@
 
 		-- Set frame parameters
 		LeaPlusLC["PageF"] = PageF
-		PageF:SetSize(570,370)
+		PageF:SetSize(570, LeaPlusLC.MainPanelHeight)
 		PageF:Hide();
 		PageF:SetFrameStrata("FULLSCREEN_DIALOG")
 		PageF:SetClampedToScreen(true)
@@ -13928,8 +13953,8 @@
 
 		-- Add textures
 		LeaPlusLC:CreateBar("FootTexture", PageF, 570, 48, "BOTTOM", 0.5, 0.5, 0.5, 1.0, "Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
-		LeaPlusLC:CreateBar("MainTexture", PageF, 440, 323, "TOPRIGHT", 0.7, 0.7, 0.7, 0.7,  "Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
-		LeaPlusLC:CreateBar("MenuTexture", PageF, 130, 323, "TOPLEFT", 0.7, 0.7, 0.7, 0.7, "Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
+		LeaPlusLC:CreateBar("MainTexture", PageF, 440, LeaPlusLC.MainPanelHeight - 47, "TOPRIGHT", 0.7, 0.7, 0.7, 0.7,  "Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
+		LeaPlusLC:CreateBar("MenuTexture", PageF, 130, LeaPlusLC.MainPanelHeight - 47, "TOPLEFT", 0.7, 0.7, 0.7, 0.7, "Interface\\ACHIEVEMENTFRAME\\UI-GuildAchievement-Parchment-Horizontal-Desaturated.png")
 
 		-- Set panel position when shown
 		PageF:SetScript("OnShow", function()
@@ -15330,6 +15355,7 @@
 				LeaPlusDB["MiniExcludeList"] = "BugSack, Leatrix_Plus" -- Excluded addon list
 				LeaPlusDB["MinimapScale"] = 1.40				-- Minimap scale slider
 				LeaPlusDB["MinimapSize"] = 180					-- Minimap size slider
+				LeaPlusDB["MinimapBorderWidth"] = 3				-- Minimap border width
 				LeaPlusDB["MiniClusterScale"] = 1				-- Minimap cluster scale
 				LeaPlusDB["MinimapNoScale"] = "Off"				-- Minimap not minimap
 				LeaPlusDB["HideMiniZoneText"] = "On"			-- Hide zone text bar
@@ -15645,7 +15671,7 @@
 	LeaPlusLC:MakeWD(LeaPlusLC[pg], "To begin, choose an options page.", 146, -92);
 
 	LeaPlusLC:MakeTx(LeaPlusLC[pg], "Support", 146, -132);
-	LeaPlusLC:MakeWD(LeaPlusLC[pg], "www.leatrix.com", 146, -152);
+	LeaPlusLC:MakeWD(LeaPlusLC[pg], "curseforge.com/wow/addons/leatrix-plus", 146, -152);
 
 ----------------------------------------------------------------------
 -- 	LC1: Automation
@@ -15686,9 +15712,10 @@
 	LeaPlusLC:MakeCB(LeaPlusLC[pg], "AcceptPartyFriends"		, 	"Party from friends"			, 	340, -92, 	false,	"If checked, party invitations from friends will be automatically accepted unless you are queued for a battleground or the Looking for Group feature.")
 	LeaPlusLC:MakeCB(LeaPlusLC[pg], "InviteFromWhisper"			,   "Invite from whispers"			,	340, -112,	false,	L["If checked, a group invite will be sent to anyone who whispers you with a set keyword as long as you are ungrouped, group leader or raid assistant and not queued for a battleground or the Looking for Group feature.|n|nFriends who message the keyword using Battle.net will not be sent a group invite if they are appearing offline.  They need to either change their online status or use character whispers."] .. "|n|n" .. L["Keyword"] .. ": |cffffffff" .. "dummy" .. "|r")
 
-	LeaPlusLC:MakeFT(LeaPlusLC[pg], "For all of the social options above, you can treat guild members as friends too.", 146, 380)
+	local FriendlyGuildFooter = LeaPlusLC:MakeFT(LeaPlusLC[pg], "For all of the social options above, you can treat guild members as friends too.", 146, 380)
 	LeaPlusLC:MakeCB(LeaPlusLC[pg], "FriendlyGuild"				, 	"Guild"							, 	146, -282, 	false,	"If checked, members of your guild will be treated as friends for all of the options on this page.")
-
+	LeaPlusCB["FriendlyGuild"]:ClearAllPoints()
+	LeaPlusCB["FriendlyGuild"]:SetPoint("TOPLEFT", FriendlyGuildFooter, "BOTTOMLEFT", 0, -10)
 	if LeaPlusCB["FriendlyGuild"].f:GetStringWidth() > 90 then
 		LeaPlusCB["FriendlyGuild"].f:SetWidth(90)
 		LeaPlusCB["FriendlyGuild"]:SetHitRectInsets(0, -84, 0, 0)
