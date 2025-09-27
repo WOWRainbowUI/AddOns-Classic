@@ -33,9 +33,9 @@ L["Appearance"] = "外观"
 L["APPEARANCEDESC"] = "控制 Skillet 显示方式的选项"
 --[[Translation missing --]]
 L["Auction"] = "Auction"
-L["bank"] = "银行"
 --[[Translation missing --]]
 L["Bank"] = "Bank"
+L["bank"] = "银行"
 L["Blizzard"] = "暴雪"
 L["Buy Reagents"] = "购买材料"
 L["buyable"] = "可购买"
@@ -172,9 +172,9 @@ L["INCLUDEREAGENTSNAME"] = "包含搜索中的材料"
 L["INTERRUPTCLEARDESC"] = "Moving, jumping, closing the frame, or clicking the Pause button clears the in progress queue entry"
 --[[Translation missing --]]
 L["INTERRUPTCLEARNAME"] = "Spell interrupt clears queue entry"
-L["Inventory"] = "背包"
 --[[Translation missing --]]
 L["inventory"] = "inventory"
+L["Inventory"] = "背包"
 L["INVENTORYDESC"] = "背包信息"
 L["InvSlot"] = "插槽"
 L["is now disabled"] = "现已停用"
