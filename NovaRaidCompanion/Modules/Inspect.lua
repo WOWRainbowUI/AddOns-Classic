@@ -241,6 +241,11 @@ end
 function NRC:getEnchantName(itemLink)
 	return getEnchantName(itemLink);
 end
+NRC.upgradeAmountPerLevel = 0;
+if (isMOP) then
+	NRC.upgradeAmountPerLevel = 4;
+end
+local upgradeAmountPerLevel = NRC.upgradeAmountPerLevel;
 
 function NRC:getAverageItemLevel(guid, decimal)
 	local averageItemLevel = 0;
@@ -283,13 +288,22 @@ function NRC:getAverageItemLevel(guid, decimal)
 			end
 			for k, v in pairs(slots) do
 				numSlots = numSlots + 1;
-				if (data[k]) then
-					local item = Item:CreateFromItemLink(data[k].itemLink);
+				local itemData = data[k];
+				if (itemData) then
+					local item = Item:CreateFromItemLink(itemData.itemLink);
 					if (item) then
 						local itemLevel = item:GetCurrentItemLevel();
 						if (itemLevel and itemLevel > 0) then
+							if (upgradeAmountPerLevel > 0 and itemData.currentUpgradeLevel) then
+								itemLevel = itemLevel + (itemData.currentUpgradeLevel * upgradeAmountPerLevel);
+							end
 							averageItemLevel = averageItemLevel + itemLevel;
 						end
+						--print(itemLevel,GetActualItemLevel(data[k].itemLink), C_Item.GetDetailedItemLevelInfo(data[k].itemLink))
+						--NRC:printRaw(data[k].itemLink)
+						--|cffa335ee|Hitem:79328::::::::90::255::::::::|h[Relic of Xuen]|h|r
+						--/run NRC:printRaw(GetInventoryItemLink("player", 13))
+						--/dump (GetInventoryItemLink("player", 13)
 					end
 				end
 			end
@@ -413,6 +427,8 @@ local function updateGemsCache(guid)
 	end
 end
 
+local ilvlTooltipScanner = CreateFrame("GameTooltip", "NRCiLvLTooltipScanner", nil, "GameTooltipTemplate");
+ilvlTooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
 --if got id but missing link then add bare itemlinks and create list to oncontinue
 -- then try update all from oncontinue (if unit is still inspectable)
 function NRC:buildInventoryFromInspect(guid, unit, secondTry)
@@ -434,6 +450,7 @@ function NRC:buildInventoryFromInspect(guid, unit, secondTry)
 		local updated;
 		local cachingIssueFound;
 		local gear = {};
+		local totalCurrentUpgradeLevels, totalMaxUpgradeLevels = 0, 0;
 		fallbackCache[guid] = nil;
 		for k, v in pairs(inspectSlots) do
 			local itemID = GetInventoryItemID(unit, k);
@@ -457,6 +474,25 @@ function NRC:buildInventoryFromInspect(guid, unit, secondTry)
 				gear[k] = {
 					itemLink = itemLink;
 				};
+				if (NRC.expansionNum > 4) then
+					ilvlTooltipScanner:SetInventoryItem(unit, k);
+		            for i = 1, 6 do
+			            local text = _G["NRCiLvLTooltipScannerTextLeft" .. i]:GetText();
+			            if (text and strmatch(text, ITEM_UPGRADE_TOOLTIP_FORMAT)) then
+			            	--Upgrade Level: %d/%d
+							local match = string.gsub(ITEM_UPGRADE_TOOLTIP_FORMAT, "%%d", "(.+)");
+							local current, max = strmatch(text, match);
+							if (current) then
+								--print(current, max)
+								gear[k].currentUpgradeLevel = current;
+			            		gear[k].maxUpgradeLevel = max;
+			            		totalCurrentUpgradeLevels = totalCurrentUpgradeLevels + current;
+			            		totalMaxUpgradeLevels = totalMaxUpgradeLevels + max;
+			            	end
+			            	break;
+			            end
+		            end
+	            end
 				--[[if (GetItemGem and GetItemNumSockets) then
 					local gemCount = GetItemNumSockets(itemLink);
 					--if (k == 6) then
@@ -514,6 +550,8 @@ function NRC:buildInventoryFromInspect(guid, unit, secondTry)
 				updated = true;
 			end
 		end
+		gear.totalCurrentUpgradeLevels = totalCurrentUpgradeLevels;
+		gear.totalMaxUpgradeLevels = totalMaxUpgradeLevels;
 		if (updated) then
 			NRC.gearCache[guid] = gear;
 			NRC.gearCache[guid].updated = GetServerTime();

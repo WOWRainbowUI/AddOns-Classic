@@ -372,6 +372,10 @@ if (NRC.isSOD) then
 	repairBots[1213955] = 136172;
 end
 
+if (NRC.expansionNum > 4) then
+	repairBots[29893] = 136194; --Ritual of souls in mop+.
+end
+
 local trackAnnounce = {};
 for k, v in pairs(cauldrons) do
 	trackAnnounce[k] = v;
@@ -413,6 +417,7 @@ local function combatLogEventUnfiltered(...)
 			if (inInstance) then
 				--Trim the msg a bit for english clients, no need to show it's a major, all cauldrons are.
 				spellName = string.gsub(spellName, "Major ", "");
+				spellName = string.gsub(spellName, "^Create ", "");
 				if (spellID == 429961) then
 					spellName = L["Sleeping Bag"];
 				end
@@ -897,50 +902,99 @@ function NRC:startMiddleIcon(icon, shownTime, text, bottomText) --/run NRC:start
 end
 
 local isShown;
-if (NRC.isWrath or NRC.isCata or NRC.isMOP) then
-	--Add a timer to the resurrection popup.
-	local function NRC_StaticPopup_OnUpdate(self)
-	    if (self.which == "RESURRECT_NO_SICKNESS" or self.which == "RESURRECT_NO_TIMER") then
-			local timeLeft = self.timeleft;
-			if (timeLeft > 0) then
-				local t = self.text:GetText();
-				if (strmatch(t, " %(%d+%)$")) then
-					--If not first update and our string is already attached then we need to remove old timer and attach new.
-					t = gsub(t, " %(%d+%)$", "");
-				end
-				self.text:SetText(t .. " (" .. ceil(timeLeft) .. ")");
+local function NRC_StaticPopup_OnUpdate(self)
+    if (self.which == "RESURRECT_NO_SICKNESS" or self.which == "RESURRECT_NO_TIMER") then
+		local timeLeft = self.timeleft;
+		if (timeLeft > 0) then
+			local text = self:GetTextFontString();
+			local t = text:GetText();
+			if (strmatch(t, " %(%d+%)$")) then
+				--If not first update and our string is already attached then we need to remove old timer and attach new.
+				t = gsub(t, " %(%d+%)$", "");
 			end
-		elseif (self.which == "DEATH") then
-			if (NRC.config.releaseWarning and NRC.raid) then
-				if (isShown) then
-					if (next(NRC.encounter)) then
-						if (IsShiftKeyDown()) then
-							self.button1:Enable();
-							staticPopupFrame.fs2:SetText("|cFFFF0A0AEncounter in progress |cFF00C800(Shift held down)|r.");
-						else
-							self.button1:Disable();
-							staticPopupFrame.fs2:SetText("|cFFFF0A0AEncounter in progress (Hold shift to release).");
-							if (not _G[self:GetName() .. "Text"]:GetText() or _G[self:GetName() .. "Text"]:GetText() == "") then
-								--If for some reason this fires outside an instance the text will be blank.
-								--Something on Blizzards end wipes the text if the button is disabled, doesn't happen inside raids when there's no timer.
-								_G[self:GetName() .. "Text"]:SetText(DEATH_RELEASE_NOTIMER);
-							end
-						end
-						staticPopupFrame.fs:SetText("");
+			text:SetText(t .. " (" .. ceil(timeLeft) .. ")");
+		end
+	elseif (self.which == "DEATH") then
+		if (NRC.config.releaseWarning and NRC.raid) then
+			if (isShown) then
+				local button = self:GetButton1();
+				if (next(NRC.encounter)) then
+					if (IsShiftKeyDown()) then
+						button:Enable();
+						staticPopupFrame.fs2:SetText("|cFFFF0A0AEncounter in progress |cFF00C800(Shift held down)|r.");
 					else
-						staticPopupFrame.fs2:SetText("|cFF00C800Encounter has ended.");
-						staticPopupFrame.fs:SetText("|cFFFF6900NRC|r");
-						self.button1:Enable();
+						button:Disable();
+						staticPopupFrame.fs2:SetText("|cFFFF0A0AEncounter in progress (Hold shift to release).");
+						local text = self:GetTextFontString():GetText();
+						if (not text or text == "") then
+							--If for some reason this fires outside an instance the text will be blank.
+							--Something on Blizzards end wipes the text if the button is disabled, doesn't happen inside raids when there's no timer.
+							self:GetTextFontString():SetText(DEATH_RELEASE_NOTIMER);
+							self:SetHeight(74.325); --Set height so things look right, popup is smallest size when things are disabled.
+						end
 					end
+					staticPopupFrame.fs:SetText("");
+				else
+					staticPopupFrame.fs2:SetText("|cFF00C800Encounter has ended.");
+					staticPopupFrame.fs:SetText("|cFFFF6900NRC|r");
+					button:Enable();
 				end
 			end
 		end
 	end
+end
+
+local function checkStaticPoups(frame)
+	--print(frame.which)
+	if (frame.which == "DEATH" and frame:IsShown()) then
+		C_Timer.After(0.1, function()
+			if (NRC.config.releaseWarning and NRC.raid and next(NRC.encounter)) then
+				--Some other addons or weakauras may hide the button, if it's hidden then we don't need this feature.
+				local button = frame:GetButton1();
+				isShown = button:IsShown();
+				if (isShown) then
+					staticPopupFrame:ClearAllPoints();
+					staticPopupFrame:SetPoint("TOPLEFT", frame, "BOTTOMLEFT", 8, 20);
+					staticPopupFrame:SetPoint("TOPRIGHT", frame, "BOTTOMRIGHT", -8, 20);
+					staticPopupFrame:Show();
+					if (next(NRC.encounter)) then
+						staticPopupFrame.fs2:SetText("|cFFFF0A0AEncounter in progress don't release.");
+						staticPopupFrame.fs:SetText("");
+					else
+						staticPopupFrame.fs2:SetText("|cFF00C800Encounter has ended.");
+						staticPopupFrame.fs:SetText("|cFFFF6900NRC|r");
+					end
+					if (not frame.NRC_Hook) then
+						NRC:debug("Hooking static popup.")
+						frame:HookScript("OnUpdate", function(self)
+							NRC_StaticPopup_OnUpdate(self);
+						end)
+						frame.NRC_Hook = true;
+					end
+				end
+			end
+		end)
+	elseif (frame.which == "RESURRECT_NO_SICKNESS" or frame.which == "RESURRECT_NO_TIMER" and frame:IsShown()) then
+		C_Timer.After(0.1, function()
+			if (not frame.NRC_Hook) then
+				NRC:debug("Hooking static popup2.")
+				frame:HookScript("OnUpdate", function(self)
+					NRC_StaticPopup_OnUpdate(self);
+				end)
+				frame.NRC_Hook = true;
+			end
+		end)
+	end
+end
+
+if (NRC.expansionNum > 2) then
 	hooksecurefunc("StaticPopup_Show", function(...)
+		StaticPopup_ForEachShownDialog(checkStaticPoups);
 		--local type = ...;
 		--print("Static popup show:", type);
-		for i = 1, STATICPOPUP_NUMDIALOGS do
-			local frame = _G["StaticPopup" .. i];
+		--[[local _, frame = StaticPopup_Visible("DEATH");
+		--for i = 1, STATICPOPUP_NUMDIALOGS do
+			--local frame = _G["StaticPopup" .. i];
 			if (frame.which == "DEATH" and frame:IsShown()) then
 				C_Timer.After(0.1, function()
 					if (NRC.config.releaseWarning and NRC.raid and next(NRC.encounter)) then
@@ -971,7 +1025,7 @@ if (NRC.isWrath or NRC.isCata or NRC.isMOP) then
 			elseif (frame.which == "RESURRECT_NO_SICKNESS" or frame.which == "RESURRECT_NO_TIMER" and frame:IsShown()) then
 				C_Timer.After(0.1, function()
 					if (not frame.NRC_Hook) then
-						NRC:debug("Hooking static popup.")
+						NRC:debug("Hooking static popup2.")
 						frame:HookScript("OnUpdate", function(self)
 							NRC_StaticPopup_OnUpdate(self);
 						end)
@@ -979,18 +1033,12 @@ if (NRC.isWrath or NRC.isCata or NRC.isMOP) then
 					end
 				end)
 			end
-		end
+		--end]]
 	end)
 	
 	hooksecurefunc("StaticPopup_Hide", function(...)
-		local shown;
-		for i = 1, STATICPOPUP_NUMDIALOGS do
-			local frame = _G["StaticPopup" .. i];
-			if (frame.which == "DEATH" and frame:IsShown()) then
-				shown = true;
-			end
-		end
-		if (not shown) then
+		local _, frame = StaticPopup_Visible("DEATH");
+		if (not frame) then
 			staticPopupFrame:Hide();
 			staticPopupFrame:ClearAllPoints();
 			staticPopupFrame.fs:SetText("");

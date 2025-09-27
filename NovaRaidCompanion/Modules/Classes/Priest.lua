@@ -126,7 +126,7 @@ local function tallyDamage(name)
 		--Msg target how much my PI gave them.
 		if (NRC.config.piSendDamageWhisper and sourceMe) then
 			if (targetGUID and strfind(targetGUID, "Player")) then
-				local msg = "[NRC] " .. string.format(L["meThreatPIWhisper"], NRC:commaValue(total));
+				local msg = "[NRC] " .. string.format(L["mePIWhisper"], NRC:commaValue(total));
 				SendChatMessage(msg, "WHISPER", nil, target);
 			end
 		end

@@ -438,7 +438,7 @@ NRC.options = {
 					type = "toggle",
 					name = L["raidCooldownsNecksRaidOnlyTitle"],
 					desc = L["raidCooldownsNecksRaidOnlyDesc"],
-					order = 15,
+					order = 14,
 					get = "getRaidCooldownsNecksRaidOnly",
 					set = "setRaidCooldownsNecksRaidOnly",
 				},
@@ -4794,9 +4794,22 @@ function NRC:loadExtraOptions()
 			type = "toggle",
 			name = L["raidCooldownsBresCountTitle"],
 			desc = L["raidCooldownsBresCountDesc"],
-			order = 14,
+			order = 15,
 			get = "getRaidCooldownsBresCount",
 			set = "setRaidCooldownsBresCount",
+		};
+		NRC.options.args.raidCooldowns.args.raidCooldownsBresScale = {
+			type = "range",
+			name = L["raidCooldownsBresScaleTitle"],
+			desc = L["raidCooldownsBresScaleDesc"],
+			order = 16,
+			get = "getRaidCooldownsBresScale",
+			set = "setRaidCooldownsBresScale",
+			min = 0.3,
+			max = 4,
+			softMin = 0.3,
+			softMax = 4,
+			step = 0.1,
 		};
 		NRC.options.args.raidCooldowns.args.raidCooldownsBresCountPosition = {
 			type = "select",
@@ -4883,6 +4896,7 @@ NRC.optionDefaults = {
 		raidCooldownsBorderType = 1,
 		raidCooldownsSortOrder = 1,
 		raidCooldownsScale = 1,
+		raidCooldownsBresScale = 1.3,
 		raidStatusScale = 1,
 		raidCooldownsDisableMouse = false,
 		raidCooldownsFont = "NRC Default",
@@ -5840,19 +5854,24 @@ end
 
 function NRC:checkNewVersion()
 	--NRC.db.global.versions = {};
-	local newVersionNotes = 1.77;
+	local newVersionNotes = 1.79;
 	if (NRC.version and NRC.version == newVersionNotes) then
 		if (not NRC.db.global.versions[NRC.version]) then
 			if (NRC.isMOP) then
 				local notes = {
-					--"|cFF00FF00[Version 1.73]|r",
-					"Added a filter box in the raid log so you can filter raids by name.",
-					"Added checking of correct armor type for 5% stats bonus to issues column, it will display if a plate wearer has leather etc (MoP only).",
-					"Added more item details to the loot log links (and fixed first item mouseover tooltip not working).",
-					"Added a difficulty indicator beside heroic bosses in the log.",
-					"Added a list of players (raid roster) in the raid log.",
-					"Added healing tide totem to cooldowns list for mop.",
-					"Fixed some lua errors.",
+					"|cFF00FF00[Version 1.79]|r",
+					"Added tracking of upgraded levels on gear in the raid status window, mouseover the someone's sword icon to view upgrade levels and click on someones gear icon to view full gear with upgraded levels displayed.",
+					"Average item level calcs now also factor in upgraded gear levels.",
+					"|cFF00FF00[Version 1.78]|r",
+					"The battle res icon now properly generates new battle res charges as the fight goes on and shows a timer until next.",
+					"Added option to resize the battle res icon and made it a bit bigger by default (bres options are in raid cooldowns section).",
+					"Fixed bonus rolls log not recording your own bonus loot.",
+					"Fixed missing sporebat buff in haste column.",
+					"Fixed missing dalaran brilliance in crit column.",
+					"Added soulwell to list of items announced when placed on the ground during raid (can be disabled under feast/repair bot options).",
+					"Fixed classic era Power Infusion outgoing whisper to other players telling them how much dmg they gained from PI in priest options.",
+					"Fixed some lua errors in new MoP patch.",
+					"A bunch of other small bug fixes and display tweaks.",
 				};
 				loadNewVersionFrame(NRC.version, notes, "Nova Raid Companion", "Interface\\AddOns\\NovaRaidCompanion\\Media\\nrc_icon2", 0, 300);
 			end
@@ -6096,6 +6115,16 @@ end
 
 function NRC:getRaidCooldownsScale(info)
 	return self.db.global.raidCooldownsScale;
+end
+
+--Raid cooldown bres scale.
+function NRC:setRaidCooldownsBresScale(info, value)
+	self.db.global.raidCooldownsBresScale = value;
+	NRC:updateRaidCooldownFramesLayout();
+end
+
+function NRC:getRaidCooldownsBresScale(info)
+	return self.db.global.raidCooldownsBresScale;
 end
 
 --Raid cooldown backdrop alpha.

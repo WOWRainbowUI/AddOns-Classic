@@ -436,6 +436,9 @@ function NRC:updateRaidCooldownFramesLayout()
 			frame.sortLineFrames();
 		end
 	end]]
+	if (bresCountFrame) then
+		bresCountFrame:SetScale(db.raidCooldownsBresScale);
+	end
 	sortCooldowns();
 	NRC:updateRaidCooldowns();
 end
@@ -2764,6 +2767,9 @@ function NRC:startRaidCooldownsTest(quiet)
 		NRC:print("|cFF00C800Started raid cooldown test for 30 seconds.");
 	end
 	testRaidCooldowns();
+	if (bresCountFrame) then
+		NRC:startBresCountFrame(3, true);
+	end
 	testRunning = true;
 	for i = 1, NRC.maxCooldownFrameCount do
 		local frame = raidCooldowns[i];
@@ -2808,6 +2814,9 @@ function NRC:stopRaidCooldownsTest()
 	NRC:updateRaidCooldownFramesLayout();
 	NRC:updateRaidCooldowns();
 	NRC:raidCooldownsUpdateFrameLocks();
+	if (bresCountFrame) then
+		NRC:endBresCountFrame();
+	end
 	NRC.acr:NotifyChange("NovaRaidCompanion");
 end
 
@@ -3001,34 +3010,6 @@ if (NRC.expansionNum < 4) then
 end
 --Frame position is set in RaidCooldowns, everything else is here.
 
-function NRC:startBresCountFrame(difficultyID)
-	if (not NRC.config.raidCooldownsBresCount or not NRC.config.showRaidCooldowns) then
-		if (bresCountFrame) then
-			bresCountFrame:Hide();
-		end
-		return;
-	end
-	if (difficultyID == 3 or difficultyID == 5) then
-		bresCastAllowance = bresCastAllowance10;
-	elseif (difficultyID == 4 or difficultyID == 6) then
-		bresCastAllowance = bresCastAllowance25;
-	else
-		--Only show in raids.
-		return;
-	end
-	bresPending = {};
-	NRC:updateBresFramePosition();
-	bresCastCount = 0;
-	bresCountFrame:Show();
-	NRC:updateBresFrame();
-end
-
-function NRC:endBresCountFrame()
-	bresPending = {};
-	bresCountFrame:Hide();
-	bresCastCount = 0;
-end
-
 --[[function NRC:updateBresCountState()
 	if (not bresCountFrame) then
 		return;
@@ -3041,6 +3022,7 @@ end
 end]]
 
 ---Move these into cooldown state funcs
+local isBresTest;
 function NRC:updateBresCountFrame(lineFrame)
 	if (disabled or not bresCountFrame) then
 		if (bresCountFrame) then
@@ -3059,34 +3041,82 @@ function NRC:updateBresCountFrame(lineFrame)
 end
 
 local function getBresCountRemaining()
-	--PLAYER_ALIVE
-	--return 0;
-	return bresCastAllowance - bresCastCount;
-	--The below API func is broken in cata, doesn't return correct charges.
-	--[[local charges, maxCharges, cooldownStart, cooldownDuration, chargeModRate = GetSpellCharges(20484);
+	--The below API func was broken in cata, seems to now work in mop?
+	local charges, maxCharges, cooldownStart, cooldownDuration, chargeModRate = GetSpellCharges(20484);
 	if (charges) then
-		bresCountFrame.fs:SetText("|cFFFFFF00" .. charges);
-		if (bresRefreshTime == 0) then
-			return;
-		end
-		--local remaining = endTime - GetServerTime();
-		--local elapsedDuration = maxDuration - remaining;
-		--bresCountFrame.texture.cooldown:SetCooldown(GetTime() - elapsedDuration, maxDuration);
-		--bresCountFrame.texture.swipeRunning = true;
+		return charges, cooldownStart, cooldownDuration, true;
 	else
-		bresCountFrame.fs:SetText("|cFFFFFF00Err");
-		bresCountFrame.cooldown:Clear();
-	end]]
+		--Incase the API breaks use the backup system, it's a bit scuffed though it doesn't show new charges.
+		return bresCastAllowance - bresCastCount;
+	end
+end
+
+local function updateBresCooldownSwipe(frame, cooldownStart, cooldownDuration)
+	if (cooldownStart and cooldownDuration and cooldownDuration > 0 and not testRunning) then
+		if (not frame.cooldown) then
+			local cooldown = CreateFrame("Cooldown", "NRCBresIconFrameCooldown", frame, "CooldownFrameTemplate");
+			cooldown:SetHideCountdownNumbers(true); --Hide cooldown number incase user has enabled it in options for hotbars.
+			--cooldown:SetCountdownFont("GameFontNormal");
+			--cooldown:ClearAllPoints();
+			--cooldown:SetSize(frame.texture:GetSize());
+			--cooldown:SetPoint("CENTER", frame.texture);
+			cooldown:SetReverse(true);
+			cooldown:SetDrawBling(false);
+			cooldown.noCooldownCount = true; --Make omnicc respect the no cooldown text.
+			cooldown:GetRegions():SetAlpha(0); --Make real sure the blizzard timer text doesn't display also, first region is the text apparently (from UI disc).
+			frame.cooldown = cooldown;
+		end
+		--if (not texture.swipeRunning) then
+		if (frame.swipeRunning ~= cooldownStart) then
+			--NRCBresIconFrameCooldown.text:Hide();
+			frame.cooldown:SetCooldown(cooldownStart, cooldownDuration);
+			frame.swipeRunning = cooldownStart;
+		end
+	end
+end
+--/run NRC:startBresCountFrame(3, true)
+local function stopBresCooldownSwipe(texture)
+	if (texture and texture.swipeRunning) then
+		texture.cooldown:Clear();
+		texture.swipeRunning = nil;
+	end
 end
 
 local function updateBresFrame()
-	--PLAYER_ALIVE
-	local count = getBresCountRemaining();
+	local count, cooldownStart, cooldownDuration, usingAPI;
+	if (isBresTest) then
+		count, cooldownStart, cooldownDuration, usingAPI = 3, isBresTest, 60, true;
+	else
+		count, cooldownStart, cooldownDuration, usingAPI = getBresCountRemaining();
+	end
 	if (count < 1) then
-		--bresCountFrame.fs:SetText("|cFFFFAE42" .. count);
 		bresCountFrame.fs:SetText("|cFFFF0000" .. count);
 	else
 		bresCountFrame.fs:SetText("|cFFFFFF00" .. count);
+	end
+	if (usingAPI) then
+		updateBresCooldownSwipe(bresCountFrame, cooldownStart, cooldownDuration);
+		--updateBresCooldownSwipe(bresCountFrame, GetTime() - 30, 60); --For testing.
+		
+		local elapsed = GetTime() - cooldownStart;
+		local endTime = cooldownStart + cooldownDuration;
+		local timeLeft = ceil((endTime - elapsed) - cooldownStart);
+		local timeString = "";
+		if (timeLeft > 0) then
+			local m = math.floor((timeLeft % 3600) / 60);
+			local s = math.floor((timeLeft % 60));
+			if (m >= 1) then
+				timeString = m .. L["minuteShort"];
+			else
+				timeString = s .. L["secondShort"];
+			end
+			--bresCountFrame.fsTimer:SetText("|cFF9CD6DE" .. timeString);
+			bresCountFrame.fsTimer:SetText("|cFFFFFFFF" .. timeString);
+		else
+			bresCountFrame.fsTimer:SetText("");
+		end
+	else
+		bresCountFrame.fsTimer:SetText("");
 	end
 end
 
@@ -3118,6 +3148,37 @@ local function combatLogEventUnfiltered(...)
 	end
 end
 
+function NRC:startBresCountFrame(difficultyID, isTest)
+	if (not NRC.config.raidCooldownsBresCount or not NRC.config.showRaidCooldowns) then
+		if (bresCountFrame) then
+			bresCountFrame:Hide();
+		end
+		return;
+	end
+	if (difficultyID == 3 or difficultyID == 5) then
+		bresCastAllowance = bresCastAllowance10;
+	elseif (difficultyID == 4 or difficultyID == 6) then
+		bresCastAllowance = bresCastAllowance25;
+	else
+		--Only show in raids.
+		return;
+	end
+	isBresTest = isTest and GetTime() - 30;
+	bresPending = {};
+	NRC:updateBresFramePosition();
+	bresCastCount = 0;
+	bresCountFrame:Show();
+	NRC:updateBresFrame();
+end
+
+function NRC:endBresCountFrame()
+	bresPending = {};
+	bresCountFrame:Hide();
+	stopBresCooldownSwipe(bresCountFrame.texture);
+	bresCastCount = 0;
+	isBresTest = nil;
+end
+
 local f = CreateFrame("Frame", "NRCRaidBres");
 f:RegisterEvent("PLAYER_ENTERING_WORLD");
 f:RegisterEvent("ENCOUNTER_START");
@@ -3144,7 +3205,7 @@ f:SetScript('OnEvent', function(self, event, ...)
 	end
 end)
 
-bresCountFrame = NRC:createIconFrame("NRCMiddleIconFrame", 30, 30);
+bresCountFrame = NRC:createIconFrame("NRCBresIconFrame", 30, 30);
 bresCountFrame.fs:SetFont(NRC.regionFontNumbers, 22);
 --bresCountFrame.fs:SetFontObject(nil);
 --bresCountFrame.fs:SetFontObject(GameFontNormalLarge);
@@ -3157,13 +3218,6 @@ bresCountFrame:SetScript("OnUpdate", function(self)
 		updateBresFrame();
 	end
 end)
-bresCountFrame.cooldown = CreateFrame("Cooldown", bresCountFrame:GetName() .. "Cooldown", bresCountFrame, "CooldownFrameTemplate");
-bresCountFrame.cooldown:SetHideCountdownNumbers(true); --Hide cooldown number incase user has enabled it in options for hotbars.
-bresCountFrame.cooldown:ClearAllPoints();
-bresCountFrame.cooldown:SetSize(bresCountFrame.texture:GetSize());
-bresCountFrame.cooldown:SetPoint("CENTER", bresCountFrame.texture);
-bresCountFrame.cooldown:SetReverse(true);
-bresCountFrame.cooldown:SetDrawBling(false);
 bresCountFrame:Hide();
 
 function NRC:updateBresFramePosition()

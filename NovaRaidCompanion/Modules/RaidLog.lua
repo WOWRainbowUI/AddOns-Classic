@@ -89,9 +89,9 @@ function NRC:chatMsgLoot(...)
 		if (not itemLink) then
 	 		--Self receive single loot "You receive bonus loot: %s." --/run local msg = "You receive bonus loot: Test."; local itemLink = msg:match(LOOT_ITEM_BONUS_ROLL_SELF:gsub("%%s", "(.+)")); print(itemLink);
 	    	itemLink = msg:match(LOOT_ITEM_BONUS_ROLL_SELF:gsub("%%s", "(.+)"));
-	    	if (itemLink) then
-	    		NRC:debug("My bonus roll:", itemLink);
-	    	end
+	    	--if (itemLink) then
+	    	--	NRC:debug("My bonus roll:", itemLink);
+	    	--end
 			if (not itemLink) then
 				--Other players.
 				name, itemLink, amount = strmatch(msg, string.gsub(string.gsub(LOOT_ITEM_BONUS_ROLL_MULTIPLE, "%%s", "(.+)"), "%%d", "(%%d+)"));
@@ -108,6 +108,9 @@ function NRC:chatMsgLoot(...)
     		bonusRoll = true;
     	end
 	end
+	if (not otherPlayer) then
+    	name = UnitName("Player");
+    end
     if (not amount) then
     	amount = 1;
     end
@@ -2369,11 +2372,11 @@ function NRC:loadRaidLogInstance(logID)
 				frame:SetSize(325, 55);
 				
 				frame.fs = frame:CreateFontString("$parentFS", "ARTWORK");
-				frame.fs:SetPoint("LEFT", 115, 10);
+				frame.fs:SetPoint("LEFT", 100, 10);
 				frame.fs:SetJustifyH("LEFT");
 				frame.fs:SetFontObject(GameFontNormalMed3);
 				frame.fs2 = frame:CreateFontString("$parentFS2", "ARTWORK");
-				frame.fs2:SetPoint("LEFT", 115, -10);
+				frame.fs2:SetPoint("LEFT", 100, -10);
 				frame.fs2:SetJustifyH("LEFT");
 				frame.fs2:SetFont(NRC.regionFont, 14);
 				
@@ -6155,12 +6158,19 @@ end)
 
 local checkRaidLocks;
 hooksecurefunc("StaticPopup_Show", function(...)
-	local found;
-	for i = 1, STATICPOPUP_NUMDIALOGS do
-		local dialogType = _G["StaticPopup"..i].which
-		if (dialogType == "INSTANCE_LOCK" and _G["StaticPopup" .. i]:IsShown()) then
+	if (STATICPOPUP_NUMDIALOGS) then
+		local found;
+		for i = 1, STATICPOPUP_NUMDIALOGS do
+			local dialogType = _G["StaticPopup"..i].which
+			if (dialogType == "INSTANCE_LOCK" and _G["StaticPopup" .. i]:IsShown()) then
+				checkRaidLocks = true;
+				return;
+			end
+		end
+	elseif (StaticPopup_Visible) then
+		local _, frame = StaticPopup_Visible("INSTANCE_LOCK");
+		if (frame) then
 			checkRaidLocks = true;
-			return;
 		end
 	end
 end)
@@ -6168,15 +6178,27 @@ end)
 --There doesn't seem to be any instance lock event so we check data after boss kills and after the instance_lock popup has closed.
 --Seems like when you click accept OnHide doesn't trigger until the timer finishes counting down in the background?
 hooksecurefunc("StaticPopup_Hide", function(...)
-	local found;
-	for i = 1, STATICPOPUP_NUMDIALOGS do
-		local dialogType = _G["StaticPopup"..i].which
-		if (dialogType == "INSTANCE_LOCK" and checkRaidLocks) then
-			C_Timer.After(3, function()
-				NRC:recordLockoutData();
-			end)
-			checkRaidLocks = nil;
-			return;
+	if (checkRaidLocks) then
+		if (STATICPOPUP_NUMDIALOGS) then
+			local found;
+			for i = 1, STATICPOPUP_NUMDIALOGS do
+				local dialogType = _G["StaticPopup"..i].which
+				if (dialogType == "INSTANCE_LOCK" and checkRaidLocks) then
+					C_Timer.After(3, function()
+						NRC:recordLockoutData();
+					end)
+					checkRaidLocks = nil;
+					return;
+				end
+			end
+		elseif (StaticPopup_Visible) then
+			local _, frame = StaticPopup_Visible("INSTANCE_LOCK");
+			if (not frame) then
+				C_Timer.After(3, function()
+					NRC:recordLockoutData();
+				end)
+				checkRaidLocks = nil;
+			end
 		end
 	end
 end)
