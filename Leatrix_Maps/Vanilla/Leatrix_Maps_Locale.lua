@@ -10,6 +10,7 @@ local L = setmetatable({}, {__index = localeFunc})
 Leatrix_Maps.L = L
 
 if LeatrixGlobalDisableLocalisation then return end
+if LeaMapsDB then print("Leatrix Maps: LeaMapsDB exists.") end
 
 -- Locale override (enUS, zhCN, zhTW, ruRU, koKR, deDE, esMX, frFR, itIT, ptBR)
 -- GameLocale = "enUS"
@@ -1580,6 +1581,7 @@ L["Unlock map frame"] = "解鎖地圖框架"
 L["Unu'pe"] = "烏努佩"
 L["Upper Blackrock Spire"] = "黑石塔上層"
 L["Use default map"] = "使用預設地圖"
+L["Use English language"] = "使用英文語言"
 L["Use large font"] = "使用大字體"
 L["Use stationary opacity while pointing at map"] = "指向地圖時使用固定的透明度"
 L["Utgarde Keep"] = "守望堡"

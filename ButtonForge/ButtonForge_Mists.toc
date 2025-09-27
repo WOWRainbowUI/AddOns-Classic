@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50500
 ## Title: Button Forge |cff69ccf0(Classic-Mists)|r
 ## Version: 1.0.28-classic-Mists
 ## Author: Massiner of Nathrezim, Albirew, Sunnova
