@@ -1,4 +1,4 @@
-## Interface: 11507, 40402, 50500
+## Interface: 11507, 40402, 50501
 ## Notes: World buff timers and much more.
 ## Notes-esES: Temporizadores de beneficios del mundo y mucho más.
 ## Notes-esMX: Temporizadores de beneficios del mundo y mucho más.
@@ -6,7 +6,7 @@
 ## Notes-ptBR: Temporizadores de bônus mundiais e muito mais.
 ## Title: Nova World Buffs
 ## Author: Novaspark-Arugal OCE
-## Version: 3.14
+## Version: 3.15
 ## SavedVariables: NWBdatabase
 
 embeds.xml
