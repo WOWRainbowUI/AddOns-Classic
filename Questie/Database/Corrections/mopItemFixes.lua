@@ -244,7 +244,7 @@ function MopItemFixes.Load()
             [itemKeys.objectDrops] = {210209},
         },
         [78934] = { -- The Water of Youth
-            [itemKeys.objectDrops] = {223818},
+            [itemKeys.objectDrops] = {210229},
         },
         [78942] = { -- Jar of Pigment
             [itemKeys.objectDrops] = {210228},
@@ -783,6 +783,7 @@ function MopItemFixes.Load()
         },
         [85278] = { -- Guo-Lai Runestone
             [itemKeys.objectDrops] = {213180},
+            [itemKeys.npcDrops] = {63610,63611},
         },
         [85282] = { -- Tiger Flank
             [itemKeys.npcDrops] = {63537,63538,65612,67085},
@@ -1060,6 +1061,27 @@ function MopItemFixes.Load()
         },
         [89903] = { -- Thousand-Year Water
             [itemKeys.objectDrops] = {440008},
+        },
+        [91814] = { -- Pristine Golden Crownfeather
+            [itemKeys.npcDrops] = {60616},
+        },
+        [91815] = { -- Pristine Jet Crownfeather
+            [itemKeys.npcDrops] = {59763},
+        },
+        [91816] = { -- Unbruised Yak Haunch
+            [itemKeys.npcDrops] = {66549,66587,66595},
+        },
+        [91817] = { -- Funky Rotten Fish
+            [itemKeys.npcDrops] = {60358},
+        },
+        [91854] = { -- Sturdy Crane Snare
+            [itemKeys.startQuest] = 32164,
+        },
+        [91855] = { -- Sturdy Tiger Trap
+            [itemKeys.startQuest] = 32165,
+        },
+        [91856] = { -- Sturdy Crab Crate
+            [itemKeys.startQuest] = 32166,
         },
         [95383] = { -- Pristine Banner of the Mantid Empire
             [itemKeys.startQuest] = 32686,
