@@ -1,5 +1,5 @@
 ﻿----------------------------------------------------------------------
--- 	Leatrix Plus 5.0.09 (17th September 2025)
+-- 	Leatrix Plus 5.1.01 (24th September 2025)
 ----------------------------------------------------------------------
 
 --	01:Functions 02:Locks   03:Restart 40:Player   45:Rest
@@ -19,7 +19,7 @@
 	local void
 
 	-- Version
-	LeaPlusLC["AddonVer"] = "5.0.09"
+	LeaPlusLC["AddonVer"] = "5.1.01"
 
 	-- Get locale table
 	local void, Leatrix_Plus = ...
@@ -2057,8 +2057,8 @@
 					tDelay = GetTime()
 					if GetCVarBool("autoLootDefault") ~= IsModifiedClick("AUTOLOOTTOGGLE") then
 						if TSMDestroyBtn and TSMDestroyBtn:IsShown() and TSMDestroyBtn:GetButtonState() == "DISABLED" then tDelay = GetTime() return end
-						local lootMethod = GetLootMethod()
-						if lootMethod == "master" then
+						local lootMethod = C_PartyInfo.GetLootMethod()
+						if lootMethod == 2 then
 							-- Master loot is enabled so fast loot if item should be auto looted
 							local lootThreshold = GetLootThreshold()
 							for i = GetNumLootItems(), 1, -1 do
@@ -2077,7 +2077,7 @@
 									if not grouped then
 										LootSlot(i)
 									else
-										if lootMethod == "freeforall" then
+										if lootMethod == 0 then -- Free for all
 											if slotType == LOOT_SLOT_ITEM then
 												LootSlot(i)
 											end
