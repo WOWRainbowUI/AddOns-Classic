@@ -1,4 +1,10 @@
-﻿5.0.09 - 17th September 2025
+﻿5.1.01 - 24th September 2025
+- Fixed the Lua error with 'Unlock map frame' when dragging the map.
+
+5.1.00 - 24th September 2025
+- Updated for Mists of Pandaria game patch 5.5.1.
+
+5.0.09 - 17th September 2025
 - Added a new option called 'Use English language'.  If enabled, text used throughout the addon will be shown in English regardless of your game locale.
 
 5.0.08 - 10th September 2025

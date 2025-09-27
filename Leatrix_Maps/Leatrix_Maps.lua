@@ -1,6 +1,6 @@
 ﻿
 	----------------------------------------------------------------------
-	-- 	Leatrix Maps 5.0.09 (17th September 2025)
+	-- 	Leatrix Maps 5.1.01 (24th September 2025)
 	----------------------------------------------------------------------
 
 	-- 10:Func, 20:Comm, 30:Evnt, 40:Panl
@@ -12,7 +12,7 @@
 	local LeaMapsLC, LeaMapsCB, LeaDropList, LeaConfigList, LeaLockList = {}, {}, {}, {}, {}
 
 	-- Version
-	LeaMapsLC["AddonVer"] = "5.0.09"
+	LeaMapsLC["AddonVer"] = "5.1.01"
 
 	-- Get locale table
 	local void, Leatrix_Maps = ...
@@ -1758,8 +1758,8 @@
 				if LeaMapsLC["UnlockMapFrame"] == "On" then
 					-- WorldMapFrame:StartMoving()
 					-- WorldMapTitleButton_OnDragStart does nothing if map is locked
-					WorldMapScreenAnchor:ClearAllPoints()
-					WorldMapFrame:ClearAllPoints()
+					-- WorldMapScreenAnchor:ClearAllPoints() -- LeaMapsLC.NewPatch
+					-- WorldMapFrame:ClearAllPoints() -- LeaMapsLC.NewPatch
 					WorldMapFrame:StartMoving()
 				end
 			end)
