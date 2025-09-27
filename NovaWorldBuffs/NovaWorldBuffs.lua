@@ -12200,9 +12200,17 @@ f:SetScript("OnEvent", function(self, event, ...)
 end)
 
 hooksecurefunc("StaticPopup_Show", function(...)
-	for i = 1, STATICPOPUP_NUMDIALOGS do
-		local dialogType = _G["StaticPopup"..i].which
-		if (dialogType == "CONFIRM_BATTLEFIELD_ENTRY" and _G["StaticPopup" .. i]:IsShown()) then
+	if (STATICPOPUP_NUMDIALOGS) then
+		for i = 1, STATICPOPUP_NUMDIALOGS do
+			local dialogType = _G["StaticPopup"..i].which
+			if (dialogType == "CONFIRM_BATTLEFIELD_ENTRY" and _G["StaticPopup" .. i]:IsShown()) then
+				enableBgButton();
+				bgPopUp = true;
+			end
+		end
+	elseif (StaticPopup_Visible) then
+		local _, frame = StaticPopup_Visible("CONFIRM_BATTLEFIELD_ENTRY");
+		if (frame) then
 			enableBgButton();
 			bgPopUp = true;
 		end
@@ -12211,16 +12219,24 @@ end)
 
 hooksecurefunc("StaticPopup_Hide", function(...)
 	if (bgPopUp) then
-		local found;
-		for i = 1, STATICPOPUP_NUMDIALOGS do
-			local dialogType = _G["StaticPopup"..i].which
-			if (dialogType == "CONFIRM_BATTLEFIELD_ENTRY" and _G["StaticPopup" .. i]:IsShown()) then
-				found = true;
+		if (STATICPOPUP_NUMDIALOGS) then
+			local found;
+			for i = 1, STATICPOPUP_NUMDIALOGS do
+				local dialogType = _G["StaticPopup"..i].which
+				if (dialogType == "CONFIRM_BATTLEFIELD_ENTRY" and _G["StaticPopup" .. i]:IsShown()) then
+					found = true;
+				end
 			end
-		end
-		if (not found) then
-			disableBgButton();
-			bgPopUp = nil;
+			if (not found) then
+				disableBgButton();
+				bgPopUp = nil;
+			end
+		elseif (StaticPopup_Visible) then
+			local _, frame = StaticPopup_Visible("CONFIRM_BATTLEFIELD_ENTRY");
+			if (not frame) then
+				disableBgButton();
+				bgPopUp = nil;
+			end
 		end
 	end
 end)

@@ -6,7 +6,7 @@
 ## Notes-ptBR: Temporizadores de bônus mundiais e muito mais.
 ## Title: Nova World Buffs
 ## Author: Novaspark-Arugal OCE
-## Version: 3.14
+## Version: 3.15
 ## SavedVariables: NWBdatabase
 
 ## Title-zhTW: |cffFF7F00[團隊]|r Nova 世界增益監控
