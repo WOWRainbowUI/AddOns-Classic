@@ -1,112 +1,30 @@
-tag 9d3bc926e06f8a4632ec4c6d86b502b3a657a973 v2.1.6
+tag 231ad8742452396c212423e4ab6be140ed926442 v2.1.8
 Author:	skyler-code <skylerh15@github.com>
-Date:	Mon Sep 1 23:16:38 2025 -0500
+Date:	Fri Sep 26 04:43:34 2025 -0500
 
-commit f6c20745208034ac375e416516a06fd40831c687
+commit e43b50572df4f9071be8d346ae868e828690ab44
 Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 21:35:54 2025 -0500
+Date:   Fri Sep 26 04:43:03 2025 -0500
 
-    bring methodwindow to front if already shown
+    need to do playerrace check last
 
-commit fb50b10d7cc25f96bedc3306820b71847eea119f
+commit 9086eb884207420a8d8ea077e336d5746642e454
 Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 21:09:33 2025 -0500
+Date:   Fri Sep 26 04:39:45 2025 -0500
 
-    Prevent edge where user has item missing in import but equipped item in slot
+    conversion cleanup
 
-commit 344079a39ac7051a7a675efb7dd9e0018eee8fc4
+commit b301746030ecc6e8ac54ee045559602895f05607
 Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 20:48:45 2025 -0500
+Date:   Fri Sep 26 03:52:37 2025 -0500
 
-    restore accept button
+    Factor in 50% additional haste for mistweavers
+    
+    closes #49
 
-commit c26b6b00b7c11e25713d0db8463d139aabce0367
+commit 8ea4a5ef1343de88bddda2fe9e851fe3c47c4ee3
 Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 20:21:22 2025 -0500
+Date:   Fri Sep 26 03:51:56 2025 -0500
 
-    Recognize imports with swapped items
-
-commit 9ae976858a91c2df4ba52493fe3cdc9f41213766
-Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 19:25:44 2025 -0500
-
-    utilize ContinueOnItemLoad to ensure mismatch error always has links
-
-commit 9105ffef92ba02661df08cdef9b4365dc80b9998
-Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 18:06:22 2025 -0500
-
-    correct ReforgingFrameIsVisible func name
-
-commit e41f93a0b6f5bab5b5056dce57a12d9b6fe479eb
-Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 18:03:29 2025 -0500
-
-    AceGUI usage improvements
-
-commit a0d487f610f2c72866a8bf351d5af8248b3514b9
-Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 18:02:49 2025 -0500
-
-    Update label for Summarize reforged stats on tooltip
-
-commit 4eba53564496d16460f4ffd6f46835a2e3d52932
-Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 15:17:39 2025 -0500
-
-    cleanup and provide better errors while importing
-
-commit c24d6036df4522a12477a1b31be611f513d35819
-Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 14:12:36 2025 -0500
-
-    show tooltip for truncated import errors
-
-commit bd8bc0b981891c49fceeac5afe15ff719e9ff86a
-Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 10:53:02 2025 -0500
-
-    Partial revert of https://github.com/skyler-code/ReforgeLite/commit/3a81e7ab35728e8fc38e91e055f9db483af16d98
-
-commit 88f4d01657d4ff54809fabf0270574d81fbcaea8
-Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 10:51:54 2025 -0500
-
-    clear all points on import window before setting a new one
-
-commit ae0fa7153bdd152d5baaa44ba063874b84bf1a5f
-Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 01:02:54 2025 -0500
-
-    only show + for values greater than 0
-
-commit 1ef32f1b0a28334a274f485d0e3d1d1aee5f6c75
-Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 01:02:41 2025 -0500
-
-    small cleanup
-
-commit 8c4179da1e187923d0820c954498930680aed032
-Author: skyler-code <skylerh15@github.com>
-Date:   Mon Sep 1 00:35:19 2025 -0500
-
-    can just use RegisterUnitEvent for PLAYER_SPECIALIZATION_CHANGED here instead
-
-commit b09f8dfac45fd8110982fa182f3671b4f4d0c523
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Aug 31 13:48:41 2025 -0500
-
-    restore original red/green colors
-
-commit 3d7b71c0e7cef6fd0d5a61052f9a7a57562c6894
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Aug 31 13:45:55 2025 -0500
-
-    add '%' to haste tooltip
-
-commit a15505b9a128963197e28f83327e2ba5453505af
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Aug 31 04:45:14 2025 -0500
-
-    unified font colors
+    EnumUtil
 

@@ -135,20 +135,7 @@ addonTable.CreateIconMarkup = CreateIconMarkup
 
 local AtLeast = addonTable.StatCapMethods.AtLeast
 local AtMost = addonTable.StatCapMethods.AtMost
-
-local CAPS = {
-  ManualCap = 1,
-  MeleeHitCap = 2,
-  SpellHitCap = 3,
-  MeleeDWHitCap = 4,
-  ExpSoftCap = 5,
-  ExpHardCap = 6,
-  FirstHasteBreak = 7,
-  SecondHasteBreak = 8,
-  ThirdHasteBreak = 9,
-  FourthHasteBreak = 10,
-  FifthHasteBreak = 11,
-}
+local CAPS = EnumUtil.MakeEnum("ManualCap", "MeleeHitCap", "SpellHitCap", "MeleeDWHitCap", "ExpSoftCap", "ExpHardCap", "FirstHasteBreak", "SecondHasteBreak", "ThirdHasteBreak", "FourthHasteBreak", "FifthHasteBreak")
 
 ReforgeLite.capPresets = {
   {
@@ -717,7 +704,7 @@ function ReforgeLite:InitPresets()
           preset.weights[addonTable.statIds.MASTERY] = raw["MasteryRating"] or 0
           local total = 0
           local average = 0
-          for i = 1, #self.itemStats do
+          for i = 1, addonTable.itemStatCount do
             if preset.weights[i] ~= 0 then
               total = total + 1
               average = average + preset.weights[i]
@@ -731,7 +718,7 @@ function ReforgeLite:InitPresets()
             while factor * average / total > 1000 do
               factor = factor / 10
             end
-            for i = 1, #self.itemStats do
+            for i = 1, addonTable.itemStatCount do
               preset.weights[i] = preset.weights[i] * factor
             end
             tinsert(result, preset)

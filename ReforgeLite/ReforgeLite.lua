@@ -98,6 +98,11 @@ local DefaultDB = {
 }
 
 local RFL_FRAMES = { ReforgeLite }
+RFL_FRAMES.CloseAll = function(t)
+  for _, frame in ipairs(t) do
+    frame:Hide()
+  end
+end
 
 local function ReforgingFrameIsVisible()
   return ReforgingFrame and ReforgingFrame:IsShown()
@@ -105,27 +110,15 @@ end
 
 local PLAYER_ITEM_DATA = setmetatable({}, {
   __index = function(t, k)
-    if type(k) == "number" and k >= INVSLOT_FIRST_EQUIPPED and k <= INVSLOT_LAST_EQUIPPED then
-      rawset(t, k, Item:CreateFromEquipmentSlot(k))
-      return t[k]
-    elseif tContains(ITEM_SLOTS, k) then
-      local slotId = GetInventorySlotInfo(k)
-      rawset(t, k, t[slotId])
-      return t[slotId]
-    end
+    rawset(t, k, Item:CreateFromEquipmentSlot(k))
+    return t[k]
   end
 })
 ReforgeLite.playerData = PLAYER_ITEM_DATA
 
 addonTable.localeClass, addonTable.playerClass, addonTable.playerClassID = UnitClass("player")
-addonTable.playerRace = select(2, UnitRace("player"))
 local UNFORGE_INDEX = -1
-addonTable.StatCapMethods = {
-  AtLeast = 1,
-  AtMost = 2,
-  NewValue = 3,
-  Exactly = 4,
-}
+addonTable.StatCapMethods = EnumUtil.MakeEnum("AtLeast", "AtMost", "NewValue", "Exactly")
 
 function ReforgeLite:UpgradeDB()
   local db = ReforgeLiteDB
@@ -163,9 +156,7 @@ GUI.CreateStaticPopup("REFORGE_LITE_SAVE_PRESET", L["Enter the preset name"], { 
   ReforgeLite.deletePresetButton:ToggleStatus()
 end })
 
-local statIds = {
-  SPIRIT = 1, DODGE = 2, PARRY = 3, HIT = 4, CRIT = 5, HASTE = 6, EXP = 7, MASTERY = 8, SPELLHIT = 9
-}
+local statIds = EnumUtil.MakeEnum("SPIRIT", "DODGE", "PARRY", "HIT", "CRIT", "HASTE", "EXP", "MASTERY", "SPELLHIT")
 addonTable.statIds = statIds
 ReforgeLite.STATS = statIds
 
@@ -250,8 +241,8 @@ local ITEM_STATS = {
     RatingStat (statIds.EXP,     "ITEM_MOD_EXPERTISE_RATING",     EXPERTISE_ABBR, STAT_EXPERTISE,       CR_EXPERTISE),
     RatingStat (statIds.MASTERY, "ITEM_MOD_MASTERY_RATING_SHORT", STAT_MASTERY,   STAT_MASTERY,         CR_MASTERY),
 }
-ReforgeLite.itemStats = ITEM_STATS
 local ITEM_STAT_COUNT = #ITEM_STATS
+addonTable.itemStats, addonTable.itemStatCount = ITEM_STATS, ITEM_STAT_COUNT
 
 local REFORGE_TABLE_BASE = 112
 local reforgeTable = {
@@ -322,7 +313,7 @@ function ReforgeLite:ValidateWoWSimsString(importStr)
   local newItems = CopyTable((self.pdb.method or self:InitializeMethod()).items)
   for slot, item in ipairs(newItems) do
     local simItemInfo = wowsims.player.equipment.items[slot] or {}
-    if simItemInfo.id ~= self.itemData[slot].itemId then
+    if simItemInfo.id ~= self.itemData[slot].itemInfo.itemId then
       local swappedSlotId = IsItemSwapped(slot, wowsims)
       if swappedSlotId then
         simItemInfo = wowsims.player.equipment.items[swappedSlotId]
@@ -352,12 +343,21 @@ function ReforgeLite:ApplyWoWSimsImport(newItems, attachToReforge)
 end
 
 --[===[@debug@
+addonTable.isDev = true
 function ReforgeLite:ParsePresetString(presetStr)
   local success, preset = pcall(function () return C_EncodingUtil.DeserializeJSON(presetStr) end)
   if success and type(preset.caps) == "table" then
     DevTools_Dump(preset)
   end
 end
+
+function ReforgeLite:PreviewColors()
+  for _, dbColor in ipairs(C_UIColor.GetColors()) do
+    local color = _G[dbColor.baseTag]
+    print(color:WrapTextInColorCode(string.join(", ", dbColor.baseTag, color:GetRGB())))
+  end
+end
+
 --@end-debug@]===]
 
 function ReforgeLite:ValidatePawnString(importStr)
@@ -741,6 +741,7 @@ function ReforgeLite:CreateFrame()
   self:CreateOptionList ()
 
   RunNextFrame(function() self:FixScroll() end)
+  self:RegisterEvent("PLAYER_REGEN_DISABLED")
 end
 
 function ReforgeLite:CreateItemTable ()
@@ -754,7 +755,7 @@ function ReforgeLite:CreateItemTable ()
     self.playerTalents[tier] = self:CreateTexture(nil, "ARTWORK")
     self.playerTalents[tier]:SetPoint("TOPLEFT", self.playerTalents[tier-1] or self.playerSpecTexture, "TOPRIGHT", 4, 0)
     self.playerTalents[tier]:SetSize(18, 18)
-    self.playerTalents[tier]:SetTexCoord(0.0825, 0.0825, 0.0825, 0.9175, 0.9175, 0.0825, 0.9175, 0.9175)
+    self.playerTalents[tier]:SetTexCoord(self.playerSpecTexture:GetTexCoord())
     self.playerTalents[tier]:SetScript("OnLeave", GameTooltip_Hide)
   end
 
@@ -783,26 +784,25 @@ function ReforgeLite:CreateItemTable ()
   end
   self.itemData = {}
   for i, v in ipairs (ITEM_SLOTS) do
-    self.itemData[i] = CreateFrame ("Frame", nil, self.itemTable)
+    self.itemData[i] = CreateFrame("Frame", nil, self.itemTable)
     self.itemData[i].slot = v
-    self.itemData[i]:ClearAllPoints ()
+    self.itemData[i]:ClearAllPoints()
     self.itemData[i]:SetSize(ITEM_SIZE, ITEM_SIZE)
-    self.itemTable:SetCell (i, 0, self.itemData[i])
-    self.itemData[i]:EnableMouse (true)
-    self.itemData[i]:SetScript ("OnEnter", function (frame)
-      GameTooltip:SetOwner (frame, "ANCHOR_LEFT")
-      if frame.item then
-        GameTooltip:SetInventoryItem("player", frame.slotId)
-      else
+    self.itemTable:SetCell(i, 0, self.itemData[i])
+    self.itemData[i]:EnableMouse(true)
+    self.itemData[i]:SetScript("OnEnter", function(frame)
+      GameTooltip:SetOwner(frame, "ANCHOR_LEFT")
+      local hasItem = GameTooltip:SetInventoryItem("player", frame.slotId)
+      if not hasItem then
         GameTooltip:SetText(_G[strupper(frame.slot)])
       end
-      GameTooltip:Show ()
+      GameTooltip:Show()
     end)
     self.itemData[i]:SetScript ("OnLeave", GameTooltip_Hide)
     self.itemData[i]:SetScript ("OnMouseDown", function (frame)
-      if not frame.itemGUID then return end
-      self.pdb.itemsLocked[frame.itemGUID] = not self.pdb.itemsLocked[frame.itemGUID] and 1 or nil
-      frame.locked:SetShown(self.pdb.itemsLocked[frame.itemGUID] ~= nil)
+      if not frame.itemInfo.itemGUID then return end
+      self.pdb.itemsLocked[frame.itemInfo.itemGUID] = not self.pdb.itemsLocked[frame.itemInfo.itemGUID] and 1 or nil
+      frame.locked:SetShown(self.pdb.itemsLocked[frame.itemInfo.itemGUID] ~= nil)
     end)
     self.itemData[i].slotId, self.itemData[i].slotTexture = GetInventorySlotInfo (v)
     self.itemData[i].texture = self.itemData[i]:CreateTexture (nil, "ARTWORK")
@@ -817,7 +817,7 @@ function ReforgeLite:CreateItemTable ()
     self.itemData[i].quality:SetAlpha(0.75)
     self.itemData[i].quality:SetSize(44,44)
     self.itemData[i].quality:SetPoint ("CENTER", self.itemData[i])
-
+    self.itemData[i].itemInfo = {}
     self.itemData[i].stats = {}
     for j, s in ipairs (ITEM_STATS) do
       local statFontString = self.itemTable:CreateFontString (nil, "OVERLAY", "GameFontNormalSmall")
@@ -1312,13 +1312,13 @@ function ReforgeLite:CreateOptionList ()
   self:UpdateContentSize ()
 
   if self.pdb.method then
-    ReforgeLite:UpdateMethodCategory ()
+    self:UpdateMethodCategory ()
   end
 end
 
 function ReforgeLite:GetActiveWindow()
-  if(not RFL_FRAMES[2] and RFL_FRAMES[1]:IsShown()) then
-    return RFL_FRAMES[1]
+  if not RFL_FRAMES[2] then
+    return RFL_FRAMES[1]:IsShown() and RFL_FRAMES[1] or nil
   end
   local topWindow
   for _, frame in ipairs(RFL_FRAMES) do
@@ -1354,11 +1354,7 @@ function ReforgeLite:FillSettings()
   accuracySlider:SetScript ("OnValueChanged", function (slider)
     self.db.accuracy = slider:GetValue ()
   end)
-
   accuracySlider.Text:SetText (L["Accuracy"])
-  accuracySlider.Low:SetText (LOW)
-  accuracySlider.High:SetText (HIGH)
-  self.accuracySlider = accuracySlider
 
   GUI:SetTooltip(accuracySlider, L["Setting to Low will result in lower accuracy but faster results! Set this back to High if you're not getting the results you expect."])
 
@@ -1557,47 +1553,52 @@ local function GetReforgeID(slotId)
   return GetReforgeIDFromString(PLAYER_ITEM_DATA[slotId]:GetItemLink())
 end
 
+local function GetItemUpgradeLevel(item)
+    if item:IsItemEmpty()
+    or not item:HasItemLocation()
+    or item:GetItemQuality() < Enum.ItemQuality.Rare
+    or item:GetCurrentItemLevel() < 458 then
+        return 0
+    end
+    local originalIlvl = C_Item.GetDetailedItemLevelInfo(item:GetItemID())
+    if not originalIlvl then
+        return 0
+    end
+
+    return (item:GetCurrentItemLevel() - originalIlvl) / 4
+end
+
 function ReforgeLite:UpdateItems()
   for _, v in ipairs (self.itemData) do
-    local item = PLAYER_ITEM_DATA[v.slotId]
+    local item = self.playerData[v.slotId]
     local stats = {}
     local reforgeSrc, reforgeDst
-    if not item:IsItemEmpty() then
-      v.item = item:GetItemLink()
-      v.itemId = item:GetItemID()
-      v.ilvl = item:GetCurrentItemLevel()
-      v.itemGUID = item:GetItemGUID()
-      v.upgradeLevel = v.ilvl >= 458 and addonTable.GetUpgradeIdForInventorySlot(v.slotId) or 0
+    if item:IsItemEmpty() then
+      wipe(v.itemInfo)
+      v.texture:SetTexture(v.slotTexture)
+      v.quality:SetVertexColor(addonTable.FONTS.white:GetRGB())
+    else
+      v.itemInfo = {
+        link = item:GetItemLink(),
+        itemId = item:GetItemID(),
+        ilvl = item:GetCurrentItemLevel(),
+        itemGUID = item:GetItemGUID(),
+        upgradeLevel = GetItemUpgradeLevel(item),
+        reforge = GetReforgeID(v.slotId)
+      }
       v.texture:SetTexture(item:GetItemIcon())
-      v.qualityColor = item:GetItemQualityColor()
-      v.quality:SetVertexColor(v.qualityColor.r, v.qualityColor.g, v.qualityColor.b)
-      v.quality:Show()
-      stats = GetItemStats(v.item, v.upgradeLevel)
-      v.reforge = GetReforgeID(v.slotId)
-      if v.reforge then
-        local srcId, dstId = unpack(reforgeTable[v.reforge])
+      v.quality:SetVertexColor(item:GetItemQualityColor().color:GetRGB())
+      stats = GetItemStats(v.itemInfo.link, v.itemInfo.upgradeLevel)
+      if v.itemInfo.reforge then
+        local srcId, dstId = unpack(reforgeTable[v.itemInfo.reforge])
         reforgeSrc, reforgeDst = ITEM_STATS[srcId].name, ITEM_STATS[dstId].name
         local amount = floor ((stats[reforgeSrc] or 0) * addonTable.REFORGE_COEFF)
         stats[reforgeSrc] = (stats[reforgeSrc] or 0) - amount
         stats[reforgeDst] = (stats[reforgeDst] or 0) + amount
       end
-    else
-      v.item = nil
-      v.itemId = nil
-      v.ilvl = nil
-      v.reforge = nil
-      v.itemGUID = nil
-      v.qualityColor = nil
-      v.upgradeLevel = nil
-      v.texture:SetTexture (v.slotTexture)
-      v.quality:SetVertexColor(addonTable.FONTS.white:GetRGB())
-      v.quality:Hide()
     end
-    if self.pdb.itemsLocked[v.itemGUID] then
-      v.locked:Show()
-    else
-      v.locked:Hide()
-    end
+    v.quality:SetShown(not item:IsItemEmpty())
+    v.locked:SetShown(self.pdb.itemsLocked[v.itemInfo.itemGUID])
     for j, s in ipairs (ITEM_STATS) do
       if stats[s.name] and stats[s.name] ~= 0 then
         v.stats[j]:SetText (stats[s.name])
@@ -1632,29 +1633,25 @@ function ReforgeLite:UpdatePlayerSpecInfo()
   self.playerSpecTexture:SetTexture(icon)
   local activeSpecGroup = C_SpecializationInfo.GetActiveSpecGroup()
   for tier = 1, MAX_NUM_TALENT_TIERS do
-    self.playerTalents[tier]:Show()
     local tierAvailable, selectedTalentColumn = GetTalentTierInfo(tier, activeSpecGroup, false, "player")
-    if tierAvailable then
-      if selectedTalentColumn > 0 then
-        local talentInfo = C_SpecializationInfo.GetTalentInfo({
-          tier = tier,
-          column = selectedTalentColumn,
-          groupIndex = activeSpecGroup,
-          target = 'player'
-        })
-        self.playerTalents[tier]:SetTexture(talentInfo.icon)
-        self.playerTalents[tier]:SetScript("OnEnter", function(f)
-          GameTooltip:SetOwner(f, "ANCHOR_LEFT")
-          GameTooltip:SetTalent(talentInfo.talentID, false, false, activeSpecGroup)
-          GameTooltip:Show()
-        end)
-      else
-        self.playerTalents[tier]:SetTexture(132222)
-        self.playerTalents[tier]:SetScript("OnEnter", nil)
-      end
+    if selectedTalentColumn > 0 then
+      local talentInfo = C_SpecializationInfo.GetTalentInfo({
+        tier = tier,
+        column = selectedTalentColumn,
+        groupIndex = activeSpecGroup,
+        target = 'player'
+      })
+      self.playerTalents[tier]:SetTexture(talentInfo.icon)
+      self.playerTalents[tier]:SetScript("OnEnter", function(f)
+        GameTooltip:SetOwner(f, "ANCHOR_LEFT")
+        GameTooltip:SetTalent(talentInfo.talentID, false, false, activeSpecGroup)
+        GameTooltip:Show()
+      end)
     else
-      self.playerTalents[tier]:Hide()
+      self.playerTalents[tier]:SetTexture(132222)
+      self.playerTalents[tier]:SetScript("OnEnter", nil)
     end
+    self.playerTalents[tier]:SetShown(tierAvailable)
   end
 end
 
@@ -1764,8 +1761,7 @@ function ReforgeLite:CreateMethodWindow()
     self:RegisterQueueUpdateEvents()
   end)
   self.methodWindow:SetScript ("OnHide", function (frame)
-    local activeWindow = self:GetActiveWindow()
-    if activeWindow then
+    if self:GetActiveWindow() then
       self:SetFrameActive(true)
     else
       self:UnregisterQueueUpdateEvents()
@@ -1856,7 +1852,7 @@ function ReforgeLite:RefreshMethodWindow()
   end
 
   for i, v in ipairs (self.methodWindow.items) do
-    local item = PLAYER_ITEM_DATA[v.slotId]
+    local item = self.playerData[v.slotId]
     if not item:IsItemEmpty() then
       v.item = item:GetItemLink()
       v.texture:SetTexture(item:GetItemIcon())
@@ -1908,7 +1904,7 @@ function ReforgeLite:UpdateMethodChecks ()
     local cost = 0
     local anyDiffer
     for i, v in ipairs (self.methodWindow.items) do
-      local item = PLAYER_ITEM_DATA[v.slotId]
+      local item = self.playerData[v.slotId]
       v.item = item:GetItemLink()
       v.texture:SetTexture (item:GetItemIcon() or v.slotTexture)
       local isMatching = item:IsItemEmpty() or IsReforgeMatching(v.slotId, self.pdb.method.items[i].reforge, self.methodOverride[i])
@@ -2032,7 +2028,7 @@ local function HandleTooltipUpdate(tip)
   for _, region in pairs({tip:GetRegions()}) do
     if region:GetObjectType() == "FontString" and region:GetText() == REFORGED then
       local srcId, destId = unpack(reforgeTable[reforgeId])
-      region:SetFormattedText("%s (%s > %s)", REFORGED, ReforgeLite.itemStats[srcId].long, ReforgeLite.itemStats[destId].long)
+      region:SetFormattedText("%s (%s > %s)", REFORGED, ITEM_STATS[srcId].long, ITEM_STATS[destId].long)
       return
     end
   end
@@ -2101,7 +2097,7 @@ function ReforgeLite:FORGE_MASTER_ITEM_CHANGED()
 end
 
 function ReforgeLite:FORGE_MASTER_OPENED()
-  if self.db.openOnReforge and not self:IsShown() and (not self.methodWindow or not self.methodWindow:IsShown()) then
+  if self.db.openOnReforge and not self:GetActiveWindow() then
     self.autoOpened = true
     self:Show()
   end
@@ -2114,20 +2110,14 @@ end
 
 function ReforgeLite:FORGE_MASTER_CLOSED()
   if self.autoOpened then
-    self:Hide()
-    if self.methodWindow then
-      self.methodWindow:Hide()
-    end
+    RFL_FRAMES:CloseAll()
     self.autoOpened = nil
   end
   self:StopReforging()
 end
 
 function ReforgeLite:PLAYER_REGEN_DISABLED()
-  if self.methodWindow then
-    self.methodWindow:Hide()
-  end
-  self:Hide()
+  RFL_FRAMES:CloseAll()
 end
 
 local currentSpec -- hack because this event likes to fire twice
@@ -2166,14 +2156,18 @@ function ReforgeLite:ADDON_LOADED (addon)
     tremove(self.pdb.caps)
   end
 
-  self.conversion = {}
+  self.conversion = setmetatable({}, {
+    __index = function(t, k)
+      rawset(t, k, {})
+      return t[k]
+    end
+  })
 
   if self.db.updateTooltip then
     self:HookTooltipScripts()
   end
   self:RegisterEvent("FORGE_MASTER_OPENED")
   self:RegisterEvent("FORGE_MASTER_CLOSED")
-  self:RegisterEvent("PLAYER_REGEN_DISABLED")
   self:RegisterEvent("PLAYER_ENTERING_WORLD")
   self:RegisterUnitEvent("PLAYER_SPECIALIZATION_CHANGED", "player")
   if self.db.specProfiles then
