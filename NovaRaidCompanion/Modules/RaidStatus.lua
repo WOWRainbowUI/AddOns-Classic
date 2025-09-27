@@ -1096,6 +1096,8 @@ local function updateCooldownSwipe(texture, endTime, maxDuration)
 			cooldown:SetPoint("CENTER", texture);
 			cooldown:SetReverse(true);
 			cooldown:SetDrawBling(false);
+			cooldown.noCooldownCount = true; --Make omnicc respect the no cooldown text.
+			cooldown:GetRegions():SetAlpha(0); --Make real sure the blizzard timer text doesn't display also, first region is the text apparently (from UI disc).
 			texture.cooldown = cooldown;
 		end
 		--if (not texture.swipeRunning) then
@@ -2092,6 +2094,18 @@ function NRC:updateRaidStatusFrames(updateLayout)
 						frame.fs:SetText("|cFF9CD6DE" .. v.specialSlotData3);
 						frame.texture:SetTexture();
 						local tooltipString = "|cFFFFFF00Average item level: |cFF9CD6DE" .. v.specialSlotData3;
+						local gearCache = NRC.gearCache[v.guid];
+						if (gearCache and gearCache.totalCurrentUpgradeLevels and gearCache.totalMaxUpgradeLevels and gearCache.totalMaxUpgradeLevels > 0) then
+							local text = "\n|cFFFFFF00Total upgrade levels: ";
+							if (gearCache.totalCurrentUpgradeLevels == 0) then
+								text = text .. "|cFFFFFFFF" .. gearCache.totalCurrentUpgradeLevels .. "/" .. gearCache.totalMaxUpgradeLevels .. "|r";
+							elseif (gearCache.totalCurrentUpgradeLevels == gearCache.totalMaxUpgradeLevels) then
+								text = text .. "|cFFFFFF00" .. gearCache.totalCurrentUpgradeLevels .. "/" .. gearCache.totalMaxUpgradeLevels .. "|r";
+							else
+								text = text .. "|cFFFFFFFF" .. gearCache.totalCurrentUpgradeLevels .. "/" .. gearCache.totalMaxUpgradeLevels .. "|r";
+							end
+							tooltipString = tooltipString .. text;
+						end
 						updateTooltipSpecialSlot(frame, name, classHex, tooltipString);
 					end
 					--if (not InCombatLockdown()) then
@@ -2121,6 +2135,7 @@ function NRC:updateRaidStatusFrames(updateLayout)
 						frame.texture:SetPoint("CENTER", 0, 0);
 						--local totalIssues = NRC:getTotalIssues(v.guid);
 						local issues = NRC.issuesCache[v.guid];
+						local gearCache = NRC.gearCache[v.guid];
 						frame.texture:ClearAllPoints();
 						frame.texture2:ClearAllPoints();
 						frame.texture:SetSize(16, 16);
@@ -2207,6 +2222,17 @@ function NRC:updateRaidStatusFrames(updateLayout)
 						end
 						--tooltipString = tooltipString .. "\n\n|cFFFFAE42[Click here to view equipment]\n";
 						--tooltipString = tooltipString .. "\n\n|cFFFFFF00[Click here to view equipment]\n";
+						if (gearCache and gearCache.totalCurrentUpgradeLevels and gearCache.totalMaxUpgradeLevels and gearCache.totalMaxUpgradeLevels > 0) then
+							local text = "\n|cFFFFFF00Total upgrade levels: ";
+							if (gearCache.totalCurrentUpgradeLevels == 0) then
+								text = text .. "|cFFFFFFFF" .. gearCache.totalCurrentUpgradeLevels .. "/" .. gearCache.totalMaxUpgradeLevels .. "|r";
+							elseif (gearCache.totalCurrentUpgradeLevels == gearCache.totalMaxUpgradeLevels) then
+								text = text .. "|cFFFFFF00" .. gearCache.totalCurrentUpgradeLevels .. "/" .. gearCache.totalMaxUpgradeLevels .. "|r";
+							else
+								text = text .. "|cFFFFFFFF" .. gearCache.totalCurrentUpgradeLevels .. "/" .. gearCache.totalMaxUpgradeLevels .. "|r";
+							end
+							tooltipString = tooltipString .. text;
+						end
 						updateTooltipSpecialSlot(frame, name, classHex, tooltipString, "|cFFFFFF00(Click here to view equipment)\n");
 					end
 					if (not InCombatLockdown()) then

@@ -9508,6 +9508,13 @@ NRC.int = {
 		rank = 1,
 		maxRank = true,
 	},
+	[61316] = {
+		name = "Dalaran Brilliance",
+		icon = 135932, --Use the normal arcane brilliance icon and not 236512.
+		desc = "+10% Spell Power, +5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
 	--MoP.
 	[126309] = {
 		name = "Still Water",
@@ -9650,6 +9657,14 @@ NRC.spirit = {
 		rank = 1,
 		maxRank = true,
 	},
+	[61316] = {
+		name = "Dalaran Brilliance",
+		icon = 135932, --Use the normal arcane brilliance icon and not 236512.
+		desc = "+10% Spell Power, +5% Crit",
+		rank = 1,
+		maxRank = true,
+	},
+	
 	[116781] = {
 		name = "Legacy of the White Tiger",
 		icon = 606548,
@@ -9851,6 +9866,13 @@ NRC.extraSlot2Data = {
 		rank = 1,
 		maxRank = true,
 	},
+	[135678] = {
+	    name = "Energizing Spores",
+	    icon = 136079,
+	    desc = "+5% Spell Haste",
+	    rank = 1,
+	    maxRank = true,
+    },
 };
 
 NRC.extraSlot3Data = {

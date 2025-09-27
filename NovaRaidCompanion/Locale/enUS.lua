@@ -1347,4 +1347,7 @@ L["AP"] = "AP";
 L["Haste"] = "Haste";
 L["Speed"] = "Speed";
 
-L["fishingGearWarning"] = "Fishing gear %s is still equipped!"
+L["fishingGearWarning"] = "Fishing gear %s is still equipped!";
+
+L["raidCooldownsBresScaleTitle"] = "Bres Scale";
+L["raidCooldownsBresScaleDesc"] = "How big do you want the battle res icon to be?";

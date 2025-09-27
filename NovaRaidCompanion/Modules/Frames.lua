@@ -4206,13 +4206,33 @@ function NRC:createIconFrame(name, width, height, x, y)
 	frame:SetBackdropColor(0, 0, 0, 0.2);
 	--frame:SetBackdropBorderColor(1, 1, 1, 0.5);
 	
-	frame.fs = frame:CreateFontString(frame:GetName().. "FS", "ARTWORK");
+	--Need them to sit on seperate frames for level control over the cooldown swipe.
+	frame.fsFrame = CreateFrame("Frame", "$parentFsFrame", frame, "BackdropTemplate");
+	frame.fsFrame:SetSize(1, 1);
+	frame.fsFrame:SetPoint("CENTER");
+	frame.fs = frame.fsFrame:CreateFontString(frame:GetName().. "FS", "ARTWORK");
 	frame.fs:SetPoint("CENTER", 0, 0);
 	frame.fs:SetFont(NRC.regionFont, 14);
-	frame.fsBottom = frame:CreateFontString(frame:GetName().. "FS", "ARTWORK");
+	frame.fsBottom = frame:CreateFontString(frame:GetName().. "FSBottom", "ARTWORK");
 	frame.fsBottom:SetPoint("TOP", frame, "BOTTOM", 0, 0);
 	frame.fsBottom:SetFont(NRC.regionFont, 14);
-	frame.texture = frame:CreateTexture(nil, "BORDER");
+	
+	frame.countFrame = CreateFrame("Frame", "$countFsFrame", frame, "BackdropTemplate");
+	frame.countFrame:SetSize(1, 1);
+	frame.countFrame:SetPoint("BOTTOMRIGHT", frame, "BOTTOMRIGHT", -1, 2);
+	frame.fsCount = frame.countFrame:CreateFontString(frame:GetName().. "FSCount", "ARTWORK");
+	frame.fsCount:SetPoint("BOTTOMRIGHT");
+	frame.fsCount:SetFont(NRC.regionFont, 11, "OUTLINE");
+	frame.timerFrame = CreateFrame("Frame", "$parentTimerFrame", frame, "BackdropTemplate");
+	frame.timerFrame:SetSize(1, 1);
+	--frame.timerFrame:SetPoint("TOP");
+	--frame.fsTimer = frame.timerFrame:CreateFontString(frame:GetName().. "FSTimer", "ARTWORK");
+	--frame.fsTimer:SetPoint("BOTTOM");
+	frame.timerFrame:SetPoint("RIGHT", 2, 0);
+	frame.fsTimer = frame.timerFrame:CreateFontString(frame:GetName().. "FSTimer", "ARTWORK");
+	frame.fsTimer:SetPoint("LEFT");
+	frame.fsTimer:SetFont(NRC.regionFont, 10);
+	frame.texture = frame:CreateTexture("$parentTexture", "BORDER");
 	frame.texture:SetAllPoints();
 			
 	return frame;
@@ -5596,7 +5616,8 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 			v.fs:SetPoint("RIGHT", -5, 0);
 			local foundTexture, foundItemLink;
 			if (data and data[v.slot]) then
-				local itemLink = data[v.slot].itemLink;
+				local itemData = data[v.slot];
+				local itemLink = itemData.itemLink;
 				local _, itemID, enchantID = strsplit(":", itemLink);
 				itemID = tonumber(itemID);
 				v.itemLink = itemLink;
@@ -5614,6 +5635,9 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 				if (item) then
 					local itemLevel = item:GetCurrentItemLevel();
 					if (itemLevel and itemLevel > 0) then
+						if (NRC.upgradeAmountPerLevel > 0 and itemData.currentUpgradeLevel) then
+							itemLevel = itemLevel + (itemData.currentUpgradeLevel * NRC.upgradeAmountPerLevel);
+						end
 						local quality = item:GetItemQuality();
 						if (quality) then
 							local itemHex = ITEM_QUALITY_COLORS[quality] and ITEM_QUALITY_COLORS[quality].hex;
@@ -5625,14 +5649,44 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 				end
 				v.fs:SetText(itemLink .. itemLevelString);
 				foundItemLink = true;
-				if (not data[v.slot].skipEnchantCheck) then
+				if (not itemData.skipEnchantCheck) then
 					if (enchantID) then
 						local enchantName = NRC:getEnchantName(itemLink);
+						local text;
 						if (enchantName) then
-							v.fs2:SetText("|cFF1EFF00" .. enchantName);
+							text = "|cFF1EFF00" .. enchantName;
 						else
-							v.fs2:SetText("|cFF1EFF00Enchant ID " .. enchantID .. " (Can't find name)");
+							text = "|cFF1EFF00Enchant ID " .. enchantID .. " (Can't find name)";
 						end
+						if (itemData.currentUpgradeLevel and itemData.maxUpgradeLevel) then
+							if (itemData.currentUpgradeLevel == 0) then
+								--text = "|cFFFFFF00(|cFFFF0000" .. itemData.currentUpgradeLevel .. "|r|cFFFFFF00/" .. itemData.maxUpgradeLevel .. ")|r " .. text;
+								text = "|cFFFFFFFF(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ") " .. text;
+							elseif (itemData.currentUpgradeLevel == itemData.maxUpgradeLevel) then
+								text = "|cFFFFFF00(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ")|r " .. text;
+							else
+								--text = "|cFFFFFF00(|cFFFFFFFF" .. itemData.currentUpgradeLevel .. "|r|cFFFFFF00/" .. itemData.maxUpgradeLevel .. ")|r " .. text;
+								text = "|cFFFFFFFF(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ") " .. text;
+							end
+							--text = "|cFF9CD6DE(|cFFFFFFFF1|r|cFFFFFF00/" .. itemData.maxUpgradeLevel .. ")|r " .. text;
+							--text = "|cFF9CD6DE(1/" .. itemData.maxUpgradeLevel .. ") " .. text;
+							--text = "|cFFFFFFFF(1/" .. itemData.maxUpgradeLevel .. ") " .. text;
+							--text = "|cFFFFFFFF(|cFFFF0000" .. itemData.currentUpgradeLevel .. "|r/" .. itemData.maxUpgradeLevel .. ") " .. text;
+						end
+						v.fs2:SetText(text);
+						v.fs:ClearAllPoints();
+						v.fs:SetPoint("TOPLEFT", 5 + size, -2);
+						v.fs:SetPoint("RIGHT", -5, 0);
+					elseif (itemData.currentUpgradeLevel and itemData.maxUpgradeLevel) then
+						local text;
+						if (itemData.currentUpgradeLevel == 0) then
+							text = "|cFFFFFFFF(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ")";
+						elseif (itemData.currentUpgradeLevel == itemData.maxUpgradeLevel) then
+							text = "|cFFFFFF00(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ")";
+						else
+							text = "|cFFFFFFFF(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ")";
+						end
+						v.fs2:SetText(text);
 						v.fs:ClearAllPoints();
 						v.fs:SetPoint("TOPLEFT", 5 + size, -2);
 						v.fs:SetPoint("RIGHT", -5, 0);
@@ -5645,9 +5699,9 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 						v.fs:SetPoint("RIGHT", -5, 0);
 					end
 				end
-				--[[if (data[v.slot].gems and not data[v.slot].skipGemCheck) then
+				--[[if (itemData.gems and not itemData.skipGemCheck) then
 					local gemString = "";
-					for gemSlot, gemData in ipairs(data[v.slot].gems) do
+					for gemSlot, gemData in ipairs(itemData.gems) do
 						--Meta/Cogwheel/Red etc
 						if (gemData.color and gemTextures[gemData.color]) then
 						
