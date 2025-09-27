@@ -1,0 +1,44 @@
+notes for Mists Classic 5.5.1
+
+Look for the following comments in the files changed
+
+ -- changed for Mists 
+ -- removed for Mists 
+ -- added for Mists 
+
+---------------------------------------------------------------------------------------------------------
+
+ButtonForge.toc
+
+---- Updated with
+## Interface: 50501
+## Title: Button Forge |cff69ccf0(Classic-Mists)|r
+## Version: 1.0.28-classic-Mists
+## Author: Massiner of Nathrezim, Albirew, Sunnova
+
+---------------------------------------------------------------------------------------------------------
+
+Const.lua
+
+changed from:
+
+Const.VersionMinor			= 0.27;
+
+to:
+
+Const.VersionMinor			= 0.28;   -- Modified for Mists 5.5.1 08/29/2025
+
+
+---------------------------------------------------------------------------------------------------------
+
+ .lua
+
+---------------
+
+changed from:
+ 
+
+to:
+
+---------------
+
