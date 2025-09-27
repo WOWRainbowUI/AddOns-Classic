@@ -118,7 +118,7 @@ function IUF:PLAYER_LOGIN()
 		end
 	end
 	self.db.skinName = self.skinDB.idx[self.db.skin]
-	self.db.classBar.useBlizzard = false --대격변에서 와우 자체 직업바가 없음	
+
 	self:SetScale(self.db.scale)
 	-- 미니맵 버튼, 미니맵 메뉴 생성
 	MapButton:CreateButton(self, "InvenUnitFramesMapButton", "Interface\\AddOns\\InvenUnitFrames\\Texture\\Icon.tga", 190, InvenUnitFramesDB.minimapButton)

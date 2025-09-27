@@ -2483,7 +2483,7 @@ function Option:CreateClassBarMenu(menu, parent)
 			return IUF.db.classBar.useBlizzard
 		end,
 		function(v)
-			IUF.db.classBar.useBlizzard = false --비활성화 함
+			IUF.db.classBar.useBlizzard = v
 			updateClassBar()
 		end
 	)

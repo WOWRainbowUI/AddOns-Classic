@@ -29,6 +29,7 @@ local GetSpecialization = _G.GetSpecialization or _GetSpecialization
 		
 
 
+
 local function setClassBar(frame, object, frameLevel, visible)
 if not frame then return end
 	frame:SetParent(object)
@@ -68,19 +69,20 @@ if not frame then return end
 end
 
 local function createClassBar(object)
+
 	object:SetFrameLevel(4)
 	object.classBar = CreateFrame("Frame", object:GetName().."_ClassBar", object)
 	object.classBar:SetFrameLevel(3)
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
 
 if wowtocversion and wowtocversion < 50000 then
 	if playerClass=="DRUID" then
 	--Classic has different constant
+
 		if not DRUID_CAT_FORM then DRUID_CAT_FORM = CAT_FORM end
 		if not DRUID_BEAR_FORM then DRUID_BEAR_FORM = BEAR_FORM end
 
-	else
-
-		IUF.db.classBar.use = false
 	end
 
 
@@ -353,11 +355,13 @@ if playerClass == "DRUID" then
 
 --	if (GetShapeshiftFormID() == CAT_FORM or GetShapeshiftFormID == BEAR_FORM ) then --BEAR_FORM returns 5
 
-		if (GetShapeshiftFormID() == DRUID_CAT_FORM or GetShapeshiftFormID() == DRUID_BEAR_FORM or GetShapeshiftForm() > 3) then
+		if   (GetShapeshiftFormID() == DRUID_CAT_FORM or GetShapeshiftFormID() == DRUID_BEAR_FORM or GetShapeshiftForm() > 3) then
+
 		if IUF.db.classBar.druidManaDisible then
 
 			hideMana = true
 			if not IUF.units.player.classBar.addOn.mana:IsShown() then
+
 				IUF.units.player.classBar.addOn.mana.max, IUF.units.player.classBar.addOn.mana.cur = UnitPowerMax("player", 0), UnitPower("player", 0)
 				IUF.units.player.classBar.addOn.mana.anchors[1].bar:SetMinMaxValues(0, IUF.units.player.classBar.addOn.mana.max)
 				IUF.units.player.classBar.addOn.mana.anchors[1].bar:SetValue(IUF.units.player.classBar.addOn.mana.cur)
@@ -380,23 +384,29 @@ if playerClass == "DRUID" then
 		end
 --]]
 	end
-	
+
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
 
-		if IUF.db.classBar.use then
+		if var_use then
+
 			if hideMana then
 				IUF.units.player.classBar.addOn.mana:SetAlpha(0)
 				IUF.units.player.classBar.addOn.bg:SetAlpha(0)
+
 			else
 				IUF.units.player.classBar.addOn.mana:SetAlpha(1)
 				IUF.units.player.classBar.addOn.bg:SetAlpha(1)
+
 			end
 
-			if IUF.db.classBar.useBlizzard and TotemFrame  then
+			if var_Blizzard and TotemFrame  then
 				if TotemFrame:IsShown() then
 					IUF.units.player.classBar:SetAlpha(1)
 
@@ -482,6 +492,7 @@ if playerClass == "DRUID" then
 			local druidManaDisible = false
 --			if IUF.db.classBar.druidManaDisible and (GetShapeshiftFormID() == CAT_FORM or GetShapeshiftFormID() == 8 or GetShapeshiftFormID == BEAR_FORM) then --while API returns 8 but BEAR_FORM returns 5
 			if IUF.db.classBar.druidManaDisible and (GetShapeshiftFormID() == DRUID_CAT_FORM or  GetShapeshiftForm() > 3 ) then
+
 				druidManaDisible = true
 			end
 
@@ -492,6 +503,7 @@ if playerClass == "DRUID" then
 					self.anchors[1].bar:SetValue(self.cur)
 					IUF:SetStatusBarValue(self.text, 2, self.cur, self.max)
 				end
+
 			elseif event == "UNIT_MAXPOWER" then
 
 				if powerType == "MANA" and not druidManaDisible then
@@ -500,9 +512,11 @@ if playerClass == "DRUID" then
 					self.anchors[1].bar:SetValue(self.cur)
 					IUF:SetStatusBarValue(self.text, 2, self.cur, self.max)
 				end
-			elseif UnitPowerType("player") == 0 or UnitHasVehicleUI("player") or druidManaDisible then
+--			elseif UnitPowerType("player") == 0 or UnitHasVehicleUI("player") or druidManaDisible then
+			elseif (UnitPowerType("player") == 0 or UnitHasVehicleUI("player") or druidManaDisible) then
 	
 				if self:IsShown() then
+
 					self:Hide()
 					self:UnregisterEvent("UNIT_MAXPOWER")
 					self:UnregisterEvent("UNIT_POWER_UPDATE")
@@ -521,6 +535,7 @@ if playerClass == "DRUID" then
 					updateVisible()
 
 --				end
+
 				self:GetScript("OnEvent")(self, "UNIT_MAXPOWER", nil, "MANA")
 			end
 		end)
@@ -635,6 +650,7 @@ if playerClass == "DRUID" then
 				end
  				
 			elseif GetPrimaryTalentTree() == 1 and not UnitHasVehicleUI("player") and (not GetShapeshiftFormID() or GetShapeshiftFormID() == MOONKIN_FORM) then
+
 				if not self:IsShown() then
 					self:Show()
  					self:RegisterEvent("ECLIPSE_DIRECTION_CHANGE")
@@ -649,6 +665,7 @@ if playerClass == "DRUID" then
 				self:onEvent("UNIT_POWER_FREQUENT", nil, "BALANCE")
 				self:onEvent("UNIT_AURA")
 			elseif self:IsShown() then
+
 				self:Hide()
 				self.flash.anchor = nil
 				IUF:UnregisterFlash(self.flash)
@@ -724,6 +741,7 @@ if playerClass == "DRUID" then
 					self.prev = self.value
 				end
 			elseif UnitPowerType("player") == 3 and not UnitHasVehicleUI("player") then
+
 				if not self:IsShown() then
 					self:Show()
 					self:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
@@ -758,14 +776,17 @@ if playerClass == "DRUID" then
 	end
 
 	function IUF:ClassBarSetup(object)	-- DRUID
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard= false
+		var_Blizzard= false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
---	IUF.db.classBar.useBlizzard= true
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+--	var_Blizzard= true
+		if var_use then
+			if var_Blizzard then
 				IUF.units.player.classBar.addOn:Hide()
 				if not object.classBar.setupBlizzard then
 					object.classBar.setupBlizzard = true
@@ -911,15 +932,20 @@ elseif playerClass == "DEATHKNIGHT" then
 	end
 
 	local function updateVisible()	-- DEATHKNIGHT
+
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
 
---	IUF.db.classBar.useBlizzard= true
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+--	var_Blizzard= true
+		if var_use then
+			if var_Blizzard then
 				if TotemFrame and TotemFrame:IsShown() then
 					IUF.units.player.classBar:SetHeight(38)
 				elseif RuneFrame:IsShown() then
@@ -1075,14 +1101,19 @@ elseif playerClass == "DEATHKNIGHT" then
 	end
 
 	function IUF:ClassBarSetup(object)	-- DEATHKNIGHT
+
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
---	IUF.db.classBar.useBlizzard= true
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+--	var_Blizzard= true
+		if var_use then
+			if var_Blizzard then
 				object.classBar.addOn:Hide()
 				if not object.classBar.setupBlizzard then
 					object.classBar.setupBlizzard = true
@@ -1159,20 +1190,26 @@ elseif playerClass == "DEATHKNIGHT" then
 	end
 
 elseif playerClass == "PRIEST" then
+
 	local function updateVisible()	-- PRIEST
---	IUF.db.classBar.useBlizzard= true
+--	var_Blizzard= true
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
 
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
 
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+		if var_use then
+			if var_Blizzard then
+
 				if TotemFrame:IsShown() then
 					IUF.units.player.classBar:SetHeight(42)
 				elseif PriestBarFrame:IsShown() then
+
 					IUF.units.player.classBar:SetHeight(34)
 				else
 					IUF.units.player.classBar:SetHeight(0.001)
@@ -1281,15 +1318,19 @@ elseif playerClass == "PRIEST" then
 	end
 
 	function IUF:ClassBarSetup(object)	-- PRIEST
---	IUF.db.classBar.useBlizzard= true
+--	var_Blizzard= true
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
 
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+		if var_use then
+			if var_Blizzard then
 				object.classBar.addOn:Hide()
 				if not object.classBar.setupBlizzard then
 					object.classBar.setupBlizzard = true
@@ -1395,18 +1436,24 @@ elseif playerClass == "PRIEST" then
 
 elseif playerClass == "PALADIN" then
 	local function updateVisible()	-- PALADIN
---	IUF.db.classBar.useBlizzard= true
+--	var_Blizzard= true
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
+
 	end
 
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard and PaladinPowerBarFrame then
+		if var_use then
+			if var_Blizzard and PaladinPowerBar then
+
 				if TotemFrame and TotemFrame:IsShown() then
 					IUF.units.player.classBar:SetHeight(40)
-				elseif PaladinPowerBarFrame:IsShown() then	-- if GetPrimaryTalentTree() == SPEC_PALADIN_RETRIBUTION then
+				elseif PaladinPowerBar:IsShown() then	-- if GetPrimaryTalentTree() == SPEC_PALADIN_RETRIBUTION then
 					IUF.units.player.classBar:SetHeight(38)
 				else
 					IUF.units.player.classBar:SetHeight(0.001)
@@ -1508,18 +1555,22 @@ elseif playerClass == "PALADIN" then
 	end
 
 	function IUF:ClassBarSetup(object)	-- PALADIN
---	IUF.db.classBar.useBlizzard= true
+--	var_Blizzard= true
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard and PaladinPowerBarFrame then
+		if var_use then
+			if var_Blizzard and PaladinPowerBar then
 				object.classBar.addOn:Hide()
 				if not object.classBar.setupBlizzard then
 					object.classBar.setupBlizzard = true
-					setClassBar(PaladinPowerBarFrame, object, nil, updateVisible)
+					setClassBar(PaladinPowerBar, object, nil, updateVisible)
 					
 					if TotemFrame then setClassBar(TotemFrame, object, 4, updateVisible) end
 					if TotemFrameTotem1 then TotemFrameTotem1:ClearAllPoints() end
@@ -1530,51 +1581,51 @@ elseif playerClass == "PALADIN" then
 				end
 				if TotemFrameTotem1 then TotemFrameTotem1:ClearAllPoints() end
 				
-				PaladinPowerBarFrame:ClearAllPoints()
-				PaladinPowerBarFrameBG:ClearAllPoints()
-				PaladinPowerBarFrameBankBG:ClearAllPoints()
-				PaladinPowerBarFrameGlowBGTexture:ClearAllPoints()
-				PaladinPowerBarFrameRune1:ClearAllPoints()
-				PaladinPowerBarFrameRune4:ClearAllPoints()
-				PaladinPowerBarFrameRune5:ClearAllPoints()
+				PaladinPowerBar:ClearAllPoints()
+				PaladinPowerBarBG:ClearAllPoints()
+				PaladinPowerBarBankBG:ClearAllPoints()
+				PaladinPowerBarGlowBGTexture:ClearAllPoints()
+				PaladinPowerBarRune1:ClearAllPoints()
+				PaladinPowerBarRune4:ClearAllPoints()
+				PaladinPowerBarRune5:ClearAllPoints()
 			
 				if IUF.db.classBar.pos == "BOTTOM" then
-					if TotemFrameTotem1 then TotemFrameTotem1:SetPoint("RIGHT", PaladinPowerBarFrame, "LEFT", 20, 0) end
+					if TotemFrameTotem1 then TotemFrameTotem1:SetPoint("RIGHT", PaladinPowerBar, "LEFT", 20, 0) end
 					
-					PaladinPowerBarFrame:ClearAllPoints()
-					PaladinPowerBarFrame:SetPoint("TOP", object.classBar, "TOP", 0, 7)
-					PaladinPowerBarFrameBG:SetPoint("TOP", 0, 0)
-					PaladinPowerBarFrameBG:SetTexCoord(0.00390625, 0.53515625, 0.00781250, 0.31250000)
-					PaladinPowerBarFrameBankBG:SetPoint("TOP", 0, -29)
-					PaladinPowerBarFrameBankBG:SetTexCoord(0.00390625, 0.27343750, 0.64843750, 0.77343750)
-					PaladinPowerBarFrameGlowBGTexture:SetPoint("TOP", 0, 0)
-					PaladinPowerBarFrameGlowBGTexture:SetTexCoord(0.00390625, 0.53515625, 0.32812500, 0.63281250)
-					PaladinPowerBarFrameRune1:SetPoint("TOPLEFT", 21, -11)
-					PaladinPowerBarFrameRune4:SetPoint("TOPLEFT", 67, -28)
-					PaladinPowerBarFrameRune5:SetPoint("TOPLEFT", 43, -28)
-					PaladinPowerBarFrameRune1Texture:SetTexCoord(0.00390625, 0.14453125, 0.78906250, 0.96093750)
-					PaladinPowerBarFrameRune2Texture:SetTexCoord(0.15234375, 0.27343750, 0.78906250, 0.92187500)
-					PaladinPowerBarFrameRune3Texture:SetTexCoord(0.28125000, 0.38671875, 0.64843750, 0.81250000)
-					PaladinPowerBarFrameRune4Texture:SetTexCoord(0.28125000, 0.38671875, 0.82812500, 0.92187500)
-					PaladinPowerBarFrameRune5Texture:SetTexCoord(0.39453125, 0.49609375, 0.64843750, 0.74218750)
+					PaladinPowerBar:ClearAllPoints()
+					PaladinPowerBar:SetPoint("TOP", object.classBar, "TOP", 0, 7)
+					PaladinPowerBarBG:SetPoint("TOP", 0, 0)
+					PaladinPowerBarBG:SetTexCoord(0.00390625, 0.53515625, 0.00781250, 0.31250000)
+					PaladinPowerBarBankBG:SetPoint("TOP", 0, -29)
+					PaladinPowerBarBankBG:SetTexCoord(0.00390625, 0.27343750, 0.64843750, 0.77343750)
+					PaladinPowerBarGlowBGTexture:SetPoint("TOP", 0, 0)
+					PaladinPowerBarGlowBGTexture:SetTexCoord(0.00390625, 0.53515625, 0.32812500, 0.63281250)
+					PaladinPowerBarRune1:SetPoint("TOPLEFT", 21, -11)
+					PaladinPowerBarRune4:SetPoint("TOPLEFT", 67, -28)
+					PaladinPowerBarRune5:SetPoint("TOPLEFT", 43, -28)
+					PaladinPowerBarRune1Texture:SetTexCoord(0.00390625, 0.14453125, 0.78906250, 0.96093750)
+					PaladinPowerBarRune2Texture:SetTexCoord(0.15234375, 0.27343750, 0.78906250, 0.92187500)
+					PaladinPowerBarRune3Texture:SetTexCoord(0.28125000, 0.38671875, 0.64843750, 0.81250000)
+					PaladinPowerBarRune4Texture:SetTexCoord(0.28125000, 0.38671875, 0.82812500, 0.92187500)
+					PaladinPowerBarRune5Texture:SetTexCoord(0.39453125, 0.49609375, 0.64843750, 0.74218750)
 					
 				else
-					if TotemFrameTotem1 then TotemFrameTotem1:SetPoint("RIGHT", PaladinPowerBarFrame, "LEFT", 20, 0) end
-					PaladinPowerBarFrame:SetPoint("BOTTOM", object.classBar, "BOTTOM", 0, -7)
-					PaladinPowerBarFrameBG:SetPoint("BOTTOM", 0, 0)
-					PaladinPowerBarFrameBG:SetTexCoord(0.00390625, 0.53515625, 0.31250000, 0.00781250)
-					PaladinPowerBarFrameBankBG:SetPoint("BOTTOM", 0, 29)
-					PaladinPowerBarFrameBankBG:SetTexCoord(0.00390625, 0.27343750, 0.77343750, 0.64843750)
-					PaladinPowerBarFrameGlowBGTexture:SetPoint("BOTTOM", 0, 0)
-					PaladinPowerBarFrameGlowBGTexture:SetTexCoord(0.00390625, 0.53515625, 0.63281250, 0.32812500)
-					PaladinPowerBarFrameRune1:SetPoint("BOTTOMLEFT", 21, 11)
-					PaladinPowerBarFrameRune4:SetPoint("BOTTOMLEFT", 67, 28)
-					PaladinPowerBarFrameRune5:SetPoint("BOTTOMLEFT", 43, 28)
-					PaladinPowerBarFrameRune1Texture:SetTexCoord(0.00390625, 0.14453125, 0.96093750, 0.78906250)
-					PaladinPowerBarFrameRune2Texture:SetTexCoord(0.15234375, 0.27343750, 0.92187500, 0.78906250)
-					PaladinPowerBarFrameRune3Texture:SetTexCoord(0.28125000, 0.38671875, 0.81250000, 0.64843750)
-					PaladinPowerBarFrameRune4Texture:SetTexCoord(0.28125000, 0.38671875, 0.92187500, 0.82812500)
-					PaladinPowerBarFrameRune5Texture:SetTexCoord(0.39453125, 0.49609375, 0.74218750, 0.64843750)
+					if TotemFrameTotem1 then TotemFrameTotem1:SetPoint("RIGHT", PaladinPowerBar, "LEFT", 20, 0) end
+					PaladinPowerBar:SetPoint("BOTTOM", object.classBar, "BOTTOM", 0, -7)
+					PaladinPowerBarBG:SetPoint("BOTTOM", 0, 0)
+					PaladinPowerBarBG:SetTexCoord(0.00390625, 0.53515625, 0.31250000, 0.00781250)
+					PaladinPowerBarBankBG:SetPoint("BOTTOM", 0, 29)
+					PaladinPowerBarBankBG:SetTexCoord(0.00390625, 0.27343750, 0.77343750, 0.64843750)
+					PaladinPowerBarGlowBGTexture:SetPoint("BOTTOM", 0, 0)
+					PaladinPowerBarGlowBGTexture:SetTexCoord(0.00390625, 0.53515625, 0.63281250, 0.32812500)
+					PaladinPowerBarRune1:SetPoint("BOTTOMLEFT", 21, 11)
+					PaladinPowerBarRune4:SetPoint("BOTTOMLEFT", 67, 28)
+					PaladinPowerBarRune5:SetPoint("BOTTOMLEFT", 43, 28)
+					PaladinPowerBarRune1Texture:SetTexCoord(0.00390625, 0.14453125, 0.96093750, 0.78906250)
+					PaladinPowerBarRune2Texture:SetTexCoord(0.15234375, 0.27343750, 0.92187500, 0.78906250)
+					PaladinPowerBarRune3Texture:SetTexCoord(0.28125000, 0.38671875, 0.81250000, 0.64843750)
+					PaladinPowerBarRune4Texture:SetTexCoord(0.28125000, 0.38671875, 0.92187500, 0.82812500)
+					PaladinPowerBarRune5Texture:SetTexCoord(0.39453125, 0.49609375, 0.74218750, 0.64843750)
 				
 				end
 				updateTotemDurationText()
@@ -1584,8 +1635,8 @@ elseif playerClass == "PALADIN" then
 					TotemFrameTotem2:ClearAllPoints()
 					TotemFrameTotem2:SetPoint("BOTTOM", UIParent, "TOP", 0, 2000)
 					end
-					PaladinPowerBarFrame:ClearAllPoints()
-					PaladinPowerBarFrame:SetPoint("BOTTOM", UIParent, "TOP", 0, 2000)
+					PaladinPowerBar:ClearAllPoints()
+					PaladinPowerBar:SetPoint("BOTTOM", UIParent, "TOP", 0, 2000)
 				end
 				
 				object.classBar.addOn:Show()				
@@ -1623,8 +1674,8 @@ elseif playerClass == "PALADIN" then
 				TotemFrameTotem2:ClearAllPoints()
 				TotemFrameTotem2:SetPoint("BOTTOM", UIParent, "TOP", 0, 2000)
 				end
-				PaladinPowerBarFrame:ClearAllPoints()
-				PaladinPowerBarFrame:SetPoint("BOTTOM", UIParent, "TOP", 0, 2000)
+				PaladinPowerBar:ClearAllPoints()
+				PaladinPowerBar:SetPoint("BOTTOM", UIParent, "TOP", 0, 2000)
 			end
 			object.classBar.addOn:Hide()
 		end
@@ -1635,14 +1686,18 @@ elseif playerClass == "MONK" then
 
 	local function updateVisible()	-- MONK
 
---	IUF.db.classBar.useBlizzard= true
+--	var_Blizzard= true
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+		if var_use then
+			if var_Blizzard then
 				if TotemFrame and TotemFrame:IsShown() then
 					IUF.units.player.classBar:SetHeight(MonkHarmonyBar:IsShown() and 63 or 42)
 				else
@@ -1823,14 +1878,17 @@ elseif playerClass == "MONK" then
 	end
 
 	function IUF:ClassBarSetup(object)	-- MONK
---	IUF.db.classBar.useBlizzard= true
+--	var_Blizzard= true
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+		if var_use then
+			if var_Blizzard then
 				object.classBar.addOn:Hide()
 				if not object.classBar.setupBlizzard then
 					object.classBar.setupBlizzard = true
@@ -1943,14 +2001,17 @@ elseif playerClass == "MONK" then
  
  elseif playerClass == "WARLOCK" then
  	local function updateVisible()	-- WARLOCK
---	IUF.db.classBar.useBlizzard= true
+--	var_Blizzard= true
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
- 		if IUF.db.classBar.use then
- 			if IUF.db.classBar.useBlizzard then
+ 		if var_use then
+ 			if var_Blizzard then
  				if TotemFrame:IsShown() then
  					if WarlockPowerFrame:IsShown() then
  						IUF.units.player.classBar:SetHeight(64)
@@ -2186,14 +2247,17 @@ elseif playerClass == "MONK" then
  	end
  	
  	function IUF:ClassBarSetup(object)	-- WARLOCK
---	IUF.db.classBar.useBlizzard= true
+--	var_Blizzard= true
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
- 		if IUF.db.classBar.use then
- 			if IUF.db.classBar.useBlizzard then
+ 		if var_use then
+ 			if var_Blizzard then
  				object.classBar.addOn:Hide()
  				if not object.classBar.setupBlizzard then
  					object.classBar.setupBlizzard = true
@@ -2364,8 +2428,8 @@ elseif playerClass == "MONK" then
 
 --~ elseif playerClass == "MAGE" then
 --~ 	local function updateVisible()	-- MAGE
---~ 		if IUF.db.classBar.use then
---~ 			if IUF.db.classBar.useBlizzard then
+--~ 		if var_use then
+--~ 			if var_Blizzard then
 --~ 				if TotemFrame:IsShown() then
 --~ 					IUF.units.player.classBar:SetHeight(40)
 --~ 				else
@@ -2461,8 +2525,8 @@ elseif playerClass == "MONK" then
 --~ 	end
 --~ 	
 --~ 	function IUF:ClassBarSetup(object)	-- MAGE
---~ 		if IUF.db.classBar.use then
---~ 			if IUF.db.classBar.useBlizzard then
+--~ 		if var_use then
+--~ 			if var_Blizzard then
 --~ 				object.classBar.addOn:Hide()
 --~ 				if not object.classBar.setupBlizzard then
 --~ 					object.classBar.setupBlizzard = true
@@ -2531,14 +2595,18 @@ elseif playerClass == "MONK" then
 	
 elseif playerClass == "ROGUE" then
 	local function updateVisible()	-- ROGUE
---	IUF.db.classBar.useBlizzard= true
+--	var_Blizzard= true
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+		if var_use then
+			if var_Blizzard then
 				if  TotemFrame and TotemFrame:IsShown() then
 					IUF.units.player.classBar:SetHeight(40)
 				else
@@ -2655,14 +2723,17 @@ elseif playerClass == "ROGUE" then
 	end
 	
 	function IUF:ClassBarSetup(object)	-- ROGUE
---	IUF.db.classBar.useBlizzard= true
+--	var_Blizzard= true
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
 	if wowtocversion and wowtocversion < 50000 then
-		IUF.db.classBar.useBlizzard=false
+		var_Blizzard=false
 	else
-		IUF.db.classBar.useBlizzard= true
+		var_Blizzard= true
 	end
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+		if var_use then
+			if var_Blizzard then
 				object.classBar.addOn:Hide()
 				if not object.classBar.setupBlizzard then
 					object.classBar.setupBlizzard = true
@@ -2743,9 +2814,12 @@ elseif playerClass == "ROGUE" then
 else
 
 	local function updateVisible()	-- OTHER
-	IUF.db.classBar.useBlizzard= true
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+
+var_use = IUF.db.classBar.use
+var_Blizzard= IUF.db.classBar.useBlizzard
+
+		if var_use then
+			if var_Blizzard then
 				if TotemFrame and TotemFrame:IsShown() then
 					IUF.units.player.classBar:SetHeight(42)
 				else
@@ -2832,9 +2906,9 @@ else
 	end
 
 	function IUF:ClassBarSetup(object)	-- OTHER
-	IUF.db.classBar.useBlizzard= true
-		if IUF.db.classBar.use then
-			if IUF.db.classBar.useBlizzard then
+	var_Blizzard= true
+		if var_use then
+			if var_Blizzard then
 				object.classBar.addOn:Hide()
 				if not object.classBar.setupBlizzard then
 					object.classBar.setupBlizzard = true
