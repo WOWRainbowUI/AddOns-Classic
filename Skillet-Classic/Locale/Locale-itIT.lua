@@ -28,9 +28,9 @@ L["Appearance"] = "Aspetto"
 L["APPEARANCEDESC"] = "Le opzioni che controllano come Skillet viene mostrato"
 --[[Translation missing --]]
 L["Auction"] = "Auction"
-L["bank"] = "banca"
 --[[Translation missing --]]
 L["Bank"] = "Bank"
+L["bank"] = "banca"
 L["Blizzard"] = "Tempesta"
 L["Buy Reagents"] = "Compra Reagenti"
 L["buyable"] = "comprabile"

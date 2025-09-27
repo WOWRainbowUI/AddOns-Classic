@@ -32,9 +32,9 @@ L["Appearance"] = "겉모양"
 L["APPEARANCEDESC"] = "Skillet 표시 방법을 제어하는 옵션"
 --[[Translation missing --]]
 L["Auction"] = "Auction"
-L["bank"] = "은행"
 --[[Translation missing --]]
 L["Bank"] = "Bank"
+L["bank"] = "은행"
 L["Blizzard"] = "블리자드"
 L["Buy Reagents"] = "재료 구입"
 L["buyable"] = "구입 가능"
