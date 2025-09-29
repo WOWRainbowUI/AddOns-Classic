@@ -1,3 +1,79 @@
+Version 3.191-vanilla  
+  
+  
+Known issues:  
+-- Spells by rank can be specified using a rank suffix:  
+--  Example: Lesser Heal(Rank 1)  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Shield bar is not working due to unavailable Blizzard APIs  
+-- Spell trace only works for known spells in the player's spellbook  
+-- Group roster changes will not be reflected during combat  
+--   Swapping a player between groups during combat will cause  
+--   unpredictable, negative results.  Be warned!  
+-- Built-in Blizzard APIs for incoming healing only partially working  
+--   If other healers are using LibHealComm enable it under:  
+--   'VuhDo Options > General > Threat / Incoming > Incoming Heal > Use LibHealComm'  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+  
+  
+--------------------------------------------------------------  
+Version 3.191-mopc  
+  
+  
+Known issues:  
+-- Spells by rank can be specified using a rank suffix:  
+--  Example: Lesser Heal(Rank 1)  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Spell trace only works for known spells in the player's spellbook  
+-- Group roster changes will not be reflected during combat  
+--   Swapping a player between groups during combat will cause  
+--   unpredictable, negative results.  Be warned!  
+  
+  
+Bugfixes:  
+  
+  
+Improvements:  
+-- Added default custom debuffs for MoP Classic raid encounters  
+-- Bump TOC interface for 5.5.1  
+  
+  
+--------------------------------------------------------------  
+Version 3.191  
+  
+  
+Known issues:  
+-- Debuff tooltips are currently bugged when using ElvUI  
+--   Deselect 'VuhDo Options > Panels > Tooltips > Tooltips > Debuffs'  
+-- Blizzard continues to have a bug that breaks proper spell targeting.  
+--   Under 'Game Menu > Options > Gameplay > Combat' deselect 'Auto Self Cast'  
+--   and set 'Self Cast Key' to 'None'  
+  
+  
+Bugfixes:  
+-- Fixed Warlock 'Soulstone' spell binding while in combat  
+-- Fixed NPC units showing in class specific panel groups  
+-- Fixed truncation of player name text with special characters  
+  
+  
+Improvements:  
+-- Added Warlock and Death Knight combat resurrections to Smart Cast  
+-- Added clock sweep countdown option for debuff icons  
+-- Added debuff default setting to display full timer duration  
+-- Incoming spell trace icons now display cast time as time remaining  
+-- Added default custom debuffs for Manaforge Omega raid encounters  
+-- Added default custom debuffs for season 3 dungeon encounters  
+-- Bump TOC interface for 11.2.0  
+  
+  
+--------------------------------------------------------------  
 Version 3.190-vanilla  
   
   
