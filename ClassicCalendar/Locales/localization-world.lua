@@ -57,6 +57,7 @@ L.Options = {
 		["HourSingular"]				 = "小時",
 		["HourPlural"]					 = "小時",
 		["MinutePlural"]				 = "分鐘",
+		["HideLevelUpRaidText"]			 = "[探索賽季] 隱藏練等團隊重置 (黑澗深淵、諾姆瑞根、沉沒的神廟)"
 		["ClassicCalendar"]  			 = "行事曆"
 	},
 	["zhCN"] = {
@@ -484,6 +485,14 @@ L.HolidayLocalization = {
 				["name"] = "Lunar Festival",
 				["description"] = "Every year the druids of Moonglade hold a celebration of their city's great triumph over an ancient evil. During the Lunar Festival, citizens of Azeroth have the opportunity to honor their elders by celebrating their sage wisdom, sharing in magnificent feasts, and of course... shooting lots of fireworks!",
 			},
+			["Brewfest"] = {
+				["name"] = "Brewfest",
+				["description"] = "Raise a stein and celebrate Brewfest with food, drink, and revelry!",
+			},
+				["PilgrimsBounty"] = {
+					["name"] = "Pilgrim's Bounty",
+					["description"] = "Give thanks and celebrate the harvest with feasts and friends during Pilgrim's Bounty!",
+				},
 		},
 	},
 	["deDE"] = {
@@ -681,6 +690,14 @@ L.HolidayLocalization = {
 			["LunarFestival"] = {
 				["name"] = "新年慶典",
 				["description"] = "每年月光林地的德魯伊們都會舉辦一場歡慶他們擊敗一個古老魔物的祭典。在新年節慶期間內，艾澤拉斯的居民們可以趁此佳節來榮耀他們的長者，藉由歌頌他們的智慧，舉辦盛宴，當然還有...數不盡的煙火!",
+			},
+			["Brewfest"] = {
+				["name"] = "啤酒節",
+				["description"] = "舉起啤酒杯，透過美食、美酒與狂歡來慶祝啤酒節！",
+			},
+			["PilgrimsBounty"] = {
+				["name"] = "旅人豐年祭",
+				["description"] = "在旅人豐年祭期間，與夥伴共享盛宴、感念恩惠並慶祝豐收！",
 			},
 		},
 	},

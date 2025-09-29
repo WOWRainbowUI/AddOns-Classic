@@ -1,10 +1,12 @@
 ## Interface: 11507
-## Title: Classic Calendar
-## Version: 0.7.0beta Fix
+## Title: Classic Calendar - Revived
+## Version: v0.8.7
+## Author: Pimptasty
+## Version: v0.8.7
+
+## X-Curse-Project-ID: 1339939
+
 ## SavedVariables: CCConfig
-## X-Wago-ID: nKW1ZrNE
-## X-WoWI-ID: 26678
-## X-Curse-Project-ID: 960282
 
 ## Title-zhTW: |cffFF7F00[團隊]|r 行事曆
 ## Notes-zhTW: Classic Calendar |n|n在經典版中提供和正式服相同的行事曆的功能。|n|cffffd200使用方法：|r點小地圖按鈕。
@@ -14,5 +16,7 @@ ClassicCalendar_Options.lua
 HolidayData.lua
 Patches.lua
 Patches.xml
+Libs\LibStub\LibStub.lua
+Libs\LibDBIcon-1.0\LibDBIcon-1.0\LibDBIcon-1.0.lua
 ClassicCalendar.lua
 ClassicCalendar.xml

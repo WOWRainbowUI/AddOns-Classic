@@ -28,6 +28,7 @@ local defaultOptions = {
 	["AlarmNumber"] = 15,
 	["AlarmUnit"] = "minute",
 	["HideLevelUpRaidResets"] = false,
+	["DebugMode"] = false,
 }
 
 local function ToggleCalButtonLock(checked)
@@ -447,6 +448,9 @@ local function CCOptionsHandler(self, event, arg1)
 				CCConfig[key] = value
 			end
 		end
+
+		-- Initialize debug mode from saved variables
+		DEBUG_MODE = CCConfig.DebugMode
 
 		SlashCmdList["CCCONFIG"] = GoToCCSettings;
 		SLASH_CCCONFIG1, SLASH_CCCONFIG2 = "/caloptions", "/calendaroptions"

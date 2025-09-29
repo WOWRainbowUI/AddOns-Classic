@@ -4,6 +4,9 @@ local localeString = tostring(GetLocale())
 local date = date
 local time = time
 
+-- Debug mode variable (global)
+DEBUG_MODE = false
+
 CALENDAR_INVITESTATUS_INFO = {
 	["UNKNOWN"] = {
 		name		= UNKNOWN,
@@ -354,7 +357,54 @@ function stubbedGetNumDayEvents(monthOffset, monthDay)
 	}
 	local eventTime = time(eventDate)
 
-	for _, holiday in next, GetClassicHolidays() do
+	local holidays = GetClassicHolidays()
+	
+	if DEBUG_MODE then
+		print("ClassicCalendar Debug: Number of holidays:", #holidays)
+	end
+	
+	-- Limit processing to prevent script timeout
+	if #holidays > 500 then
+		if DEBUG_MODE then
+			print("ClassicCalendar ERROR: Too many holidays generated (" .. #holidays .. "), limiting to first 500")
+		end
+		-- Truncate the holidays table to prevent timeout
+		for i = 501, #holidays do
+			holidays[i] = nil
+		end
+	end
+	
+	if DEBUG_MODE then
+		-- Only show first 10 and last 10 holidays for debugging
+		for i = 1, math.min(10, #holidays) do
+			local holiday = holidays[i]
+			if holiday.startDate and holiday.endDate then
+				print(string.format("Holiday %d: name=%s, startDate=%d/%d/%d, endDate=%d/%d/%d", 
+					i, holiday.name or "Unknown", 
+					holiday.startDate.month, holiday.startDate.day, holiday.startDate.year,
+					holiday.endDate.month, holiday.endDate.day, holiday.endDate.year))
+			else
+				print(string.format("Holiday %d: MISSING startDate or endDate", i))
+			end
+		end
+		
+		if #holidays > 10 then
+			print("... (showing last 10 holidays)")
+			for i = math.max(#holidays - 9, 11), #holidays do
+				local holiday = holidays[i]
+				if holiday.startDate and holiday.endDate then
+					print(string.format("Holiday %d: name=%s, startDate=%d/%d/%d, endDate=%d/%d/%d", 
+						i, holiday.name or "Unknown", 
+						holiday.startDate.month, holiday.startDate.day, holiday.startDate.year,
+						holiday.endDate.month, holiday.endDate.day, holiday.endDate.year))
+				else
+					print(string.format("Holiday %d: MISSING startDate or endDate", i))
+				end
+			end
+		end
+	end
+
+	for _, holiday in next, holidays do
 		local holidayMinStartTime = time(SetMinTime(holiday.startDate))
 		if eventTime < holidayMinStartTime then
 			break
@@ -572,6 +622,68 @@ SLASH_CALENDAR1, SLASH_CALENDAR2 = '/cal', '/calendar'
 
 function SlashCmdList.CALENDAR(_msg, _editBox)
 	Calendar_Toggle()
+end
+
+-- Slash command /caldebug to toggle debug mode
+
+SLASH_CALDEBUG1 = '/caldebug'
+
+function SlashCmdList.CALDEBUG(_msg, _editBox)
+	DEBUG_MODE = not DEBUG_MODE
+	CCConfig.DebugMode = DEBUG_MODE
+	print("ClassicCalendar Debug Mode: " .. (DEBUG_MODE and "ON" or "OFF"))
+end
+
+-- Slash command /caldarkmoon to check Darkmoon Faire status
+
+SLASH_CALDARKMOON1 = '/caldarkmoon'
+
+function SlashCmdList.CALDARKMOON(_msg, _editBox)
+	print("=== Darkmoon Faire Debug ===")
+	
+	-- Check CVar
+	local darkmoonCVar = GetCVar("calendarShowDarkmoon")
+	print("calendarShowDarkmoon CVar:", darkmoonCVar)
+	
+	-- Check if we're in SoD
+	local isSoD = C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.Placeholder)
+	print("Is Season of Discovery:", tostring(isSoD))
+	print("Note: Currently using Classic schedule for both Classic and SoD")
+	
+	-- Get all holidays and count Darkmoon events
+	local holidays = GetClassicHolidays()
+	local darkmoonCount = 0
+	local darkmoonEvents = {}
+	
+	for _, holiday in ipairs(holidays) do
+		if holiday.name and string.match(holiday.name:lower(), "darkmoon") then
+			darkmoonCount = darkmoonCount + 1
+			table.insert(darkmoonEvents, holiday)
+		end
+	end
+	
+	print("=== Hardcoded Schedule Status ===")
+	print("Total holidays:", #holidays)
+	print("Darkmoon Faire events found:", darkmoonCount)
+	
+	-- Show first few Darkmoon events
+	for i = 1, math.min(5, #darkmoonEvents) do
+		local event = darkmoonEvents[i]
+		if event.startDate and event.endDate then
+			-- Calculate what day of week this starts on
+			local startTime = time({year=event.startDate.year, month=event.startDate.month, day=event.startDate.day})
+			local endTime = time({year=event.endDate.year, month=event.endDate.month, day=event.endDate.day})
+			local startDayName = {"Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"}
+			local startDayOfWeek = os.date("*t", startTime).wday
+			local endDayOfWeek = os.date("*t", endTime).wday
+			
+			print(string.format("Event %d: %s", i, event.name))
+			print(string.format("  Opens:  %s %d/%d/%d", 
+				startDayName[startDayOfWeek], event.startDate.month, event.startDate.day, event.startDate.year))
+			print(string.format("  Closes: %s %d/%d/%d", 
+				startDayName[endDayOfWeek], event.endDate.month, event.endDate.day, event.endDate.year))
+		end
+	end
 end
 
 function newGetHolidayInfo(offsetMonths, monthDay, eventIndex)

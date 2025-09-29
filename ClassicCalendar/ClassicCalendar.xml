@@ -577,7 +577,7 @@
 							<KeyValue key="fontName" value="GameFontNormalSmallLeft" type="string"/>
 						</KeyValues>
 					</Frame>
-					<EventFrame parentKey="ScrollBar" inherits="WowClassicScrollBar" frameStrata="HIGH">
+					<EventFrame name="CalendarCreateEventDescriptionContainerScrollBar" inherits="WowClassicScrollBar" frameStrata="HIGH">
 						<KeyValues>
 							<KeyValue key="hideBackground" value="true" type="boolean"/>
 						</KeyValues>
@@ -919,7 +919,7 @@
 					<KeyValue key="backdropBorderColor" value="TOOLTIP_DEFAULT_COLOR" type="global"/>
 				</KeyValues>
 				<Frames>
-					<Frame parentKey="ScrollingEditBox" inherits="ScrollingEditBoxTemplate" frameStrata="HIGH">
+					<Frame name="CalendarCreateEventDescriptionContainerScrollingEditBox" parentKey="ScrollingEditBox" inherits="ScrollingEditBoxTemplate" frameStrata="HIGH">
 						<KeyValues>
 							<KeyValue key="fontName" value="GameFontHighlightSmall" type="string"/>
 							<KeyValue key="defaultFontName" value="GameFontDisableSmall" type="string"/>
@@ -936,8 +936,8 @@
 							<KeyValue key="hideBackground" value="true" type="boolean"/>
 						</KeyValues>
 						<Anchors>
-							<Anchor point="TOPRIGHT" relativePoint="TOPRIGHT" x="-2" y="-1"/>
-							<Anchor point="BOTTOMRIGHT" relativePoint="BOTTOMRIGHT"/>
+							<Anchor point="TOPRIGHT" relativeTo="CalendarCreateEventDescriptionContainerScrollingEditBox" relativePoint="TOPRIGHT" x="-2" y="-1"/>
+							<Anchor point="BOTTOMRIGHT" relativeTo="CalendarCreateEventDescriptionContainerScrollingEditBox" relativePoint="BOTTOMRIGHT"/>
 						</Anchors>
 					</EventFrame>
 				</Frames>
