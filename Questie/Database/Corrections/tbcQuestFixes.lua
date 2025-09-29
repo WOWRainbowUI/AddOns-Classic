@@ -196,6 +196,9 @@ function QuestieTBCQuestFixes:Load()
         [1322] = {
             [questKeys.objectivesText] = {"Acquire 5 Acidic Venom Sacs for Do'gol in Brackenwall Village."},
         },
+        [1361] = {
+            [questKeys.startedBy] = {{2229,4485,10540}},
+        },
         [1437] = {
             [questKeys.triggerEnd] = {"Find and search Tyranis and Dalinda Malem's wagon", {[zoneIDs.DESOLACE]={{56.52,17.84}}}},
         },
@@ -222,6 +225,9 @@ function QuestieTBCQuestFixes:Load()
         },
         [1687] = {
             [questKeys.questLevel] = -1,
+        },
+        [1698] = {
+            [questKeys.startedBy] = {{5479,7315}},
         },
         [1699] = {
             [questKeys.triggerEnd] = {"Enter the Rethban Caverns", {[zoneIDs.REDRIDGE_MOUNTAINS]={{19.22,25.25}}}},

@@ -84,31 +84,27 @@ function QuestEventHandler:Initialize()
                     quest = QuestieDB.GetQuest(questId)
 
                     if quest then
-                        local info = StaticPopupDialogs[which]
-                        local sourceItemId, soureItemName, sourceItemType, soureClassID
-                        local reqSourceItemId, reqSoureItemName, reqSourceItemType, reqSoureClassID
+                        local sourceItemId = quest.sourceItemId
+                        local sourceItemName
+                        local reqSourceItemId, reqSoureItemName
 
-                        if quest.sourceItemId then
-                            sourceItemId = quest.sourceItemId
-
-                            if sourceItemId then
-                                soureItemName, _, _, _, _, sourceItemType, _, _, _, _, _, soureClassID = GetItemInfo(sourceItemId)
-                            end
+                        if sourceItemId then
+                            sourceItemName, _, _, _, _, _, _, _, _, _, _, _ = GetItemInfo(sourceItemId)
                         end
 
                         if quest.requiredSourceItems then
                             reqSourceItemId = quest.requiredSourceItems[1]
 
                             if reqSourceItemId then
-                                reqSoureItemName, _, _, _, _, reqSourceItemType, _, _, _, _, _, reqSoureClassID = GetItemInfo(reqSourceItemId)
+                                reqSoureItemName, _, _, _, _, _, _, _, _, _, _, _ = GetItemInfo(reqSourceItemId)
                             end
                         end
 
-                        if sourceItemId and soureItemName and sourceItemType and soureClassID and (sourceItemType == "Quest" or soureClassID == 12) and QuestieDB.QueryItemSingle(sourceItemId, "class") == 12 and text_arg1 == soureItemName then
+                        if sourceItemId and sourceItemName and QuestieDB.QueryItemSingle(sourceItemId, "class") == 12 and text_arg1 == sourceItemName then
                             questName = quest.name
                             foundQuestItem = true
                             break
-                        elseif reqSourceItemId and reqSoureItemName and reqSourceItemType and reqSoureClassID and (reqSourceItemType == "Quest" or reqSoureClassID == 12) and QuestieDB.QueryItemSingle(reqSourceItemId, "class") == 12 and text_arg1 == reqSoureItemName then
+                        elseif reqSourceItemId and reqSoureItemName and QuestieDB.QueryItemSingle(reqSourceItemId, "class") == 12 and text_arg1 == reqSoureItemName then
                             questName = quest.name
                             foundQuestItem = true
                             break
@@ -128,25 +124,39 @@ function QuestEventHandler:Initialize()
             end
 
             if foundQuestItem and quest and questName then
-                local frame, text
+                if StaticPopup_ForEachShownDialog then
+                    -- MoP+
+                    StaticPopup_ForEachShownDialog(function(dialog)
+                        if dialog.Text.text_arg1 == text_arg1 then
+                            local text = dialog.Text
+                            local updateText = l10n("Quest Item %%s might be needed for the quest %%s. \n\nAre you sure you want to delete this?")
+                            text:SetFormattedText(updateText, text_arg1, questName)
+                            text.text_arg1 = updateText
 
-                for i = 1, STATICPOPUP_NUMDIALOGS do
-                    frame = _G["StaticPopup" .. i]
-                    if (frame:IsShown()) and frame.text.text_arg1 == text_arg1 then
-                        text = _G[frame:GetName() .. "Text"]
-                        break
+                            StaticPopup_ResizeShownDialogs()
+                            deletedQuestItem = true
+
+                            Questie:Debug(Questie.DEBUG_DEVELOP, "[QuestieQuest] StaticPopup_Show: Quest Item Detected. Updating Static Popup.")
+                        end
+                    end)
+                else
+                    -- Pre-MoP
+                    for i = 1, STATICPOPUP_NUMDIALOGS do
+                        local frame = _G["StaticPopup" .. i]
+                        if (frame:IsShown()) and frame.text.text_arg1 == text_arg1 then
+                            local text = _G[frame:GetName() .. "Text"]
+
+                            local updateText = l10n("Quest Item %%s might be needed for the quest %%s. \n\nAre you sure you want to delete this?")
+                            text:SetFormattedText(updateText, text_arg1, questName)
+                            text.text_arg1 = updateText
+
+                            StaticPopup_Resize(frame, which)
+                            deletedQuestItem = true
+
+                            Questie:Debug(Questie.DEBUG_DEVELOP, "[QuestieQuest] StaticPopup_Show: Quest Item Detected. Updating Static Popup.")
+                            break
+                        end
                     end
-                end
-
-                if frame ~= nil and text ~= nil then
-                    local updateText = l10n("Quest Item %%s might be needed for the quest %%s. \n\nAre you sure you want to delete this?")
-                    text:SetFormattedText(updateText, text_arg1, questName)
-                    text.text_arg1 = updateText
-
-                    StaticPopup_Resize(frame, which)
-                    deletedQuestItem = true
-
-                    Questie:Debug(Questie.DEBUG_DEVELOP, "[QuestieQuest] StaticPopup_Show: Quest Item Detected. Updating Static Popup.")
                 end
             end
         end

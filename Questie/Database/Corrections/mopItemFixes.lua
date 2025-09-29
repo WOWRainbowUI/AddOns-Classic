@@ -1049,15 +1049,15 @@ function MopItemFixes.Load()
         },
         [89812] = { -- "Jinyu Princess" Irrigation System
             [itemKeys.startQuest] = 31936,
-            [itemKeys.npcDrops] = {58706},
+            [itemKeys.npcDrops] = {58706}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
         },
         [89813] = { -- "Thunder King" Pest Repellers
             [itemKeys.startQuest] = 31937,
-            [itemKeys.npcDrops] = {58706},
+            [itemKeys.npcDrops] = {58706}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
         },
         [89814] = { -- "Earth-Slasher" Master Plow
             [itemKeys.startQuest] = 31938,
-            [itemKeys.npcDrops] = {58706},
+            [itemKeys.npcDrops] = {58706}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
         },
         [89903] = { -- Thousand-Year Water
             [itemKeys.objectDrops] = {440008},
@@ -1074,14 +1074,49 @@ function MopItemFixes.Load()
         [91817] = { -- Funky Rotten Fish
             [itemKeys.npcDrops] = {60358},
         },
+        [91819] = { -- Sturdy Crane Snare
+            [itemKeys.startQuest] = 32161,
+            [itemKeys.npcDrops] = {67751}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
+        },
+        [91821] = { -- Sturdy Tiger Trap
+            [itemKeys.startQuest] = 32162,
+            [itemKeys.npcDrops] = {67751}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
+        },
+        [91822] = { -- Sturdy Crab Crate
+            [itemKeys.startQuest] = 32163,
+            [itemKeys.npcDrops] = {67751}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
+        },
+        [91823] = { -- Animatable Stone
+            [itemKeys.npcDrops] = {67441},
+            [itemKeys.objectDrops] = {216160},
+        },
         [91854] = { -- Sturdy Crane Snare
             [itemKeys.startQuest] = 32164,
+            [itemKeys.npcDrops] = {67881}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
         },
         [91855] = { -- Sturdy Tiger Trap
             [itemKeys.startQuest] = 32165,
+            [itemKeys.npcDrops] = {67881}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
         },
         [91856] = { -- Sturdy Crab Crate
             [itemKeys.startQuest] = 32166,
+            [itemKeys.npcDrops] = {67881}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
+        },
+        [91907] = { -- Lion's Landing Lumber
+            [itemKeys.objectDrops] = {216229},
+        },
+        [92474] = { -- Extra-Waxy Alliance Ears
+            [itemKeys.npcDrops] = {67296,67297,67304,67317,67441},
+        },
+        [92704] = { -- Ancient Mogu Essence
+            [itemKeys.npcDrops] = {68070,68073},
+        },
+        [92708] = { -- Spirit Trap
+            [itemKeys.npcDrops] = {68061},
+        },
+        [93022] = { -- Animatable Stone
+            [itemKeys.npcDrops] = {67929},
+            [itemKeys.objectDrops] = {216160},
         },
         [95383] = { -- Pristine Banner of the Mantid Empire
             [itemKeys.startQuest] = 32686,
@@ -1106,6 +1141,10 @@ function MopItemFixes.Load()
         },
         [95390] = { -- Pristine Kypari Sap Container
             [itemKeys.startQuest] = 32693,
+        },
+        [105891] = { -- Moonfang's Pelt
+            [itemKeys.startQuest] = 33354,
+            [itemKeys.npcDrops] = {71992},
         },
         [244172] = { -- Eternal Blossom
             [itemKeys.name] = "Eternal Blossom",
