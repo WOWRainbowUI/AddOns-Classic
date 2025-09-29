@@ -19,7 +19,7 @@ if region == "EU" then
 elseif region == "KR" then
 	resetHour = 6
 else
-	resetHour = 8
+	resetHour = 7
 end
 
 local WEEKDAYS = {
@@ -40,15 +40,23 @@ local function addDaysToDate(eventDate, dayCount)
 	return date("*t", dateSeconds)
 end
 
+
 function SetMinTime(dateD)
-	local newDate = CopyTable(dateD)
+	local newDate = {}
+	for k, v in pairs(dateD) do
+		newDate[k] = v
+	end
 	newDate.hour = 0
 	newDate.min = 1
 	return newDate
 end
 
+
 function SetMaxTime(dateD)
-	local newDate = CopyTable(dateD)
+	local newDate = {}
+	for k, v in pairs(dateD) do
+		newDate[k] = v
+	end
 	newDate.hour = 23
 	newDate.min = 59
 	return newDate
@@ -159,14 +167,6 @@ local function GetLunarFestivalEnd(year)
 	return cny
 end
 
-local function GetDarkmoonStartDay(year, month)
-	local firstDayOfMonth = {
-		year=year,
-		month=month,
-		day=1
-	}
-	return changeWeekdayOfDate(firstDayOfMonth, WEEKDAYS.Monday, 1)
-end
 
 local function GetFollowingSunday(dateD)
 	return changeWeekdayOfDate(dateD, WEEKDAYS.Sunday, 1)
@@ -193,22 +193,102 @@ local ZIndexes = {
 
 local CLASSIC_CALENDAR_HOLIDAYS = {
 	{
-		-- Historical
-		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["WintersVeil"]["name"],
-		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["WintersVeil"]["description"],
-		startDate={ year=2023, month=12, day=15, hour=9, min=0 },
-		endDate={ year=2024, month=1, day= 2, hour=9, min=0 },
-		startTexture="Interface/Calendar/Holidays/Calendar_WinterVeilStart",
-		ongoingTexture="Interface/Calendar/Holidays/Calendar_WinterVeilOngoing",
-		endTexture="Interface/Calendar/Holidays/Calendar_WinterVeilEnd",
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["LunarFestival"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["LunarFestival"]["description"],
+		startDate={ year=2025, month=2, day=1, hour=9, min=0 },
+		endDate={ year=2025, month=2, day=15, hour=23, min=59 },
+		startTexture="Interface/Calendar/Holidays/Calendar_LunarFestivalStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_LunarFestivalOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_LunarFestivalEnd",
 		ZIndex=ZIndexes.high
 	},
 	{
-		-- Confirmed, static dates
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["LoveisintheAir"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["LoveisintheAir"]["description"],
+		startDate={ year=2025, month=2, day=7, hour=9, min=0 },
+		endDate={ year=2025, month=2, day=20, hour=23, min=59 },
+		startTexture="Interface/Calendar/Holidays/Calendar_LoveIsInTheAirStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_LoveIsInTheAirOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_LoveIsInTheAirEnd",
+		ZIndex=ZIndexes.high
+	},
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["Noblegarden"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["Noblegarden"]["description"],
+		startDate={ year=2025, month=4, day=20, hour=9, min=0 },
+		endDate={ year=2025, month=4, day=27, hour=23, min=59 },
+		startTexture="Interface/Calendar/Holidays/Calendar_NoblegardenStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_NoblegardenOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_NoblegardenEnd",
+		ZIndex=ZIndexes.high
+	},
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["ChildrensWeek"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["ChildrensWeek"]["description"],
+		startDate={ year=2025, month=5, day=1, hour=9, min=0 },
+		endDate={ year=2025, month=5, day=7, hour=23, min=59 },
+		startTexture="Interface/Calendar/Holidays/Calendar_ChildrensWeekStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_ChildrensWeekOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_ChildrensWeekEnd",
+		ZIndex=ZIndexes.high
+	},
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["MidsummerFireFestival"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["MidsummerFireFestival"]["description"],
+		startDate={ year=2025, month=6, day=21, hour=9, min=0 },
+		endDate={ year=2025, month=7, day=5, hour=23, min=59 },
+		startTexture="Interface/Calendar/Holidays/Calendar_MidsummerFireFestivalStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_MidsummerFireFestivalOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_MidsummerFireFestivalEnd",
+		ZIndex=ZIndexes.high
+	},
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["HarvestFestival"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["HarvestFestival"]["description"],
+		startDate={ year=2025, month=9, day=27, hour=9, min=0 },
+		endDate={ year=2025, month=10, day=4, hour=23, min=59 },
+		startTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalEnd",
+		ZIndex=ZIndexes.high
+	},
+	--[[
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["Brewfest"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["Brewfest"]["description"],
+		startDate={ year=2025, month=9, day=20, hour=9, min=0 },
+		endDate={ year=2025, month=10, day=4, hour=23, min=59 },
+		startTexture="Interface/Calendar/Holidays/Calendar_BrewfestStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_BrewfestOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_BrewfestEnd",
+		ZIndex=ZIndexes.high
+	},
+	--]]
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["HallowsEnd"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["HallowsEnd"]["description"],
+		startDate={ year=2025, month=10, day=18, hour=9, min=0 },
+		endDate={ year=2025, month=11, day=1, hour=23, min=59 },
+		startTexture="Interface/Calendar/Holidays/Calendar_HallowsEndStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_HallowsEndOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_HallowsEndEnd",
+		ZIndex=ZIndexes.high
+	},
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["PilgrimsBounty"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["PilgrimsBounty"]["description"],
+		startDate={ year=2025, month=11, day=22, hour=9, min=0 },
+		endDate={ year=2025, month=11, day=28, hour=23, min=59 },
+		startTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalEnd",
+		ZIndex=ZIndexes.high
+	},
+	{
 		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["WintersVeil"]["name"],
 		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["WintersVeil"]["description"],
-		startDate={ year=2024, month=12, day=15, hour=9, min=0 },
-		endDate={ year=2025, month=1, day= 2, hour=9, min=0 },
+		startDate={ year=2025, month=12, day=15, hour=9, min=0 },
+		endDate={ year=2026, month=1, day=2, hour=23, min=59 },
 		startTexture="Interface/Calendar/Holidays/Calendar_WinterVeilStart",
 		ongoingTexture="Interface/Calendar/Holidays/Calendar_WinterVeilOngoing",
 		endTexture="Interface/Calendar/Holidays/Calendar_WinterVeilEnd",
@@ -319,7 +399,9 @@ local WeeklyHolidays = 	{
 		startTexture="Interface/Calendar/Holidays/Calendar_FishingExtravaganza",
 		ongoingTexture="Interface/Calendar/Holidays/Calendar_FishingExtravaganza",
 		endTexture="Interface/Calendar/Holidays/Calendar_FishingExtravaganza",
-		ZIndex=ZIndexes.low
+		ZIndex=ZIndexes.low,
+		calendarType = "HOLIDAY"
+	,sequenceType = "START"
 	},
 }
 
@@ -334,7 +416,9 @@ local SoDWeeklyHolidays = {
 		startTexture="Interface/Calendar/Holidays/Calendar_FishingExtravaganza",
 		ongoingTexture="Interface/Calendar/Holidays/Calendar_FishingExtravaganza",
 		endTexture="Interface/Calendar/Holidays/Calendar_FishingExtravaganza",
-		ZIndex=ZIndexes.low
+		ZIndex=ZIndexes.low,
+		calendarType = "HOLIDAY"
+	,sequenceType = "START"
 	},
 	{
 		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["StranglethornFishingExtravaganza"]["name"],
@@ -346,30 +430,19 @@ local SoDWeeklyHolidays = {
 		startTexture="Interface/Calendar/Holidays/Calendar_FishingExtravaganza",
 		ongoingTexture="Interface/Calendar/Holidays/Calendar_FishingExtravaganza",
 		endTexture="Interface/Calendar/Holidays/Calendar_FishingExtravaganza",
-		ZIndex=ZIndexes.low
+		ZIndex=ZIndexes.low,
+		calendarType = "HOLIDAY"
+	,sequenceType = "START"
 	},
 }
 
 local battlegroundWeekends = {
-	warsongGulch={
-		name=L.HolidayLocalization[localeString]["CalendarPVP"]["WarsongGulch"]["name"],
-		description=L.HolidayLocalization[localeString]["CalendarPVP"]["WarsongGulch"]["description"],
-		startDate={ year=2023, month=12, day=15, hour=0, min=1 },
-		endDate={ year=2023, month=12, day=19, hour=resetHour, min=0 },
-		frequency=28,
-		CVar="calendarShowBattlegrounds",
-		artConfig="BattlegroundsArt",
-		startTexture="Interface/Calendar/Holidays/Calendar_WeekendBattlegroundsStart",
-		ongoingTexture="Interface/Calendar/Holidays/Calendar_WeekendBattlegroundsOngoing",
-		endTexture="Interface/Calendar/Holidays/Calendar_WeekendBattlegroundsEnd",
-		ZIndex=ZIndexes.medium
-	},
 	arathiBasin={
 		name=L.HolidayLocalization[localeString]["CalendarPVP"]["ArathiBasin"]["name"],
 		description=L.HolidayLocalization[localeString]["CalendarPVP"]["ArathiBasin"]["description"],
-		startDate={ year=2024, month=2, day=16, hour=0, min=1 },
-		endDate={ year=2024, month=2, day=20, hour=resetHour, min=0 },
-		frequency=28,
+		startDate={ year=2025, month=8, day=29, hour=0, min=0 }, -- last weekend (Friday, midnight, server time)
+		endDate={ year=2025, month=9, day=2, hour=resetHour, min=0 },
+		frequency=21,
 		CVar="calendarShowBattlegrounds",
 		artConfig="BattlegroundsArt",
 		startTexture="Interface/Calendar/Holidays/Calendar_WeekendBattlegroundsStart",
@@ -380,9 +453,22 @@ local battlegroundWeekends = {
 	alteracValley={
 		name=L.HolidayLocalization[localeString]["CalendarPVP"]["AlteracValley"]["name"],
 		description=L.HolidayLocalization[localeString]["CalendarPVP"]["AlteracValley"]["description"],
-		startDate={ year=2024, month=1, day=5, hour=0, min=1 },
-		endDate={ year=2024, month=1, day=9, hour=resetHour, min=0 },
-		frequency=28,
+		startDate={ year=2025, month=9, day=5, hour=0, min=0 }, -- this coming weekend (Friday, midnight, server time)
+		endDate={ year=2025, month=9, day=9, hour=resetHour, min=0 },
+		frequency=21,
+		CVar="calendarShowBattlegrounds",
+		artConfig="BattlegroundsArt",
+		startTexture="Interface/Calendar/Holidays/Calendar_WeekendBattlegroundsStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_WeekendBattlegroundsOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_WeekendBattlegroundsEnd",
+		ZIndex=ZIndexes.medium
+	},
+	warsongGulch={
+		name=L.HolidayLocalization[localeString]["CalendarPVP"]["WarsongGulch"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarPVP"]["WarsongGulch"]["description"],
+		startDate={ year=2025, month=9, day=12, hour=0, min=0 }, -- following weekend (Friday, midnight, server time)
+		endDate={ year=2025, month=9, day=16, hour=resetHour, min=0 },
+		frequency=21,
 		CVar="calendarShowBattlegrounds",
 		artConfig="BattlegroundsArt",
 		startTexture="Interface/Calendar/Holidays/Calendar_WeekendBattlegroundsStart",
@@ -421,25 +507,146 @@ local SoDBattlegroundWeekends = {
 	}
 }
 
-local DarkmoonHolidays = {
-	elwynn={
+-- Hardcoded Darkmoon Faire schedule for 2025 (based on official Wowhead schedule)
+local ClassicDarkmoonSchedule2025 = {
+	-- January - Elwynn Forest
+	{
 		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["name"],
 		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["description"],
-		startDate={ year=2023, month=12, day=18, hour=4, min=0 },
-		endDate={ year=2023, month=12, day=25, hour=4, min=0 },
-		frequency=isSoD and 28 or nil,
+		startDate={ year=2025, month=1, day=7, hour=0, min=1 },
+		endDate={ year=2025, month=1, day=13, hour=23, min=59 },
 		CVar="calendarShowDarkmoon",
 		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnStart",
 		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnOngoing",
 		endTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnEnd",
 		ZIndex=ZIndexes.medium
 	},
-	mulgore={
+	-- February - Mulgore
+	{
 		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["name"],
 		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["description"],
-		startDate={ year=2023, month=12, day=4, hour=4, min=0 },
-		endDate={ year=2023, month=12, day=11, hour=4, min=0 },
-		frequency=isSoD and 28 or nil,
+		startDate={ year=2025, month=2, day=10, hour=0, min=1 },
+		endDate={ year=2025, month=2, day=16, hour=23, min=59 },
+		CVar="calendarShowDarkmoon",
+		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreEnd",
+		ZIndex=ZIndexes.medium
+	},
+	-- March - Elwynn Forest
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["description"],
+		startDate={ year=2025, month=3, day=10, hour=0, min=1 },
+		endDate={ year=2025, month=3, day=16, hour=23, min=59 },
+		CVar="calendarShowDarkmoon",
+		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnEnd",
+		ZIndex=ZIndexes.medium
+	},
+	-- April - Mulgore
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["description"],
+		startDate={ year=2025, month=4, day=7, hour=0, min=1 },
+		endDate={ year=2025, month=4, day=13, hour=23, min=59 },
+		CVar="calendarShowDarkmoon",
+		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreEnd",
+		ZIndex=ZIndexes.medium
+	},
+	-- May - Elwynn Forest
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["description"],
+		startDate={ year=2025, month=5, day=5, hour=0, min=1 },
+		endDate={ year=2025, month=5, day=11, hour=23, min=59 },
+		CVar="calendarShowDarkmoon",
+		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnEnd",
+		ZIndex=ZIndexes.medium
+	},
+	-- June - Mulgore
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["description"],
+		startDate={ year=2025, month=6, day=9, hour=0, min=1 },
+		endDate={ year=2025, month=6, day=15, hour=23, min=59 },
+		CVar="calendarShowDarkmoon",
+		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreEnd",
+		ZIndex=ZIndexes.medium
+	},
+	-- July - Elwynn Forest
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["description"],
+		startDate={ year=2025, month=7, day=7, hour=0, min=1 },
+		endDate={ year=2025, month=7, day=13, hour=23, min=59 },
+		CVar="calendarShowDarkmoon",
+		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnEnd",
+		ZIndex=ZIndexes.medium
+	},
+	-- August - Mulgore
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["description"],
+		startDate={ year=2025, month=8, day=4, hour=0, min=1 },
+		endDate={ year=2025, month=8, day=10, hour=23, min=59 },
+		CVar="calendarShowDarkmoon",
+		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreEnd",
+		ZIndex=ZIndexes.medium
+	},
+	-- September - Elwynn Forest
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["description"],
+		startDate={ year=2025, month=9, day=8, hour=0, min=1 },
+		endDate={ year=2025, month=9, day=14, hour=23, min=59 },
+		CVar="calendarShowDarkmoon",
+		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnEnd",
+		ZIndex=ZIndexes.medium
+	},
+	-- October - Mulgore
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["description"],
+		startDate={ year=2025, month=10, day=6, hour=0, min=1 },
+		endDate={ year=2025, month=10, day=12, hour=23, min=59 },
+		CVar="calendarShowDarkmoon",
+		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreEnd",
+		ZIndex=ZIndexes.medium
+	},
+	-- November - Elwynn Forest
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireElwynn"]["description"],
+		startDate={ year=2025, month=11, day=10, hour=0, min=1 },
+		endDate={ year=2025, month=11, day=16, hour=23, min=59 },
+		CVar="calendarShowDarkmoon",
+		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnOngoing",
+		endTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireElwynnEnd",
+		ZIndex=ZIndexes.medium
+	},
+	-- December - Mulgore
+	{
+		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["name"],
+		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["DarkmoonFaireMulgore"]["description"],
+		startDate={ year=2025, month=12, day=8, hour=0, min=1 },
+		endDate={ year=2025, month=12, day=14, hour=23, min=59 },
 		CVar="calendarShowDarkmoon",
 		startTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreStart",
 		ongoingTexture="Interface/Calendar/Holidays/Calendar_DarkmoonFaireMulgoreOngoing",
@@ -508,6 +715,16 @@ local SoDEvents = {
 		ongoingTexture="Interface/Calendar/Holidays/Calendar_WeekendWorldQuestStart",
 		endTexture="Interface/Calendar/Holidays/Calendar_WeekendWorldQuestStart",
 		ZIndex=ZIndexes.highest
+	},
+	{
+		name="Phase 5 Launch",
+		description="Season of Discovery phase 5 officially arrives with Blackwing Lair and Zul'Gurub raids, and Prince Thunderaan world boss!",
+		startDate={ year=2024, month=9, day=26, hour=14, min=0 },
+		endDate={ year=2024, month=9, day=26, hour=14, min=0 },
+		startTexture="Interface/Calendar/Holidays/Calendar_WeekendWorldQuestStart",
+		ongoingTexture="Interface/Calendar/Holidays/Calendar_WeekendWorldQuestStart",
+		endTexture="Interface/Calendar/Holidays/Calendar_WeekendWorldQuestStart",
+		ZIndex=ZIndexes.highest
 	}
 }
 
@@ -536,6 +753,7 @@ local function getSoDEvents()
 end
 
 local holidaySchedule = {}
+local lastCacheDate = nil
 
 local function getDSTDates(year)
 	-- Start of DST is 2nd Sunday of March
@@ -573,56 +791,127 @@ local function addHolidayToSchedule(holiday, schedule)
 	local startTime = time(holiday.startDate)
 	local endTime = time(holiday.endDate)
 
-	holiday.startDate = date("*t", startTime)
-	holiday.endDate = date("*t", endTime)
+	if holiday.artConfig == "BattlegroundsArt" or holiday.CVar == "calendarShowDarkmoon" then
+		holiday.startDate = date("*t", startTime)
+		holiday.endDate = date("*t", endTime)
+	else
+		holiday.startDate = date("*t", adjustDST(startTime))
+		holiday.endDate = date("*t", adjustDST(endTime))
+	end
+	-- Force fishing event times to 2pm–4pm
+	if holiday.name == L.HolidayLocalization[localeString]["CalendarHolidays"]["StranglethornFishingExtravaganza"]["name"] then
+		holiday.startDate.hour = 14
+		holiday.startDate.min = 0
+		holiday.endDate.hour = 16
+		holiday.endDate.min = 0
+	end
+	-- Force BG holiday event times to fixed hours and prevent DST offset
+	if holiday.artConfig == "BattlegroundsArt" then
+		-- Example: 12:00 to 23:59, adjust as needed for your server/event
+		holiday.startDate.hour = 12
+		holiday.startDate.min = 0
+		holiday.endDate.hour = 23
+		holiday.endDate.min = 59
+	end
+	-- Force Darkmoon Faire event times to fixed hours and prevent DST offset
+	if holiday.CVar == "calendarShowDarkmoon" then
+		-- DMF runs Monday 00:01 to Sunday 23:59
+		holiday.startDate.hour = 0
+		holiday.startDate.min = 1
+		holiday.endDate.hour = 23
+		holiday.endDate.min = 59
+	end
+	-- Set iconTexture for battleground weekends
+	if holiday.calendarType == "HOLIDAY" and holiday.artConfig == "BattlegroundsArt" then
+		if holiday.sequenceType == "START" and holiday.startTexture then
+			holiday.iconTexture = holiday.startTexture
+		elseif holiday.sequenceType == "ONGOING" and holiday.ongoingTexture then
+			holiday.iconTexture = holiday.ongoingTexture
+		elseif holiday.sequenceType == "END" and holiday.endTexture then
+			holiday.iconTexture = holiday.endTexture
+		end
+	end
 	tinsert(schedule, holiday)
 	if holiday.frequency ~= nil then
-		local days = 0
-		while days < 365 do
+		local currentTime = time(currentCalendarTime)
+		local oneYearFromNow = currentTime + (365 * SECONDS_IN_DAY)
+		
+		-- Generate recurring events for 1 year rolling window from current date
+		while startTime < oneYearFromNow do
 			local eventCopy = CopyTable(holiday)
 			startTime = startTime + (SECONDS_IN_DAY * holiday.frequency)
 			endTime = endTime + (SECONDS_IN_DAY * holiday.frequency)
-			eventCopy.startDate = date("*t", adjustDST(startTime))
-			eventCopy.endDate = date("*t", adjustDST(endTime))
+			
+			-- Skip events that are too far in the future
+			if startTime > oneYearFromNow then
+				break
+			end
+			
+			eventCopy.startDate = date("*t", startTime)
+			eventCopy.endDate = date("*t", endTime)
+			-- Force fishing event times to 2pm–4pm
+			if eventCopy.name == L.HolidayLocalization[localeString]["CalendarHolidays"]["StranglethornFishingExtravaganza"]["name"] then
+				eventCopy.startDate.hour = 14
+				eventCopy.startDate.min = 0
+				eventCopy.endDate.hour = 16
+				eventCopy.endDate.min = 0
+			end
+			-- Force BG holiday event times to fixed hours for recurring events
+			if eventCopy.artConfig == "BattlegroundsArt" then
+				-- Ensure start is Friday
+				local d = eventCopy.startDate
+				local weekday = date("*t", time(d)).wday
+				-- WoW Lua: Sunday=1, Friday=6
+				if weekday ~= 6 then
+					local daysToFriday = (6 - weekday) % 7
+					local newTime = time(d) + (daysToFriday * SECONDS_IN_DAY)
+					eventCopy.startDate = date("*t", newTime)
+				end
+				eventCopy.startDate.hour = 0
+				eventCopy.startDate.min = 1
+				-- Ensure end is Tuesday at 7:00am
+				local dEnd = eventCopy.endDate
+				local weekdayEnd = date("*t", time(dEnd)).wday
+				-- WoW Lua: Sunday=1, Tuesday=3
+				if weekdayEnd ~= 3 then
+					local daysToTuesday = (3 - weekdayEnd) % 7
+					local newEndTime = time(dEnd) + (daysToTuesday * SECONDS_IN_DAY)
+					eventCopy.endDate = date("*t", newEndTime)
+				end
+				eventCopy.endDate.hour = 7
+				eventCopy.endDate.min = 0
+			end
+			-- Set iconTexture for battleground weekends (recurring)
+			if eventCopy.calendarType == "HOLIDAY" and eventCopy.artConfig == "BattlegroundsArt" then
+				if eventCopy.sequenceType == "START" and eventCopy.startTexture then
+					eventCopy.iconTexture = eventCopy.startTexture
+				elseif eventCopy.sequenceType == "ONGOING" and eventCopy.ongoingTexture then
+					eventCopy.iconTexture = eventCopy.ongoingTexture
+				elseif eventCopy.sequenceType == "END" and eventCopy.endTexture then
+					eventCopy.iconTexture = eventCopy.endTexture
+				end
+			end
 			tinsert(schedule, eventCopy)
-			days = days + holiday.frequency
 		end
 	end
 end
 
 local function GetClassicDarkmoons()
-	-- Darkmoon in Classic Era starts on the first Friday of every month
-	local isElwynn = true
-	local year = 2023
-	local month = 1
-
-	local darkmoonEvents = {}
-
-	-- Starting from Jan 2024, add a year of Darkmoon events per year since 2024
-	for _ = 1, (currentCalendarTime.year - year + 1) * 12 do
-		month = month + 1
-		if month > 12 then
-			month = 1
-			year = year + 1
-		end
-		local holidayCopy = CopyTable(isElwynn and DarkmoonHolidays.mulgore or DarkmoonHolidays.elwynn)
-		local startDate = GetDarkmoonStartDay(year, month)
-		local endDate = addDaysToDate(startDate, 6)
-		startDate.hour = 0
-		startDate.min = 1
-		endDate.hour = 23
-		endDate.min = 59
-		holidayCopy.startDate = startDate
-		holidayCopy.endDate = endDate
-		tinsert(holidaySchedule, holidayCopy)
-
-		isElwynn = not isElwynn
-	end
-
-	return darkmoonEvents
+	-- Return the hardcoded 2025 schedule
+	return ClassicDarkmoonSchedule2025
 end
 
 function GetClassicHolidays()
+	-- Clear cache if it's a new day or if it has too many entries (indicates old buggy generation)
+	local currentDate = string.format("%d-%d-%d", currentCalendarTime.year, currentCalendarTime.month, currentCalendarTime.day)
+	if (lastCacheDate ~= currentDate) or (next(holidaySchedule) ~= nil and #holidaySchedule > 500) then
+		if DEBUG_MODE and next(holidaySchedule) ~= nil then
+			print("ClassicCalendar: Refreshing holiday cache (" .. (#holidaySchedule > 500 and "oversized: " .. #holidaySchedule .. " entries" or "new day") .. ")")
+		end
+		holidaySchedule = {}
+		lastCacheDate = currentDate
+	end
+	
 	if next(holidaySchedule) ~= nil then
 		return holidaySchedule
 	end
@@ -644,7 +933,9 @@ function GetClassicHolidays()
 	end
 
 	-- Darkmoon
-	for _, holiday in next, isSoD and DarkmoonHolidays or GetClassicDarkmoons() do
+	-- TODO: For SoD, would need a separate SoD schedule with twice-monthly events
+	-- For now, using Classic schedule for both
+	for _, holiday in next, GetClassicDarkmoons() do
 		addHolidayToSchedule(holiday, holidaySchedule)
 	end
 
@@ -686,8 +977,11 @@ function GetClassicRaidResets()
 		local templeName, _ = L.DungeonLocalization[localeString][136360][1]
 		local azuregosName = "Azuregos" -- WIP, to be replaced with proper localization if possible?
 		local kazzakName = "Kazzak" -- WIP, to be replaced with proper localization if possible?
+		local thunderName = "Prince Thunderaan" -- WIP, to be replaced with proper localization if possible?
 		local mcName = L.RaidLocalization[localeString][136346]
 		local onyName = L.RaidLocalization[localeString][136351]
+		local bwlName = L.RaidLocalization[localeString][136329]
+		local zgName = L.RaidLocalization[localeString][136369]
 		raidResets = {
 			{
 				name=bfdName,
@@ -736,19 +1030,41 @@ function GetClassicRaidResets()
 				frequency=3
 			},
 			-- Weekly raids
+			-- {
+			-- 	name=templeName,
+			-- 	firstReset = {
+			-- 		year=2024,
+			-- 		month=4,
+			-- 		day=9,
+			-- 		hour=resetHour,
+			-- 		min=0
+			-- 	},
+			-- 	frequency=7
+			-- },
+			-- Twice-weekly raids
+			-- (one entry for Tuesdays, another for Saturdays)
 			{
 				name=templeName,
 				firstReset = {
 					year=2024,
-					month=4,
+					month=7,
 					day=9,
 					hour=resetHour,
 					min=0
 				},
 				frequency=7
 			},
-			-- Twice-weekly raids
-			-- (one entry for Tuesdays, another for Saturdays)
+			{
+				name=templeName,
+				firstReset = {
+					year=2024,
+					month=7,
+					day=13,
+					hour=resetHour,
+					min=0
+				},
+				frequency=7
+			},
 			{
 				name=azuregosName,
 				firstReset = {
@@ -798,17 +1114,6 @@ function GetClassicRaidResets()
 				firstReset = {
 					year=2024,
 					month=7,
-					day=27,
-					hour=resetHour,
-					min=0
-				},
-				frequency=7
-			},
-			{
-				name=mcName,
-				firstReset = {
-					year=2024,
-					month=7,
 					day=30,
 					hour=resetHour,
 					min=0
@@ -832,12 +1137,74 @@ function GetClassicRaidResets()
 					year=2024,
 					month=7,
 					day=30,
+					hour=resetHour,
+					min=0
+				},
+				frequency=7
+			},
+			{
+				name=bwlName,
+				firstReset = {
+					year=2024,
+					month=10,
+					day=1,
+					hour=resetHour,
+					min=0
+				},
+				frequency=7
+			},
+			{
+				name=zgName,
+				firstReset = {
+					year=2024,
+					month=9,
+					day=28,
+					hour=resetHour,
+					min=0
+				},
+				frequency=7
+			},
+			{
+				name=zgName,
+				firstReset = {
+					year=2024,
+					month=10,
+					day=1,
+					hour=resetHour,
+					min=0
+				},
+				frequency=7
+			},
+			{
+				name=thunderName,
+				firstReset = {
+					year=2024,
+					month=9,
+					day=28,
+					hour=resetHour,
+					min=0
+				},
+				frequency=7
+			},
+			{
+				name=thunderName,
+				firstReset = {
+					year=2024,
+					month=10,
+					day=1,
 					hour=resetHour,
 					min=0
 				},
 				frequency=7
 			}
 		}
+		if CCConfig.HideLevelUpRaidResets then
+			for i = #raidResets, 1, -1 do
+				if raidResets[i].name == bfdName or raidResets[i].name == gnomerName or raidResets[i].name == templeName then
+					table.remove(raidResets, i)
+				end
+			end
+		end
 	else
 		local MCName, _ = L.RaidLocalization[localeString][136346]
 		local OnyName, _ = L.RaidLocalization[localeString][136351]

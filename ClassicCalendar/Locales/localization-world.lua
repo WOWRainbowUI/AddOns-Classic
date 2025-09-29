@@ -14,7 +14,7 @@ L.Options = {
 		["SelectDefaultText"]			 = "DEFAULT",
 		["GeneralHeaderText"]			 = "General",
 		["ArtHeaderText"]				 = "Art",
-		["AuthorHeaderText"]			 = "Authors",
+		["AuthorHeaderText"]			 = "Author",
 		["CALENDAR_FILTER_BATTLEGROUND"] = "Battleground Call to Arms",
 		["EventAlarmsHeaderText"]		 = "Event Alarms",
 		["EventAlarmsDesc"]			 	 = "How the calendar notifies you when you have an event starting soon",
@@ -29,6 +29,7 @@ L.Options = {
 		["HourSingular"]				 = "hour",
 		["HourPlural"]					 = "hours",
 		["MinutePlural"]				 = "minutes",
+		["HideLevelUpRaidText"]			 = "[SoD] Hide level-up raid resets (BFD, Gnomeregan, ST)"
 	},
 	["frFR"] = {
 		["PVPArtText"] 					 = "",
@@ -671,6 +672,14 @@ L.HolidayLocalization = {
 				["name"] = "Lunar Festival",
 				["description"] = "Every year the druids of Moonglade hold a celebration of their city's great triumph over an ancient evil. During the Lunar Festival, citizens of Azeroth have the opportunity to honor their elders by celebrating their sage wisdom, sharing in magnificent feasts, and of course... shooting lots of fireworks!",
 			},
+			["Brewfest"] = {
+				["name"] = "Brewfest",
+				["description"] = "Raise a stein and celebrate Brewfest with food, drink, and revelry!",
+			},
+				["PilgrimsBounty"] = {
+					["name"] = "Pilgrim's Bounty",
+					["description"] = "Give thanks and celebrate the harvest with feasts and friends during Pilgrim's Bounty!",
+				},
 		},
 	},
 	["deDE"] = {

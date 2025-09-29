@@ -9,8 +9,9 @@ CCOptions:RegisterEvent("VARIABLES_LOADED")
 
 function GoToCCSettings(msg, editbox)
 	if msg == "" or msg == nil then
-		InterfaceOptionsFrame_OpenToCategory(AddonTitle)
-		InterfaceOptionsFrame_OpenToCategory(AddonTitle) -- Second call works around the issue detailed at Stanzilla/WoWUIBugs/issues/89
+		-- InterfaceOptionsFrame_OpenToCategory(AddonTitle)
+		-- InterfaceOptionsFrame_OpenToCategory(AddonTitle) -- Second call works around the issue detailed at Stanzilla/WoWUIBugs/issues/89
+		Settings.OpenToCategory(AddonTitle)
 	end
 end
 
@@ -25,7 +26,9 @@ local defaultOptions = {
 	["FlashCalButton"] = false,
 	["UnlockCalendarButton"] = false,
 	["AlarmNumber"] = 15,
-	["AlarmUnit"] = "minute"
+	["AlarmUnit"] = "minute",
+	["HideLevelUpRaidResets"] = false,
+	["DebugMode"] = false,
 }
 
 local function ToggleCalButtonLock(checked)
@@ -58,24 +61,12 @@ end
 
 checkLocale()
 
--- Randomization of attribution names
-
-local function shuffle(tbl)
-  for i = #tbl, 2, -1 do
-    local j = math.random(i)
-    tbl[i], tbl[j] = tbl[j], tbl[i]
-  end
-end
-
-local randomName = {"Toxiix-WildGrowth(NA)", "Lovediodes-WildGrowth(NA)"}
-shuffle(randomName) -- Randomize order of displayed names
-
 -- INTERFACE OPTIONS (starts building the frame now)
 
 local CCIOFrame = CreateFrame("Frame")
 CCIOFrame.name = AddonTitle
 
-local InterfaceOptionsFramePanelContainerWidth = InterfaceOptionsFramePanelContainer:GetWidth()
+local InterfaceOptionsFramePanelContainerWidth = SettingsPanel.Container.SettingsCanvas:GetWidth() - 48
 
 local function createHorizontalRule(text, anchorFrame)
 	local hrLine_p1 = CCIOFrame:CreateLine()
@@ -209,8 +200,26 @@ local chkIOHideCalButtonDesc = CCIOFrame:CreateFontString(nil, nil, "GameFontHig
 chkIOHideCalButtonDesc:SetPoint("LEFT", chkIOHideCalButton, "LEFT", 0, -24)
 chkIOHideCalButtonDesc:SetText("|cFF9CD6DE"..L.Options[localeString]["HideCalButtonDesc"].."|r")
 
+-- Hide resets for level up raids
+
+local hideLevelUpRaidsButton = CreateFrame("CheckButton", nil, CCIOFrame, "OptionsBaseCheckButtonTemplate")
+hideLevelUpRaidsButton:SetPoint("TOPLEFT", chkIOHideCalButton, "BOTTOMLEFT", 0, -24)
+
+hideLevelUpRaidsButton:SetScript("OnUpdate", function(frame)
+	hideLevelUpRaidsButton:SetChecked(CCConfig.HideLevelUpRaidResets)
+end)
+
+hideLevelUpRaidsButton:HookScript("OnClick", function(frame)
+	local checked = frame:GetChecked()
+	CCConfig.HideLevelUpRaidResets = checked
+end)
+
+local hideLevelUpRaidsButtonText = CCIOFrame:CreateFontString(nil, nil, "GameFontHighlight")
+hideLevelUpRaidsButtonText:SetPoint("LEFT", hideLevelUpRaidsButton, "RIGHT", 0, 1)
+hideLevelUpRaidsButtonText:SetText(L.Options[localeString]["HideLevelUpRaidText"])
+
 -- HR line for event alarm options
-local horizRule3 = createHorizontalRule(L.Options[localeString]["EventAlarmsHeaderText"], chkIOHideCalButtonDesc)
+local horizRule3 = createHorizontalRule(L.Options[localeString]["EventAlarmsHeaderText"], hideLevelUpRaidsButton)
 
 local eventAlarmsDesc = CCIOFrame:CreateFontString(nil, nil, "GameFontHighlight")
 eventAlarmsDesc:SetPoint("LEFT", horizRule3, "LEFT", 0, -24)
@@ -409,12 +418,8 @@ chkIOShowFireworksSpectacularText:SetText(L.Options[localeString]["FireworksSpec
 local attLine1 = createHorizontalRule(L.Options[localeString]["AuthorHeaderText"], chkIOShowFireworksSpectacular)
 
 local attLine2 = CCIOFrame:CreateFontString(nil, nil, "GameFontHighlight")
-attLine2:SetPoint("CENTER", attLine1, "LEFT", (InterfaceOptionsFramePanelContainerWidth/3), -16)
-attLine2:SetText("|cFF9CD6DE"..randomName[1].."|r")
-
-local attLine3 = CCIOFrame:CreateFontString(nil, nil, "GameFontHighlight")
-attLine3:SetPoint("CENTER", attLine1, "LEFT", (InterfaceOptionsFramePanelContainerWidth/3)*2, -16)
-attLine3:SetText("|cFF9CD6DE"..randomName[2].."|r")
+attLine2:SetPoint("CENTER", attLine1, "LEFT", (InterfaceOptionsFramePanelContainerWidth/2), -16)
+attLine2:SetText("|cFF9CD6DEToxix-WildGrowth(NA)|r")
 
 -- Discord Info
 
@@ -427,7 +432,8 @@ local lblDiscord = CCIOFrame:CreateFontString(nil, nil, "GameFontHighlight")
 lblDiscord:SetPoint("LEFT", DiscordLogo, "RIGHT", 4, 0)
 lblDiscord:SetText("|cFFEFC502https://discord.gg/CMxKsBQFKp|r")
 
-InterfaceOptions_AddCategory(CCIOFrame);
+local category = Settings.RegisterCanvasLayoutCategory(CCIOFrame, "Classic Calendar")
+Settings.RegisterAddOnCategory(category)
 
 -- Loading handler
 
@@ -441,6 +447,9 @@ local function CCOptionsHandler(self, event, arg1)
 				CCConfig[key] = value
 			end
 		end
+
+		-- Initialize debug mode from saved variables
+		DEBUG_MODE = CCConfig.DebugMode
 
 		SlashCmdList["CCCONFIG"] = GoToCCSettings;
 		SLASH_CCCONFIG1, SLASH_CCCONFIG2 = "/caloptions", "/calendaroptions"

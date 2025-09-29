@@ -369,21 +369,6 @@
 				</Anchors>
 			</Button>
 
-			<!-- Context menus -->
-			<Frame name="CalendarContextMenu" inherits="UIMenuTemplate" frameStrata="FULLSCREEN" enableMouse="true" clampedToScreen="true" hidden="true">
-				<Scripts>
-					<OnLoad inherit="prepend" function="CalendarContextMenu_OnLoad"/>
-					<OnHide function="CalendarContextMenu_OnHide"/>
-				</Scripts>
-			</Frame>
-			<Frame name="CalendarInviteStatusContextMenu" inherits="UIMenuTemplate" frameStrata="FULLSCREEN" enableMouse="true" hidden="true" parent="CalendarContextMenu">
-				<Scripts>
-					<OnLoad inherit="prepend" function="CalendarInviteStatusContextMenu_OnLoad"/>
-					<OnShow function="CalendarInviteStatusContextMenu_OnShow"/>
-					<OnEvent function="CalendarInviteStatusContextMenu_OnEvent"/>
-				</Scripts>
-			</Frame>
-
 			<!-- Modal frame support -->
 			<Frame name="CalendarModalDummy" enableMouse="true" enableKeyboard="true" hidden="true">
 				<Size x="655" y="624"/>
@@ -592,7 +577,7 @@
 							<KeyValue key="fontName" value="GameFontNormalSmallLeft" type="string"/>
 						</KeyValues>
 					</Frame>
-					<EventFrame parentKey="ScrollBar" inherits="WowClassicScrollBar" frameStrata="HIGH">
+					<EventFrame name="CalendarCreateEventDescriptionContainerScrollBar" inherits="WowClassicScrollBar" frameStrata="HIGH">
 						<KeyValues>
 							<KeyValue key="hideBackground" value="true" type="boolean"/>
 						</KeyValues>
@@ -711,7 +696,6 @@
 			<OnLoad function="CalendarViewEventFrame_OnLoad"/>
 			<OnEvent function="CalendarViewEventFrame_OnEvent"/>
 			<OnShow function="CalendarViewEventFrame_OnShow"/>
-			<OnHide function="CalendarViewEventFrame_OnHide"/>
 		</Scripts>
 	</Frame>
 
@@ -935,7 +919,7 @@
 					<KeyValue key="backdropBorderColor" value="TOOLTIP_DEFAULT_COLOR" type="global"/>
 				</KeyValues>
 				<Frames>
-					<Frame parentKey="ScrollingEditBox" inherits="ScrollingEditBoxTemplate" frameStrata="HIGH">
+					<Frame name="CalendarCreateEventDescriptionContainerScrollingEditBox" parentKey="ScrollingEditBox" inherits="ScrollingEditBoxTemplate" frameStrata="HIGH">
 						<KeyValues>
 							<KeyValue key="fontName" value="GameFontHighlightSmall" type="string"/>
 							<KeyValue key="defaultFontName" value="GameFontDisableSmall" type="string"/>
@@ -952,8 +936,8 @@
 							<KeyValue key="hideBackground" value="true" type="boolean"/>
 						</KeyValues>
 						<Anchors>
-							<Anchor point="TOPRIGHT" parentKey="$parent.ScrollingEditBox" relativePoint="TOPRIGHT" x="-2" y="-1"/>
-							<Anchor point="BOTTOMRIGHT" parentKey="$parent.ScrollingEditBox" relativePoint="BOTTOMRIGHT"/>
+							<Anchor point="TOPRIGHT" relativeTo="CalendarCreateEventDescriptionContainerScrollingEditBox" relativePoint="TOPRIGHT" x="-2" y="-1"/>
+							<Anchor point="BOTTOMRIGHT" relativeTo="CalendarCreateEventDescriptionContainerScrollingEditBox" relativePoint="BOTTOMRIGHT"/>
 						</Anchors>
 					</EventFrame>
 				</Frames>

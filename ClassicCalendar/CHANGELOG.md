@@ -1,6 +1,6 @@
-# Classic Calendar
+# Classic Calendar - Revived
 
-## [v0.5.9beta](https://github.com/birkholz/ClassicCalendar/tree/v0.5.9beta) (2024-07-02)
-[Full Changelog](https://github.com/birkholz/ClassicCalendar/compare/v0.5.8beta...v0.5.9beta) [Previous Releases](https://github.com/birkholz/ClassicCalendar/releases)
+## [v0.8.7](https://github.com/ianjplamondon-cyber/ClassicCalendar-Revived/tree/v0.8.7) (2025-09-28)
+[Full Changelog](https://github.com/ianjplamondon-cyber/ClassicCalendar-Revived/compare/v0.8.6...v0.8.7) [Previous Releases](https://github.com/ianjplamondon-cyber/ClassicCalendar-Revived/releases)
 
-- Add missing ZIndex to Era AV weekend  
+- Removed Brewfest  
