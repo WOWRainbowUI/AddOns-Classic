@@ -57,8 +57,8 @@ L.Options = {
 		["HourSingular"]				 = "小時",
 		["HourPlural"]					 = "小時",
 		["MinutePlural"]				 = "分鐘",
-		["HideLevelUpRaidText"]			 = "[探索賽季] 隱藏練等團隊重置 (黑澗深淵、諾姆瑞根、沉沒的神廟)"
-		["ClassicCalendar"]  			 = "行事曆"
+		["HideLevelUpRaidText"]			 = "[探索賽季] 隱藏練等團隊重置 (黑澗深淵、諾姆瑞根、沉沒的神廟)",
+		["ClassicCalendar"]  			 = "行事曆",
 	},
 	["zhCN"] = {
 		["PVPArtText"] 					 = "",
