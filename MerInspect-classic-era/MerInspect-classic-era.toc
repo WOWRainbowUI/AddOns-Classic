@@ -1,4 +1,4 @@
-## Interface: 11507, 50500
+## Interface: 11507, 50501
 ## Title: MerInspect for classic era
 ## Version: 1.1.4
 ## Notes: Inspect Assist 

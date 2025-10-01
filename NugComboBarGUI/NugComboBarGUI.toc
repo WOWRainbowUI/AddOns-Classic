@@ -1,4 +1,4 @@
-## Interface: 11507, 30403, 50500, 110100, 110105
+## Interface: 11507, 30403, 50501, 110100, 110105
 ## Title: NugComboBarGUI
 ## Notes: NugComboBar Configuration Panel
 ## Version: 11.0.6

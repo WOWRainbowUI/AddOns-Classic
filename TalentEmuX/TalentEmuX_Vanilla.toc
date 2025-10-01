@@ -1,4 +1,4 @@
-## Interface: 11507, 30403, 50500
+## Interface: 11507, 30403, 50501
 ## Title: Talent Emu
 ## Title-zhCN: ala天赋模拟器
 ## Title-zhTW: ala天賦模擬器

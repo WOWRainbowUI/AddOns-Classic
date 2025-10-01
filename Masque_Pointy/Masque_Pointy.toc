@@ -1,4 +1,4 @@
-## Interface: 11507, 30403, 50500, 110002
+## Interface: 11507, 30403, 50501, 110002
 
 ## Title: Masque: Pointy
 ## Notes: Pointy Skin for Masque, inspired by GW2 and FFXIV

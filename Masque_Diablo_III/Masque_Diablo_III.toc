@@ -1,4 +1,4 @@
-## Interface: 11507, 30403, 50500, 110002## IconTexture: 982414
+## Interface: 11507, 30403, 50501, 110002## IconTexture: 982414
 ## Title: Masque: |cffa20000Diablo|r |cffffffffIII|r
 ## Version: 1.6
 ## Author: Suicidal Katt

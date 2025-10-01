@@ -1,4 +1,4 @@
-## Interface: 50500
+## Interface: 50501
 ## Title: Lib: CooldownTracker-1.0
 ## Notes: Library for tracking cooldowns of other players
 ## Author: Slaren

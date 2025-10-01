@@ -1,4 +1,4 @@
-## Interface: 11507, 50500, 110002
+## Interface: 11507, 50501, 110002
 ## Version: 6.0.3 Fix
 ## Title: Mik's Scrolling Battle Text
 ## Author: Mikord

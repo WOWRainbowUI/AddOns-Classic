@@ -1,4 +1,4 @@
-﻿## Interface: 50500
+﻿## Interface: 50501
 ## Title: Enhanced Bloodlust
 ## Notes: Add a music in Bloodlust or Heroism!
 ## Author: Vilkku, 彩虹ui

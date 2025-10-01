@@ -1,4 +1,4 @@
-## Interface: 11507, 30403, 50500, 110002
+## Interface: 11507, 30403, 50501, 110002
 ## IconTexture: Interface\Icons\achievement_doublerainbow
 ## Title: SharedMedia Rainbow
 ## Notes: Inserts some media into LibSharedMedia's storage.

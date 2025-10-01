@@ -1,5 +1,5 @@
 ## Interface: 50501
-## X-Min-Interface: 50500
+## X-Min-Interface: 50501
 ## Category: DBM
 ## Group: DBM-Core
 ## Title:|cffffe00a<|r|cffff7d0aDBM Core|r|cffffe00a>|r |cff69ccf0Main Core|r

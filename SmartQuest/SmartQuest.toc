@@ -1,9 +1,9 @@
-## Interface: 11507, 30403, 50500, 110005
+## Interface: 11507, 30403, 50501, 110005
 ## X-Min-Interface: 110002
 ## X-Min-Interface-Classic: 11503
 ## X-Min-Interface-BCC: 20504
 ## X-Min-Interface-Wrath: 30403
-## X-Min-Interface-Cata: 50500
+## X-Min-Interface-Cata: 50501
 ## Title: SmartQuest
 ## Version: 1.29.1 Fix
 ## Notes: Group Quest Tracking

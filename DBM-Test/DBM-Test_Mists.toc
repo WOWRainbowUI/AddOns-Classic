@@ -1,5 +1,5 @@
 ## Interface: 50501
-## X-Min-Interface: 50500
+## X-Min-Interface: 50501
 ## Category: DBM
 ## Group: DBM-Test
 ## Title:|cffffe00a<|r|cffff7d0aDBM Tests|r|cffffe00a>|r |cff69ccf0Test runner for DBM|r

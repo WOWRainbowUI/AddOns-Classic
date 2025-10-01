@@ -1,5 +1,5 @@
 ## Interface: 50501
-## X-Min-Interface-Mists: 50500
+## X-Min-Interface-Mists: 50501
 ## Category: DBM
 
 ## Title:|cffffe00a<|r|cffff7d0aDBM Mod|r|cffffe00a>|r |cffc030c0Dungeons (Cata)|r

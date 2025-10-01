@@ -1,4 +1,4 @@
-## Interface: 50500
+## Interface: 50501
 ## Title: BattleGroundEnemies
 ## Version: 11.2.0.6
 ## Author: Bullsei

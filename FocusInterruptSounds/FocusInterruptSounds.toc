@@ -1,4 +1,4 @@
-## Interface: 11507, 30404, 50500
+## Interface: 11507, 30404, 50501
 
 ## Title: Focus Interrupt Sounds |cff7fff7f -Ace3-|r
 ## Version: 4.0 r144
