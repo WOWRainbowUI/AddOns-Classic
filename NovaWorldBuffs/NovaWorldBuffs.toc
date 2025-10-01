@@ -6,7 +6,7 @@
 ## Notes-ptBR: Temporizadores de bônus mundiais e muito mais.
 ## Title: Nova World Buffs
 ## Author: Novaspark-Arugal OCE
-## Version: 3.15
+## Version: 3.16
 ## SavedVariables: NWBdatabase
 
 ## Title-zhTW: |cffFF7F00[團隊]|r Nova 世界增益監控
@@ -17,12 +17,12 @@
 embeds.xml
 Locale\Locales.xml
 Modules\DB.lua
+Modules\Realms.lua
 NovaWorldBuffs.lua
 Modules\Options.lua
 Modules\Help.lua
 Modules\Data.lua
 Modules\Creatures.lua
-Modules\Realms.lua
 Modules\GuildFilter.lua
 Modules\WorldBuffs.lua
 Modules\WeeklyReset.lua
