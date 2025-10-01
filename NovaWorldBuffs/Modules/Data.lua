@@ -39,8 +39,9 @@ local GetRaidRosterInfo = GetRaidRosterInfo;
 local strmatch = strmatch;
 local connectedRealms = {};
 local layerExpireTime = 10800;
-if (NWB.megaServer) then
-	layerExpireTime = 3600;
+
+function NWB:setLayerExpireTimeData()
+	layerExpireTime = NWB.layerExpireTime;
 end
 
 if (GetAutoCompleteRealms and next(GetAutoCompleteRealms())) then
@@ -232,7 +233,18 @@ function NWB:OnCommReceived(commPrefix, string, distribution, sender)
 			NWB:sendLayerBuffs();
 		end
 	end
-	if (NWB.isMOP) then
+	if (NWB.isMOP and NWB.isMegaserver) then
+		if (tonumber(remoteVersion) < 3.16) then
+			if (cmd == "requestData" and distribution == "GUILD") then
+				if (not NWB:getGuildDataStatus()) then
+					NWB:sendSettings("GUILD");
+				else
+					NWB:sendData("GUILD");
+				end
+			end
+			return;
+		end
+	elseif (NWB.isMOP) then
 		if (tonumber(remoteVersion) < 3.11) then
 			if (cmd == "requestData" and distribution == "GUILD") then
 				if (not NWB:getGuildDataStatus()) then

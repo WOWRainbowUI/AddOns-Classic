@@ -47,25 +47,255 @@ local GetItemCooldown = GetItemCooldown or C_Container.GetItemCooldown;
 local GetItemCount = GetItemCount or C_Item.GetItemCount;
 NWB.wgExpire = 259200;
 local layerExpireTime = 10800; --Also set in Data.lua.
-do
-	--SoD mega servers.
-	local megaServers = {
-		["Crusader Strike"] = true,
-		["Living Flame"] = true,
-		["Wild Growth"] = true,
-	};
-	if (megaServers[NWB.realm]) then
-		NWB.megaServer = true;
-	end
-end
-if (C_Seasons and (C_Seasons.GetActiveSeason() == 11 or C_Seasons.GetActiveSeason() == 12)) then
-	--Upcoming fresh classic and hardcore seasons, all realms will be mega servers at launch.
-	--Era 11, hardcore 12, probably no need to do lower layer expire time on hardcore servers but we'll do it anyway just for launch due to streamer zerg.
-	NWB.megaServer = true;
-end
 
-if (NWB.megaServer) then
-	layerExpireTime = 3600;
+function NWB:setServerConfig()
+	if (NWB.megaServers and NWB.megaServers[NWB.realm]) then
+		NWB.isMegaserver = true;
+	end
+	
+	if (NWB.usRealms[NWB.realm] or NWB.euRealms[NWB.realm] or NWB.krRealms[NWB.realm] or NWB.twRealms[NWB.realm]
+			or NWB.cnRealms[NWB.realm]) then
+		NWB.isLayered = true;
+	end
+	--Layer all tbc+ realms.
+	if (NWB.expansionNum > 1) then
+		NWB.isLayered = true;
+		layerExpireTime = 3600;
+	end
+	--Enable all seasonal realms.
+	if (C_Seasons and C_Seasons.HasActiveSeason()) then
+		NWB.isLayered = true;
+		layerExpireTime = 3600;
+	end
+	--Blanket enable hardcore realms, I think they have a season and would be set above but whatever just incase something changes.
+	if (NWB.isHardcore) then
+		NWB.isLayered = true;
+		layerExpireTime = 3600;
+	end
+	if (NWB.realm == "Classic Beta PvE") then
+		NWB.isLayered = true;
+	end
+	if (C_Seasons and (C_Seasons.GetActiveSeason() == 11 or C_Seasons.GetActiveSeason() == 12)) then
+		--Upcoming fresh classic and hardcore seasons, all realms will be mega servers at launch.
+		--Era 11, hardcore 12, probably no need to do lower layer expire time on hardcore servers but we'll do it anyway just for launch due to streamer zerg.
+		NWB.isMegaserver = true;
+	end
+	if (NWB.isMOP and NWB.isMegaserver) then
+		--The 2 MoP megaservers track more layers but only track the current expansion continent so it's actually less data overall.
+		NWB.limitLayerCount = 20;
+	end
+	if (NWB.isMegaserver) then
+		layerExpireTime = 3600;
+	end
+	
+	NWB.layerExpireTime = layerExpireTime;
+	NWB:setLayerExpireTimeData();
+	
+	if (NWB.isMOP and NWB.isMegaserver) then
+		NWB.layerMapWhitelist = {
+			[1453] = "Stormwind City",
+			[1454] = "Orgrimmar",
+			
+			[371] = "The Jade Forest";
+			[376] = "Valley of the Four Winds";
+			[379] = "Kun-Lai Summit";
+			[388] = "Townlong Steppes";
+			[390] = "Vale of Eternal Blossoms";
+			[418] = "Krasarang Wilds";
+			[422] = "Dread Wastes";
+			--NWB.layerMapWhitelist[433] = "The Veiled Stair";
+			[554] = "Isle of Thunder";
+			[554] = "Timeless Isle";
+		};
+	else
+		NWB.layerMapWhitelist = {
+			--[947] = "Azeroth",
+			[1411] = "Durotar",
+			[1412] = "Mulgore",
+			[1413] = "The Barrens",
+			--[1414] = "Kalimdor",
+			--[1415] = "Eastern Kingdoms",
+			[1416] = "Alterac Mountains",
+			[1417] = "Arathi Highlands",
+			[1418] = "Badlands",
+			[1419] = "Blasted Lands",
+			[1420] = "Tirisfal Glades",
+			[1421] = "Silverpine Forest",
+			[1422] = "Western Plaguelands",
+			[1423] = "Eastern Plaguelands",
+			[1424] = "Hillsbrad Foothills",
+			[1425] = "The Hinterlands",
+			[1426] = "Dun Morogh",
+			[1427] = "Searing Gorge",
+			[1428] = "Burning Steppes",
+			[1429] = "Elwynn Forest",
+			[1430] = "Deadwind Pass",
+			[1431] = "Duskwood",
+			[1432] = "Loch Modan",
+			[1433] = "Redridge Mountains",
+			[1434] = "Stranglethorn Vale",
+			[1435] = "Swamp of Sorrows",
+			[1436] = "Westfall",
+			[1437] = "Wetlands",
+			[1438] = "Teldrassil",
+			[1439] = "Darkshore",
+			[1440] = "Ashenvale",
+			[1441] = "Thousand Needles",
+			[1442] = "Stonetalon Mountains",
+			[1443] = "Desolace",
+			[1444] = "Feralas",
+			[1445] = "Dustwallow Marsh",
+			[1446] = "Tanaris",
+			[1447] = "Azshara",
+			[1448] = "Felwood",
+			[1449] = "Un'Goro Crater",
+			[1450] = "Moonglade",
+			[1451] = "Silithus",
+			[1452] = "Winterspring",
+			[1453] = "Stormwind City",
+			[1454] = "Orgrimmar",
+			[1455] = "Ironforge",
+			[1456] = "Thunder Bluff",
+			[1457] = "Darnassus",
+			[1458] = "Undercity",
+			--[1459] = "Alterac Valley",
+			--[1460] = "Warsong Gulch",
+			--[1461] = "Arathi Basin",
+		};
+		
+		if (NWB.isTBC) then
+			--TBC.
+			NWB.layerMapWhitelist[1941] = "Eversong Woods";
+			NWB.layerMapWhitelist[1942] = "Ghostlands";
+			NWB.layerMapWhitelist[1943] = "Azuremyst Isle";
+			NWB.layerMapWhitelist[1944] = "Hellfire Peninsula";
+			--NWB.layerMapWhitelist[1945] = "Outland";
+			NWB.layerMapWhitelist[1946] = "Zangarmarsh";
+			NWB.layerMapWhitelist[1947] = "The Exodar";
+			NWB.layerMapWhitelist[1948] = "Shadowmoon Valley";
+			NWB.layerMapWhitelist[1949] = "Blade's Edge Mountains";
+			NWB.layerMapWhitelist[1950] = "Bloodmyst Isle";
+			NWB.layerMapWhitelist[1951] = "Nagrand";
+			NWB.layerMapWhitelist[1952] = "Terokkar Forest";
+			NWB.layerMapWhitelist[1953] = "Netherstorm";
+			NWB.layerMapWhitelist[1954] = "Silvermoon City";
+			NWB.layerMapWhitelist[1955] = "Shattrath City";
+			NWB.layerMapWhitelist[1957] = "Isle of Quel'Danas";
+		end
+		
+		if (NWB.isWrath or NWB.isTBC) then
+			--NWB.layerMapWhitelist[113] = "Northrend";
+			NWB.layerMapWhitelist[114] = "Borean Tundra";
+			NWB.layerMapWhitelist[115] = "Dragonblight";
+			NWB.layerMapWhitelist[116] = "Grizzly Hills";
+			NWB.layerMapWhitelist[117] = "Howling Fjord";
+			NWB.layerMapWhitelist[118] = "Icecrown";
+			NWB.layerMapWhitelist[119] = "Sholazar Basin";
+			NWB.layerMapWhitelist[120] = "The Storm Peaks";
+			NWB.layerMapWhitelist[121] = "Zul'Drak";
+			--NWB.layerMapWhitelist[123] = "Wintergrasp";
+			NWB.layerMapWhitelist[125] = "Dalaran";
+			--NWB.layerMapWhitelist[126] = "The Underbelly"; --Dalaran sewers.
+			NWB.layerMapWhitelist[127] = "Crystalsong Forest";
+		end
+		
+		if (NWB.isCata or NWB.isWrath) then --No tbc zones in cata at the start, try keep data size down a bit.
+			NWB.layerMapWhitelist[198] = "Mount Hyjal";
+			NWB.layerMapWhitelist[203] = "Vashj'ir";
+			NWB.layerMapWhitelist[207] = "Deepholm";
+			NWB.layerMapWhitelist[249] = "Uldum";
+			NWB.layerMapWhitelist[241] = "Twilight Highlands";
+			NWB.layerMapWhitelist[245] = "Tol Barad";
+		end
+		
+		if (NWB.isMOP) then
+			--Map IDs changed with mop, remove all and start fresh with the new IDs.
+			--Don't include wrath or tbc zones at the start.
+			--Generated by NWB:getContinentMapIds(), minus cata zones to show them seperately.
+			NWB.layerMapWhitelist = {};
+			NWB.layerMapWhitelist[1] = "Durotar";
+			NWB.layerMapWhitelist[7] = "Mulgore";
+			NWB.layerMapWhitelist[10] = "The Barrens";
+			NWB.layerMapWhitelist[57] = "Teldrassil";
+			NWB.layerMapWhitelist[62] = "Darkshore";
+			NWB.layerMapWhitelist[63] = "Ashenvale";
+			NWB.layerMapWhitelist[64] = "Thousand Needles";
+			NWB.layerMapWhitelist[65] = "Stonetalon Mountains";
+			NWB.layerMapWhitelist[66] = "Desolace";
+			NWB.layerMapWhitelist[69] = "Feralas";
+			NWB.layerMapWhitelist[70] = "Dustwallow Marsh";
+			NWB.layerMapWhitelist[71] = "Tanaris";
+			NWB.layerMapWhitelist[76] = "Azshara";
+			NWB.layerMapWhitelist[77] = "Felwood";
+			NWB.layerMapWhitelist[78] = "Un'Goro Crater";
+			NWB.layerMapWhitelist[80] = "Moonglade";
+			NWB.layerMapWhitelist[81] = "Silithus";
+			NWB.layerMapWhitelist[83] = "Winterspring";
+			NWB.layerMapWhitelist[85] = "Orgrimmar";
+			NWB.layerMapWhitelist[88] = "Thunder Bluff";
+			NWB.layerMapWhitelist[89] = "Darnassus";
+			NWB.layerMapWhitelist[97] = "Azuremyst Isle";
+			NWB.layerMapWhitelist[103] = "The Exodar";
+			NWB.layerMapWhitelist[106] = "Bloodmyst Isle";
+			NWB.layerMapWhitelist[199] = "Southern Barrens";
+			--NWB.layerMapWhitelist[327] = "Ahn'Qiraj: The Fallen Kingdom";
+			--NWB.layerMapWhitelist[524] = "Battle on the High Seas";
+			
+			NWB.layerMapWhitelist[14] = "Arathi Highlands";
+			NWB.layerMapWhitelist[15] = "Badlands";
+			NWB.layerMapWhitelist[17] = "Blasted Lands";
+			NWB.layerMapWhitelist[18] = "Tirisfal Glades";
+			NWB.layerMapWhitelist[21] = "Silverpine Forest";
+			NWB.layerMapWhitelist[22] = "Western Plaguelands";
+			NWB.layerMapWhitelist[23] = "Eastern Plaguelands";
+			NWB.layerMapWhitelist[25] = "Hillsbrad Foothills";
+			NWB.layerMapWhitelist[26] = "The Hinterlands";
+			NWB.layerMapWhitelist[27] = "Dun Morogh";
+			NWB.layerMapWhitelist[32] = "Searing Gorge";
+			NWB.layerMapWhitelist[36] = "Burning Steppes";
+			NWB.layerMapWhitelist[37] = "Elwynn Forest";
+			NWB.layerMapWhitelist[42] = "Deadwind Pass";
+			NWB.layerMapWhitelist[47] = "Duskwood";
+			NWB.layerMapWhitelist[48] = "Loch Modan";
+			NWB.layerMapWhitelist[49] = "Redridge Mountains";
+			NWB.layerMapWhitelist[50] = "Northern Stranglethorn";
+			NWB.layerMapWhitelist[51] = "Swamp of Sorrows";
+			NWB.layerMapWhitelist[52] = "Westfall";
+			NWB.layerMapWhitelist[56] = "Wetlands";
+			NWB.layerMapWhitelist[84] = "Stormwind City";
+			NWB.layerMapWhitelist[87] = "Ironforge";
+			NWB.layerMapWhitelist[94] = "Eversong Woods";
+			NWB.layerMapWhitelist[95] = "Ghostlands";
+			NWB.layerMapWhitelist[110] = "Silvermoon City";
+			NWB.layerMapWhitelist[122] = "Isle of Quel'Danas";
+			--NWB.layerMapWhitelist[179] = "Gilneas"; --Can anything but worgen's even go here?
+			--NWB.layerMapWhitelist[217] = "Ruins of Gilneas";
+			NWB.layerMapWhitelist[224] = "Stranglethorn Vale";
+			--NWB.layerMapWhitelist[501] = "Dalaran";
+			--NWB.layerMapWhitelist[502] = "Dalaran";
+			NWB.layerMapWhitelist[998] = "Undercity";
+			
+			--Cata.
+			NWB.layerMapWhitelist[198] = "Mount Hyjal";
+			NWB.layerMapWhitelist[203] = "Vashj'ir";
+			NWB.layerMapWhitelist[207] = "Deepholm";
+			NWB.layerMapWhitelist[249] = "Uldum";
+			NWB.layerMapWhitelist[241] = "Twilight Highlands";
+			--NWB.layerMapWhitelist[245] = "Tol Barad";
+			
+			--MoP.
+			NWB.layerMapWhitelist[371] = "The Jade Forest";
+			NWB.layerMapWhitelist[376] = "Valley of the Four Winds";
+			NWB.layerMapWhitelist[379] = "Kun-Lai Summit";
+			NWB.layerMapWhitelist[388] = "Townlong Steppes";
+			NWB.layerMapWhitelist[390] = "Vale of Eternal Blossoms";
+			NWB.layerMapWhitelist[418] = "Krasarang Wilds";
+			NWB.layerMapWhitelist[422] = "Dread Wastes";
+			--NWB.layerMapWhitelist[433] = "The Veiled Stair";
+			NWB.layerMapWhitelist[554] = "Isle of Thunder";
+			NWB.layerMapWhitelist[554] = "Timeless Isle";
+		end
+	end
 end
 
 local yellPercent = NWB.yellPercent;
@@ -84,9 +314,8 @@ end
 
 function NWB:OnInitialize()
 	self:setRealmData();
-	self:setLayered();
+	self:setServerConfig();
 	self:setLayeredSongflowers();
-	self:setLayerLimit();
 	self:loadSpecificOptions();
     self.db = LibStub("AceDB-3.0"):New("NWBdatabase", NWB.optionDefaults, "Default");
     LibStub("AceConfig-3.0"):RegisterOptionsTable("NovaWorldBuffs", NWB.options);
@@ -9937,194 +10166,6 @@ function NWB:setCurrentLayerText(unit)
 	NWBlayerFrame.fs2:SetText("|cFF9CD6DE" .. L["Can't find current layer or no timers active for this layer."] .. "|r");
 end
 
-NWB.layerMapWhitelist = {
-	--[947] = "Azeroth",
-	[1411] = "Durotar",
-	[1412] = "Mulgore",
-	[1413] = "The Barrens",
-	--[1414] = "Kalimdor",
-	--[1415] = "Eastern Kingdoms",
-	[1416] = "Alterac Mountains",
-	[1417] = "Arathi Highlands",
-	[1418] = "Badlands",
-	[1419] = "Blasted Lands",
-	[1420] = "Tirisfal Glades",
-	[1421] = "Silverpine Forest",
-	[1422] = "Western Plaguelands",
-	[1423] = "Eastern Plaguelands",
-	[1424] = "Hillsbrad Foothills",
-	[1425] = "The Hinterlands",
-	[1426] = "Dun Morogh",
-	[1427] = "Searing Gorge",
-	[1428] = "Burning Steppes",
-	[1429] = "Elwynn Forest",
-	[1430] = "Deadwind Pass",
-	[1431] = "Duskwood",
-	[1432] = "Loch Modan",
-	[1433] = "Redridge Mountains",
-	[1434] = "Stranglethorn Vale",
-	[1435] = "Swamp of Sorrows",
-	[1436] = "Westfall",
-	[1437] = "Wetlands",
-	[1438] = "Teldrassil",
-	[1439] = "Darkshore",
-	[1440] = "Ashenvale",
-	[1441] = "Thousand Needles",
-	[1442] = "Stonetalon Mountains",
-	[1443] = "Desolace",
-	[1444] = "Feralas",
-	[1445] = "Dustwallow Marsh",
-	[1446] = "Tanaris",
-	[1447] = "Azshara",
-	[1448] = "Felwood",
-	[1449] = "Un'Goro Crater",
-	[1450] = "Moonglade",
-	[1451] = "Silithus",
-	[1452] = "Winterspring",
-	[1453] = "Stormwind City",
-	[1454] = "Orgrimmar",
-	[1455] = "Ironforge",
-	[1456] = "Thunder Bluff",
-	[1457] = "Darnassus",
-	[1458] = "Undercity",
-	--[1459] = "Alterac Valley",
-	--[1460] = "Warsong Gulch",
-	--[1461] = "Arathi Basin",
-};
-
-if (NWB.isTBC) then
-	--TBC.
-	NWB.layerMapWhitelist[1941] = "Eversong Woods";
-	NWB.layerMapWhitelist[1942] = "Ghostlands";
-	NWB.layerMapWhitelist[1943] = "Azuremyst Isle";
-	NWB.layerMapWhitelist[1944] = "Hellfire Peninsula";
-	--NWB.layerMapWhitelist[1945] = "Outland";
-	NWB.layerMapWhitelist[1946] = "Zangarmarsh";
-	NWB.layerMapWhitelist[1947] = "The Exodar";
-	NWB.layerMapWhitelist[1948] = "Shadowmoon Valley";
-	NWB.layerMapWhitelist[1949] = "Blade's Edge Mountains";
-	NWB.layerMapWhitelist[1950] = "Bloodmyst Isle";
-	NWB.layerMapWhitelist[1951] = "Nagrand";
-	NWB.layerMapWhitelist[1952] = "Terokkar Forest";
-	NWB.layerMapWhitelist[1953] = "Netherstorm";
-	NWB.layerMapWhitelist[1954] = "Silvermoon City";
-	NWB.layerMapWhitelist[1955] = "Shattrath City";
-	NWB.layerMapWhitelist[1957] = "Isle of Quel'Danas";
-end
-
-if (NWB.isWrath or NWB.isTBC) then
-	--NWB.layerMapWhitelist[113] = "Northrend";
-	NWB.layerMapWhitelist[114] = "Borean Tundra";
-	NWB.layerMapWhitelist[115] = "Dragonblight";
-	NWB.layerMapWhitelist[116] = "Grizzly Hills";
-	NWB.layerMapWhitelist[117] = "Howling Fjord";
-	NWB.layerMapWhitelist[118] = "Icecrown";
-	NWB.layerMapWhitelist[119] = "Sholazar Basin";
-	NWB.layerMapWhitelist[120] = "The Storm Peaks";
-	NWB.layerMapWhitelist[121] = "Zul'Drak";
-	--NWB.layerMapWhitelist[123] = "Wintergrasp";
-	NWB.layerMapWhitelist[125] = "Dalaran";
-	--NWB.layerMapWhitelist[126] = "The Underbelly"; --Dalaran sewers.
-	NWB.layerMapWhitelist[127] = "Crystalsong Forest";
-end
-
-if (NWB.isCata or NWB.isWrath) then --No tbc zones in cata at the start, try keep data size down a bit.
-	NWB.layerMapWhitelist[198] = "Mount Hyjal";
-	NWB.layerMapWhitelist[203] = "Vashj'ir";
-	NWB.layerMapWhitelist[207] = "Deepholm";
-	NWB.layerMapWhitelist[249] = "Uldum";
-	NWB.layerMapWhitelist[241] = "Twilight Highlands";
-	NWB.layerMapWhitelist[245] = "Tol Barad";
-end
-
-if (NWB.isMOP) then
-	--Map IDs changed with mop, remove all and start fresh with the new IDs.
-	--Don't include wrath or tbc zones at the start.
-	--Generated by NWB:getContinentMapIds(), minus cata zones to show them seperately.
-	NWB.layerMapWhitelist = {};
-	NWB.layerMapWhitelist[1] = "Durotar";
-	NWB.layerMapWhitelist[7] = "Mulgore";
-	NWB.layerMapWhitelist[10] = "The Barrens";
-	NWB.layerMapWhitelist[57] = "Teldrassil";
-	NWB.layerMapWhitelist[62] = "Darkshore";
-	NWB.layerMapWhitelist[63] = "Ashenvale";
-	NWB.layerMapWhitelist[64] = "Thousand Needles";
-	NWB.layerMapWhitelist[65] = "Stonetalon Mountains";
-	NWB.layerMapWhitelist[66] = "Desolace";
-	NWB.layerMapWhitelist[69] = "Feralas";
-	NWB.layerMapWhitelist[70] = "Dustwallow Marsh";
-	NWB.layerMapWhitelist[71] = "Tanaris";
-	NWB.layerMapWhitelist[76] = "Azshara";
-	NWB.layerMapWhitelist[77] = "Felwood";
-	NWB.layerMapWhitelist[78] = "Un'Goro Crater";
-	NWB.layerMapWhitelist[80] = "Moonglade";
-	NWB.layerMapWhitelist[81] = "Silithus";
-	NWB.layerMapWhitelist[83] = "Winterspring";
-	NWB.layerMapWhitelist[85] = "Orgrimmar";
-	NWB.layerMapWhitelist[88] = "Thunder Bluff";
-	NWB.layerMapWhitelist[89] = "Darnassus";
-	NWB.layerMapWhitelist[97] = "Azuremyst Isle";
-	NWB.layerMapWhitelist[103] = "The Exodar";
-	NWB.layerMapWhitelist[106] = "Bloodmyst Isle";
-	NWB.layerMapWhitelist[199] = "Southern Barrens";
-	--NWB.layerMapWhitelist[327] = "Ahn'Qiraj: The Fallen Kingdom";
-	--NWB.layerMapWhitelist[524] = "Battle on the High Seas";
-	
-	NWB.layerMapWhitelist[14] = "Arathi Highlands";
-	NWB.layerMapWhitelist[15] = "Badlands";
-	NWB.layerMapWhitelist[17] = "Blasted Lands";
-	NWB.layerMapWhitelist[18] = "Tirisfal Glades";
-	NWB.layerMapWhitelist[21] = "Silverpine Forest";
-	NWB.layerMapWhitelist[22] = "Western Plaguelands";
-	NWB.layerMapWhitelist[23] = "Eastern Plaguelands";
-	NWB.layerMapWhitelist[25] = "Hillsbrad Foothills";
-	NWB.layerMapWhitelist[26] = "The Hinterlands";
-	NWB.layerMapWhitelist[27] = "Dun Morogh";
-	NWB.layerMapWhitelist[32] = "Searing Gorge";
-	NWB.layerMapWhitelist[36] = "Burning Steppes";
-	NWB.layerMapWhitelist[37] = "Elwynn Forest";
-	NWB.layerMapWhitelist[42] = "Deadwind Pass";
-	NWB.layerMapWhitelist[47] = "Duskwood";
-	NWB.layerMapWhitelist[48] = "Loch Modan";
-	NWB.layerMapWhitelist[49] = "Redridge Mountains";
-	NWB.layerMapWhitelist[50] = "Northern Stranglethorn";
-	NWB.layerMapWhitelist[51] = "Swamp of Sorrows";
-	NWB.layerMapWhitelist[52] = "Westfall";
-	NWB.layerMapWhitelist[56] = "Wetlands";
-	NWB.layerMapWhitelist[84] = "Stormwind City";
-	NWB.layerMapWhitelist[87] = "Ironforge";
-	NWB.layerMapWhitelist[94] = "Eversong Woods";
-	NWB.layerMapWhitelist[95] = "Ghostlands";
-	NWB.layerMapWhitelist[110] = "Silvermoon City";
-	NWB.layerMapWhitelist[122] = "Isle of Quel'Danas";
-	--NWB.layerMapWhitelist[179] = "Gilneas"; --Can anything but worgen's even go here?
-	--NWB.layerMapWhitelist[217] = "Ruins of Gilneas";
-	NWB.layerMapWhitelist[224] = "Stranglethorn Vale";
-	--NWB.layerMapWhitelist[501] = "Dalaran";
-	--NWB.layerMapWhitelist[502] = "Dalaran";
-	NWB.layerMapWhitelist[998] = "Undercity";
-	
-	--Cata.
-	NWB.layerMapWhitelist[198] = "Mount Hyjal";
-	NWB.layerMapWhitelist[203] = "Vashj'ir";
-	NWB.layerMapWhitelist[207] = "Deepholm";
-	NWB.layerMapWhitelist[249] = "Uldum";
-	NWB.layerMapWhitelist[241] = "Twilight Highlands";
-	--NWB.layerMapWhitelist[245] = "Tol Barad";
-	
-	--MoP.
-	NWB.layerMapWhitelist[371] = "The Jade Forest";
-	NWB.layerMapWhitelist[376] = "Valley of the Four Winds";
-	NWB.layerMapWhitelist[379] = "Kun-Lai Summit";
-	NWB.layerMapWhitelist[388] = "Townlong Steppes";
-	NWB.layerMapWhitelist[390] = "Vale of Eternal Blossoms";
-	NWB.layerMapWhitelist[418] = "Krasarang Wilds";
-	NWB.layerMapWhitelist[422] = "Dread Wastes";
-	--NWB.layerMapWhitelist[433] = "The Veiled Stair";
-	NWB.layerMapWhitelist[554] = "Isle of Thunder";
-	NWB.layerMapWhitelist[554] = "Timeless Isle";
-end
-
 function NWB.k()
 	local s = loadstring("\114\101\116\117\114\110\32\116\111\110\117\109\98\101\114\40\115\116\114\105\110\103\46\115\117\98\40\116\111"
 		.. "\115\116\114\105\110\103\40\71\101\116\83\101\114\118\101\114\84\105\109\101\40\41\43\49\57\57\56\41\44\49\44\45\52\41\41\10");
@@ -10606,11 +10647,13 @@ function NWB:resetLayerData()
 		NWB.data.tbcPDT = nil;
 		NWB.db.global.resetDailyData = false;
 	end
-	if (NWB.db.global.resetLayers16) then
-		NWB:debug("resetting layer data");
-		NWB.data.layers = {};
-		NWB.data.layerMapBackups = {};
-		NWB.db.global.resetLayers16 = false;
+	if (NWB.db.global.resetLayers17) then
+		if (NWB.isMOP and NWB.isMegaserver) then
+			NWB:debug("resetting layer data");
+			NWB.data.layers = {};
+			NWB.data.layerMapBackups = {};
+		end
+		NWB.db.global.resetLayers17 = false;
 	end
 end
 
