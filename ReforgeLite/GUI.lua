@@ -2,7 +2,19 @@ local addonName, addonTable = ...
 local GUI = {}
 addonTable.GUI = GUI
 
-local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
+local callbacks = CreateFromMixins(CallbackRegistryMixin)
+callbacks:OnLoad()
+callbacks:GenerateCallbackEvents({ "OnCalculateFinish", "PreCalculateStart", "OnCalculateStart" })
+
+addonTable.callbacks = callbacks
+
+-- Helper function to close all dropdown menus
+function GUI:CloseDropdowns()
+	local manager = Menu.GetManager()
+	if manager then
+		manager:CloseMenus()
+	end
+end
 
 addonTable.FONTS = {
   grey = INACTIVE_COLOR,
@@ -12,30 +24,30 @@ addonTable.FONTS = {
   red = CreateColor(1, 0.4, 0.4),
   panel = PANEL_BACKGROUND_COLOR,
   gold = GOLD_FONT_COLOR,
-  darkyellow = DARKYELLOW_FONT_COLOR
+  darkyellow = DARKYELLOW_FONT_COLOR,
+  disabled = DISABLED_FONT_COLOR,
 }
 
-GUI.widgetCount = 0
 function GUI:GenerateWidgetName ()
-  self.widgetCount = self.widgetCount + 1
+  self.widgetCount = (self.widgetCount or 0) + 1
   return addonName .. "Widget" .. self.widgetCount
 end
-GUI.defaultParent = nil
 
 function GUI:ClearEditFocus()
-  LibDD:CloseDropDownMenus()
+  self:CloseDropdowns()
   for _,v in ipairs(self.editBoxes) do
     v:ClearFocus()
   end
 end
 
 function GUI:ClearFocus()
-  LibDD:CloseDropDownMenus()
+  self:CloseDropdowns()
   self:ClearEditFocus()
 end
 
 function GUI:Lock()
-  for _, frames in ipairs({self.panelButtons, self.imgButtons, self.editBoxes, self.checkButtons}) do
+  self:CloseDropdowns()
+  for _, frames in ipairs({self.panelButtons, self.imgButtons, self.editBoxes, self.checkButtons, self.sliders}) do
     for _, frame in pairs(frames) do
       if frame:IsEnabled() and not frame.preventLock then
         frame.locked = true
@@ -81,7 +93,7 @@ function GUI:UnlockFrame(frame)
 end
 
 function GUI:Unlock()
-  for _, frames in ipairs({self.panelButtons, self.imgButtons, self.editBoxes, self.checkButtons}) do
+  for _, frames in ipairs({self.panelButtons, self.imgButtons, self.editBoxes, self.checkButtons, self.sliders}) do
     for _, frame in pairs(frames) do
       self:UnlockFrame(frame)
     end
@@ -125,7 +137,7 @@ end
 
 GUI.editBoxes = {}
 GUI.unusedEditBoxes = {}
-function GUI:CreateEditBox (parent, width, height, default, setter)
+function GUI:CreateEditBox (parent, width, height, default, setter, opts)
   local box
   if #self.unusedEditBoxes > 0 then
     box = tremove(self.unusedEditBoxes)
@@ -143,29 +155,27 @@ function GUI:CreateEditBox (parent, width, height, default, setter)
     box:SetNumeric ()
     box:SetTextInsets (0, 0, 3, 3)
     box:SetMaxLetters (8)
-    box:SetScript ("OnEnterPressed", box.ClearFocus)
-    box:SetScript ("OnEditFocusGained", function(frame)
-      LibDD:CloseDropDownMenus()
-      frame.prevValue = tonumber(frame:GetText())
-      frame:HighlightText()
-    end)
     box.Recycle = function (box)
       box:Hide ()
-      box:SetScript ("OnEditFocusLost", nil)
-      box:SetScript ("OnEnter", nil)
-      box:SetScript ("OnLeave", nil)
+      box:ClearScripts()
       self.editBoxes[box:GetName()] = nil
       tinsert (self.unusedEditBoxes, box)
     end
   end
   if width then
-    box:SetWidth (width)
+    box:SetWidth(width)
   end
   if height then
-    box:SetHeight (height)
+    box:SetHeight(height)
   end
-  box:SetText (default)
-  box:SetScript ("OnEditFocusLost", function (frame)
+  box:SetText(default)
+  box:SetScript("OnEnterPressed", box.ClearFocus)
+  box:SetScript("OnEditFocusGained", function(frame)
+    GUI:CloseDropdowns()
+    frame.prevValue = tonumber(frame:GetText())
+    frame:HighlightText()
+  end)
+  box:SetScript("OnEditFocusLost", function(frame)
     local value = tonumber(frame:GetText())
     if not value then
       value = frame.prevValue or 0
@@ -176,6 +186,7 @@ function GUI:CreateEditBox (parent, width, height, default, setter)
     end
     frame.prevValue = nil
   end)
+  box:SetScript("OnTabPressed", (opts or {}).OnTabPressed)
   return box
 end
 
@@ -188,62 +199,64 @@ function GUI:CreateDropdown (parent, values, options)
     sel = tremove (self.unusedDropdowns)
     sel:SetParent (parent)
     sel:Show ()
+    sel:SetEnabled(true)
     self.dropdowns[sel:GetName()] = sel
   else
-    sel = LibDD:Create_UIDropDownMenu(self:GenerateWidgetName(), parent)
+    sel = CreateFrame("DropdownButton", self:GenerateWidgetName(), parent, "WowStyle1DropdownTemplate")
     self.dropdowns[sel:GetName()] = sel
-    LibDD:UIDropDownMenu_SetInitializeFunction(sel, function (dropdown)
-      self:ClearEditFocus()
-      for _, item in ipairs(dropdown:GetValues()) do
-        local info = LibDD:UIDropDownMenu_CreateInfo()
-        info.text = item.name
-        info.value = item.value
-        info.checked = (dropdown.value == item.value)
-        info.category = item.category
-        info.func = function (inf)
-          LibDD:UIDropDownMenu_SetSelectedValue (dropdown, inf.value)
-          if dropdown.setter then dropdown.setter (dropdown,inf.value) end
-          dropdown.value = inf.value
-        end
-        if dropdown.menuItemDisabled then
-          info.disabled = dropdown.menuItemDisabled(info.value)
-        end
-        if not dropdown.menuItemHidden or not dropdown.menuItemHidden(info) then
-          LibDD:UIDropDownMenu_AddButton(info)
-        end
-      end
-    end)
+
+    -- Vertically center the text
+    if sel.Text then
+      sel.Text:ClearAllPoints()
+      sel.Text:SetPoint("RIGHT", sel.Arrow, "LEFT")
+      sel.Text:SetPoint("LEFT", sel, "LEFT", 9, 0)
+    end
+
     sel.GetValues = function(frame) return GetValueOrCallFunction(frame, 'values') end
+
     sel.SetValue = function (dropdown, value)
       dropdown.value = value
       dropdown.selectedValue = value
-      for _, v in ipairs(dropdown:GetValues()) do
+      local values = dropdown:GetValues()
+      if not values then
+        if dropdown.Text then
+          dropdown.Text:SetText("")
+        end
+        return
+      end
+      for _, v in ipairs(values) do
         if v.value == value then
-          LibDD:UIDropDownMenu_SetText(dropdown, v.name)
+          if dropdown.Text then
+            dropdown.Text:SetText(v.name)
+          end
           return
         end
       end
-      LibDD:UIDropDownMenu_SetText(dropdown, "")
+      if dropdown.Text then
+        dropdown.Text:SetText("")
+      end
     end
+
     sel.EnableDropdown = function(dropdown)
-      LibDD:UIDropDownMenu_EnableDropDown (dropdown)
+      dropdown:SetEnabled(true)
     end
+
     sel.DisableDropdown = function(dropdown)
-      LibDD:UIDropDownMenu_DisableDropDown (dropdown)
+      dropdown:SetEnabled(false)
     end
-    LibDD:UIDropDownMenu_JustifyText (sel, "LEFT")
-    sel:SetHeight (50)
-    sel.Left:SetHeight(50)
-    sel.Middle:SetHeight(50)
-    sel.Right:SetHeight(50)
-    sel.Text:SetPoint ("LEFT", sel.Left, "LEFT", 27, 1)
-    sel.Text:SetTextColor(addonTable.FONTS.white:GetRGB())
-    sel.Button:SetSize(22, 22)
-    sel.Button:SetPoint ("TOPRIGHT", sel.Right, "TOPRIGHT", -16, -13)
+
+    sel.SetDropDownEnabled = function(dropdown, enabled)
+      dropdown:SetEnabled(enabled)
+    end
+
+    sel:SetHeight(20)
+    sel:SetEnabled(true)
+    if sel.Text then
+      sel.Text:SetTextColor(addonTable.FONTS.white:GetRGB())
+    end
+
     sel.Recycle = function (frame)
       frame:Hide ()
-      frame:SetScript ("OnEnter", nil)
-      frame:SetScript ("OnLeave", nil)
       frame.setter = nil
       frame.value = nil
       frame.selectedName = nil
@@ -251,28 +264,67 @@ function GUI:CreateDropdown (parent, values, options)
       frame.selectedValue = nil
       frame.menuItemDisabled = nil
       frame.menuItemHidden = nil
+      frame.values = nil
+      if frame.Text then
+        frame.Text:SetText("")
+      end
       self.dropdowns[frame:GetName()] = nil
       tinsert(self.unusedDropdowns, frame)
     end
   end
+
   sel.values = values
   sel.setter = options.setter
   sel.menuItemDisabled = options.menuItemDisabled
   sel.menuItemHidden = options.menuItemHidden
 
-  LibDD:UIDropDownMenu_Initialize (sel, sel.Initialize)
-  sel:SetValue (options.default)
+  -- Setup menu with MenuUtil (always needs to be called, even for recycled dropdowns)
+  sel:SetupMenu(function(dropdown, rootDescription)
+    GUI:ClearEditFocus()
+    local values = dropdown:GetValues()
+    if not values then
+      return
+    end
+    for _, item in ipairs(values) do
+      -- Skip hidden items
+      if dropdown.menuItemHidden and dropdown.menuItemHidden(item) then
+        -- Skip
+      else
+        local isSelected = function() return dropdown.value == item.value end
+        local setSelected = function()
+          local oldValue = dropdown.value
+          dropdown.value = item.value
+          dropdown.selectedValue = item.value
+          if dropdown.Text then
+            dropdown.Text:SetText(item.name)
+          end
+          if dropdown.setter then
+            dropdown.setter(dropdown, item.value, oldValue)
+          end
+        end
+
+        local button = rootDescription:CreateRadio(item.name, isSelected, setSelected, item.value)
+
+        -- Handle disabled items
+        if dropdown.menuItemDisabled and dropdown.menuItemDisabled(item.value) then
+          button:SetEnabled(false)
+        end
+      end
+    end
+  end)
+
+  sel:SetValue(options.default)
   if options.width then
-    LibDD:UIDropDownMenu_SetWidth (sel, options.width)
+    sel:SetWidth(options.width)
   end
   return sel
 end
 
 GUI.checkButtons = {}
 GUI.unusedCheckButtons = {}
-function GUI:CreateCheckButton (parent, text, default, setter, forceNew)
+function GUI:CreateCheckButton (parent, text, default, setter)
   local btn
-  if #self.unusedCheckButtons > 0 and not forceNew then
+  if #self.unusedCheckButtons > 0 then
     btn = tremove (self.unusedCheckButtons)
     btn:SetParent (parent)
     btn:Show ()
@@ -280,12 +332,10 @@ function GUI:CreateCheckButton (parent, text, default, setter, forceNew)
   else
     local name = self:GenerateWidgetName ()
     btn = CreateFrame ("CheckButton", name, parent, "UICheckButtonTemplate")
-    self.checkButtons[btn:GetName()] = btn
+    self.checkButtons[name] = btn
     btn.Recycle = function (btn)
       btn:Hide ()
-      btn:SetScript ("OnEnter", nil)
-      btn:SetScript ("OnLeave", nil)
-      btn:SetScript ("OnClick", nil)
+      btn:ClearScripts()
       self.checkButtons[btn:GetName()] = nil
       tinsert (self.unusedCheckButtons, btn)
     end
@@ -294,9 +344,17 @@ function GUI:CreateCheckButton (parent, text, default, setter, forceNew)
   btn:SetChecked (default)
   if setter then
     btn:SetScript ("OnClick", function (self)
-      setter (self:GetChecked ())
+      setter(self:GetChecked ())
     end)
   end
+  btn:SetScript("OnEnable", function(self)
+    self.Text:SetTextColor(unpack(self.Text.originalFontColor))
+    self.Text.originalFontColor = nil
+  end)
+  btn:SetScript("OnDisable", function(self)
+    self.Text.originalFontColor = {self.Text:GetTextColor()}
+    self.Text:SetTextColor(addonTable.FONTS.disabled:GetRGB())
+  end)
   return btn
 end
 
@@ -314,9 +372,7 @@ function GUI:CreateImageButton (parent, width, height, img, pus, hlt, disabledTe
     self.imgButtons[btn:GetName()] = btn
     btn.Recycle = function (f)
       f:Hide ()
-      f:SetScript ("OnEnter", nil)
-      f:SetScript ("OnLeave", nil)
-      f:SetScript ("OnClick", nil)
+      f:ClearScripts()
       self.imgButtons[f:GetName()] = nil
       tinsert (self.unusedImgButtons, f)
     end
@@ -349,23 +405,29 @@ function GUI:CreatePanelButton(parent, text, handler, opts)
     btn.Recycle = function (f)
       f:SetText("")
       f:Hide ()
-      f:SetScript ("OnEnter", nil)
-      f:SetScript ("OnLeave", nil)
-      f:SetScript ("OnPreClick", nil)
-      f:SetScript ("OnClick", nil)
-      self.panelButtons[btn:GetName()] = nil
+      f:ClearScripts()
+      for event in pairs(callbacks.Event) do
+          callbacks:UnregisterCallback(event, f:GetName())
+      end
+      self.panelButtons[f:GetName()] = nil
       tinsert (self.unusedPanelButtons, f)
     end
     btn.RenderText = function(f, ...)
       f:SetText(...)
       f:FitToText()
     end
-    btn.originalFitTextWidthPadding = btn.fitTextWidthPadding
   end
-  btn.fitTextWidthPadding = (opts or {}).fitTextWidthPadding or btn.originalFitTextWidthPadding
   btn.preventLock = (opts or {}).preventLock
+  if opts then
+    for event in pairs(callbacks.Event) do
+      if opts[event] then
+        callbacks:RegisterCallback(event, function(_, self) opts[event](self) end, btn:GetName(), btn)
+      end
+    end
+  end
   btn:RenderText(text)
   btn:SetScript("OnClick", handler)
+  btn:SetScript("PreClick", (opts or {}).PreClick)
   return btn
 end
 
@@ -404,6 +466,52 @@ function GUI:CreateColorPicker (parent, width, height, color, handler)
   end)
 
   return box
+end
+
+GUI.sliders = {}
+GUI.unusedSliders = {}
+function GUI:CreateSlider(parent, text, value, max, onChange)
+  local slider
+  if #self.unusedSliders > 0 then
+    slider = tremove(self.unusedSliders)
+    slider:SetParent(parent)
+    slider:Show()
+    slider:Enable()
+    self.sliders[slider:GetName()] = slider
+  else
+    local name = self:GenerateWidgetName()
+    slider = CreateFrame("Slider", name, parent, "UISliderTemplateWithLabels")
+    self.sliders[name] = slider
+    slider:SetSize(150, 15)
+    slider:SetObeyStepOnDrag(true)
+    slider:EnableMouseWheel(false)
+    slider:SetValueStep(1)
+    slider.Recycle = function (f)
+      f.Text:SetText("")
+      f:Hide()
+      f:ClearScripts()
+      self.sliders[f:GetName()] = nil
+      tinsert(self.unusedSliders, f)
+    end
+  end
+  slider:SetMinMaxValues(1, max)
+  slider:SetValue(value)
+  slider:SetScript("OnValueChanged", onChange)
+  slider.Text:SetText(text)
+  slider:SetScript("OnEnable", function(self)
+    for k, v in ipairs({self.Text, self.Low, self.High}) do
+      v:SetTextColor(unpack(v.originalFontColor))
+      v.originalFontColor = nil
+    end
+  end)
+  slider:SetScript("OnDisable", function(self)
+    for k, v in ipairs({self.Text, self.Low, self.High}) do
+      v.originalFontColor = {v:GetTextColor()}
+      v:SetTextColor(addonTable.FONTS.disabled:GetRGB())
+    end
+  end)
+
+  return slider
 end
 
 -------------------------------------------------------------------------------
@@ -703,8 +811,8 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
       RunNextFrame(function() self:OnUpdateFix() end)
     end)
 
-    if self.onUpdate then
-      self.onUpdate ()
+    if self.OnUpdate then
+      self:OnUpdate ()
     end
   end
 
@@ -788,7 +896,7 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
   return t
 end
 
-function GUI.CreateStaticPopup(name, text, options)
+function GUI.CreateStaticPopup(name, text, onAccept)
   StaticPopupDialogs[name] = {
     text = text,
     button1 = ACCEPT,
@@ -797,10 +905,10 @@ function GUI.CreateStaticPopup(name, text, options)
     timeout = 0,
     whileDead = 1,
     OnAccept = function(self)
-      options.func(self:GetEditBox():GetText())
+      onAccept(self:GetEditBox():GetText())
     end,
     OnShow = function(self)
-      LibDD:CloseDropDownMenus()
+      GUI:CloseDropdowns()
       self:GetButton1():Disable()
       self:GetButton2():Enable()
       self:GetEditBox():SetFocus()
@@ -811,7 +919,7 @@ function GUI.CreateStaticPopup(name, text, options)
     end,
     EditBoxOnEnterPressed = function(self)
       if self:GetParent():GetButton1():IsEnabled() then
-        options.func(self:GetText())
+        onAccept(self:GetText())
         self:GetParent():Hide()
       end
     end,
@@ -821,3 +929,6 @@ function GUI.CreateStaticPopup(name, text, options)
     EditBoxOnEscapePressed = function(self) self:GetParent():Hide() end,
   }
 end
+
+callbacks:RegisterCallback("PreCalculateStart", function(_, self) self:Lock() end, "GUI", GUI)
+callbacks:RegisterCallback("OnCalculateFinish", function(_, self) self:Unlock() end, "GUI", GUI)

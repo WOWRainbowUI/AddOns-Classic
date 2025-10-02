@@ -64,7 +64,7 @@ local STAT_CONVERSIONS = {
 }
 
 function ReforgeLite:GetConversion()
-  wipe(self.conversion)
+  self.conversion = wipe(self.conversion or {})
   local classInfo = STAT_CONVERSIONS[playerClass]
   if classInfo then
     if classInfo.base then
@@ -77,6 +77,7 @@ function ReforgeLite:GetConversion()
     end
   end
   if playerRace == "Human" then
+    self.conversion[statIds.SPIRIT] = self.conversion[statIds.SPIRIT] or {}
     self.conversion[statIds.SPIRIT][statIds.SPIRIT] = (self.conversion[statIds.SPIRIT][statIds.SPIRIT] or 1) * 0.03
   end
 end
@@ -92,8 +93,8 @@ function ReforgeLite:UpdateMethodStats (method)
   end
   method.items = method.items or {}
   for k, item in ipairs(self.itemData) do
-    local orgstats = (item.itemInfo.link and GetItemStats(item.itemInfo.link, item.itemInfo.upgradeLevel) or {})
-    local stats = (item.itemInfo.link and GetItemStats(item.itemInfo.link, item.itemInfo.upgradeLevel) or {})
+    local stats = GetItemStats(item.itemInfo)
+    local orgstats = CopyTable(stats)
     local reforge = item.itemInfo.reforge
 
     method.items[k] = method.items[k] or {}
@@ -260,9 +261,8 @@ function ReforgeLite:InitializeMethod()
   for k, v in ipairs(self.itemData) do
     method.items[k] = { stats = {} }
     orgitems[k] = {}
-    local item = v.itemInfo.link
-    local stats = (item and GetItemStats(item, v.itemInfo.upgradeLevel) or {})
-    local orgstats = (item and GetItemStats(item, v.itemInfo.upgradeLevel) or {})
+    local stats = GetItemStats(v.itemInfo)
+    local orgstats = CopyTable(stats)
     for j, stat in ipairs(addonTable.itemStats) do
       method.items[k].stats[j] = (stats[stat.name] or 0)
       orgitems[k][j] = (orgstats[stat.name] or 0)
@@ -412,9 +412,8 @@ end
 
 local chooseLoops = 0
 
-function ReforgeLite:ComputeReforge()
+function ReforgeLite:ComputeReforgeClassic()
   self.TABLE_SIZE = floor(10000 * (self.db.accuracy / addonTable.MAX_SPEED))
-  TABLE_SIZE = floor(10000 * (self.db.accuracy / addonTable.MAX_SPEED))
   local data = self:InitReforgeClassic()
   local reforgeOptions = {}
   for i = 1, #self.itemData do
@@ -449,10 +448,19 @@ function ReforgeLite:ComputeReforge()
   end
 end
 
+function ReforgeLite:ComputeReforge()
+  if self.pdb.useBranchBound and self.pdb.caps[2].stat ~= 0 then
+    self:ComputeReforgeBranchBound()
+  else
+    self:ComputeReforgeClassic()
+  end
+end
+
 local NORMAL_STATUS_CODES = { suspended = true, running = true }
 local routine
 
 function ReforgeLite:ResumeCompute()
+  if not routine then return end
   coroutine.resume(routine)
   if not NORMAL_STATUS_CODES[coroutine.status(routine)] then
     self:EndCompute()
@@ -478,20 +486,27 @@ function ReforgeLite:RunYieldCheck(maxLoops)
   end
 end
 
-function ReforgeLite:StartCompute()
-  if routine and addonTable.pauseRoutine == 'pause' and NORMAL_STATUS_CODES[coroutine.status(routine)]  then
+function ReforgeLite:CreateRoutine(func)
+  addonTable.pauseRoutine = nil
+  addonTable.callbacks:TriggerEvent("PreCalculateStart")
+  if routine and NORMAL_STATUS_CODES[coroutine.status(routine)] then
     coroutine.resume(routine)
   else
-    routine = coroutine.create(function() self:ComputeReforge() end)
+    routine = coroutine.create(function() self[func](self) end)
   end
   self:ResumeComputeNextFrame()
 end
 
+function ReforgeLite:StartAlgorithmComparison()
+  self:CreateRoutine("RunAlgorithmComparison")
+end
+
+function ReforgeLite:StartCompute()
+  self:CreateRoutine("ComputeReforge")
+end
+
 function ReforgeLite:EndCompute()
-  self.computeButton:RenderText(L["Compute"])
-  addonTable.GUI:Unlock()
-  self.pauseButton:RenderText(KEY_PAUSE)
-  self.pauseButton:Disable()
+  addonTable.callbacks:TriggerEvent("OnCalculateFinish")
   routine = nil
   collectgarbage('collect')
 end
