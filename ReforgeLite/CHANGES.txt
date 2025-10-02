@@ -1,30 +1,10 @@
-tag 231ad8742452396c212423e4ab6be140ed926442 v2.1.8
+tag 8f7930fc0681913db7d0bfac00d99260c34d1a8d v2.2.0a
 Author:	skyler-code <skylerh15@github.com>
-Date:	Fri Sep 26 04:43:34 2025 -0500
+Date:	Wed Oct 1 10:33:52 2025 -0500
 
-commit e43b50572df4f9071be8d346ae868e828690ab44
+commit c86f980f5dfc36d326045742ab23de7f20bb4cc5
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Sep 26 04:43:03 2025 -0500
+Date:   Wed Oct 1 10:33:11 2025 -0500
 
-    need to do playerrace check last
-
-commit 9086eb884207420a8d8ea077e336d5746642e454
-Author: skyler-code <skylerh15@github.com>
-Date:   Fri Sep 26 04:39:45 2025 -0500
-
-    conversion cleanup
-
-commit b301746030ecc6e8ac54ee045559602895f05607
-Author: skyler-code <skylerh15@github.com>
-Date:   Fri Sep 26 03:52:37 2025 -0500
-
-    Factor in 50% additional haste for mistweavers
-    
-    closes #49
-
-commit 8ea4a5ef1343de88bddda2fe9e851fe3c47c4ee3
-Author: skyler-code <skylerh15@github.com>
-Date:   Fri Sep 26 03:51:56 2025 -0500
-
-    EnumUtil
+    missing nil check
 

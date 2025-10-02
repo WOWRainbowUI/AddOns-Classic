@@ -6,14 +6,14 @@ addonTable.ReforgeLite = ReforgeLite
 
 local L = addonTable.L
 local GUI = addonTable.GUI
-local LibDD = LibStub:GetLibrary("LibUIDropDownMenu-4.0")
 
 local GetItemStats = addonTable.GetItemStatsUp
 
 addonTable.printLog = {}
+local gprint = print
 local function print(...)
     tinsert(addonTable.printLog, (" "):join(date("[%X]:"), tostringall(...)))
-    getprinthandler()(TRANSMOGRIFY_FONT_COLOR:WrapTextInColorCode(addonName)..":",...)
+    gprint(TRANSMOGRIFY_FONT_COLOR:WrapTextInColorCode(addonName)..":",...)
 end
 addonTable.print = print
 
@@ -56,6 +56,7 @@ local DefaultDB = {
     inactiveWindowTitle = {0.5, 0.5, 0.5},
     specProfiles = false,
     importButton = true,
+    clampedToScreen = true,
   },
   char = {
     targetLevel = 3,
@@ -91,6 +92,7 @@ local DefaultDB = {
     methodOrigin = addonName,
     itemsLocked = {},
     categoryStates = {},
+    useBranchAndBound = false,
   },
   class = {
     customPresets = {}
@@ -147,14 +149,14 @@ end
 
 -----------------------------------------------------------------
 
-GUI.CreateStaticPopup("REFORGE_LITE_SAVE_PRESET", L["Enter the preset name"], { func = function(text)
+GUI.CreateStaticPopup("REFORGE_LITE_SAVE_PRESET", L["Enter the preset name"], function(text)
   ReforgeLite.cdb.customPresets[text] = {
     caps = CopyTable(ReforgeLite.pdb.caps),
     weights = CopyTable(ReforgeLite.pdb.weights)
   }
   ReforgeLite:InitCustomPresets()
   ReforgeLite.deletePresetButton:ToggleStatus()
-end })
+end)
 
 local statIds = EnumUtil.MakeEnum("SPIRIT", "DODGE", "PARRY", "HIT", "CRIT", "HASTE", "EXP", "MASTERY", "SPELLHIT")
 addonTable.statIds = statIds
@@ -592,6 +594,7 @@ function ReforgeLite:CreateFrame()
   self:SetFrameStrata ("DIALOG")
   self:ClearAllPoints ()
   self:SetToplevel(true)
+  self:SetClampedToScreen(self.db.clampedToScreen)
   self:SetSize(self.db.windowWidth, self.db.windowHeight)
   self:SetResizeBounds(780, 500, 1000, 800)
   if self.db.windowLocation then
@@ -850,6 +853,7 @@ function ReforgeLite:AddCapPoint (i, loading)
   local rem = GUI:CreateImageButton (self.statCaps, 20, 20, "Interface\\PaperDollInfoFrame\\UI-GearManager-LeaveItem-Transparent",
     "Interface\\PaperDollInfoFrame\\UI-GearManager-LeaveItem-Transparent", nil, nil, function ()
     self:RemoveCapPoint (i, point)
+    self.statCaps:ToggleStatDropdownToCorrectState()
   end)
   local methodList = {
     {value = addonTable.StatCapMethods.AtLeast, name = L["At least"]},
@@ -857,10 +861,10 @@ function ReforgeLite:AddCapPoint (i, loading)
     {value = addonTable.StatCapMethods.Exactly, name = L["Exactly"]},
     {value = addonTable.StatCapMethods.NewValue, name = ""}
   }
-  local method = GUI:CreateDropdown (self.statCaps, methodList, { default = 1, setter = function (_,val) self.pdb.caps[i].points[point].method = val end, width = 80 })
+  local method = GUI:CreateDropdown (self.statCaps, methodList, { default = 1, setter = function (_,val) self.pdb.caps[i].points[point].method = val end, width = 95 })
   local preset = GUI:CreateDropdown (self.statCaps, self.capPresets, {
     default = 1,
-    width = 80,
+    width = 95,
     setter = function (_,val)
       self.pdb.caps[i].points[point].preset = val
       self:UpdateCapPreset (i, point)
@@ -921,9 +925,9 @@ function ReforgeLite:AddCapPoint (i, loading)
   end)
   GUI:SetTooltip (after, L["Weight after cap"])
 
-  self.statCaps:SetCell (row, 0, rem)
-  self.statCaps:SetCell (row, 1, method, "LEFT", -20, -10)
-  self.statCaps:SetCell (row, 2, preset, "LEFT", -20, -10)
+  self.statCaps:SetCell (row, 0, rem, "LEFT", 0, 0)
+  self.statCaps:SetCell (row, 1, method, "LEFT", 0, 0)
+  self.statCaps:SetCell (row, 2, preset, "LEFT", 5, 0)
   self.statCaps:SetCell (row, 3, value)
   self.statCaps:SetCell (row, 4, after)
 
@@ -1049,17 +1053,17 @@ function ReforgeLite:SetStatWeights (weights, caps)
       self:UpdateCapPoints (i)
     end
     self.statCaps:ToggleStatDropdownToCorrectState()
-    self.statCaps.onUpdate ()
-    self:UpdateContentSize ()
+    self.statCaps:OnUpdate()
+    self:UpdateContentSize()
     RunNextFrame(function() self:CapUpdater() end)
   end
   self:RefreshMethodStats ()
 end
-function ReforgeLite:CapUpdater ()
-  self.statCaps[1].stat:SetValue (self.pdb.caps[1].stat)
-  self.statCaps[2].stat:SetValue (self.pdb.caps[2].stat)
-  self:UpdateCapPoints (1)
-  self:UpdateCapPoints (2)
+function ReforgeLite:CapUpdater()
+  for i, statCap in ipairs(self.statCaps) do
+    statCap.stat:SetValue(self.pdb.caps[i].stat)
+    self:UpdateCapPoints(i)
+  end
 end
 function ReforgeLite:UpdateStatWeightList ()
   local rows = ITEM_STAT_COUNT
@@ -1079,17 +1083,24 @@ function ReforgeLite:UpdateStatWeightList ()
     col = 1 + 2 * col
 
     self.statWeights:SetCellText (row, col, v.long, "LEFT")
-    self.statWeights.inputs[i] = GUI:CreateEditBox (self.statWeights, 60, ITEM_SIZE, self.pdb.weights[i], function (val)
-      self.pdb.weights[i] = val
-      self:RefreshMethodStats ()
-    end)
-    self.statWeights.inputs[i]:SetScript("OnTabPressed", function(frame)
-      if self.statWeights.inputs[i+1] then
-        self.statWeights.inputs[i+1]:SetFocus()
-      else
-        frame:ClearFocus()
+    self.statWeights.inputs[i] = GUI:CreateEditBox(
+      self.statWeights,
+      60,
+      ITEM_SIZE,
+      self.pdb.weights[i],
+        function (val)
+        self.pdb.weights[i] = val
+        self:RefreshMethodStats()
+      end,
+      {
+      OnTabPressed = function(frame)
+        if self.statWeights.inputs[i+1] then
+          self.statWeights.inputs[i+1]:SetFocus()
+        else
+          frame:ClearFocus()
+        end
       end
-    end)
+    })
     self.statWeights:SetCell (row, col + 1, self.statWeights.inputs[i])
   end
 
@@ -1105,7 +1116,9 @@ function ReforgeLite:CreateOptionList ()
 
   self.presetsButton = GUI:CreateImageButton (self.content, 24, 24, "Interface\\ChatFrame\\UI-ChatIcon-ScrollDown-Up",
     "Interface\\ChatFrame\\UI-ChatIcon-ScrollDown-Down", "Interface\\Buttons\\UI-Common-MouseHilight", nil, function (btn)
-    LibDD:ToggleDropDownMenu (nil, nil, self.presetMenu, btn:GetName(), 0, 0)
+    if self.presetMenuGenerator then
+      MenuUtil.CreateContextMenu(btn, self.presetMenuGenerator)
+    end
   end)
   self.statWeightsCategory:AddFrame (self.presetsButton)
   self:SetAnchor (self.presetsButton, "TOPLEFT", self.statWeightsCategory, "BOTTOMLEFT", 0, -5)
@@ -1118,7 +1131,9 @@ function ReforgeLite:CreateOptionList ()
   self:SetAnchor (self.savePresetButton, "LEFT", self.presetsButton.tip, "RIGHT", 8, 0)
 
   self.deletePresetButton = GUI:CreatePanelButton (self.content, DELETE, function(btn)
-    LibDD:ToggleDropDownMenu (nil, nil, self.presetDelMenu, btn:GetName(), 0, 0)
+    if self.presetDelMenuGenerator then
+      MenuUtil.CreateContextMenu(btn, self.presetDelMenuGenerator)
+    end
   end)
   self.statWeightsCategory:AddFrame (self.deletePresetButton)
   self:SetAnchor (self.deletePresetButton, "LEFT", self.savePresetButton, "RIGHT", 5, 0)
@@ -1129,7 +1144,9 @@ function ReforgeLite:CreateOptionList ()
 
   --[===[@debug@
   self.exportPresetButton = GUI:CreatePanelButton (self.content, L["Export"], function(btn)
-    LibDD:ToggleDropDownMenu (nil, nil, self.exportPresetMenu, btn:GetName(), 0, 0)
+    if self.exportPresetMenuGenerator then
+      MenuUtil.CreateContextMenu(btn, self.exportPresetMenuGenerator)
+    end
   end)
   self.statWeightsCategory:AddFrame (self.exportPresetButton)
   self.exportPresetButton:SetPoint ("LEFT", self.deletePresetButton, "RIGHT", 5, 0)
@@ -1157,13 +1174,13 @@ function ReforgeLite:CreateOptionList ()
   self.targetLevel.text = self.targetLevel:CreateFontString(nil, "OVERLAY", "GameFontNormal")
   self.targetLevel.text:SetText(STAT_TARGET_LEVEL)
   self:SetAnchor(self.targetLevel.text, "TOPLEFT", self.pawnButton, "BOTTOMLEFT", 0, -8)
-  self.targetLevel:SetPoint("BOTTOMLEFT", self.targetLevel.text, "BOTTOMLEFT", self.targetLevel.text:GetStringWidth(), -20)
+  self.targetLevel:SetPoint("LEFT", self.targetLevel.text, "RIGHT", 5, 0)
 
   self.buffsContextMenu = CreateFrame("DropdownButton", nil, self.content, "WowStyle1FilterDropdownTemplate")
   self.buffsContextMenu:SetText(L["Buffs"])
   self.buffsContextMenu.resizeToTextPadding = 25
   self.statWeightsCategory:AddFrame(self.buffsContextMenu)
-  self:SetAnchor(self.buffsContextMenu, "TOPLEFT", self.targetLevel, "TOPRIGHT", 0 , 5)
+  self:SetAnchor(self.buffsContextMenu, "LEFT", self.targetLevel, "RIGHT", 10, 0)
 
   local buffsContextValues = {
     spellHaste = { text = addonTable.CreateIconMarkup(136092) .. L["Spell Haste"], selected = self.PlayerHasSpellHasteBuff },
@@ -1205,23 +1222,22 @@ function ReforgeLite:CreateOptionList ()
   end
   self.statCaps.ToggleStatDropdownToCorrectState = function(caps)
     for i = 2, #caps do
-      if self.pdb.caps[i-1].stat == 0  then
-        caps[i].stat:DisableDropdown()
-      else
-        caps[i].stat:EnableDropdown()
-      end
+      caps[i].stat:SetDropDownEnabled(self.pdb.caps[i-1].stat ~= 0)
+    end
+    if self.fastModeButton then
+      self.fastModeButton:SetShown(self.pdb.caps[#self.pdb.caps].stat ~= 0)  
     end
   end
   for i = 1, 2 do
     self.statCaps[i] = {}
     self.statCaps[i].stat = GUI:CreateDropdown (self.statCaps, statList, {
       default = self.pdb.caps[i].stat,
-      setter = function (dropdown, val)
+      setter = function (dropdown, val, oldVal)
         if val == 0 then
           while #self.pdb.caps[i].points > 0 do
             self:RemoveCapPoint (i, 1)
           end
-        elseif dropdown.value == 0 then
+        elseif oldVal == 0 then
           self:AddCapPoint(i)
         end
         self.pdb.caps[i].stat = val
@@ -1230,9 +1246,9 @@ function ReforgeLite:CreateOptionList ()
         end
         self.statCaps:ToggleStatDropdownToCorrectState()
       end,
-      width = 110,
+      width = 125,
       menuItemDisabled = function(val)
-        return val > 0 and self.statCaps[3-i].stat.value == val
+        return val > 0 and self.statCaps[3-i] and self.statCaps[3-i].stat and self.statCaps[3-i].stat.value == val
       end
     })
     self.statCaps[i].add = GUI:CreateImageButton (self.statCaps, 20, 20, "Interface\\Buttons\\UI-PlusButton-Up",
@@ -1240,7 +1256,7 @@ function ReforgeLite:CreateOptionList ()
       self:AddCapPoint (i)
     end)
     GUI:SetTooltip (self.statCaps[i].add, L["Add cap"])
-    self.statCaps:SetCell (i, 0, self.statCaps[i].stat, "LEFT", -20, -10)
+    self.statCaps:SetCell (i, 0, self.statCaps[i].stat, "LEFT", 0, 0)
     self.statCaps:SetCell (i, 2, self.statCaps[i].add, "LEFT")
   end
   for i = 1, 2 do
@@ -1253,51 +1269,73 @@ function ReforgeLite:CreateOptionList ()
     end
   end
   self.statCaps:ToggleStatDropdownToCorrectState()
-  self.statCaps.onUpdate = function ()
+  self.statCaps.OnUpdate = function(statCaps)
     local row = 1
-    for i = 1, 2 do
+    for i, cap in ipairs(self.pdb.caps) do
       row = row + 1
-      for point = 1, #self.pdb.caps[i].points do
-        if self.statCaps.cells[row][2] and self.statCaps.cells[row][2].values then
-          LibDD:UIDropDownMenu_SetWidth (self.statCaps.cells[row][2], self.statCaps:GetColumnWidth (2) - 20)
+      for point = 1, #cap.points do
+        if statCaps.cells[row][2] and statCaps.cells[row][2].values then
+          statCaps.cells[row][2]:SetWidth(statCaps:GetColumnWidth (2) - 20)
         end
         row = row + 1
       end
     end
   end
-  self.statCaps.saveOnUpdate = self.statCaps.onUpdate
-  self.statCaps.onUpdate ()
+  self.statCaps:OnUpdate()
   RunNextFrame(function() self:CapUpdater() end)
-
-  self.computeButton = GUI:CreatePanelButton (self.content, L["Compute"], function() self:StartCompute() end)
-  self.computeButton:SetScript ("PreClick", function (btn)
-    GUI:Lock()
-    GUI:ClearFocus()
-    btn:RenderText(IN_PROGRESS)
-    addonTable.pauseRoutine = nil
-    self.pauseButton:Enable()
-    self.pauseButton:RenderText(KEY_PAUSE)
-  end)
-
-  self.pauseButton = GUI:CreatePanelButton (self.content, KEY_PAUSE, function(btn)
-    if addonTable.pauseRoutine then
-      addonTable.pauseRoutine = 'kill'
-      self:EndCompute(addonTable.pauseRoutine)
-    else
-      addonTable.pauseRoutine = 'pause'
-      btn:RenderText(CANCEL)
-      self.computeButton:RenderText(CONTINUE)
-      addonTable.GUI:UnlockFrame(self.computeButton)
+  self.computeButton = GUI:CreatePanelButton (self.content, L["Compute"], function() self:StartCompute() end, {
+    OnCalculateFinish = function(btn)
+      btn:RenderText(L["Compute"])
+    end,
+    PreCalculateStart = function(btn)
+      btn:RenderText(IN_PROGRESS)
+    end,
+    PreClick = function (btn)
+      addonTable.pauseRoutine = nil
     end
-  end, {preventLock = true})
+  })
+
+  self.pauseButton = GUI:CreatePanelButton(
+    self.content,
+    KEY_PAUSE,
+    function(btn)
+      if addonTable.pauseRoutine then
+        addonTable.pauseRoutine = 'kill'
+        self:EndCompute(addonTable.pauseRoutine)
+      else
+        addonTable.pauseRoutine = 'pause'
+        btn:RenderText(CANCEL)
+        self.computeButton:RenderText(CONTINUE)
+        addonTable.GUI:UnlockFrame(self.computeButton)
+      end
+    end, 
+    {
+      preventLock = true,
+      PreCalculateStart = function(btn)
+        btn:RenderText(KEY_PAUSE)
+        btn:Enable()
+      end,
+      OnCalculateFinish = function(btn) 
+        btn:RenderText(KEY_PAUSE)
+        btn:Disable()
+      end
+    }
+  )
   self:SetAnchor (self.pauseButton, "LEFT", self.computeButton, "RIGHT", 4, 0)
   self.pauseButton:Disable()
+
+  self.fastModeButton = GUI:CreateCheckButton(self.content, L["Experimental Fast Mode"], self.pdb.useBranchBound, function (val) self.pdb.useBranchBound = val end)
+  self:SetAnchor(self.fastModeButton, "LEFT", self.pauseButton, "RIGHT", 4, 0)
+  self.fastModeButton:SetShown(self.pdb.caps[#self.pdb.caps].stat ~= 0) 
+
+  GUI:SetTooltip(self.fastModeButton, L["EXPERIMENTAL!!\nThis feature utilizes the branch and bound method which attempts to speed up the process without sacrificing any accuracy. While it should be faster for most users, there are still some edge cases where it can be even slower than the original formula.\n\nThank you!"])
+
 
   self:UpdateStatWeightList ()
 
   self.settingsCategory = self:CreateCategory (SETTINGS)
   self:SetAnchor (self.settingsCategory, "TOPLEFT", self.computeButton, "BOTTOMLEFT", 0, -10)
-  self.settings = GUI:CreateTable (8, 1, nil, 200)
+  self.settings = GUI:CreateTable (10, 1, nil, 200)
   self.settingsCategory:AddFrame (self.settings)
   self:SetAnchor (self.settings, "TOPLEFT", self.settingsCategory, "BOTTOMLEFT", 0, -10)
   self.settings:SetPoint ("RIGHT", self.content, -10, 0)
@@ -1344,17 +1382,15 @@ function ReforgeLite:GetInactiveWindows()
 end
 
 function ReforgeLite:FillSettings()
-  local accuracySlider = CreateFrame ("Slider", nil, self.settings, "UISliderTemplateWithLabels")
-  accuracySlider:SetSize(150, 15)
-  accuracySlider:SetMinMaxValues (1, addonTable.MAX_SPEED)
-  accuracySlider:SetValueStep (1)
-  accuracySlider:SetObeyStepOnDrag(true)
-  accuracySlider:SetValue (self.db.accuracy)
-  accuracySlider:EnableMouseWheel (false)
-  accuracySlider:SetScript ("OnValueChanged", function (slider)
-    self.db.accuracy = slider:GetValue ()
-  end)
-  accuracySlider.Text:SetText (L["Accuracy"])
+  local accuracySlider = GUI:CreateSlider(
+  self.settings,
+  L["Accuracy"],
+  self.db.accuracy,
+  addonTable.MAX_SPEED, 
+    function(slider)
+      self.db.accuracy = slider:GetValue()
+    end
+  )
 
   GUI:SetTooltip(accuracySlider, L["Setting to Low will result in lower accuracy but faster results! Set this back to High if you're not getting the results you expect."])
 
@@ -1362,6 +1398,17 @@ function ReforgeLite:FillSettings()
 
   self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Open window when reforging"],
     self.db.openOnReforge, function (val) self.db.openOnReforge = val end), "LEFT")
+
+  self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Show import button on Reforging window"],
+    self.db.importButton, function (val)
+      self.db.importButton = val
+      if val then
+        self:CreateImportButton()
+      elseif self.importButton then
+        self.importButton:Hide()
+      end
+    end),
+    "LEFT")
 
   self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Summarize reforged stats on tooltip"],
     self.db.updateTooltip,
@@ -1385,13 +1432,12 @@ function ReforgeLite:FillSettings()
     end),
     "LEFT")
 
-  self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Show import button on Reforging window"],
-    self.db.importButton, function (val)
-      self.db.importButton = val
-      if val then
-        self:CreateImportButton()
-      elseif self.importButton then
-        self.importButton:Hide()
+  self.settings:SetCell (getOrderId('settings'), 0, GUI:CreateCheckButton (self.settings, L["Prevent windows from going off screen"],
+    self.db.clampedToScreen, function (val)
+      self.db.clampedToScreen = val
+      self:SetClampedToScreen(val)
+      if self.methodWindow then
+        self.methodWindow:SetClampedToScreen(val)
       end
     end),
     "LEFT")
@@ -1410,8 +1456,18 @@ function ReforgeLite:FillSettings()
     end
   end), "LEFT")
 
-  self.debugButton = GUI:CreatePanelButton (self.settings, L["Debug"], function(btn) self:DebugMethod () end)
-  self.settings:SetCell (getOrderId('settings'), 0, self.debugButton, "LEFT")
+  local testAlgoButton = GUI:CreatePanelButton (self.settings, L["Run Algorithm Comparison"], function(btn) self:StartAlgorithmComparison() end, {
+    OnCalculateFinish = function(btn)
+      btn:RenderText(L["Run Algorithm Comparison"])
+    end,
+    PreCalculateStart = function(btn)
+      btn:RenderText(IN_PROGRESS)
+    end
+  })
+  self.settings:SetCell(getOrderId('settings'), 0, testAlgoButton, "LEFT")
+
+  local debugButton = GUI:CreatePanelButton (self.settings, L["Debug"], function(btn) self:DebugMethod () end)
+  self.settings:SetCell (getOrderId('settings'), 0, debugButton, "LEFT")
 
 --[===[@debug@
   self.settings:AddRow()
@@ -1588,7 +1644,7 @@ function ReforgeLite:UpdateItems()
       }
       v.texture:SetTexture(item:GetItemIcon())
       v.quality:SetVertexColor(item:GetItemQualityColor().color:GetRGB())
-      stats = GetItemStats(v.itemInfo.link, v.itemInfo.upgradeLevel)
+      stats = GetItemStats(v.itemInfo)
       if v.itemInfo.reforge then
         local srcId, dstId = unpack(reforgeTable[v.itemInfo.reforge])
         reforgeSrc, reforgeDst = ITEM_STATS[srcId].name, ITEM_STATS[dstId].name
@@ -1698,10 +1754,12 @@ end
 --------------------------------------------------------------------------
 
 function ReforgeLite:CreateMethodWindow()
+  if self.methodWindow then return end
   self.methodWindow = CreateFrame ("Frame", "ReforgeLiteMethodWindow", UIParent, "BackdropTemplate")
   self.methodWindow:SetFrameStrata ("DIALOG")
   self.methodWindow:SetToplevel(true)
-  self.methodWindow:ClearAllPoints ()
+  self.methodWindow:ClearAllPoints()
+  self.methodWindow:SetClampedToScreen(self.db.clampedToScreen)
   self.methodWindow:SetSize(250, 480)
   if self.db.methodWindowLocation then
     self.methodWindow:SetPoint (SafeUnpack(self.db.methodWindowLocation))
@@ -1822,7 +1880,7 @@ function ReforgeLite:CreateMethodWindow()
     self.methodWindow.items[i].reforge:SetText ("")
 
     self.methodWindow.items[i].check = GUI:CreateCheckButton (self.methodWindow.itemTable, "", false,
-      function (val) self.methodOverride[i] = (val and 1 or -1) self:UpdateMethodChecks () end, true)
+      function (val) self.methodOverride[i] = (val and 1 or -1) self:UpdateMethodChecks () end)
     self.methodWindow.itemTable:SetCell (i, 1, self.methodWindow.items[i].check)
   end
 
@@ -1856,13 +1914,11 @@ function ReforgeLite:RefreshMethodWindow()
     if not item:IsItemEmpty() then
       v.item = item:GetItemLink()
       v.texture:SetTexture(item:GetItemIcon())
-      v.qualityColor = item:GetItemQualityColor()
-      v.quality:SetVertexColor(v.qualityColor.r, v.qualityColor.g, v.qualityColor.b)
+      v.quality:SetVertexColor(item:GetItemQualityColor().color:GetRGB())
       v.quality:Show()
     else
       v.item = nil
       v.texture:SetTexture (v.slotTexture)
-      v.qualityColor = nil
       v.quality:SetVertexColor(addonTable.FONTS.white:GetRGB())
       v.quality:Hide()
     end
@@ -1880,9 +1936,7 @@ function ReforgeLite:RefreshMethodWindow()
 end
 
 function ReforgeLite:ShowMethodWindow(attachToReforge)
-  if not self.methodWindow then
-    self:CreateMethodWindow()
-  end
+  self:CreateMethodWindow()
 
   GUI:ClearFocus()
   if self.methodWindow:IsShown() then
@@ -1990,19 +2044,19 @@ end
 function ReforgeLite:DoReforgeUpdate()
   if self.methodWindow then
     for slotId, slotInfo in ipairs(self.methodWindow.items) do
-      local newReforge = self.pdb.method.items[slotId].reforge
-      if slotInfo.item and not IsReforgeMatching(slotInfo.slotId, newReforge, self.methodOverride[slotId]) then
+      local itemMethod = self.pdb.method.items[slotId]
+      if slotInfo.item and not IsReforgeMatching(slotInfo.slotId, itemMethod.reforge, self.methodOverride[slotId]) then
         PickupInventoryItem(slotInfo.slotId)
         C_Reforge.SetReforgeFromCursorItem()
-        if newReforge then
+        if itemMethod.reforge then
           local id = UNFORGE_INDEX
-          local stats = GetItemStats (slotInfo.item, self.itemData[slotId].upgradeLevel)
-          for s, reforgeInfo in ipairs(reforgeTable) do
+          local stats = GetItemStats(self.itemData[slotId].itemInfo)
+          for _, reforgeInfo in ipairs(reforgeTable) do
             local srcstat, dststat = unpack(reforgeInfo)
             if (stats[ITEM_STATS[srcstat].name] or 0) ~= 0 and (stats[ITEM_STATS[dststat].name] or 0) == 0 then
               id = id + 1
             end
-            if srcstat == self.pdb.method.items[slotId].src and dststat == self.pdb.method.items[slotId].dst then
+            if srcstat == itemMethod.src and dststat == itemMethod.dst then
               C_Reforge.ReforgeItem (id)
               coroutine.yield()
             end
@@ -2155,13 +2209,6 @@ function ReforgeLite:ADDON_LOADED (addon)
   while #self.pdb.caps > #DefaultDB.char.caps do
     tremove(self.pdb.caps)
   end
-
-  self.conversion = setmetatable({}, {
-    __index = function(t, k)
-      rawset(t, k, {})
-      return t[k]
-    end
-  })
 
   if self.db.updateTooltip then
     self:HookTooltipScripts()
