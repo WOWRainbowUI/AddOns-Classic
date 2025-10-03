@@ -810,12 +810,26 @@ function MopObjectFixes.Load()
             [objectKeys.questStarts] = nil,
             [objectKeys.questEnds] = {32163,32166},
         },
+        [216231] = { -- Powder Magazine
+            [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{12.33,75.58}}},
+            [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [216232] = { -- Powder Magazine
+            [objectKeys.name] = "Powder Magazine",
+            [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{15.1,76.65},{15.09,76.65},{15.09,76.63},{15.09,76.64},{15.1,76.63},{15.1,76.61},{15.11,76.62},{15.12,76.62},{15.11,76.6},{15.11,76.57},{15.1,76.59},{15.09,76.61},{15.07,76.62},{15.07,76.64},{15.06,76.67}}},
+            [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
         [216274] = { -- Signal Fire
             [objectKeys.name] = "Signal Fire",
             [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{8.44,63.98}}},
             [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
             [objectKeys.questStarts] = nil,
             [objectKeys.questEnds] = {32108},
+        },
+        [216420] = { -- Portal to The Purple Parlor
+            [objectKeys.name] = "Portal to The Purple Parlor",
+            [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{89.19,33.56}}},
+            [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
         },
         [216427] = { -- Hammer of Fellowship
             [objectKeys.name] = "Hammer of Fellowship",
@@ -833,6 +847,30 @@ function MopObjectFixes.Load()
             [objectKeys.name] = "Memory Wine",
             [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{60.5,55.4}}},
             [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
+        },
+        [216643] = { -- Mogu Statue
+            [objectKeys.name] = "Mogu Statue",
+            [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{58.08,84.56},{58.22,84.94},{58.35,84.05}}},
+            [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
+        },
+        [216664] = { -- Weathered Journal
+            [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{58.26,84.21}}},
+            [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
+        },
+        [216743] = { -- Goblin Explosives Crate
+            [objectKeys.name] = "Goblin Explosives Crate",
+            [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{25.47,59.41}}},
+            [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [216744] = { -- Goblin Explosives Crate
+            [objectKeys.name] = "Goblin Explosives Crate",
+            [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{23.91,54.62}}},
+            [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [216745] = { -- Goblin Explosives Crate
+            [objectKeys.name] = "Goblin Explosives Crate",
+            [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{15.27,58.98}}},
+            [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
         },
         [216837] = { -- Wrathion's Jewel Chest
             [objectKeys.spawns] = {[zoneIDs.THE_VEILED_STAIR] = {{54.99,72.65}}},

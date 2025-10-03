@@ -763,6 +763,9 @@ function MopItemFixes.Load()
         [84727] = { -- Ancient Spirit Dust
             [itemKeys.npcDrops] = {62679},
         },
+        [84759] = { -- Ciphered Scroll
+            [itemKeys.npcDrops] = {62613,62677,62844},
+        },
         [84762] = { -- Highly Explosive Yaungol Oil
             [itemKeys.objectDrops] = {212877},
         },
@@ -1076,15 +1079,15 @@ function MopItemFixes.Load()
         },
         [91819] = { -- Sturdy Crane Snare
             [itemKeys.startQuest] = 32161,
-            [itemKeys.npcDrops] = {67751}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
+            [itemKeys.npcDrops] = {67447,67751}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
         },
         [91821] = { -- Sturdy Tiger Trap
             [itemKeys.startQuest] = 32162,
-            [itemKeys.npcDrops] = {67751}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
+            [itemKeys.npcDrops] = {67447,67751}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
         },
         [91822] = { -- Sturdy Crab Crate
             [itemKeys.startQuest] = 32163,
-            [itemKeys.npcDrops] = {67751}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
+            [itemKeys.npcDrops] = {67447,67751}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
         },
         [91823] = { -- Animatable Stone
             [itemKeys.npcDrops] = {67441},
@@ -1105,14 +1108,35 @@ function MopItemFixes.Load()
         [91907] = { -- Lion's Landing Lumber
             [itemKeys.objectDrops] = {216229},
         },
+        [92425] = { -- Ancient Korune Tablet
+            [itemKeys.npcDrops] = {67833},
+        },
         [92474] = { -- Extra-Waxy Alliance Ears
             [itemKeys.npcDrops] = {67296,67297,67304,67317,67441},
+        },
+        [92493] = { -- Bilgewater Blasting Cap
+            [itemKeys.npcDrops] = {67929},
         },
         [92704] = { -- Ancient Mogu Essence
             [itemKeys.npcDrops] = {68070,68073},
         },
         [92708] = { -- Spirit Trap
             [itemKeys.npcDrops] = {68061},
+        },
+        [92735] = { -- Meng-do's Essence
+            [itemKeys.npcDrops] = {68170},
+        },
+        [92736] = { -- Gen-Li's Essence
+            [itemKeys.npcDrops] = {68169},
+        },
+        [92804] = { -- Weathered Journal
+            [itemKeys.objectDrops] = {216664},
+        },
+        [93009] = { -- Shieldwall Soldier Dog Tag
+            [itemKeys.npcDrops] = {68700},
+        },
+        [93179] = { -- Scrap Metal
+            [itemKeys.npcDrops] = {67285},
         },
         [93022] = { -- Animatable Stone
             [itemKeys.npcDrops] = {67929},

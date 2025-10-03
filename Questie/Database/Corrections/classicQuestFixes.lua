@@ -121,12 +121,15 @@ function QuestieQuestFixes:Load()
         },
         [163] = {
             [questKeys.breadcrumbForQuestId] = 5, -- #1198
+            [questKeys.nextQuestInChain] = 5,
         },
         [164] = {
             [questKeys.breadcrumbForQuestId] = 95, -- deliveries to sven is a breadcrumb
+            [questKeys.nextQuestInChain] = 95,
         },
         [165] = {
             [questKeys.breadcrumbForQuestId] = 148, -- #1173
+            [questKeys.nextQuestInChain] = 148,
         },
         [178] = {
             [questKeys.objectivesText] = {"Bring the Faded Shadowhide Pendant to Theocritus the Mage. NOTE: This is a very rare drop!"},
@@ -196,9 +199,6 @@ function QuestieQuestFixes:Load()
         },
         [310] = {
             [questKeys.childQuests] = {308,403},
-        },
-        [337] = { -- An Old History Book
-            [questKeys.objectivesText] = {"Return the book: The History of Stormwind, to the Stormwind Library. NOTE: This is a very rare drop!"},
         },
         [349] = {
             [questKeys.objectivesText] = {},
@@ -397,7 +397,7 @@ function QuestieQuestFixes:Load()
         },
         [665] = {
             [questKeys.triggerEnd] = {"Defend Professor Phizzlethorpe", {[zoneIDs.ARATHI_HIGHLANDS]={{33.87,80.6}}}},
-            [questKeys.preQuestSingle] = {663},
+            [questKeys.preQuestSingle] = {663}, -- #6972
         },
         [667] = {
             [questKeys.triggerEnd] = {"Defend Shakes O'Breen", {[zoneIDs.ARATHI_HIGHLANDS]={{31.93,81.82}}}},
@@ -412,11 +412,10 @@ function QuestieQuestFixes:Load()
             [questKeys.preQuestSingle] = {678}, -- #1062
         },
         [690] = {
-            [questKeys.breadcrumbForQuestId] = 691, -- #1587
+            [questKeys.exclusiveTo] = {691}, -- #1587
         },
         [691] = {
-            [questKeys.preQuestSingle] = {},
-            [questKeys.breadcrumbs] = {690}, -- #1587
+            [questKeys.preQuestSingle] = {}, -- #1587
         },
         [707] = {
             [questKeys.nextQuestInChain] = 738,
@@ -502,13 +501,14 @@ function QuestieQuestFixes:Load()
         },
         [854] = {
             [questKeys.breadcrumbForQuestId] = 871, -- #2014
+            [questKeys.nextQuestInChain] = 871,
         },
         [860] = {
             [questKeys.breadcrumbForQuestId] = 844,
         },
         [861] = {
             [questKeys.nextQuestInChain] = 860,
-            [questKeys.exclusiveTo] = {860,844}, -- #1109
+            [questKeys.exclusiveTo] = {844}, -- #1109
         },
         [862] = {
             [questKeys.requiredSkill] = {185,76}, -- You need to be a Journeyman for this quest -- this needs proper fix
@@ -516,7 +516,7 @@ function QuestieQuestFixes:Load()
         [863] = {
             [questKeys.triggerEnd] = {"Escort Wizzlecrank out of the Venture Co. drill site", {[zoneIDs.THE_BARRENS]={{55.36,7.68}}}},
         },
-       [870] = {
+        [870] = {
             [questKeys.breadcrumbs] = {886},
         },
         [871] = {
@@ -657,6 +657,7 @@ function QuestieQuestFixes:Load()
         },
         [1061] = {
             [questKeys.breadcrumbForQuestId] = 1062, -- #1803
+            [questKeys.nextQuestInChain] = 1062,
         },
         [1062] = {
             [questKeys.breadcrumbs] = {1061}, -- #1803
@@ -898,9 +899,11 @@ function QuestieQuestFixes:Load()
             [questKeys.triggerEnd] = {"Search for the Temple of Atal'Hakkar", {[zoneIDs.SWAMP_OF_SORROWS]={{70.2,45.2},{66.6,48.1},{73.6,48.1},{64.9,53.3},{75.4,53.3},{66.6,58.4},{73.6,58.4},{70.2,60.5}}}},
         },
         [1462] = {
+            [questKeys.parentQuest] = 1521, -- #6723
             [questKeys.objectivesText] = {},
         },
         [1463] = {
+            [questKeys.parentQuest] = 1518, -- #6723
             [questKeys.objectivesText] = {},
         },
         [1464] = {
@@ -965,22 +968,25 @@ function QuestieQuestFixes:Load()
             [questKeys.requiredSourceItems] = {},
         },
         [1516] = {
-            [questKeys.exclusiveTo] = {1519},
+            [questKeys.exclusiveTo] = {1519}, -- #6723
         },
         [1517] = {
-            [questKeys.exclusiveTo] = {1520}, -- This needs to be re-examined per issue 6723, I am not convinced this is true
+            [questKeys.preQuestSingle] = {1516,1519}, -- #6723
+            [questKeys.childQuests] = {}, -- #6723
         },
         [1518] = {
-            [questKeys.exclusiveTo] = {1521},
+            [questKeys.childQuests] = {1463}, -- #6723
         },
         [1519] = {
-            [questKeys.exclusiveTo] = {1516},
+            [questKeys.requiredRaces] = raceIDs.ALL_HORDE, -- #6723
+            [questKeys.exclusiveTo] = {1516}, -- #6723
         },
         [1520] = {
-            [questKeys.exclusiveTo] = {1517},
+            [questKeys.preQuestSingle] = {1516,1519}, -- #6723
+            [questKeys.childQuests] = {}, -- #6723
         },
         [1521] = {
-            [questKeys.exclusiveTo] = {1518},
+            [questKeys.childQuests] = {1462}, -- #6723
         },
         [1522] = {
             [questKeys.breadcrumbForQuestId] = 1524,
@@ -990,6 +996,7 @@ function QuestieQuestFixes:Load()
             [questKeys.breadcrumbForQuestId] = 1524,
         },
         [1524] = {
+            [questKeys.preQuestSingle] = {},
             [questKeys.breadcrumbs] = {1522,1523,2983,2984},
         },
         [1528] = {
@@ -999,6 +1006,7 @@ function QuestieQuestFixes:Load()
             [questKeys.breadcrumbForQuestId] = 1530,
         },
         [1530] = {
+            [questKeys.preQuestSingle] = {},
             [questKeys.breadcrumbs] = {1528,1529,2985,2986},
         },
         [1558] = {
@@ -1099,6 +1107,7 @@ function QuestieQuestFixes:Load()
             [questKeys.breadcrumbForQuestId] = 1699,
         },
         [1699] = {
+            [questKeys.preQuestSingle] = {},
             [questKeys.breadcrumbs] = {1698},
         },
         [1700] = {
@@ -1309,6 +1318,7 @@ function QuestieQuestFixes:Load()
             [questKeys.nextQuestInChain] = 2206,
         },
         [2206] = {
+            [questKeys.preQuestSingle] = {},
             [questKeys.breadcrumbs] = {2205},
         },
         [2218] = {
@@ -1316,6 +1326,7 @@ function QuestieQuestFixes:Load()
             [questKeys.breadcrumbForQuestId] = 2238,
         },
         [2238] = {
+            [questKeys.preQuestSingle] = {},
             [questKeys.breadcrumbs] = {2218},
         },
         [2240]  = {
@@ -1327,6 +1338,7 @@ function QuestieQuestFixes:Load()
             [questKeys.nextQuestInChain] = 2242,
         },
         [2242] = {
+            [questKeys.preQuestSingle] = {},
             [questKeys.breadcrumbs] = {2241},
         },
         [2259] = {
@@ -1338,6 +1350,7 @@ function QuestieQuestFixes:Load()
             [questKeys.preQuestSingle] = {},
             [questKeys.breadcrumbs] = {2259}, -- #2476
             [questKeys.breadcrumbForQuestId] = 2281, -- #2476
+            [questKeys.nextQuestInChain] = 2281,
         },
         [2278] = {
             [questKeys.objectives] = {{{7172,"Learn what lore that the stone watcher has to offer",Questie.ICON_TYPE_TALK}}},
@@ -1350,6 +1363,7 @@ function QuestieQuestFixes:Load()
             [questKeys.preQuestSingle] = {},
             [questKeys.breadcrumbs] = {2299}, -- #2476
             [questKeys.breadcrumbForQuestId] = 2281, -- #2476
+            [questKeys.nextQuestInChain] = 2281,
         },
         [2299] = {
             [questKeys.preQuestSingle] = {},
@@ -1742,7 +1756,7 @@ function QuestieQuestFixes:Load()
         [3790] = {
             [questKeys.breadcrumbForQuestId] = 3764,
         },
-        [3791] = { -- The Mystery of Morrowgrain
+        [3791] = {
             [questKeys.requiredSourceItems] = {11022,11018},
             [questKeys.breadcrumbs] = {3787,3788}, -- #885
         },
@@ -1935,6 +1949,9 @@ function QuestieQuestFixes:Load()
         },
         [4494] = {
             [questKeys.preQuestSingle] = {7732},
+        },
+        [4495] = {
+            [questKeys.nextQuestInChain] = 3519,
         },
         [4496] = {
             [questKeys.preQuestSingle] = {4493,4494},
@@ -2348,15 +2365,28 @@ function QuestieQuestFixes:Load()
         },
         [5621] = { -- Garments of the Moon
             [questKeys.objectives] = {{{12429,"Heal and fortify Sentinel Shaya",Questie.ICON_TYPE_INTERACT}}},
+            [questKeys.preQuestSingle] = {},
+            [questKeys.breadcrumbs] = {5622},
         },
         [5622] = {
             [questKeys.questLevel] = 5, -- #2306
+            [questKeys.breadcrumbForQuestId] = 5621,
+        },
+        [5623] = {
+            [questKeys.breadcrumbForQuestId] = 5624,
         },
         [5624] = { -- Garments of the Light
             [questKeys.objectives] = {{{12423,"Heal and fortify Guard Roberts",Questie.ICON_TYPE_INTERACT}}},
+            [questKeys.preQuestSingle] = {},
+            [questKeys.breadcrumbs] = {5623},
         },
         [5625] = { -- Garments of the Light
             [questKeys.objectives] = {{{12427,"Heal and fortify Mountaineer Dolf",Questie.ICON_TYPE_INTERACT}}},
+            [questKeys.preQuestSingle] = {},
+            [questKeys.breadcrumbs] = {5626},
+        },
+        [5626] = {
+            [questKeys.breadcrumbForQuestId] = 5625,
         },
         [5634] = {
             [questKeys.startedBy] = {{376},nil,nil},
@@ -2377,7 +2407,7 @@ function QuestieQuestFixes:Load()
         [5638] = {
             [questKeys.exclusiveTo] = {5634,5635,5636,5637,5639,5640},
         },
-        [5639] = {
+        [5639] = { -- Desperate Prayer (Ironforge)
             [questKeys.exclusiveTo] = {5634,5635,5636,5637,5638,5640},
         },
         [5640] = {
@@ -2392,33 +2422,79 @@ function QuestieQuestFixes:Load()
             [questKeys.exclusiveTo] = {5634,5635,5636,5637,5638,5639},
             [questKeys.zoneOrSort] = sortKeys.PRIEST,
         },
+        [5641] = { -- Fear Ward (Ironforge)
+            [questKeys.startedBy] = {{11406},nil,nil},
+            [questKeys.objectivesText] = {},
+        },
+        [5643] = { -- Shadowguard (Undercity)
+            [questKeys.startedBy] = {{4606},nil,nil},
+        },
+        [5644] = { -- Devouring Plague (Thunder Bluff)
+            [questKeys.startedBy] = {{3044},nil,nil},
+        },
+        [5645] = { -- Fear Ward (Stormwind)
+            [questKeys.startedBy] = {{376},nil,nil},
+        },
+        [5646] = { -- Devouring Plague (Orgrimmar)
+            [questKeys.startedBy] = {{6018},nil,nil},
+        },
         [5647] = {
             [questKeys.startedBy] = {{11401},nil,nil}, -- #2424
         },
         [5648] = { -- Garments of Spirituality
             [questKeys.objectives] = {{{12427,"Heal and fortify Grunt Kor'ja",Questie.ICON_TYPE_INTERACT}}},
+            [questKeys.preQuestSingle] = {},
+            [questKeys.breadcrumbs] = {5649},
+        },
+        [5649] = {
+            [questKeys.breadcrumbForQuestId] = 5648,
         },
         [5650] = { -- Garments of Darkness
             [questKeys.objectives] = {{{12428,"Heal and fortify Deathguard Kel",Questie.ICON_TYPE_INTERACT}}},
+            [questKeys.preQuestSingle] = {},
+            [questKeys.breadcrumbs] = {5651},
         },
-        [5658] = { -- #7083 and #1603
+        [5651] = {
+            [questKeys.breadcrumbForQuestId] = 5650,
+        },
+        [5652] = { -- Hex of Weakness (Orgrimmar)
+            [questKeys.objectivesText] = {},
+        },
+        [5654] = { -- Hex of Weakness (Durotar)
+            [questKeys.startedBy] = {{3706},nil,nil},
+        },
+        [5655] = { -- Hex of Weakness (Mulgore)
+            [questKeys.startedBy] = {{11407},nil,nil},
+        },
+        [5656] = { -- Hex of Weakness (Thunder Bluff)
+            [questKeys.startedBy] = {{3044},nil,nil},
+        },
+        [5657] = { -- Hex of Weakness (Undercity)
+            [questKeys.startedBy] = {{4606},nil,nil},
+        },
+        [5658] = { -- #7083 and #1603 Touch of Weakness (Undercity)
             [questKeys.startedBy] = {{4606},nil,nil},
             [questKeys.objectivesText] = {},
         },
-        [5661] = { -- #7083 and #1603
+        [5661] = { -- #7083 and #1603 Touch of Weakness (Mulgore)
             [questKeys.startedBy] = {{11407},nil,nil},
         },
-        [5663] = { -- #7083 and #1603
+        [5663] = { -- #7083 and #1603 Touch of Weakness (Thunder Bluff)
             [questKeys.startedBy] = {{3044},nil,nil},
         },
-        [5676] = {
+        [5672] = { -- Elune's Grace (Darnassus)
+            [questKeys.startedBy] = {{11401},nil,nil},
+            [questKeys.objectivesText] = {},
+        },
+        [5676] = { -- Feedback (Stormwind)
+            [questKeys.startedBy] = {{376},nil,nil},
             [questKeys.exclusiveTo] = {5677,5678},
             [questKeys.objectivesText] = {},
         },
-        [5677] = {
+        [5677] = { -- Feedback (Ironforge)
             [questKeys.exclusiveTo] = {5676,5678},
         },
-        [5678] = {
+        [5678] = { -- Feedback (Darnassus)
             [questKeys.name] = "Arcane Feedback",
             [questKeys.startedBy] = {{11401},nil,nil},
             [questKeys.finishedBy] = {{376},nil},
@@ -2430,7 +2506,12 @@ function QuestieQuestFixes:Load()
             [questKeys.exclusiveTo] = {5676,5677},
             [questKeys.zoneOrSort] = sortKeys.PRIEST,
         },
-        [5679] = {
+        [5679] = { -- Devouring Plague (Undercity)
+            [questKeys.startedBy] = {{4606},nil,nil},
+            [questKeys.objectivesText] = {},
+        },
+        [5680] = { -- Shadowguard (Orgrimmar)
+            [questKeys.startedBy] = {{6018},nil,nil},
             [questKeys.objectivesText] = {},
         },
         [5713] = {
@@ -2898,16 +2979,10 @@ function QuestieQuestFixes:Load()
             [questKeys.specialFlags] = 0,
         },
         [7121] = {
-            [questKeys.breadcrumbForQuestId] = 7122,
-        },
-        [7122] = {
-            [questKeys.breadcrumbs] = {7121},
+            [questKeys.exclusiveTo] = {5892,6892},
         },
         [7123] = {
-            [questKeys.breadcrumbForQuestId] = 7124,
-        },
-        [7124] = {
-            [questKeys.breadcrumbs] = {7123},
+            [questKeys.exclusiveTo] = {5893,6985},
         },
         [7141] = {
             [questKeys.triggerEnd] = {"Defeat Drek'thar.",{[zoneIDs.ALTERAC_VALLEY]={{47.22,86.95}}}},
@@ -2947,9 +3022,11 @@ function QuestieQuestFixes:Load()
         },
         [7241] = {
             [questKeys.breadcrumbForQuestId] = 7161,
+            [questKeys.nextQuestInChain] = 7161,
         },
         [7261] = {
             [questKeys.breadcrumbForQuestId] = 7162,
+            [questKeys.nextQuestInChain] = 7162,
         },
         [7281] = {
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,

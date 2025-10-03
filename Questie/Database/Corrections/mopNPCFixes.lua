@@ -3082,8 +3082,11 @@ function MopNpcFixes.Load()
             [npcKeys.spawns] = {[zoneIDs.THE_JADE_FOREST] = {{28.82,32.62}}},
         },
         [63314] = { -- Wodin the Troll-Servant
-            [npcKeys.spawns] = {[zoneIDs.ARENA_OF_ANNIHILATION] = {{50,18.48}}},
+            [npcKeys.spawns] = {[zoneIDs.ARENA_OF_ANNIHILATION] = {{49.99,18.56}}},
             [npcKeys.zoneID] = zoneIDs.ARENA_OF_ANNIHILATION,
+        },
+        [63316] = { -- Cloudbender Kobo
+            [npcKeys.spawns] = {[zoneIDs.ARENA_OF_ANNIHILATION] = {{45.96,51.27}}},
         },
         [63317] = { -- Captain "Soggy" Su-Dao
             [npcKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {
@@ -4015,6 +4018,9 @@ function MopNpcFixes.Load()
                 {50.18,10.2,phases.CHEN_AT_BREWGARDEN},
             }},
         },
+        [67359] = { -- Skyfire Gyrocopter X2
+            [npcKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{9.4,59.6},{9.6,59.8},{10,58.8},{10.4,57.6},{11,58},{11.2,56.8},{11.2,59},{11.4,56.2},{11.4,59.8},{11.6,56.6},{11.8,58.4},{12.2,58.6},{12.4,56.4},{12.4,59.8},{12.8,56.4},{13.2,60},{13.4,54.4},{13.4,54.6},{13.4,57},{13.4,57.6},{13.6,54.4},{13.6,54.6},{13.6,59},{16.6,79.6},{16.8,78.8}}},
+        },
         [67370] = { -- Jeremy Feasel
             [npcKeys.spawns] = {[zoneIDs.DARKMOON_FAIRE_ISLAND] = {{47.71,62.65},{-1,-1}}},
         },
@@ -4128,6 +4134,14 @@ function MopNpcFixes.Load()
             [npcKeys.maxLevel] = 0,
             [npcKeys.zoneID] = 0,
         },
+        [67626] = { -- Captain Brent the Black
+            [npcKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{12.79,75.79}}},
+            [npcKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [67627] = { -- Captain Mulkey
+            [npcKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{15.28,76.37}}},
+            [npcKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
         [67628] = { -- Shademaster Kiryn
             [npcKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{75.83,34.47}}},
             [npcKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
@@ -4138,6 +4152,10 @@ function MopNpcFixes.Load()
         },
         [67631] = { -- Marshal Troteman
             [npcKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{89.69,33.08}}},
+            [npcKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [67639] = { -- Alliance Supply Drop
+            [npcKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{8.08,61.21},{7.8,61.6},{7.75,60.28},{8.59,59.76},{8.11,59.77},{7.37,59.43},{7.28,60.71},{8.15,63.88},{7.61,62.51},{8.23,62.13},{8.71,63.2},{8.36,63.17},{8.54,64.39},{9.73,64.75},{9.4,65.02}}},
             [npcKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
         },
         [67682] = { -- Brann Bronzebeard
@@ -4170,6 +4188,22 @@ function MopNpcFixes.Load()
             [npcKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{8.73,64.36}}},
             [npcKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
             [npcKeys.friendlyToFaction] = "H",
+        },
+        [67833] = { -- Mercurial Guardian
+            [npcKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{18.05,11.73}}},
+            [npcKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
+        },
+        [67834] = { -- Fanlyr Silverthorn
+            [npcKeys.minLevel] = 90,
+            [npcKeys.maxLevel] = 90,
+            [npcKeys.spawns] = {[zoneIDs.VALE_OF_ETERNAL_BLOSSOMS] = {{20.95,15.58}}},
+            [npcKeys.zoneID] = zoneIDs.VALE_OF_ETERNAL_BLOSSOMS,
+        },
+        [67840] = { -- Garrosh Hellscream
+            [npcKeys.minLevel] = 93,
+            [npcKeys.maxLevel] = 93,
+            [npcKeys.spawns] = {[zoneIDs.SHRINE_OF_TWO_MOONS_TOP_FLOOR] = {{32.26,84.86}}},
+            [npcKeys.zoneID] = zoneIDs.SHRINE_OF_TWO_MOONS_TOP_FLOOR,
         },
         [67847] = { -- Belloc Brightblade
             [npcKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{76.32,34.07}}},
@@ -4263,6 +4297,18 @@ function MopNpcFixes.Load()
             [npcKeys.friendlyToFaction] = "H",
             [npcKeys.questEnds] = {32330},
         },
+        [68106] = { -- Anduin Wrynn
+            [npcKeys.minLevel] = 90,
+            [npcKeys.maxLevel] = 90,
+            [npcKeys.spawns] = {[zoneIDs.DALARAN_LANDFALL] = {{26.78,39.01}}},
+            [npcKeys.zoneID] = zoneIDs.DALARAN_LANDFALL,
+        },
+        [68108] = { -- Lady Jaina Proudmoore
+            [npcKeys.minLevel] = 90,
+            [npcKeys.maxLevel] = 90,
+            [npcKeys.spawns] = {[zoneIDs.DALARAN_LANDFALL] = {{26.78,39.01}}},
+            [npcKeys.zoneID] = zoneIDs.DALARAN_LANDFALL,
+        },
         [68137] = { -- Akama
             [npcKeys.name] = "Akama",
             [npcKeys.minLevel] = 35,
@@ -4349,10 +4395,8 @@ function MopNpcFixes.Load()
             [npcKeys.questEnds] = {32316},
         },
         [68274] = { -- Kaelis Sunsoar
+            [npcKeys.spawns] = {[zoneIDs.RUINS_OF_OGUDEI_RELIQUARY_INCURSION] = {{35.27,42.12}}},
             [npcKeys.zoneID] = zoneIDs.RUINS_OF_OGUDEI_RELIQUARY_INCURSION,
-            [npcKeys.spawns] = {
-                [zoneIDs.RUINS_OF_OGUDEI_RELIQUARY_INCURSION] = {{35.4,42.16}},
-            },
         },
         [68275] = { -- Hilda Hornswaggle
             [npcKeys.spawns] = {[zoneIDs.RUINS_OF_OGUDEI_ALLIANCE_EXCAVATION] = {{30.11,27.48}}},
@@ -4411,6 +4455,17 @@ function MopNpcFixes.Load()
         [68399] = { -- 7th Legion Champion
             [npcKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{85.28,28.68}}},
             [npcKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [68413] = { -- Shaggy Longhorn
+            [npcKeys.name] = "Shaggy Longhorn",
+            [npcKeys.minLevel] = 90,
+            [npcKeys.maxLevel] = 90,
+            [npcKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{58.56,83.97},{58.58,83.91},{58.62,83.81}}},
+            [npcKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
+        },
+        [68417] = { -- Cousin Goottooth
+            [npcKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{59.2,84.26}}},
+            [npcKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
         },
         [68430] = { -- Arcanis Mechanica
             [npcKeys.spawns] = {[zoneIDs.SILVERMOON_CITY] = {{86.4,31.8}}},
@@ -4564,6 +4619,14 @@ function MopNpcFixes.Load()
             [npcKeys.spawns] = {[zoneIDs.DALARAN] = {{64.98,23.02}}},
             [npcKeys.friendlyToFaction] = "H",
         },
+        [68741] = { -- Fennie Hornswaggle
+            [npcKeys.name] = "Fennie Hornswaggle",
+            [npcKeys.minLevel] = 90,
+            [npcKeys.maxLevel] = 90,
+            [npcKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{88.34,34.19}}},
+            [npcKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+            [npcKeys.friendlyToFaction] = "A",
+        },
         [68756] = {
             [npcKeys.name] = "Sunreaver Assassin",
             [npcKeys.minLevel] = 35,
@@ -4612,6 +4675,13 @@ function MopNpcFixes.Load()
         [68908] = { -- Amber Kearnen
             [npcKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{89.79,32.43}}},
             [npcKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [68913] = { -- Mogu Statue
+            [npcKeys.name] = "Mogu Statue",
+            [npcKeys.minLevel] = 1,
+            [npcKeys.maxLevel] = 1,
+            [npcKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{58.08,84.56},{58.22,84.94},{58.35,84.05}}},
+            [npcKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
         },
         [68952] = { -- Bizmo's Brawlpub Entrance
             [npcKeys.spawns] = {[zoneIDs.DEEPRUN_TRAM] = {{52.15,47.69},{-1,-1}}},

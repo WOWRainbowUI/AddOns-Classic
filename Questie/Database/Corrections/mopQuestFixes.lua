@@ -3292,6 +3292,7 @@ function MopQuestFixes.Load()
             [questKeys.requiredSourceItems] = {80234,80235},
             [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.reputationReward] = {{factionIDs.THE_TILLERS,4},{factionIDs.JOGU_THE_DRUNK,10}},
+            [questKeys.objectives] = {nil,nil,{{80236,nil,Questie.ICON_TYPE_TALK}}},
         },
         [30479] = { -- A Gift For Gina
             [questKeys.preQuestSingle] = {30257},
@@ -4282,6 +4283,7 @@ function MopQuestFixes.Load()
         },
         [30926] = { -- The Terrible Truth
             [questKeys.preQuestSingle] = {30925},
+            [questKeys.objectives] = {{{62562,nil,Questie.ICON_TYPE_EVENT},{62534,nil,Questie.ICON_TYPE_EVENT},{62307}}},
         },
         [30927] = { -- Give Them Peace
             [questKeys.preQuestSingle] = {30925},
@@ -4389,7 +4391,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestSingle] = {30976},
         },
         [30978] = { -- Hostile Skies
-            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_MOUNT_UP,l10n("Get in the cannon"),0,{{"monster",62747}}}},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_MOUNT_UP,l10n("Use the cannon"),0,{{"monster",62747}}}},
         },
         [30981] = { -- Taoshi and Korvexxis
             [questKeys.preQuestSingle] = {31065},
@@ -4510,7 +4512,7 @@ function MopQuestFixes.Load()
             [questKeys.reputationReward] = {{factionIDs.THE_LOREWALKERS,28}},
         },
         [31016] = { -- The Lorewalkers
-            [questKeys.preQuestSingle] = {31003}, -- not entirely sure. could be 31001+31002 instead OR 30259 OR Tillers halfway honored
+            [questKeys.preQuestSingle] = {31003}, -- not entirely sure. could be 31001+31002 instead OR 30259 OR Tillers halfway honored. it has more than this
             [questKeys.breadcrumbForQuestId] = 31015,
             [questKeys.exclusiveTo] = {31367,31368},
         },
@@ -4537,7 +4539,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestGroup] = {31020,31021},
         },
         [31024] = { -- Kunchong Treats
-            [questKeys.preQuestGroup] = {31092,31359,31398},
+            [questKeys.preQuestGroup] = {31092,31359},
             [questKeys.exclusiveTo] = {31238,31494,31506}, -- exclusivity for honored The Klaxxi
             [questKeys.reputationReward] = {{factionIDs.THE_KLAXXI,30}},
         },
@@ -4820,7 +4822,7 @@ function MopQuestFixes.Load()
         [31117] = { -- Uruk!
             [questKeys.exclusiveTo] = {31120},
             [questKeys.questFlags] = questFlags.DAILY,
-            [questKeys.preQuestGroup] = {31113,31114,31116,31119},
+            [questKeys.preQuestGroup] = {31114,31116}, -- 31116 was last before being offered 31117. turn in 31116 1st next time
         },
         [31118] = { -- The Deadtalker Cipher
             [questKeys.exclusiveTo] = {31116},
@@ -4870,7 +4872,7 @@ function MopQuestFixes.Load()
             [questKeys.finishedBy] = {{63217}},
         },
         [31133] = { -- Kor'thik Aggression
-            [questKeys.preQuestGroup] = {31069,31070},
+            [questKeys.preQuestSingle] = {31070},
         },
         [31134] = { -- If These Stones Could Speak
             [questKeys.objectives] = {nil,{{212926},{212925},{212924}}},
@@ -5116,7 +5118,7 @@ function MopQuestFixes.Load()
         },
         [31207] = { -- The Arena of Annihilation
             [questKeys.preQuestSingle] = {31511,31512},
-            [questKeys.objectives] = {nil,nil,nil,nil,{{{64280,64281},64280}}},
+            [questKeys.objectives] = {nil,nil,nil,nil,{{{64280,64281,63316},64280}}},
         },
         [31208] = { -- Venomous Intent
             [questKeys.preQuestSingle] = {31018},
@@ -5206,7 +5208,7 @@ function MopQuestFixes.Load()
             [questKeys.questFlags] = questFlags.DAILY,
         },
         [31238] = { -- Brain Food
-            [questKeys.preQuestGroup] = {31092,31359,31398},
+            [questKeys.preQuestGroup] = {31092,31359},
             [questKeys.exclusiveTo] = {31024,31494,31506}, -- exclusivity for honored The Klaxxi
             [questKeys.reputationReward] = {{factionIDs.THE_KLAXXI,30}},
         },
@@ -5325,7 +5327,7 @@ function MopQuestFixes.Load()
             [questKeys.reputationReward] = {{factionIDs.THE_KLAXXI,30}},
         },
         [31268] = { -- A Little Brain Work
-            [questKeys.preQuestGroup] = {31092,31359,31398},
+            [questKeys.preQuestGroup] = {31092,31359},
             [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.exclusiveTo] = {31235,31487,31505}, -- exclusivity for honored The Klaxxi
             [questKeys.reputationReward] = {{factionIDs.THE_KLAXXI,30}},
@@ -5540,39 +5542,43 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {nil,{{211129}}},
         },
         [31367] = { -- The Lorewalkers
-            [questKeys.preQuestSingle] = {31003}, -- not entirely sure. could be 31001+31002 instead OR 30259 OR Tillers halfway honored
+            [questKeys.preQuestSingle] = {31001}, -- 100% 31001, if another quest is needed, add to this one
             [questKeys.breadcrumbForQuestId] = 31015,
             [questKeys.exclusiveTo] = {31016,31368},
             [questKeys.objectives] = {{{65716,nil,Questie.ICON_TYPE_TALK}}},
             [questKeys.reputationReward] = {{factionIDs.THE_LOREWALKERS,27}},
         },
         [31368] = { -- The Lorewalkers
-            [questKeys.preQuestSingle] = {31003}, -- not entirely sure. could be 31001+31002 instead OR 30259 OR Tillers halfway honored
+            [questKeys.preQuestSingle] = {31001}, -- 100% 31001, if another quest is needed, add to this one
             [questKeys.breadcrumbForQuestId] = 31015,
             [questKeys.exclusiveTo] = {31016,31367},
             [questKeys.objectives] = {{{65716,nil,Questie.ICON_TYPE_TALK}}},
             [questKeys.reputationReward] = {{factionIDs.THE_LOREWALKERS,27}},
         },
         [31369] = { -- The Anglers
-            [questKeys.preQuestGroup] = {30635,30636,30637},
+            [questKeys.preQuestGroup] = {30635,30636,30637,31001}, -- 100% 31001, recheck the others!
             [questKeys.requiredSkill] = {profKeys.FISHING,1},
+            [questKeys.exclusiveTo] = {31371},
         },
         [31370] = { -- The Anglers
-            [questKeys.preQuestGroup] = {30635,30636,30637},
+            [questKeys.preQuestGroup] = {30635,30636,30637,31001}, -- 100% 31001, recheck the others!
             [questKeys.requiredSkill] = {profKeys.FISHING,1},
+            [questKeys.exclusiveTo] = {31371},
         },
         [31372] = { -- The Tillers
+            [questKeys.preQuestSingle] = {30637}, -- wowhead comment, double check
             [questKeys.breadcrumbForQuestId] = 30252,
         },
         [31373] = { -- The Order of the Cloud Serpent
-            [questKeys.preQuestGroup] = {31007,31010,31660}, -- not entirely sure, could be 31006 instead, probably klaxxi friendly too. it has more than those 3!
+            [questKeys.preQuestSingle] = {31001}, -- 100% 31001, if another quest is needed, add to this one. it has more than this
             [questKeys.breadcrumbForQuestId] = 30134,
         },
         [31374] = { -- The Tillers
+            [questKeys.preQuestSingle] = {30637}, -- wowhead comment, double check
             [questKeys.breadcrumbForQuestId] = 30252,
         },
         [31375] = { -- The Order of the Cloud Serpent
-            [questKeys.preQuestGroup] = {31007,31010,31660}, -- not entirely sure, could be 31006 instead, probably klaxxi friendly too. it has more than those 3!
+            [questKeys.preQuestSingle] = {31001}, -- 100% 31001, if another quest is needed, add to this one. it has more than this
             [questKeys.breadcrumbForQuestId] = 30134,
         },
         [31376] = { -- Attack At The Temple of the Jade Serpent
@@ -5759,7 +5765,7 @@ function MopQuestFixes.Load()
             [questKeys.exclusiveTo] = {31279},
         },
         [31487] = { -- Sonic Disruption
-            [questKeys.preQuestGroup] = {31092,31359,31398},
+            [questKeys.preQuestGroup] = {31092,31359},
             [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.exclusiveTo] = {31235,31268,31505}, -- exclusivity for honored The Klaxxi
             [questKeys.reputationReward] = {{factionIDs.THE_KLAXXI,30}},
@@ -5786,7 +5792,7 @@ function MopQuestFixes.Load()
         },
         [31494] = { -- Free From Her Clutches
             [questKeys.objectives] ={nil,{{214292}}},
-            [questKeys.preQuestGroup] = {31092,31359,31398},
+            [questKeys.preQuestGroup] = {31092,31359},
             [questKeys.exclusiveTo] = {31024,31238,31506}, -- exclusivity for honored The Klaxxi
             [questKeys.reputationReward] = {{factionIDs.THE_KLAXXI,30}},
         },
@@ -5823,7 +5829,7 @@ function MopQuestFixes.Load()
             [questKeys.reputationReward] = {{factionIDs.THE_KLAXXI,30}},
         },
         [31506] = { -- Shackles of Manipulation
-            [questKeys.preQuestGroup] = {31092,31359,31398},
+            [questKeys.preQuestGroup] = {31092,31359},
             [questKeys.exclusiveTo] = {31024,31238,31494}, -- exclusivity for honored The Klaxxi
             [questKeys.reputationReward] = {{factionIDs.THE_KLAXXI,30}},
         },
@@ -6634,7 +6640,7 @@ function MopQuestFixes.Load()
             [questKeys.requiredSpell] = 119467,
         },
         [31808] = { -- Rampage Against the Machine
-            [questKeys.preQuestGroup] = {31092,31359,31398,31238}, -- 31024 31238 31494 31506 exclusives
+            [questKeys.preQuestGroup] = {31092,31359,31238}, -- 31024 31238 31494 31506 exclusives
             [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.requiredMinRep] = {factionIDs.THE_KLAXXI,21000},
             [questKeys.exclusiveTo] = {31216},
@@ -7368,8 +7374,11 @@ function MopQuestFixes.Load()
         [32038] = { -- Stag Mastery
             [questKeys.preQuestSingle] = {30181},
         },
+        [32108] = { -- Domination Point
+            [questKeys.reputationReward] = {{factionIDs.HUOJIN_PANDAREN,5},{factionIDs.DOMINANCE_OFFENSIVE,7}},
+        },
         [32109] = { -- Lion's Landing
-            [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,7}},
+            [questKeys.reputationReward] = {{factionIDs.ALLIANCE,3},{factionIDs.OPERATION_SHIELDWALL,7}},
         },
         [32115] = { -- Shackles of the Past
             [questKeys.preQuestSingle] = {32109}, -- TO DO add spawns to cave map
@@ -7412,14 +7421,17 @@ function MopQuestFixes.Load()
         [32126] = { -- Tear It Up
             [questKeys.preQuestSingle] = {32108},
             [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+            [questKeys.objectives] = {{{67639,nil,Questie.ICON_TYPE_OBJECT}}},
         },
         [32127] = { -- All Dead, All Dead
-            [questKeys.preQuestSingle] = {32108},
+            [questKeys.preQuestGroup] = {32126,32235},
             [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,12}},
         },
         [32128] = { -- Another One Bites the Dust
-            [questKeys.preQuestSingle] = {32108},
+            [questKeys.preQuestSingle] = {},
+            [questKeys.preQuestGroup] = {32126,32235},
             [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+            [questKeys.objectives] = {nil,{{216232},{216231}}},
         },
         [32130] = { -- Good Luck, Have Fun
             [questKeys.preQuestSingle] = {32108},
@@ -7456,36 +7468,35 @@ function MopQuestFixes.Load()
         },
         [32136] = { -- Work Order: Fuel
             [questKeys.preQuestSingle] = {32108},
-            [questKeys.breadcrumbForQuestId] = 32137,
             [questKeys.nextQuestInChain] = 32137,
             [questKeys.exclusiveTo] = {32138,32140},
         },
         [32137] = { -- Runnin' On Empty
-            [questKeys.preQuestSingle] = {32108},
-            [questKeys.breadcrumbs] = {32136},
+            [questKeys.preQuestGroup] = {32108,32136},
             [questKeys.exclusiveTo] = {32141,32236,32139,32238},
             [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
         },
         [32138] = { -- Work Order: Lumber
             [questKeys.preQuestSingle] = {32108},
-            [questKeys.breadcrumbForQuestId] = 32139,
+            [questKeys.nextQuestInChain] = 32139,
             [questKeys.exclusiveTo] = {32136,32140},
         },
         [32139] = { -- Stacked!
-            [questKeys.preQuestSingle] = {32108},
-            [questKeys.breadcrumbs] = {32138},
+            [questKeys.preQuestSingle] = {},
+            [questKeys.preQuestGroup] = {32108,32138},
+            [questKeys.objectives] = {nil,{{216177}}},
             [questKeys.exclusiveTo] = {32137,32237,32141,32236},
             [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
             [questKeys.questFlags] = questFlags.DAILY,
         },
         [32140] = { -- Work Order: Fuel
             [questKeys.preQuestSingle] = {32108},
-            [questKeys.breadcrumbForQuestId] = 32141,
+            [questKeys.nextQuestInChain] = 32141,
             [questKeys.exclusiveTo] = {32136,32138},
         },
         [32141] = { -- Power Metal
-            [questKeys.preQuestSingle] = {32108},
-            [questKeys.breadcrumbs] = {32140},
+            [questKeys.preQuestSingle] = {},
+            [questKeys.preQuestGroup] = {32108,32140},
             [questKeys.exclusiveTo] = {32137,32237,32139,32238},
             [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
         },
@@ -7536,6 +7547,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestSingle] = {32109},
             [questKeys.exclusiveTo] = {32151},
             [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,4}},
+            [questKeys.objectives] = {nil,nil,{{92493}},nil,{{{67671},67671}}},
         },
         [32153] = { -- Hero Killer
             [questKeys.preQuestSingle] = {32109},
@@ -7544,6 +7556,7 @@ function MopQuestFixes.Load()
         [32154] = { -- Burn Out!
             [questKeys.preQuestSingle] = {32109},
             [questKeys.exclusiveTo] = {32155},
+            [questKeys.objectives] = {nil,{{216743},{216744},{216745}}},
             [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,4}},
         },
@@ -7638,6 +7651,10 @@ function MopQuestFixes.Load()
             [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,31}},
             [questKeys.exclusiveTo] = {32170,32171},
         },
+        [32175] = { -- Darkmoon Pet Battle!
+            [questKeys.requiredSpell] = 119467,
+            [questKeys.objectives] = {{{67370,nil,Questie.ICON_TYPE_PET_BATTLE}}},
+        },
         [32181] = { -- Beastmaster's Quarry: The Crane
             [questKeys.preQuestSingle] = {32161},
             [questKeys.questFlags] = questFlags.DAILY,
@@ -7664,9 +7681,28 @@ function MopQuestFixes.Load()
             [questKeys.preQuestSingle] = {32166},
             [questKeys.questFlags] = questFlags.DAILY,
         },
-        [32175] = { -- Darkmoon Pet Battle!
-            [questKeys.requiredSpell] = 119467,
-            [questKeys.objectives] = {{{67370,nil,Questie.ICON_TYPE_PET_BATTLE}}},
+        [32190] = { -- To Mogujia
+            [questKeys.preQuestSingle] = {32372},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,11850},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32191] = { -- Ancient Guardians
+            [questKeys.preQuestSingle] = {32190},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,11850},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32192] = { -- Bloodlines
+            [questKeys.preQuestSingle] = {32190},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,11850},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32193] = { -- To Mogujia
+            [questKeys.preQuestSingle] = {32362},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,15800},
+        },
+        [32194] = { -- Bad Blood
+            [questKeys.preQuestSingle] = {32193},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,15800},
         },
         [32197] = { -- Mystery Meatloaf
             [questKeys.preQuestSingle] = {32108},
@@ -7722,26 +7758,151 @@ function MopQuestFixes.Load()
             [questKeys.exclusiveTo] = {32137,32237,32141,32236},
             [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
         },
+        [32242] = { -- Buried Secrets
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,3950},
+            [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32243] = { -- The Source of Korune Power
+            [questKeys.preQuestSingle] = {32193},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,15800},
+        },
+        [32244] = { -- The Korune
+            [questKeys.preQuestSingle] = {32190},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,11850},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32246] = { -- Meet the Scout
+            [questKeys.reputationReward] = {{factionIDs.ALLIANCE,3},{factionIDs.OPERATION_SHIELDWALL,4}},
+        },
         [32247] = { -- A King Among Men
             [questKeys.preQuestSingle] = {32246},
             [questKeys.objectives] = {{{68331,nil,Questie.ICON_TYPE_EVENT},{68312,nil,Questie.ICON_TYPE_EVENT}},nil,nil,nil,{{{68332,68333,68334},68332}}},
+            [questKeys.reputationReward] = {{factionIDs.ALLIANCE,3},{factionIDs.OPERATION_SHIELDWALL,12}},
         },
         [32248] = { -- A Little Patience
             [questKeys.preQuestSingle] = {32109},
+            [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,4}},
+        },
+        [32249] = { -- Meet the Scout
+            [questKeys.reputationReward] = {{factionIDs.HUOJIN_PANDAREN,1},{factionIDs.DOMINANCE_OFFENSIVE,4}},
         },
         [32250] = { -- The Might of the Warchief
-            [questKeys.objectives] = {{{67927,nil,Questie.ICON_TYPE_EVENT},{67926,nil,Questie.ICON_TYPE_EVENT}},nil,nil,nil,{{{67900,67901,67902},67900}}},
+            [questKeys.objectives] = {{{67927,nil,Questie.ICON_TYPE_EVENT},{67926,nil,Questie.ICON_TYPE_TALK}},nil,nil,nil,{{{67900,67901,67902},67900}}},
             [questKeys.preQuestSingle] = {32249},
+            [questKeys.reputationReward] = {{factionIDs.HUOJIN_PANDAREN,5},{factionIDs.DOMINANCE_OFFENSIVE,12}},
         },
         [32251] = { -- Dagger in the Dark
             [questKeys.objectives] = {},
             [questKeys.preQuestSingle] = {32108},
+            [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32256] = { -- Rise Of An Empire
+            [questKeys.preQuestSingle] = {32251},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Fly to the Shrine"),0,{{"monster",68681}}}},
+            [questKeys.objectives] = {{{67840,nil,Questie.ICON_TYPE_EVENT}}},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,3950},
+            [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32257] = { -- Voice of the Gods
+            [questKeys.objectives] = {{{67833,nil,Questie.ICON_TYPE_INTERACT}},nil,{{92425}}},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,3950},
+            [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32284] = { -- Someone You Should See
+            [questKeys.preQuestSingle] = {32257},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,7900},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}}, -- got up to this quest
+        },
+        [32315] = { -- Anduin's Plea
+            [questKeys.preQuestGroup] = {32194,32243},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,19750},
+        },
+        [32316] = { -- Heart Of The Alliance
+            [questKeys.preQuestSingle] = {32315},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,19750},
         },
         [32317] = { -- Seeking the Soulstones
             [questKeys.objectives] = {nil,nil,{{92494},{92495},{92496},{92497}}},
         },
+        [32318] = { -- Regeneration Takes Time
+            [questKeys.preQuestSingle] = {32284},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,7900},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32319] = { -- Find Thrall!
+            [questKeys.preQuestSingle] = {32318},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,7900},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32320] = { -- The Horde Is Family
+            [questKeys.preQuestSingle] = {32319},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,7900},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32321] = { -- The Monkey King
+            [questKeys.preQuestSingle] = {32355},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,35500},
+        },
+        [32326] = { -- Insertion
+            [questKeys.preQuestSingle] = {32392},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,35500},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32327] = { -- The Darnassus Mission
+            [questKeys.preQuestSingle] = {32326},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,35500},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32328] = { -- Victorious Return
+            [questKeys.preQuestSingle] = {32327},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,35500},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
         [32329] = { -- Get My Results!
             [questKeys.objectives] = {nil,{{215126}}},
+            [questKeys.preQuestSingle] = {32352},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,23700},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32330] = { -- What's in the Box?
+            [questKeys.preQuestSingle] = {32329},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,23700},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32331] = { -- The Kirin Tor
+            [questKeys.preQuestGroup] = {32383,32397},
+            [questKeys.objectives] = {nil,{{216420}}},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,11850},
+            [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,31}},
+        },
+        [32332] = { -- The First Riddle: Mercy
+            [questKeys.preQuestSingle] = {32321},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,35500},
+        },
+        [32333] = { -- The Second Riddle: Fellowship
+            [questKeys.preQuestSingle] = {32321},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,35500},
+        },
+        [32334] = { -- The Third Riddle: Strength
+            [questKeys.preQuestSingle] = {32321},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,35500},
+        },
+        [32335] = { -- The Greatest Prank
+            [questKeys.preQuestSingle] = {},
+            [questKeys.preQuestGroup] = {32332,32333,32334},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,35500},
+        },
+        [32336] = { -- The Handle
+            [questKeys.preQuestSingle] = {32335},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,39500},
+        },
+        [32337] = { -- The Head
+            [questKeys.preQuestSingle] = {32335},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,39500},
+        },
+        [32338] = { -- The Harmonic Ointment
+            [questKeys.preQuestSingle] = {32335},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,39500},
         },
         [32341] = { -- Demonstrate Your Power
             [questKeys.objectives] = {nil,nil,nil,nil,{{{68175,68176,68204,68205,68206},68206}}},
@@ -7781,6 +7942,48 @@ function MopQuestFixes.Load()
             [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
         },
+        [32351] = { -- Echoes of Thunder
+            [questKeys.preQuestSingle] = {32384},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,19750},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32352] = { -- A Gathering Storm
+            [questKeys.preQuestSingle] = {32351},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,19750},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32355] = { -- The Harmonic Mallet
+            [questKeys.preQuestSingle] = {32423},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,35500},
+        },
+        [32362] = { -- The Fate of Dalaran
+            [questKeys.preQuestSingle] = {32331},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,11850},
+            [questKeys.objectives] = {{{68108,nil,Questie.ICON_TYPE_TALK}}},
+        },
+        [32363] = { -- The Kun-Lai Expedition
+            [questKeys.preQuestSingle] = {32330},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,27650},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32368] = { -- Memory Wine
+            [questKeys.preQuestSingle] = {32448},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,27650},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32370] = { -- The Kun-Lai Expedition
+            [questKeys.preQuestSingle] = {32316},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,23700},
+        },
+        [32371] = { -- Memory Wine
+            [questKeys.preQuestSingle] = {32377},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,23700},
+        },
+        [32372] = { -- De-Subjugation
+            [questKeys.preQuestSingle] = {32320},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,7900},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
         [32373] = { -- The Measure of a Leader
             [questKeys.startedBy] = {{64616}},
             [questKeys.preQuestSingle] = {31483},
@@ -7791,6 +7994,24 @@ function MopQuestFixes.Load()
             [questKeys.requiredLevel] = 90,
             [questKeys.questLevel] = 90,
             [questKeys.preQuestSingle] = {32373},
+        },
+        [32376] = { -- To the Valley!
+            [questKeys.preQuestGroup] = {32191,32192,32244},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,15800},
+        },
+        [32377] = { -- A Kor'kron In Our Midst
+            [questKeys.preQuestSingle] = {32370},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,23700},
+        },
+        [32378] = { -- Clearing a Path
+            [questKeys.preQuestSingle] = {32376},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,15800},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32379] = { -- Legacy of the Korune
+            [questKeys.preQuestSingle] = {32376},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,15800},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
         },
         [32380] = { -- The Best Around
             [questKeys.preQuestSingle] = {32248},
@@ -7806,6 +8027,24 @@ function MopQuestFixes.Load()
             [questKeys.nextQuestInChain] = 32426,
             [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,15}},
         },
+        [32382] = { -- He's In Deep
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Fly to Fire Camp Bataar"),0,{{"monster",68741}}}},
+            [questKeys.preQuestSingle] = {32381},
+            [questKeys.objectives] = {{{68417,nil,Questie.ICON_TYPE_EVENT}}},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,7900},
+            [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,4}},
+        },
+        [32383] = { -- Bugging Out
+            [questKeys.preQuestSingle] = {32382},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,7900},
+            [questKeys.objectives] = {{{68913,nil,Questie.ICON_TYPE_OBJECT},{68913,nil,Questie.ICON_TYPE_OBJECT},{68913,nil,Questie.ICON_TYPE_OBJECT}}},
+            [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,15}},
+        },
+        [32384] = { -- Trapping the Leader
+            [questKeys.preQuestGroup] = {32378,32379},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,15800},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
         [32388] = { -- A Change of Command
             [questKeys.startedBy] = {{64616}},
             [questKeys.preQuestGroup] = {32374,32474},
@@ -7819,20 +8058,141 @@ function MopQuestFixes.Load()
             [questKeys.startedBy] = {{64616}},
             [questKeys.objectives] = {{{64616,nil,Questie.ICON_TYPE_TALK}}},
         },
+        [32391] = { -- The Ruins of Korune
+            [questKeys.preQuestSingle] = {32368},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,31625}, -- check if rep value is correct
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
         [32392] = { -- The Divine Bell
             [questKeys.finishedBy] = {{68337}},
+            [questKeys.preQuestSingle] = {32391},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,31625}, -- check if rep value is correct
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32393] = { -- The Ruins of Korune
+            [questKeys.preQuestSingle] = {32371},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,27650},
         },
         [32394] = { -- The Divine Bell
+            [questKeys.preQuestSingle] = {32393},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,27650},
             [questKeys.finishedBy] = {{67951}},
         },
+        [32397] = { -- He Won't Even Miss It
+            [questKeys.preQuestSingle] = {32382},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,7900},
+            [questKeys.objectives] = {{{68413,nil,Questie.ICON_TYPE_INTERACT}},nil,{{92804}}},
+            [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,15}},
+        },
+        [32398] = { -- The Bell Speaks
+            [questKeys.preQuestSingle] = {32413},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,42000},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32399] = { -- Breath of Darkest Shadow
+            [questKeys.preQuestSingle] = {32398},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,42000},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32400] = { -- The Bell Speaks
+            [questKeys.preQuestGroup] = {32336,32337,32338},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,42000},
+        },
+        [32401] = { -- Breath of Darkest Shadow
+            [questKeys.preQuestSingle] = {32400},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,42000},
+        },
+        [32402] = { -- The Situation In Dalaran
+            [questKeys.preQuestSingle] = {32328},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,39350},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32403] = { -- It Starts in the Sewers
+            [questKeys.preQuestSingle] = {32402},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,39350},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32404] = { -- Violence in the Arena
+            [questKeys.preQuestSingle] = {32403},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,39350},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32405] = { -- Hand of the Silver Covenant
+            [questKeys.preQuestSingle] = {32404},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,39350},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32406] = { -- A Tactical Assault
+            [questKeys.preQuestSingle] = {32405},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,39350},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32408] = { -- The Silver Covenant's Stronghold
+            [questKeys.preQuestSingle] = {32406},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,39350},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32409] = { -- The Kirin Tor's True Colors
+            [questKeys.preQuestSingle] = {32406},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,39350},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32410] = { -- Krasus' Landing
+            [questKeys.preQuestSingle] = {32406},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,39350},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
         [32411] = { -- The Remaining Sunreavers
+            [questKeys.preQuestGroup] = {32408,32409,32410},
             [questKeys.objectives] = {{{68711,nil,Questie.ICON_TYPE_INTERACT},{68714,nil,Questie.ICON_TYPE_INTERACT},{68715,nil,Questie.ICON_TYPE_INTERACT},{68716,nil,Questie.ICON_TYPE_INTERACT},{68717,nil,Questie.ICON_TYPE_INTERACT}}},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,39350},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32412] = { -- One Last Grasp
+            [questKeys.preQuestSingle] = {32411},
+            [questKeys.objectives] = {{{68711,nil,Questie.ICON_TYPE_INTERACT},{68714,nil,Questie.ICON_TYPE_INTERACT},{68715,nil,Questie.ICON_TYPE_INTERACT},{68716,nil,Questie.ICON_TYPE_INTERACT},{68717,nil,Questie.ICON_TYPE_INTERACT}}},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,39350},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32413] = { -- A Return to Krasarang
+            [questKeys.preQuestSingle] = {32412},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,39350},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
+        [32414] = { -- Darnassus Attacked?
+            [questKeys.preQuestSingle] = {32394},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,29900},
+        },
+        [32416] = { -- Jaina's Resolution
+            [questKeys.preQuestSingle] = {32460},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,29900},
         },
         [32417] = { -- Sewer Cleaning
+            [questKeys.preQuestSingle] = {32416},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,29900},
             [questKeys.objectives] = {nil,nil,nil,nil,{{{68756,68757,68758,68647},68647}}},
         },
+        [32418] = { -- Unfair Trade
+            [questKeys.preQuestSingle] = {32416},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,29900},
+        },
         [32419] = { -- Nowhere to Hide
+            [questKeys.preQuestSingle] = {32416},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,29900},
             [questKeys.objectives] = {nil,nil,nil,nil,{{{68051,68760,68761,68050},68050}}},
+        },
+        [32420] = { -- Cashing Out
+            [questKeys.preQuestSingle] = {32416},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,29900},
+        },
+        [32421] = { -- Nowhere to Run
+            [questKeys.preQuestSingle] = {32416},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,29900},
+        },
+        [32423] = { -- What Had To Be Done
+            [questKeys.preQuestSingle] = {},
+            [questKeys.preQuestGroup] = {32417,32418,32419,32420,32421},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,29900},
         },
         [32426] = { -- Stirred, Not Shaken
             [questKeys.preQuestSingle] = {32381},
@@ -7884,6 +8244,11 @@ function MopQuestFixes.Load()
             [questKeys.questFlags] = questFlags.DAILY,
             [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,4}},
         },
+        [32448] = { -- Ties with the Past
+            [questKeys.preQuestSingle] = {32363},
+            [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,27650},
+            -- [questKeys.reputationReward] = {{factionIDs.DOMINANCE_OFFENSIVE,4}},
+        },
         [32449] = { -- The Ruins of Ogudei
             [questKeys.preQuestSingle] = {32108},
             [questKeys.breadcrumbForQuestId] = 32118,
@@ -7900,11 +8265,19 @@ function MopQuestFixes.Load()
             [questKeys.preQuestSingle] = {32109},
             [questKeys.breadcrumbForQuestId] = 32157,
         },
+        [32455] = { -- The Silence
+            [questKeys.preQuestSingle] = {32401},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,42000},
+        },
         [32457] = { -- The Thunder King
             [questKeys.startedBy] = {{64616}},
             [questKeys.preQuestSingle] = {32390},
             [questKeys.breadcrumbForQuestId] = 32591,
             [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
+        },
+        [32460] = { -- Tracking the Thieves
+            [questKeys.preQuestSingle] = {32414},
+            [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,29900},
         },
         [32474] = { -- A Test of Valor
             [questKeys.startedBy] = {{64616}},
