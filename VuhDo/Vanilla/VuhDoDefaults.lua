@@ -522,8 +522,6 @@ local function VUHDO_customDebuffsAddDefaultSettings(aBuffName)
 			["isOthers"] = true,
 			["isBarGlow"] = false,
 			["isIconGlow"] = false,
-			["isClock"] = false,
-			["isFullDuration"] = VUHDO_CONFIG["CUSTOM_DEBUFF"]["isFullDuration"],
 		}
 	end
 
@@ -631,7 +629,6 @@ local VUHDO_DEFAULT_CONFIG = {
 	["LOCK_IN_FIGHT"] = true,
 	["PARSE_COMBAT_LOG"] = false,
 	["HIDE_EMPTY_BUTTONS"] = false,
-	["USE_DEFERRED_REDRAW"] = true,
 
 	["MODE"] = VUHDO_MODE_NEUTRAL,
 	["EMERGENCY_TRIGGER"] = 100,
@@ -702,8 +699,7 @@ local VUHDO_DEFAULT_CONFIG = {
 		["isIcon"] = true,
 		["isColor"] = false,
 		["isStacks"] = true,
-		["isName"] = false,
-		["isFullDuration"] = false,
+		["isName"] = false, 
 		["isShowFriendly"] = true,
 		["isShowHostile"] = true,
 		["isHostileMine"] = true,
@@ -867,16 +863,6 @@ local VUHDO_DEFAULT_CONFIG = {
 	["IS_READY_CHECK_DISABLED"] = false,
 
 	["SHOW_SPELL_TRACE"] = false,
-
-	["PIXEL_PERFECT"] = {
-		["enabled"] = true,
-		["redrawOnScaleChange"] = true,
-		["scaleChangeDelay"] = 0.1,
-		["logScaleChanges"] = false,
-		["autoRefresh"] = true,
-		["debounceTime"] = 0.5,
-		["testMode"] = false,
-	},
 };
 
 
@@ -968,14 +954,6 @@ function VUHDO_loadDefaultConfig()
 
 	VUHDO_DEFAULT_CONFIG = VUHDO_decompressIfCompressed(VUHDO_DEFAULT_CONFIG);
 	VUHDO_CONFIG = VUHDO_ensureSanity("VUHDO_CONFIG", VUHDO_CONFIG, VUHDO_DEFAULT_CONFIG);
-
-	local tBooleanAllowList = { "USE_DEFERRED_REDRAW", };
-
-	for _, tKey in pairs(tBooleanAllowList) do
-		if VUHDO_DEFAULT_CONFIG[tKey] ~= nil and type(VUHDO_DEFAULT_CONFIG[tKey]) == "boolean" and VUHDO_CONFIG[tKey] == nil then
-			VUHDO_CONFIG[tKey] = VUHDO_DEFAULT_CONFIG[tKey];
-		end
-	end
 
 	-- deprecate "show only for friendly" option in favor of distinct show on friendly and hostile options
 	if VUHDO_CONFIG["CUSTOM_DEBUFF"] and VUHDO_DEFAULT_CONFIG["CUSTOM_DEBUFF"] then
