@@ -88,7 +88,6 @@ local VUHDO_isUnitInModelIterative;
 local VUHDO_isUnitInPanel;
 local VUHDO_initDynamicPanelModels;
 local VUHDO_updateBuffRaidGroup;
-local VUHDO_cleanupSpellTraceForUnit;
 
 local GetRaidTargetIndex = GetRaidTargetIndex;
 local UnitIsDeadOrGhost = UnitIsDeadOrGhost;
@@ -132,7 +131,6 @@ local sCurrentMode;
 
 
 function VUHDO_vuhdoInitLocalOverrides()
-
 	VUHDO_CONFIG = _G["VUHDO_CONFIG"];
 	VUHDO_RAID = _G["VUHDO_RAID"];
 	VUHDO_PET_2_OWNER = _G["VUHDO_PET_2_OWNER"];
@@ -162,8 +160,6 @@ function VUHDO_vuhdoInitLocalOverrides()
 	VUHDO_updateBouquetsForEvent = _G["VUHDO_updateBouquetsForEvent"];
 	VUHDO_resetClusterCoordDeltas = _G["VUHDO_resetClusterCoordDeltas"];
 	VUHDO_getUnitZoneName = _G["VUHDO_getUnitZoneName"];
-	VUHDO_cleanupSpellTraceForUnit = _G["VUHDO_cleanupSpellTraceForUnit"];
-
 	VUHDO_INTERNAL_TOGGLES = _G["VUHDO_INTERNAL_TOGGLES"];
 	VUHDO_PANEL_UNITS = _G["VUHDO_PANEL_UNITS"];
 
@@ -172,9 +168,6 @@ function VUHDO_vuhdoInitLocalOverrides()
 
 	VUHDO_DEFAULT_PROFILE = _G["VUHDO_DEFAULT_PROFILE"];
 	VUHDO_DEFAULT_LAYOUT = _G["VUHDO_DEFAULT_LAYOUT"];
-
-	return;
-
 end
 
 ----------------------------------------------------
@@ -321,10 +314,6 @@ function VUHDO_setHealth(aUnit, aMode)
 		if tIsDead then
 			VUHDO_removeHots(aUnit);
 			VUHDO_removeAllDebuffIcons(aUnit);
-
-			if VUHDO_INTERNAL_TOGGLES and VUHDO_INTERNAL_TOGGLES[37] and VUHDO_CONFIG and VUHDO_CONFIG["SHOW_SPELL_TRACE"] then
-				VUHDO_cleanupSpellTraceForUnit(aUnit);
-			end
 
 			VUHDO_initEventBouquetsFor(aUnit);
 		end
@@ -808,7 +797,6 @@ end
 --
 -- Reload all raid members into the raid array e.g. in case of raid roster change
 function VUHDO_reloadRaidMembers()
-
 	local tPlayer;
 	local tMaxMembers;
 	local tUnit, tPetUnit;
@@ -866,10 +854,6 @@ function VUHDO_reloadRaidMembers()
 				VUHDO_removeAllDebuffIcons(tBossUnitId);
 				VUHDO_resetDebuffsFor(tBossUnitId);
 
-				if VUHDO_INTERNAL_TOGGLES and VUHDO_INTERNAL_TOGGLES[37] and VUHDO_CONFIG and VUHDO_CONFIG["SHOW_SPELL_TRACE"] then
-					VUHDO_cleanupSpellTraceForUnit(tBossUnitId);
-				end
-
 				VUHDO_updateTargetBars(tBossUnitId);
 				table.wipe(VUHDO_RAID[tBossUnitId] or tEmptyInfo);
 				VUHDO_RAID[tBossUnitId] = nil;
@@ -892,18 +876,11 @@ function VUHDO_reloadRaidMembers()
 	VUHDO_updateBuffRaidGroup();
 	VUHDO_updateBuffPanel();
 
-	if sCurrentMode ~= 1 then  -- VUHDO_MODE_NEUTRAL
-		VUHDO_sortEmergencies();
-	end
+	if sCurrentMode ~= 1 then VUHDO_sortEmergencies(); end -- VUHDO_MODE_NEUTRAL
 
 	VUHDO_createClusterUnits();
 
-	if VUHDO_IS_SUSPICIOUS_ROSTER then
-		VUHDO_normalRaidReload();
-	end
-
-	return;
-
+	if VUHDO_IS_SUSPICIOUS_ROSTER then VUHDO_normalRaidReload(); end
 end
 
 
@@ -917,7 +894,6 @@ local tInfo;
 local tIsDcChange;
 local tPet;
 function VUHDO_refreshRaidMembers()
-
 	VUHDO_PLAYER_RAID_ID = VUHDO_getPlayerRaidUnit();
 	VUHDO_IN_COMBAT_RELOG = false;
 
@@ -954,19 +930,9 @@ function VUHDO_refreshRaidMembers()
 
 		elseif VUHDO_RAID[tPlayer] then
 			VUHDO_RAID[tPlayer]["connected"] = false;
-
-			if VUHDO_INTERNAL_TOGGLES and VUHDO_INTERNAL_TOGGLES[37] and VUHDO_CONFIG and VUHDO_CONFIG["SHOW_SPELL_TRACE"] then
-				VUHDO_cleanupSpellTraceForUnit(tPlayer);
-			end
-
 			tPet = VUHDO_RAID[tPlayer]["petUnit"];
-
 			if VUHDO_RAID[tPet] then
 				VUHDO_RAID[tPet]["connected"] = false;
-
-				if VUHDO_INTERNAL_TOGGLES and VUHDO_INTERNAL_TOGGLES[37] and VUHDO_CONFIG and VUHDO_CONFIG["SHOW_SPELL_TRACE"] then
-					VUHDO_cleanupSpellTraceForUnit(tPet);
-				end
 			end
 		end
 	end
@@ -974,7 +940,6 @@ function VUHDO_refreshRaidMembers()
 	VUHDO_setHealthSafe("player", 1); -- VUHDO_UPDATE_ALL
 	VUHDO_setHealthSafe("pet", 1); -- VUHDO_UPDATE_ALL
 	VUHDO_setHealthSafe("focus", 1); -- VUHDO_UPDATE_ALL
-
 	if VUHDO_INTERNAL_TOGGLES[27] then -- VUHDO_UPDATE_PLAYER_TARGET
 		VUHDO_setHealthSafe("target", 1); -- VUHDO_UPDATE_ALL
 	end
@@ -998,10 +963,6 @@ function VUHDO_refreshRaidMembers()
 			VUHDO_removeAllDebuffIcons(tBossUnitId);
 			VUHDO_resetDebuffsFor(tBossUnitId);
 
-			if VUHDO_INTERNAL_TOGGLES and VUHDO_INTERNAL_TOGGLES[37] and VUHDO_CONFIG and VUHDO_CONFIG["SHOW_SPELL_TRACE"] then
-				VUHDO_cleanupSpellTraceForUnit(tBossUnitId);
-			end
-
 			VUHDO_updateTargetBars(tBossUnitId);
 			table.wipe(VUHDO_RAID[tBossUnitId] or tEmptyInfo);
 			VUHDO_RAID[tBossUnitId] = nil;
@@ -1020,14 +981,7 @@ function VUHDO_refreshRaidMembers()
 	VUHDO_updateAllPanelUnits();
 	VUHDO_updateAllGuids();
 	VUHDO_updateBuffRaidGroup();
-
-	if sCurrentMode ~= 1 then -- VUHDO_MODE_NEUTRAL
-		VUHDO_sortEmergencies();
-	end
-
+	if sCurrentMode ~= 1 then VUHDO_sortEmergencies(); end -- VUHDO_MODE_NEUTRAL
 	VUHDO_createClusterUnits();
-
-	return;
-
 end
 
