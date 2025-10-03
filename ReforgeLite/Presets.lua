@@ -55,8 +55,6 @@ function ReforgeLite:PlayerHasMasteryBuff()
   end
 end
 
------------------------------------------ CAP PRESETS ---------------------------------
-
 function ReforgeLite:RatingPerPoint (stat, level)
   level = level or UnitLevel("player")
   if stat == addonTable.statIds.SPELLHIT then
@@ -129,7 +127,7 @@ function ReforgeLite:GetNeededExpertiseHard()
 end
 
 local function CreateIconMarkup(icon)
-  return CreateSimpleTextureMarkup(icon, 16, 16) .. " "
+  return CreateTextureMarkup(icon, 64, 64, 18, 18, 0.07, 0.93, 0.07, 0.93, 0, 0) .. " "
 end
 addonTable.CreateIconMarkup = CreateIconMarkup
 
@@ -298,8 +296,6 @@ do
     })
   end
 end
------------------------------------------ WEIGHT PRESETS ------------------------------
-
 local HitCap = { stat = StatHit, points = { { method = AtLeast, preset = CAPS.MeleeHitCap } } }
 
 local HitCapSpell = { stat = StatHit, points = { { method = AtLeast, preset = CAPS.SpellHitCap } } }
@@ -654,6 +650,23 @@ function ReforgeLite:InitClassPresets()
       },
     },
   }
+
+  if self.db.debug then
+    self.presets = presets
+    for _,ids in pairs(specs) do
+      for _, id in pairs(ids) do
+        local _, tabName, _, icon = GetSpecializationInfoByID(id)
+        specInfo[id] = { name = tabName, icon = icon }
+      end
+    end
+  else
+    self.presets = presets[addonTable.playerClass]
+    for _, id in pairs(specs[addonTable.playerClass]) do
+      local _, tabName, _, icon = GetSpecializationInfoByID(id)
+      specInfo[id] = { name = tabName, icon = icon }
+    end
+  end
+
   --@non-debug@
   self.presets = presets[addonTable.playerClass]
   for _, id in pairs(specs[addonTable.playerClass]) do
@@ -662,15 +675,10 @@ function ReforgeLite:InitClassPresets()
   end
   --@end-non-debug@
   --[===[@debug@
-  self.presets = presets
-  for _,ids in pairs(specs) do
-    for _, id in pairs(ids) do
-      local _, tabName, _, icon = GetSpecializationInfoByID(id)
-      specInfo[id] = { name = tabName, icon = icon }
-    end
-  end
   --@end-debug@]===]
 end
+
+local DYNAMIC_PRESETS = tInvert( { "Pawn", CUSTOM, REFORGE_CURRENT } )
 
 function ReforgeLite:InitCustomPresets()
   local customPresets = {}
@@ -682,9 +690,13 @@ function ReforgeLite:InitCustomPresets()
   self.presets[CUSTOM] = customPresets
 end
 
-function ReforgeLite:InitPresets()
+function ReforgeLite:InitDynamicPresets()
   self:InitClassPresets()
   self:InitCustomPresets()
+end
+
+function ReforgeLite:InitPresets()
+  self:InitDynamicPresets()
   if PawnVersion then
     self.presets["Pawn"] = function ()
       if not PawnCommon or not PawnCommon.Scales then return {} end
@@ -729,33 +741,68 @@ function ReforgeLite:InitPresets()
     end
   end
 
-  -- Create preset menu generator for MenuUtil
   self.presetMenuGenerator = function(owner, rootDescription)
     GUI:ClearEditFocus()
 
+    rootDescription:CreateButton(SAVE, function()
+      GUI.CreateStaticPopup("REFORGE_LITE_SAVE_PRESET",
+        L["Enter the preset name"],
+        function(popup)
+          self.cdb.customPresets[popup:GetEditBox():GetText()] = {
+            caps = CopyTable(self.pdb.caps),
+            weights = CopyTable(self.pdb.weights)
+          }
+          self:InitCustomPresets()
+        end, { hasEditBox = 1 })
+      StaticPopup_Show("REFORGE_LITE_SAVE_PRESET")
+    end)
+
+    rootDescription:CreateDivider()
+
     local function AddPresetButton(desc, info)
-      desc:CreateButton(info.text, function()
-        if info.value.targetLevel then
-          self.pdb.targetLevel = info.value.targetLevel
-          self.targetLevel:SetValue(info.value.targetLevel)
-        end
-        self:SetStatWeights(info.value.weights, info.value.caps or {})
-      end)
+      if info.hasDelete then
+        local button = desc:CreateButton(info.text, function(mouseButton)
+          if IsShiftKeyDown() then
+            GUI.CreateStaticPopup("REFORGE_LITE_DELETE_PRESET",
+              L["Delete preset '%s'?"]:format(info.presetName),
+              function()
+                self.cdb.customPresets[info.presetName] = nil
+                self:InitCustomPresets()
+              end, { button1 = DELETE })
+            StaticPopup_Show("REFORGE_LITE_DELETE_PRESET")
+          else
+            if info.value.targetLevel then
+              self.pdb.targetLevel = info.value.targetLevel
+              self.targetLevel:SetValue(info.value.targetLevel)
+            end
+            self:SetStatWeights(info.value.weights, info.value.caps or {})
+          end
+        end)
+        button:SetTooltip(function(tooltip, elementDescription)
+          GameTooltip_AddNormalLine(tooltip, L["Click to load preset"])
+          GameTooltip_AddColoredLine(tooltip, L["Shift+Click to delete"], RED_FONT_COLOR)
+        end)
+      else
+        desc:CreateButton(info.text, function()
+          if info.value.targetLevel then
+            self.pdb.targetLevel = info.value.targetLevel
+            self.targetLevel:SetValue(info.value.targetLevel)
+          end
+          self:SetStatWeights(info.value.weights, info.value.caps or {})
+        end)
+      end
     end
 
     local menuList = {}
     for k in pairs(self.presets) do
       local v = GetValueOrCallFunction(self.presets, k)
-
-      -- Check if this is a class submenu (table of presets) or a single preset
       local isClassMenu = type(v) == "table" and not v.weights and not v.caps
 
       if isClassMenu then
-        -- This is a class submenu (or spec submenu in non-debug mode)
         local classInfo = {
           sortKey = specInfo[k] and specInfo[k].name or k,
           text = specInfo[k] and specInfo[k].name or k,
-          prioritySort = 0,
+          prioritySort = DYNAMIC_PRESETS[k] or 0,
           key = k,
           isSubmenu = true,
           submenuItems = {}
@@ -764,13 +811,10 @@ function ReforgeLite:InitPresets()
           classInfo.text = CreateIconMarkup(specInfo[k].icon) .. specInfo[k].name
         end
 
-        -- Build submenu items
         for specId, preset in pairs(v) do
-          -- Check if this spec has sub-presets
           local hasSubPresets = type(preset) == "table" and not preset.weights and not preset.caps
 
           if hasSubPresets then
-            -- This spec has sub-presets (e.g., Defensive/Aggressive)
             local specSubmenu = {
               sortKey = (specInfo[specId] and specInfo[specId].name) or tostring(specId),
               text = (specInfo[specId] and specInfo[specId].name) or tostring(specId),
@@ -787,7 +831,158 @@ function ReforgeLite:InitPresets()
                 local subSubInfo = {
                   sortKey = subK,
                   text = subK,
-                  prioritySort = subPreset.prioritySort or 0,
+                  prioritySort = DYNAMIC_PRESETS[subK] or 0,
+                  value = subPreset,
+                }
+                if subPreset.icon then
+                  subSubInfo.text = CreateIconMarkup(subPreset.icon) .. subSubInfo.text
+                end
+                tinsert(specSubmenu.submenuItems, subSubInfo)
+              end
+            end
+
+            if #specSubmenu.submenuItems > 0 then
+              tsort(specSubmenu.submenuItems, function (a, b)
+                if a.prioritySort ~= b.prioritySort then
+                  return a.prioritySort > b.prioritySort
+                end
+                return tostring(a.sortKey) < tostring(b.sortKey)
+              end)
+              tinsert(classInfo.submenuItems, specSubmenu)
+            end
+          else
+            local subInfo = {
+              sortKey = preset.name or (specInfo[specId] and specInfo[specId].name) or tostring(specId),
+              text = preset.name or (specInfo[specId] and specInfo[specId].name) or tostring(specId),
+              prioritySort = DYNAMIC_PRESETS[k] or 0,
+              value = preset,
+              hasDelete = (k == CUSTOM),
+              presetName = preset.name,
+            }
+            if specInfo[specId] then
+              subInfo.text = CreateIconMarkup(specInfo[specId].icon) .. specInfo[specId].name
+              subInfo.sortKey = specInfo[specId].name
+            end
+            if preset.icon then
+              subInfo.text = CreateIconMarkup(preset.icon) .. subInfo.text
+            end
+            tinsert(classInfo.submenuItems, subInfo)
+          end
+        end
+
+        tsort(classInfo.submenuItems, function (a, b)
+          if a.prioritySort ~= b.prioritySort then
+            return a.prioritySort > b.prioritySort
+          end
+          return tostring(a.sortKey) < tostring(b.sortKey)
+        end)
+
+        tinsert(menuList, classInfo)
+      else
+        local info = {
+          sortKey = v.name or k,
+          text = v.name or k,
+          prioritySort = DYNAMIC_PRESETS[k] or 0,
+          value = v,
+        }
+        if specInfo[k] then
+          info.text = CreateIconMarkup(specInfo[k].icon) .. specInfo[k].name
+          info.sortKey = specInfo[k].name
+        end
+        if v.icon then
+          info.text = CreateIconMarkup(v.icon) .. info.text
+        end
+        tinsert(menuList, info)
+      end
+    end
+
+    tsort(menuList, function (a, b)
+      if a.prioritySort ~= b.prioritySort then
+        return a.prioritySort > b.prioritySort
+      end
+      return tostring(a.sortKey) < tostring(b.sortKey)
+    end)
+
+    local function AddMenuItems(desc, items)
+      for _, info in ipairs(items) do
+        if info.isSubmenu then
+          local submenu = desc:CreateButton(info.text)
+          if #info.submenuItems == 0 then
+            submenu:SetEnabled(false)
+          end
+          AddMenuItems(submenu, info.submenuItems)
+        elseif info.value and (info.value.caps or info.value.weights) then
+          AddPresetButton(desc, info)
+        end
+      end
+    end
+
+    AddMenuItems(rootDescription, menuList)
+  end
+
+  local exportList = {
+    [REFORGE_CURRENT] = function()
+      local result = {
+        caps = self.pdb.caps,
+        weights = self.pdb.weights,
+      }
+      return result
+    end
+  }
+  MergeTable(exportList, self.presets)
+
+  --[===[@debug@
+  self.exportPresetMenuGenerator = function(owner, rootDescription)
+    GUI:ClearEditFocus()
+
+    local function AddExportButton(desc, info)
+      desc:CreateButton(info.text, function()
+        local output = CopyTable(info.value)
+        output.prioritySort = nil
+        self:ExportJSON(output, info.sortKey)
+      end)
+    end
+
+    local menuList = {}
+    for k in pairs(exportList) do
+      local v = GetValueOrCallFunction(exportList, k)
+
+      local isClassMenu = type(v) == "table" and not v.weights and not v.caps
+
+      if isClassMenu then
+        local classInfo = {
+          sortKey = specInfo[k] and specInfo[k].name or k,
+          text = specInfo[k] and specInfo[k].name or k,
+          prioritySort = DYNAMIC_PRESETS[k] or 0,
+          key = k,
+          isSubmenu = true,
+          submenuItems = {}
+        }
+        if specInfo[k] then
+          classInfo.text = CreateIconMarkup(specInfo[k].icon) .. specInfo[k].name
+        end
+
+        for specId, preset in pairs(v) do
+          local hasSubPresets = type(preset) == "table" and not preset.weights and not preset.caps
+
+          if hasSubPresets then
+            local specSubmenu = {
+              sortKey = (specInfo[specId] and specInfo[specId].name) or tostring(specId),
+              text = (specInfo[specId] and specInfo[specId].name) or tostring(specId),
+              prioritySort = 0,
+              isSubmenu = true,
+              submenuItems = {}
+            }
+            if specInfo[specId] then
+              specSubmenu.text = CreateIconMarkup(specInfo[specId].icon) .. specInfo[specId].name
+            end
+
+            for subK, subPreset in pairs(preset) do
+              if type(subPreset) == "table" and (subPreset.weights or subPreset.caps) then
+                local subSubInfo = {
+                  sortKey = subK,
+                  text = subK,
+                  prioritySort = DYNAMIC_PRESETS[subK] or 0,
                   value = subPreset,
                 }
                 if subPreset.icon then
@@ -811,7 +1006,7 @@ function ReforgeLite:InitPresets()
             local subInfo = {
               sortKey = preset.name or (specInfo[specId] and specInfo[specId].name) or tostring(specId),
               text = preset.name or (specInfo[specId] and specInfo[specId].name) or tostring(specId),
-              prioritySort = preset.prioritySort or 0,
+              prioritySort = DYNAMIC_PRESETS[k] or 0,
               value = preset,
             }
             if specInfo[specId] then
@@ -834,17 +1029,15 @@ function ReforgeLite:InitPresets()
 
         tinsert(menuList, classInfo)
       else
-        -- This is a direct preset
         local info = {
           sortKey = v.name or k,
           text = v.name or k,
-          prioritySort = v.prioritySort or 0,
+          prioritySort = DYNAMIC_PRESETS[k] or 0,
           value = v,
         }
         if specInfo[k] then
           info.text = CreateIconMarkup(specInfo[k].icon) .. specInfo[k].name
           info.sortKey = specInfo[k].name
-          info.prioritySort = -1
         end
         if v.icon then
           info.text = CreateIconMarkup(v.icon) .. info.text
@@ -864,94 +1057,19 @@ function ReforgeLite:InitPresets()
       for _, info in ipairs(items) do
         if info.isSubmenu then
           local submenu = desc:CreateButton(info.text)
-          -- Disable submenu if there are no items
           if #info.submenuItems == 0 then
             submenu:SetEnabled(false)
           end
           AddMenuItems(submenu, info.submenuItems)
         elseif info.value and (info.value.caps or info.value.weights) then
-          AddPresetButton(desc, info)
+          AddExportButton(desc, info)
         end
       end
     end
 
     AddMenuItems(rootDescription, menuList)
   end
-
-  local exportList = {
-    [REFORGE_CURRENT] = function()
-      local result = {
-        prioritySort = 1,
-        caps = self.pdb.caps,
-        weights = self.pdb.weights,
-      }
-      return result
-    end
-  }
-  MergeTable(exportList, self.presets)
-
-  --[===[@debug@
-  -- Create export preset menu generator for MenuUtil
-  self.exportPresetMenuGenerator = function(owner, rootDescription)
-    GUI:ClearEditFocus()
-    local menuList = {}
-    for k in pairs(exportList) do
-      local v = GetValueOrCallFunction(exportList, k)
-      local info = {
-        sortKey = v.name or k,
-        text = v.name or k,
-        prioritySort = v.prioritySort or 0,
-        value = v,
-      }
-      if specInfo[k] then
-        info.text = CreateIconMarkup(specInfo[k].icon) .. specInfo[k].name
-        info.sortKey = specInfo[k].name
-        info.prioritySort = -1
-      end
-      if v.icon then
-        info.text = CreateIconMarkup(v.icon) .. info.text
-      end
-      tinsert(menuList, info)
-    end
-    tsort(menuList, function (a, b)
-      if a.prioritySort ~= b.prioritySort then
-        return a.prioritySort > b.prioritySort
-      end
-      return tostring(a.sortKey) < tostring(b.sortKey)
-    end)
-    for _, info in ipairs(menuList) do
-      if info.value.caps or info.value.weights then
-        rootDescription:CreateButton(info.text, function()
-          local output = CopyTable(info.value)
-          output.prioritySort = nil
-          self:ExportJSON(output, info.sortKey)
-        end)
-      end
-    end
-  end
+  
+  addonTable.callbacks:RegisterCallback("ToggleDebug", function() self:InitDynamicPresets() end)
   --@end-debug@]===]
-
-  -- Create delete preset menu generator for MenuUtil
-  self.presetDelMenuGenerator = function(owner, rootDescription)
-    GUI:ClearEditFocus()
-    local menuList = {}
-    for _, db in ipairs({self.db, self.cdb}) do
-      for k in pairs(db.customPresets or {}) do
-        tinsert(menuList, {
-          text = k,
-          db = db,
-          key = k
-        })
-      end
-    end
-    tsort(menuList, function (a, b) return a.text < b.text end)
-    for _, info in ipairs(menuList) do
-      rootDescription:CreateButton(info.text, function()
-        info.db.customPresets[info.key] = nil
-        self:InitCustomPresets()
-        self.deletePresetButton:ToggleStatus()
-      end)
-    end
-  end
-
 end

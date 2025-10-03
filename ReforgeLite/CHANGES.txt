@@ -1,10 +1,91 @@
-tag 8f7930fc0681913db7d0bfac00d99260c34d1a8d v2.2.0a
+tag f578315ce05e3c6fb4e47536afdef99b96608698 v2.2.2
 Author:	skyler-code <skylerh15@github.com>
-Date:	Wed Oct 1 10:33:52 2025 -0500
+Date:	Thu Oct 2 11:29:25 2025 -0500
 
-commit c86f980f5dfc36d326045742ab23de7f20bb4cc5
+commit f71c5b3b77050aa89d0bcaf1335384782499965f
 Author: skyler-code <skylerh15@github.com>
-Date:   Wed Oct 1 10:33:11 2025 -0500
+Date:   Thu Oct 2 11:28:29 2025 -0500
 
-    missing nil check
+    Add showHelp setting to toggle all help buttons
+    
+    Added scale parameter to CreateHelpButton and batch visibility control via SetHelpButtonsShown. New setting in UI allows users to show/hide all help buttons at once.
+
+commit 42d45dca50389ccc265ab5f8b7e20cb2b4154481
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 10:50:34 2025 -0500
+
+    not true
+
+commit 8be5781c57c62fbefb25cac4977bdac3f964042d
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 10:48:19 2025 -0500
+
+    Centralize help button creation and refactor widget options
+    
+    GUI.lua:
+    - Add CreateHelpButton() to centralize MainHelpPlateButton creation
+    - Add opts parameter to CreateCheckButton, CreateImageButton, CreatePanelButton
+    - Move tooltip setup into widget creation functions via opts.tooltip
+    
+    ReforgeLite.lua:
+    - Replace all manual help button creation with GUI:CreateHelpButton()
+    - Refactor image button calls to use opts table pattern
+    - Consolidate tooltip setup with button creation
+    - Add help button to method window positioned left of title
+
+commit 35ff63df5df90f4a668ab14f6c844d2bf482e93f
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 10:12:22 2025 -0500
+
+    Reposition stat weights help button and expand tooltip
+    
+    - Moved help button from beside stat weights to beside Buffs dropdown
+    - Updated tooltip to describe Target Level, Buffs, and Stat Weights
+    - Removed dodge container reference (no longer needed)
+
+commit 0293830b1fa6d33d6ff5943212fc9ec9b86b21df
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 10:08:54 2025 -0500
+
+    Simplify item table cell creation using SetCellText
+    
+    - Use SetCellText for stat headers instead of manual CreateFontString
+    - Use SetCellText for item stat cells initialization
+    - Use SetCellText for stat totals row
+    - Access font strings via table.cells[][] after SetCellText creates them
+    - Reduces code duplication and uses consistent cell creation pattern
+
+commit 5c6ca46a020ddfa3d47509973c604b64c0a63814
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 09:51:13 2025 -0500
+
+    Fix SetCellText to use color objects directly
+    
+    - Changed default color parameter from table to color object
+    - Updated SetTextColor to call GetRGB() on color object
+    - Makes color handling consistent across the codebase
+
+commit 6864e8db2a5563203f18f698b9a7c5dca3968037
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 09:50:33 2025 -0500
+
+    Revert stat weights to 4-column layout and reposition help buttons
+    
+    - Reverted stat weights from 2-column compact to 4-column table layout
+    - Removed RIGHT anchor so stat weights table sizes to content
+    - Moved stat caps help button to anchor beside first Add cap button
+    - Kept dodge container anchor for stat weights help button
+    - Removed mastery container reference (no longer needed)
+    - Fixed color format in SetCellText calls to use color objects directly
+    - Simplified method stats table creation with SetCellText
+
+commit 90f81a2cda0f20056dff2d0149d938cee6a74608
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 07:35:38 2025 -0500
+
+    Improve tooltips and rename experimental mode
+    
+    - Renamed 'Experimental Fast Mode' to 'Branch & Bound Mode'
+    - Updated Branch & Bound tooltip for clarity
+    - Enhanced 'Weight after cap' tooltip with usage examples
 
