@@ -4,17 +4,9 @@ addonTable.GUI = GUI
 
 local callbacks = CreateFromMixins(CallbackRegistryMixin)
 callbacks:OnLoad()
-callbacks:GenerateCallbackEvents({ "OnCalculateFinish", "PreCalculateStart", "OnCalculateStart" })
+callbacks:GenerateCallbackEvents({ "OnCalculateFinish", "PreCalculateStart", "OnCalculateStart", "ToggleDebug" })
 
 addonTable.callbacks = callbacks
-
--- Helper function to close all dropdown menus
-function GUI:CloseDropdowns()
-	local manager = Menu.GetManager()
-	if manager then
-		manager:CloseMenus()
-	end
-end
 
 addonTable.FONTS = {
   grey = INACTIVE_COLOR,
@@ -34,19 +26,16 @@ function GUI:GenerateWidgetName ()
 end
 
 function GUI:ClearEditFocus()
-  self:CloseDropdowns()
   for _,v in ipairs(self.editBoxes) do
     v:ClearFocus()
   end
 end
 
 function GUI:ClearFocus()
-  self:CloseDropdowns()
   self:ClearEditFocus()
 end
 
 function GUI:Lock()
-  self:CloseDropdowns()
   for _, frames in ipairs({self.panelButtons, self.imgButtons, self.editBoxes, self.checkButtons, self.sliders}) do
     for _, frame in pairs(frames) do
       if frame:IsEnabled() and not frame.preventLock then
@@ -171,7 +160,6 @@ function GUI:CreateEditBox (parent, width, height, default, setter, opts)
   box:SetText(default)
   box:SetScript("OnEnterPressed", box.ClearFocus)
   box:SetScript("OnEditFocusGained", function(frame)
-    GUI:CloseDropdowns()
     frame.prevValue = tonumber(frame:GetText())
     frame:HighlightText()
   end)
@@ -322,7 +310,7 @@ end
 
 GUI.checkButtons = {}
 GUI.unusedCheckButtons = {}
-function GUI:CreateCheckButton (parent, text, default, setter)
+function GUI:CreateCheckButton (parent, text, default, setter, opts)
   local btn
   if #self.unusedCheckButtons > 0 then
     btn = tremove (self.unusedCheckButtons)
@@ -355,12 +343,13 @@ function GUI:CreateCheckButton (parent, text, default, setter)
     self.Text.originalFontColor = {self.Text:GetTextColor()}
     self.Text:SetTextColor(addonTable.FONTS.disabled:GetRGB())
   end)
+  self:SetTooltip(btn, (opts or {}).tooltip)
   return btn
 end
 
 GUI.imgButtons = {}
 GUI.unusedImgButtons = {}
-function GUI:CreateImageButton (parent, width, height, img, pus, hlt, disabledTexture, handler)
+function GUI:CreateImageButton (parent, width, height, img, pus, opts)
   local btn
   if #self.unusedImgButtons > 0 then
     btn = tremove (self.unusedImgButtons)
@@ -379,12 +368,11 @@ function GUI:CreateImageButton (parent, width, height, img, pus, hlt, disabledTe
   end
   btn:SetNormalTexture (img)
   btn:SetPushedTexture (pus)
-  btn:SetHighlightTexture (hlt or img)
-  btn:SetDisabledTexture(disabledTexture or img)
+  btn:SetHighlightTexture ((opts or {}).hlt or img)
+  btn:SetDisabledTexture((opts or {}).disabledTexture or img)
   btn:SetSize(width, height)
-  if handler then
-    btn:SetScript ("OnClick", handler)
-  end
+  btn:SetScript ("OnClick", (opts or {}).OnClick)
+  self:SetTooltip(btn, (opts or {}).tooltip)
   return btn
 end
 
@@ -428,6 +416,7 @@ function GUI:CreatePanelButton(parent, text, handler, opts)
   btn:RenderText(text)
   btn:SetScript("OnClick", handler)
   btn:SetScript("PreClick", (opts or {}).PreClick)
+  self:SetTooltip(btn, (opts or {}).tooltip)
   return btn
 end
 
@@ -466,6 +455,22 @@ function GUI:CreateColorPicker (parent, width, height, color, handler)
   end)
 
   return box
+end
+
+GUI.helpButtons = {}
+function GUI:CreateHelpButton(parent, tooltip, opts)
+  local btn = CreateFrame("Button", nil, parent, "MainHelpPlateButton")
+  btn:SetFrameLevel(btn:GetParent():GetFrameLevel() + 1)
+  btn:SetScale((opts or {}).scale or 0.6)
+  self:SetTooltip(btn, tooltip)
+  tinsert(self.helpButtons, btn)
+  return btn
+end
+
+function GUI:SetHelpButtonsShown(shown)
+  for _, btn in ipairs(self.helpButtons) do
+    btn:SetShown(shown)
+  end
 end
 
 GUI.sliders = {}
@@ -860,7 +865,7 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
   t.textTagPool = {}
   t.SetCellText = function (self, i, j, text, align, color, font)
     align = align or "CENTER"
-    color = color or {addonTable.FONTS.white:GetRGB()}
+    color = color or addonTable.FONTS.white
     font = font or "GameFontNormalSmall"
 
     if self.cells[i][j] and not self.cells[i][j].istag then
@@ -887,7 +892,7 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
       end
     end
     self.cells[i][j].istag = true
-    self.cells[i][j]:SetTextColor(unpack(color))
+    self.cells[i][j]:SetTextColor(color:GetRGB())
     self.cells[i][j]:SetText (text)
     self.cells[i][j].align = align
     self:AlignCell (i, j)
@@ -896,22 +901,23 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
   return t
 end
 
-function GUI.CreateStaticPopup(name, text, onAccept)
+function GUI.CreateStaticPopup(name, text, onAccept, opts)
   StaticPopupDialogs[name] = {
     text = text,
-    button1 = ACCEPT,
+    button1 = (opts or {}).button1 or ACCEPT,
     button2 = CANCEL,
-    hasEditBox = 1,
+    hasEditBox = (opts or {}).hasEditBox,
     timeout = 0,
     whileDead = 1,
     OnAccept = function(self)
-      onAccept(self:GetEditBox():GetText())
+      onAccept(self)
     end,
     OnShow = function(self)
-      GUI:CloseDropdowns()
-      self:GetButton1():Disable()
+      if self:GetEditBox():IsVisible() then
+        self:GetButton1():Disable()
+        self:GetEditBox():SetFocus()
+      end
       self:GetButton2():Enable()
-      self:GetEditBox():SetFocus()
     end,
     OnHide = function(self)
       ChatEdit_FocusActiveWindow()
