@@ -1,7 +1,21 @@
+---@type string, AddonTable
 local addonName, addonTable = ...
 local GUI = {}
 addonTable.GUI = GUI
 
+---Global callback registry for addon events
+---
+---Available callback events:
+--- - "PreCalculateStart" - Fired before computation begins (locks UI)
+--- - "OnCalculateStart" - Fired when computation starts
+--- - "OnCalculateFinish" - Fired when computation completes (unlocks UI)
+--- - "ToggleDebug" - Fired when debug mode is toggled
+---
+---Usage:
+--- callbacks:RegisterCallback("OnCalculateFinish", function() print("Done!") end)
+--- callbacks:RegisterCallback("OnCalculateFinish", function(owner) print(owner, "Done!") end, "MyAddon")
+--- callbacks:TriggerEvent("OnCalculateFinish")
+--- callbacks:UnregisterCallback("OnCalculateFinish", "MyAddon")
 local callbacks = CreateFromMixins(CallbackRegistryMixin)
 callbacks:OnLoad()
 callbacks:GenerateCallbackEvents({ "OnCalculateFinish", "PreCalculateStart", "OnCalculateStart", "ToggleDebug" })
@@ -20,21 +34,30 @@ addonTable.FONTS = {
   disabled = DISABLED_FONT_COLOR,
 }
 
+---Generates a unique widget name
+---@return string name Unique widget name (e.g., "ReforgeLiteWidget1")
 function GUI:GenerateWidgetName ()
   self.widgetCount = (self.widgetCount or 0) + 1
   return addonName .. "Widget" .. self.widgetCount
 end
 
+---Clears focus from all edit boxes
+---@return nil
 function GUI:ClearEditFocus()
   for _,v in ipairs(self.editBoxes) do
     v:ClearFocus()
   end
 end
 
+---Clears focus from all GUI elements
+---@return nil
 function GUI:ClearFocus()
   self:ClearEditFocus()
 end
 
+---Locks all GUI widgets to prevent interaction during computation
+---Disables buttons, edit boxes, checkboxes, sliders, and dropdowns
+---@return nil
 function GUI:Lock()
   for _, frames in ipairs({self.panelButtons, self.imgButtons, self.editBoxes, self.checkButtons, self.sliders}) do
     for _, frame in pairs(frames) do
@@ -57,12 +80,21 @@ function GUI:Lock()
   end
   for _, dropdown in pairs(self.dropdowns) do
     if not dropdown.isDisabled then
-      dropdown:DisableDropdown()
+      dropdown:SetEnabled(false)
+      dropdown.locked = true
+    end
+  end
+  for _, dropdown in pairs(self.filterDropdowns) do
+    if dropdown:IsEnabled() and not dropdown.preventLock then
+      dropdown:SetEnabled(false)
       dropdown.locked = true
     end
   end
 end
 
+---Unlocks a single frame
+---@param frame Frame The frame to unlock
+---@return nil
 function GUI:UnlockFrame(frame)
   if frame.locked then
     frame:Enable()
@@ -81,6 +113,8 @@ function GUI:UnlockFrame(frame)
   end
 end
 
+---Unlocks all GUI widgets after computation completes
+---@return nil
 function GUI:Unlock()
   for _, frames in ipairs({self.panelButtons, self.imgButtons, self.editBoxes, self.checkButtons, self.sliders}) do
     for _, frame in pairs(frames) do
@@ -89,12 +123,22 @@ function GUI:Unlock()
   end
   for _, dropdown in pairs(self.dropdowns) do
     if dropdown.locked then
-      dropdown:EnableDropdown()
+      dropdown:SetEnabled(true)
+      dropdown.locked = nil
+    end
+  end
+  for _, dropdown in pairs(self.filterDropdowns) do
+    if dropdown.locked then
+      dropdown:SetEnabled(true)
       dropdown.locked = nil
     end
   end
 end
 
+---Sets a tooltip on a widget
+---@param widget Frame The widget to add tooltip to
+---@param tip? string|function Tooltip text or function returning tooltip text
+---@return nil
 function GUI:SetTooltip (widget, tip)
   if tip then
     widget:SetScript ("OnEnter", function (tipFrame)
@@ -126,7 +170,16 @@ end
 
 GUI.editBoxes = {}
 GUI.unusedEditBoxes = {}
+---Creates a numeric edit box with recycling support
+---@param parent Frame Parent frame
+---@param width number Width in pixels
+---@param height number Height in pixels
+---@param default number Default value
+---@param setter? function Callback when value changes (value)
+---@param opts? table Options: OnTabPressed callback
+---@return EditBox box The created edit box
 function GUI:CreateEditBox (parent, width, height, default, setter, opts)
+  opts = opts or {}
   local box
   if #self.unusedEditBoxes > 0 then
     box = tremove(self.unusedEditBoxes)
@@ -174,13 +227,63 @@ function GUI:CreateEditBox (parent, width, height, default, setter, opts)
     end
     frame.prevValue = nil
   end)
-  box:SetScript("OnTabPressed", (opts or {}).OnTabPressed)
+  box:SetScript("OnTabPressed", opts.OnTabPressed)
   return box
 end
 
 
 GUI.dropdowns = {}
 GUI.unusedDropdowns = {}
+GUI.filterDropdowns = {}
+GUI.unusedFilterDropdowns = {}
+
+---Creates a WowStyle1FilterDropdownTemplate button with recycling support
+---@param parent Frame Parent frame
+---@param text string Button text
+---@param options? table Options: resizeToTextPadding (number), tooltip (string)
+---@return DropdownButton dropdown The created filter dropdown
+function GUI:CreateFilterDropdown (parent, text, options)
+  options = options or {}
+  local dropdown
+  if #self.unusedFilterDropdowns > 0 then
+    dropdown = tremove (self.unusedFilterDropdowns)
+    dropdown:SetParent (parent)
+    dropdown:Show ()
+    dropdown:SetEnabled(true)
+    if dropdown.originalResizeToTextPadding then
+      dropdown.resizeToTextPadding = dropdown.originalResizeToTextPadding
+      dropdown.originalResizeToTextPadding = nil
+    end
+    self.filterDropdowns[dropdown:GetName()] = dropdown
+  else
+    local name = self:GenerateWidgetName()
+    dropdown = CreateFrame("DropdownButton", name, parent, "WowStyle1FilterDropdownTemplate")
+    self.filterDropdowns[name] = dropdown
+    dropdown.originalResizeToTextPadding = dropdown.resizeToTextPadding
+
+    dropdown.Recycle = function (frame)
+      frame:Hide ()
+      frame:ClearScripts()
+      frame.originalResizeToTextPadding = frame.resizeToTextPadding
+      frame.resizeToTextPadding = nil
+      self.filterDropdowns[frame:GetName()] = nil
+      tinsert(self.unusedFilterDropdowns, frame)
+    end
+  end
+
+  if options.resizeToTextPadding then
+    dropdown.resizeToTextPadding = options.resizeToTextPadding
+  end
+  dropdown:SetText(text)
+  self:SetTooltip(dropdown, options.tooltip)
+  return dropdown
+end
+
+---Creates a dropdown menu with recycling support
+---@param parent Frame Parent frame
+---@param values table|function Array of {value, name} pairs or function returning the array
+---@param options table Options: default, setter(dropdown, value, oldValue), width, hideArrow
+---@return DropdownButton dropdown The created dropdown
 function GUI:CreateDropdown (parent, values, options)
   local sel
   if #self.unusedDropdowns > 0 then
@@ -223,18 +326,6 @@ function GUI:CreateDropdown (parent, values, options)
       if dropdown.Text then
         dropdown.Text:SetText("")
       end
-    end
-
-    sel.EnableDropdown = function(dropdown)
-      dropdown:SetEnabled(true)
-    end
-
-    sel.DisableDropdown = function(dropdown)
-      dropdown:SetEnabled(false)
-    end
-
-    sel.SetDropDownEnabled = function(dropdown, enabled)
-      dropdown:SetEnabled(enabled)
     end
 
     sel:SetHeight(20)
@@ -310,7 +401,15 @@ end
 
 GUI.checkButtons = {}
 GUI.unusedCheckButtons = {}
+---Creates a checkbox with recycling support
+---@param parent Frame Parent frame
+---@param text string Label text
+---@param default boolean Default checked state
+---@param setter? function Callback when toggled (checked)
+---@param opts? table Options: tooltip
+---@return CheckButton btn The created checkbox
 function GUI:CreateCheckButton (parent, text, default, setter, opts)
+  opts = opts or {}
   local btn
   if #self.unusedCheckButtons > 0 then
     btn = tremove (self.unusedCheckButtons)
@@ -343,13 +442,22 @@ function GUI:CreateCheckButton (parent, text, default, setter, opts)
     self.Text.originalFontColor = {self.Text:GetTextColor()}
     self.Text:SetTextColor(addonTable.FONTS.disabled:GetRGB())
   end)
-  self:SetTooltip(btn, (opts or {}).tooltip)
+  self:SetTooltip(btn, opts.tooltip)
   return btn
 end
 
 GUI.imgButtons = {}
 GUI.unusedImgButtons = {}
+---Creates an image button with recycling support
+---@param parent Frame Parent frame
+---@param width number Width in pixels
+---@param height number Height in pixels
+---@param img string|number Normal texture path or file ID
+---@param pus string|number Pushed texture path or file ID
+---@param opts? table Options: hlt, disabledTexture, OnClick, tooltip
+---@return Button btn The created image button
 function GUI:CreateImageButton (parent, width, height, img, pus, opts)
+  opts = opts or {}
   local btn
   if #self.unusedImgButtons > 0 then
     btn = tremove (self.unusedImgButtons)
@@ -368,17 +476,35 @@ function GUI:CreateImageButton (parent, width, height, img, pus, opts)
   end
   btn:SetNormalTexture (img)
   btn:SetPushedTexture (pus)
-  btn:SetHighlightTexture ((opts or {}).hlt or img)
-  btn:SetDisabledTexture((opts or {}).disabledTexture or img)
+  btn:SetHighlightTexture (opts.hlt or img)
   btn:SetSize(width, height)
-  btn:SetScript ("OnClick", (opts or {}).OnClick)
-  self:SetTooltip(btn, (opts or {}).tooltip)
+  btn:SetScript ("OnClick", opts.OnClick)
+
+  -- Set disabled texture - use custom or create desaturated version of normal texture
+  if opts.disabledTexture then
+    btn:SetDisabledTexture(opts.disabledTexture)
+  else
+    btn:SetDisabledTexture(img)
+    local disabledTexture = btn:GetDisabledTexture()
+    if disabledTexture then
+      disabledTexture:SetDesaturated(true)
+    end
+  end
+
+  self:SetTooltip(btn, opts.tooltip)
   return btn
 end
 
 GUI.panelButtons = {}
 GUI.unusedPanelButtons = {}
+---Creates a standard panel button with recycling support
+---@param parent Frame Parent frame
+---@param text string Button text
+---@param handler? function OnClick callback
+---@param opts? table Options: tooltip
+---@return Button btn The created panel button
 function GUI:CreatePanelButton(parent, text, handler, opts)
+  opts = opts or {}
   local btn
   if #self.unusedPanelButtons > 0 then
     btn = tremove(self.unusedPanelButtons)
@@ -405,7 +531,7 @@ function GUI:CreatePanelButton(parent, text, handler, opts)
       f:FitToText()
     end
   end
-  btn.preventLock = (opts or {}).preventLock
+  btn.preventLock = opts.preventLock
   if opts then
     for event in pairs(callbacks.Event) do
       if opts[event] then
@@ -415,11 +541,18 @@ function GUI:CreatePanelButton(parent, text, handler, opts)
   end
   btn:RenderText(text)
   btn:SetScript("OnClick", handler)
-  btn:SetScript("PreClick", (opts or {}).PreClick)
-  self:SetTooltip(btn, (opts or {}).tooltip)
+  btn:SetScript("PreClick", opts.PreClick)
+  self:SetTooltip(btn, opts.tooltip)
   return btn
 end
 
+---Creates a color picker button
+---@param parent Frame Parent frame
+---@param width number Width in pixels
+---@param height number Height in pixels
+---@param color table RGB color array {r, g, b}
+---@param handler? function Callback when color changes
+---@return Frame box The color picker frame
 function GUI:CreateColorPicker (parent, width, height, color, handler)
   local box = CreateFrame ("Frame", nil, parent)
   box:SetSize(width, height)
@@ -430,7 +563,7 @@ function GUI:CreateColorPicker (parent, width, height, color, handler)
   box.glow = box:CreateTexture (nil, "BACKGROUND")
   box.glow:SetPoint ("TOPLEFT", -2, 2)
   box.glow:SetPoint ("BOTTOMRIGHT", 2, -2)
-  
+
   box.glow:SetColorTexture (addonTable.FONTS.grey:GetRGB())
   box.glow:Hide ()
 
@@ -458,15 +591,24 @@ function GUI:CreateColorPicker (parent, width, height, color, handler)
 end
 
 GUI.helpButtons = {}
+---Creates a help button (question mark icon)
+---@param parent Frame Parent frame
+---@param tooltip string Help tooltip text
+---@param opts? table Options: scale (default 0.6)
+---@return Button btn The help button
 function GUI:CreateHelpButton(parent, tooltip, opts)
+  opts = opts or {}
   local btn = CreateFrame("Button", nil, parent, "MainHelpPlateButton")
   btn:SetFrameLevel(btn:GetParent():GetFrameLevel() + 1)
-  btn:SetScale((opts or {}).scale or 0.6)
+  btn:SetScale(opts.scale or 0.6)
   self:SetTooltip(btn, tooltip)
   tinsert(self.helpButtons, btn)
   return btn
 end
 
+---Shows or hides all help buttons
+---@param shown boolean True to show, false to hide
+---@return nil
 function GUI:SetHelpButtonsShown(shown)
   for _, btn in ipairs(self.helpButtons) do
     btn:SetShown(shown)
@@ -475,6 +617,13 @@ end
 
 GUI.sliders = {}
 GUI.unusedSliders = {}
+---Creates a slider with recycling support
+---@param parent Frame Parent frame
+---@param text string Label text
+---@param value number Default value
+---@param max number Maximum value
+---@param onChange function Callback when value changes (value)
+---@return Slider slider The created slider
 function GUI:CreateSlider(parent, text, value, max, onChange)
   local slider
   if #self.unusedSliders > 0 then
@@ -521,6 +670,14 @@ end
 
 -------------------------------------------------------------------------------
 
+---Creates a horizontal line
+---@param x1 number Start X coordinate
+---@param x2 number End X coordinate
+---@param y number Y coordinate
+---@param w number Line width/thickness
+---@param color table RGB color array
+---@param parent? Frame Parent frame (defaults to defaultParent)
+---@return Texture line The line texture
 function GUI:CreateHLine (x1, x2, y, w, color, parent)
   parent = parent or self.defaultParent
   local line = parent:CreateTexture (nil, "ARTWORK")
@@ -546,6 +703,14 @@ function GUI:CreateHLine (x1, x2, y, w, color, parent)
   return line
 end
 
+---Creates a vertical line
+---@param x number X coordinate
+---@param y1 number Start Y coordinate
+---@param y2 number End Y coordinate
+---@param w number Line width/thickness
+---@param color table RGB color array
+---@param parent? Frame Parent frame (defaults to defaultParent)
+---@return Texture line The line texture
 function GUI:CreateVLine (x, y1, y2, w, color, parent)
   parent = parent or self.defaultParent
   local line = parent:CreateTexture (nil, "ARTWORK")
@@ -573,6 +738,14 @@ end
 
 --------------------------------------------------------------------------------
 
+---Creates a table widget with dynamic row/column management
+---@param rows number Initial number of rows
+---@param cols number Number of columns
+---@param firstRow? number First row height (defaults to 0)
+---@param firstColumn? number First column width (defaults to 0)
+---@param gridColor? table RGB color for grid lines
+---@param parent? Frame Parent frame (defaults to defaultParent)
+---@return table table The table object with methods: SetCell, SetCellText, AddRow, DeleteRow, SetRowHeight, SetColumnWidth, etc.
 function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
   parent = parent or self.defaultParent
   firstRow = firstRow or 0
@@ -590,6 +763,7 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
   t.colPos = {}
   t.rowHeight = {}
   t.colWidth = {}
+  t.autoWidthColumns = {}
   t.rowPos[-1] = 0
   t.rowPos[0] = firstRow
   t.colPos[-1] = 0
@@ -628,6 +802,17 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
       end
     end
     self:OnUpdateFix ()
+  end
+  t.SetColumnAutoWidth = function (self, n, enabled)
+    if n < 0 or n > self.cols then
+      return
+    end
+    self.autoWidthColumns[n] = enabled
+  end
+  t.EnableColumnAutoWidth = function (self, ...)
+    for _, v in ipairs({...}) do
+      self:SetColumnAutoWidth(v, true)
+    end
   end
   t.AddRow = function (self, i, n)
     i = i or (self.rows + 1)
@@ -854,6 +1039,42 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
     RunNextFrame(function() self:OnUpdateFix() end)
   end)
 
+  t.AutoSizeColumns = function(self, columnIndex)
+    -- Auto-adjust column width if enabled for this column
+    local columnsToProcess = {}
+    if columnIndex then
+      if self.autoWidthColumns[columnIndex] then
+        columnsToProcess[columnIndex] = true
+      end
+    else
+      columnsToProcess = self.autoWidthColumns
+    end
+
+    local maxWidths = {}
+    for _, row in pairs(self.cells) do
+      for colIndex in pairs(columnsToProcess) do
+        local cell = row[colIndex]
+        if cell then
+          local foundWidth = 0
+          if cell.GetStringWidth then
+            foundWidth = cell:GetStringWidth()
+          elseif cell.GetWidth then
+            foundWidth = cell:GetWidth()
+          end
+          local currentMax = maxWidths[colIndex] or 0
+          if foundWidth > currentMax then
+            maxWidths[colIndex] = ceil(foundWidth) + 10
+          end
+        end
+      end
+    end
+
+    for colIndex, width in pairs(maxWidths) do
+      self.colWidth[colIndex] = width
+    end
+    self:OnUpdateFix()
+  end
+
   t.SetCell = function (self, i, j, value, align, offsX, offsY)
     align = align or "CENTER"
     self.cells[i][j] = value
@@ -861,6 +1082,7 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
     self.cells[i][j].offsX = offsX
     self.cells[i][j].offsY = offsY
     self:AlignCell (i, j)
+    self:AutoSizeColumns(j)
   end
   t.textTagPool = {}
   t.SetCellText = function (self, i, j, text, align, color, font)
@@ -896,17 +1118,25 @@ function GUI:CreateTable (rows, cols, firstRow, firstColumn, gridColor, parent)
     self.cells[i][j]:SetText (text)
     self.cells[i][j].align = align
     self:AlignCell (i, j)
+    self:AutoSizeColumns(j)
   end
 
   return t
 end
 
+---Creates a static popup dialog
+---@param name string Unique popup name
+---@param text string Popup message text
+---@param onAccept function Callback when accepted (receives edit box text if hasEditBox)
+---@param opts? table Options: button1 (text), hasEditBox (boolean)
+---@return nil
 function GUI.CreateStaticPopup(name, text, onAccept, opts)
+  opts = opts or {}
   StaticPopupDialogs[name] = {
     text = text,
-    button1 = (opts or {}).button1 or ACCEPT,
+    button1 = opts.button1 or ACCEPT,
     button2 = CANCEL,
-    hasEditBox = (opts or {}).hasEditBox,
+    hasEditBox = opts.hasEditBox,
     timeout = 0,
     whileDead = 1,
     OnAccept = function(self)

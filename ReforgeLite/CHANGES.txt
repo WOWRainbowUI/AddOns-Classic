@@ -1,91 +1,198 @@
-tag f578315ce05e3c6fb4e47536afdef99b96608698 v2.2.2
+tag 3fc2190cccfc28d840a8a44262d919251961263e v2.2.3
 Author:	skyler-code <skylerh15@github.com>
-Date:	Thu Oct 2 11:29:25 2025 -0500
+Date:	Fri Oct 3 04:57:06 2025 -0500
 
-commit f71c5b3b77050aa89d0bcaf1335384782499965f
+commit 2850fbba47e34d12aba22b00dd53fcb36676d364
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Oct 2 11:28:29 2025 -0500
+Date:   Fri Oct 3 04:55:07 2025 -0500
 
-    Add showHelp setting to toggle all help buttons
+    Fix item table column visibility when no gear equipped
     
-    Added scale parameter to CreateHelpButton and batch visibility control via SetHelpButtonsShown. New setting in UI allows users to show/hide all help buttons at once.
+    - Show all stat columns by default when user has no gear equipped
+    - Derive window minimum width from item table actual width instead of manual calculation
+    - Use next() to check if columnHasData has any entries (cleaner than manual loop)
+    - Account for both item table and content area in minimum width calculation
 
-commit 42d45dca50389ccc265ab5f8b7e20cb2b4154481
+commit 18c24b84e03f8688813be062d8c71f941390ba19
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Oct 2 10:50:34 2025 -0500
+Date:   Fri Oct 3 04:26:48 2025 -0500
 
-    not true
+    Refactor cap value tooltip formatter and improve help buttons
+    
+    - Extract formatWithBonus helper function to eliminate code duplication
+    - Improve help button placement and scaling for Stat Weights and Result categories
+    - Enhance help text descriptions for stat weight imports and result color coding
+    - Fix minor whitespace formatting
 
-commit 8be5781c57c62fbefb25cac4977bdac3f964042d
+commit 7fb13fb0e0b8d75577aca13dd3cca0b23956c3f7
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Oct 2 10:48:19 2025 -0500
+Date:   Fri Oct 3 04:18:24 2025 -0500
 
-    Centralize help button creation and refactor widget options
-    
-    GUI.lua:
-    - Add CreateHelpButton() to centralize MainHelpPlateButton creation
-    - Add opts parameter to CreateCheckButton, CreateImageButton, CreatePanelButton
-    - Move tooltip setup into widget creation functions via opts.tooltip
-    
-    ReforgeLite.lua:
-    - Replace all manual help button creation with GUI:CreateHelpButton()
-    - Refactor image button calls to use opts table pattern
-    - Consolidate tooltip setup with button creation
-    - Add help button to method window positioned left of title
+    moved help buttons and updated language
 
-commit 35ff63df5df90f4a668ab14f6c844d2bf482e93f
+commit 9c13991eb8b7b3cf3a6a28d7c592087c6dac7ff7
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Oct 2 10:12:22 2025 -0500
+Date:   Fri Oct 3 03:55:25 2025 -0500
 
-    Reposition stat weights help button and expand tooltip
-    
-    - Moved help button from beside stat weights to beside Buffs dropdown
-    - Updated tooltip to describe Target Level, Buffs, and Stat Weights
-    - Removed dodge container reference (no longer needed)
+    no longer needed
 
-commit 0293830b1fa6d33d6ff5943212fc9ec9b86b21df
+commit 5ae49f42a9340960a4cdc521bd57103144071a1b
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Oct 2 10:08:54 2025 -0500
+Date:   Fri Oct 3 03:53:52 2025 -0500
 
-    Simplify item table cell creation using SetCellText
+    Refactor class presets using builder pattern
     
-    - Use SetCellText for stat headers instead of manual CreateFontString
-    - Use SetCellText for item stat cells initialization
-    - Use SetCellText for stat totals row
-    - Access font strings via table.cells[][] after SetCellText creates them
-    - Reduces code duplication and uses consistent cell creation pattern
+    Introduce builder functions (MeleePreset, CasterPreset, TankPreset, HealerPreset) to simplify preset definitions and improve maintainability.
 
-commit 5c6ca46a020ddfa3d47509973c604b64c0a63814
+commit 0683fecbd63bd831eef502c89f4447d34928a5dd
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Oct 2 09:51:13 2025 -0500
+Date:   Fri Oct 3 03:30:13 2025 -0500
 
-    Fix SetCellText to use color objects directly
+    Optimize table auto-sizing and refactor stat weight display
     
-    - Changed default color parameter from table to color object
-    - Updated SetTextColor to call GetRGB() on color object
-    - Makes color handling consistent across the codebase
+    - Optimize AutoSizeColumns to only recalculate specific columns when individual cells change
+    - Add EnableColumnAutoWidth helper to enable auto-width for multiple columns at once
+    - Fix SetColumnAutoWidth bounds check (should be > not >=)
+    - Remove maxStatLabelWidth DB storage and calculate dynamically with auto-width
+    - Refactor methodStats to use SetCellText instead of direct cell references
+    - Clean up unused stat weight table row management
 
-commit 6864e8db2a5563203f18f698b9a7c5dca3968037
+commit b5276fccb192ac154a2162697797221c5cf728c3
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Oct 2 09:50:33 2025 -0500
+Date:   Fri Oct 3 01:23:05 2025 -0500
 
-    Revert stat weights to 4-column layout and reposition help buttons
+    Add auto-width column support to tables
     
-    - Reverted stat weights from 2-column compact to 4-column table layout
-    - Removed RIGHT anchor so stat weights table sizes to content
-    - Moved stat caps help button to anchor beside first Add cap button
-    - Kept dodge container anchor for stat weights help button
-    - Removed mastery container reference (no longer needed)
-    - Fixed color format in SetCellText calls to use color objects directly
-    - Simplified method stats table creation with SetCellText
+    Add SetColumnAutoWidth method to enable automatic column width
+    adjustment based on text content. When enabled for a column, the
+    column will expand to fit text wider than the current width.
+    
+    Applied to Result table stat names column to prevent text truncation.
 
-commit 90f81a2cda0f20056dff2d0149d938cee6a74608
+commit c9df428f93a0f65ff94c24aa9d45d08670c55671
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Oct 2 07:35:38 2025 -0500
+Date:   Fri Oct 3 01:07:43 2025 -0500
 
-    Improve tooltips and rename experimental mode
+    Auto-desaturate image buttons when disabled
     
-    - Renamed 'Experimental Fast Mode' to 'Branch & Bound Mode'
-    - Updated Branch & Bound tooltip for clarity
-    - Enhanced 'Weight after cap' tooltip with usage examples
+    When CreateImageButton is called without a custom disabledTexture,
+    automatically create a desaturated version of the normal texture for
+    the disabled state. This provides visual feedback when buttons are
+    disabled during computation without requiring custom disabled textures.
+
+commit ef920b113789b238c8e71ed5be613af16c219bd4
+Author: skyler-code <skylerh15@github.com>
+Date:   Fri Oct 3 00:35:58 2025 -0500
+
+    Rename maxLabelWidth to maxStatLabelWidth and add default
+    
+    - Rename maxLabelWidth to maxStatLabelWidth for clarity
+    - Add default enUS value of 70 to database
+    - Use unused variable convention (_) in stat loop
+    - Use global max() instead of math.max()
+
+commit 729ded3821450871f79599905eb84c8212e3cafa
+Author: skyler-code <skylerh15@github.com>
+Date:   Fri Oct 3 00:27:18 2025 -0500
+
+    Add CreateFilterDropdown function with proper recycling
+    
+    - Create GUI:CreateFilterDropdown for WowStyle1FilterDropdownTemplate
+    - Accept text and resizeToTextPadding as parameters
+    - Save and restore original resizeToTextPadding during recycling
+    - Add recycling support for filter dropdowns
+    - Include filterDropdowns in Lock/Unlock functions
+    - Update ReforgeLite to use cleaner CreateFilterDropdown API
+    - Standardize opts parameter handling (opts = opts or {})
+
+commit 15cf85dd22a5edbe378ff6ecc581aafec5245f89
+Author: skyler-code <skylerh15@github.com>
+Date:   Fri Oct 3 00:14:55 2025 -0500
+
+    CallbackRegistry documentation
+
+commit f7d5988c2b21d2c0662674da4e2f89057a2f2a55
+Author: skyler-code <skylerh15@github.com>
+Date:   Fri Oct 3 00:00:37 2025 -0500
+
+    Add comprehensive type definitions and IDE configuration
+    
+    - Create Types.lua with AddonTable and ReforgeLite class definitions
+    - Add all ReforgeLite methods and fields for IDE autocomplete
+    - Define WoW frame types (Frame, Button, EditBox, etc.)
+    - Create .luarc.json for Lua Language Server configuration
+    - Add all WoW API globals and constants to suppress warnings
+    - Update .pkgmeta to exclude development files
+    - Add type annotations to all files using addonTable
+    - Configure diagnostics to allow WoW addon patterns
+
+commit 75d749365d43d35f9d71b39705e3586762399021
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 23:04:59 2025 -0500
+
+    Add EmmyLua documentation to Scaling.lua
+    
+    - Document GetRandPropPoints function
+    - Document GetItemStatsUp function with upgrade calculations
+    - Add comprehensive type annotations
+
+commit cc2ad61bfa7083977eb074b40db2295b611b4e2c
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 23:00:17 2025 -0500
+
+    Add EmmyLua documentation to Presets.lua
+    
+    - Document buff checking functions (spell/melee haste, mastery)
+    - Document stat calculation functions (hit, expertise, haste bonuses)
+    - Document preset initialization functions
+    - Add comprehensive type annotations throughout
+
+commit 04e97f8fc953eba75326e4771f2db19de046531f
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 22:57:55 2025 -0500
+
+    Add EmmyLua documentation to core files
+    
+    - Add comprehensive type annotations to ReforgeLite.lua
+    - Add comprehensive type annotations to ReforgeEngine.lua
+    - Add comprehensive type annotations to GUI.lua
+    - Document all public functions with @param and @return tags
+    - Clean up duplicate dropdown enable/disable methods in GUI
+
+commit 9560f432ce82f6307e1abc4cc0ee36230401f1a8
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 22:41:40 2025 -0500
+
+    Optimize stat weights layout and make window size per-character
+    
+    - Move windowWidth/Height from global to char db for per-character sizing
+    - Add dynamic stat label width calculation cached per locale
+    - Reduce stat weight edit boxes from 60px to 50px
+    - Adjust column widths: maxLabelWidth, 55px, maxLabelWidth, 50px
+    - Lower minimum window width from 780px to 680px
+    - Update dynamic resize bounds formula: 420 + (visibleColumns * 60)
+    - Auto-resize window when minimum width increases
+
+commit 1e200ca0beaba69ae0e1ec7ce2833b04dcfce6cb
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 22:23:40 2025 -0500
+
+    nil check
+
+commit f725a1ccb28857ac10dbee2148348f9ec9eaeda8
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 22:06:31 2025 -0500
+
+    remove export button
+
+commit bdc45d654fb2a67cc6b768172e16c08e01d0a57e
+Author: skyler-code <skylerh15@github.com>
+Date:   Thu Oct 2 22:02:32 2025 -0500
+
+    Refactor ParsePawnString to use gmatch instead of gsub
+    
+    - Replace gsub with gmatch iterator to avoid linter warning about discarded return values
+    - Use string.match instead of strfind for cleaner pattern matching
+    - Remove unnecessary callback function and unused variables
+    - Improves code readability and eliminates linter errors
 

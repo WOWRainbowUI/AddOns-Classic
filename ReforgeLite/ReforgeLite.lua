@@ -1,6 +1,8 @@
+---@type string, AddonTable
 local addonName, addonTable = ...
 local addonTitle = C_AddOns.GetAddOnMetadata(addonName, "title")
 
+---@type ReforgeLite
 local ReforgeLite = CreateFrame("Frame", addonName, UIParent, "BackdropTemplate")
 addonTable.ReforgeLite = ReforgeLite
 
@@ -45,8 +47,6 @@ addonTable.MAX_SPEED = 20
 
 local DefaultDB = {
   global = {
-    windowWidth = 800,
-    windowHeight = 564,
     windowLocation = false,
     methodWindowLocation = false,
     openOnReforge = true,
@@ -60,6 +60,8 @@ local DefaultDB = {
     showHelp = true,
   },
   char = {
+    windowWidth = 720,
+    windowHeight = 564,
     targetLevel = 3,
     ilvlCap = 0,
     meleeHaste = true,
@@ -237,6 +239,7 @@ local ITEM_STATS = {
 }
 local ITEM_STAT_COUNT = #ITEM_STATS
 addonTable.itemStats, addonTable.itemStatCount = ITEM_STATS, ITEM_STAT_COUNT
+ReforgeLite.itemStats = ITEM_STATS
 
 local REFORGE_TABLE_BASE = 112
 local reforgeTable = {
@@ -253,11 +256,17 @@ ReforgeLite.reforgeTable = reforgeTable
 
 addonTable.REFORGE_COEFF = 0.4
 
+---Saves the current window dimensions to character database
+---@return nil
 function ReforgeLite:UpdateWindowSize ()
-  self.db.windowWidth = self:GetWidth ()
-  self.db.windowHeight = self:GetHeight ()
+  self.pdb.windowWidth = self:GetWidth ()
+  self.pdb.windowHeight = self:GetHeight ()
 end
 
+---Calculates the score for a stat value with cap points applied
+---@param cap table The stat cap configuration with points array
+---@param value number The stat value to score
+---@return number score The calculated score
 function ReforgeLite:GetCapScore (cap, value)
   local score = 0
   for i = #cap.points, 1, -1 do
@@ -270,6 +279,10 @@ function ReforgeLite:GetCapScore (cap, value)
   return score
 end
 
+---Gets the score for a stat value, applying caps if configured
+---@param stat number The stat ID
+---@param value number The stat value
+---@return number score The calculated score
 function ReforgeLite:GetStatScore (stat, value)
   if stat == self.pdb.caps[1].stat then
     return self:GetCapScore (self.pdb.caps[1], value)
@@ -368,15 +381,15 @@ function ReforgeLite:ParsePawnString(values)
   local raw = {}
   local average = 0
   local total = 0
-  gsub (values .. ",", "[^,]*,", function (pair)
-    local pos, _, stat, value = strfind (pair, "^%s*([%a%d]+)%s*=%s*(%-?[%d%.]+)%s*,$")
+  for pair in (values .. ","):gmatch("[^,]*,") do
+    local stat, value = pair:match("^%s*([%a%d]+)%s*=%s*(%-?[%d%.]+)%s*,$")
     value = tonumber (value)
-    if pos and stat and stat ~= "" and value then
+    if stat and stat ~= "" and value then
       raw[stat] = value
       average = average + value
       total = total + 1
     end
-  end)
+  end
   local factor = 1
   if average / total < 10 then
     factor = 100
@@ -581,14 +594,18 @@ function ReforgeLite:SetNewTopWindow(newTopWindow)
   end
 end
 
+---Creates and initializes the main addon UI frame
+---Sets up the backdrop, title bar, close button, scrolling content area,
+---item table, option list, compute button, and settings
+---@return nil
 function ReforgeLite:CreateFrame()
   self:InitPresets()
   self:SetFrameStrata ("DIALOG")
   self:ClearAllPoints ()
   self:SetToplevel(true)
   self:SetClampedToScreen(self.db.clampedToScreen)
-  self:SetSize(self.db.windowWidth, self.db.windowHeight)
-  self:SetResizeBounds(780, 500, 1000, 800)
+  self:SetSize(self.pdb.windowWidth, self.pdb.windowHeight)
+  self:SetResizeBounds(680, 500, 1000, 800)
   if self.db.windowLocation then
     self:SetPoint (SafeUnpack(self.db.windowLocation))
   else
@@ -742,6 +759,10 @@ function ReforgeLite:CreateFrame()
   end
 end
 
+---Creates the item table UI showing equipped gear and stats
+---Initializes the table with headers, rows for each equipment slot,
+---totals row, and sets up item lock/unlock functionality
+---@return nil
 function ReforgeLite:CreateItemTable ()
   self.playerSpecTexture = self:CreateTexture (nil, "ARTWORK")
   self.playerSpecTexture:SetPoint ("TOPLEFT", 10, -28)
@@ -763,6 +784,7 @@ function ReforgeLite:CreateItemTable ()
   self.itemTable:SetPoint ("TOPLEFT", self.playerSpecTexture, "BOTTOMLEFT", 0, -6)
   self.itemTable:SetPoint ("BOTTOM", 0, 10)
   self.itemTable:SetWidth (400)
+  self.itemTable:EnableColumnAutoWidth(unpack(GetKeysArray(ITEM_STATS)))
 
   self.itemLevel = self:CreateFontString (nil, "OVERLAY", "GameFontNormal")
   self.itemLevel:SetPoint ("BOTTOMRIGHT", self.itemTable, "TOPRIGHT", 0, 8)
@@ -832,6 +854,10 @@ function ReforgeLite:CreateItemTable ()
   end
 end
 
+---Adds a cap point to a stat cap configuration
+---@param i number The cap index (1 or 2)
+---@param loading? boolean Whether this is being called during initialization
+---@return nil
 function ReforgeLite:AddCapPoint (i, loading)
   local row = (loading or #self.pdb.caps[i].points + 1) + (i == 1 and 1 or #self.pdb.caps[1].points + 2)
   local point = (loading or #self.pdb.caps[i].points + 1)
@@ -882,39 +908,34 @@ function ReforgeLite:AddCapPoint (i, loading)
   GUI:SetTooltip (value, function()
     local cap = self.pdb.caps[i]
     if cap.stat == statIds.SPIRIT then return end
+
     local pointValue = (cap.points[point].value or 0)
     local rating = pointValue / self:RatingPerPoint(cap.stat)
+
+    local function formatWithBonus(val, bonus)
+      val = RoundToSignificantDigits(val, 1)
+      if bonus > 0 then
+        return ("%.2f%% + %s%% = %.2f%%"):format(val, bonus, val + bonus)
+      else
+        return ("%.2f%%"):format(val)
+      end
+    end
+
+    local ratingText
     if cap.stat == statIds.HIT then
-      local meleeHitBonus = self:GetMeleeHitBonus()
-      rating = RoundToSignificantDigits(rating, 1)
-      if meleeHitBonus > 0 then
-        rating = ("%.2f%% + %s%% = %.2f"):format(rating, meleeHitBonus, rating + meleeHitBonus)
-      else
-        rating = ("%.2f"):format(rating)
-      end
-      local spellHitRating = RoundToSignificantDigits(pointValue / self:RatingPerPoint(statIds.SPELLHIT), 1)
-      local spellHitBonus = self:GetSpellHitBonus()
-      if spellHitBonus > 0 then
-        spellHitRating = ("%.2f%% + %s%% = %.2f"):format(spellHitRating,spellHitBonus,spellHitRating+spellHitBonus)
-      else
-        spellHitRating = ("%.2f"):format(spellHitRating)
-      end
-      rating = ("%s: %s%%\n%s: %s%%"):format(MELEE, rating, STAT_CATEGORY_SPELL, spellHitRating)
+      local meleeHit = formatWithBonus(rating, self:GetMeleeHitBonus())
+      local spellHit = formatWithBonus(pointValue / self:RatingPerPoint(statIds.SPELLHIT), self:GetSpellHitBonus())
+      ratingText = ("%s: %s\n%s: %s"):format(MELEE, meleeHit, STAT_CATEGORY_SPELL, spellHit)
     elseif cap.stat == statIds.EXP then
-      rating = RoundToSignificantDigits(rating, 1)
-      local expBonus = self:GetExpertiseBonus()
-      if expBonus > 0 then
-        rating = ("%.2f%% + %s%% = %.2f%%"):format(rating, expBonus, rating + expBonus)
-      else
-        rating = ("%.2f%%"):format(rating)
-      end
+      ratingText = formatWithBonus(rating, self:GetExpertiseBonus())
     elseif cap.stat == statIds.HASTE then
       local meleeHaste, rangedHaste, spellHaste = self:CalcHasteWithBonuses(rating)
-      rating = ("%s: %.2f%%\n%s: %.2f%%\n%s: %.2f%%"):format(MELEE, meleeHaste, RANGED, rangedHaste, STAT_CATEGORY_SPELL, spellHaste)
+      ratingText = ("%s: %.2f%%\n%s: %.2f%%\n%s: %.2f%%"):format(MELEE, meleeHaste, RANGED, rangedHaste, STAT_CATEGORY_SPELL, spellHaste)
     else
-      rating = ("%.2f"):format(rating)
+      ratingText = ("%.2f"):format(rating)
     end
-    return ("%s\n%s"):format(L["Cap value"], rating)
+
+    return ("%s\n%s"):format(L["Cap value"], ratingText)
   end)
   GUI:SetTooltip (after, L["Weight after cap - The stat weight value to use once the cap is reached.\n\nThis allows you to control whether the optimizer continues valuing this stat after hitting the cap.\n\nSet to 0 to stop reforging into this stat after the cap.\nSet to a positive value to continue prioritizing it (useful for soft caps)."])
 
@@ -931,6 +952,11 @@ function ReforgeLite:AddCapPoint (i, loading)
   self.statCaps[i].add:Enable()
   self.statCaps:OnUpdateFix()
 end
+---Removes a cap point from a stat cap configuration
+---@param i number The cap index (1 or 2)
+---@param point number The point index to remove
+---@param loading? boolean Whether this is being called during initialization
+---@return nil
 function ReforgeLite:RemoveCapPoint (i, point, loading)
   local row = #self.pdb.caps[1].points + (i == 1 and 1 or #self.pdb.caps[2].points + 2)
   tremove (self.pdb.caps[i].points, point)
@@ -1061,15 +1087,8 @@ end
 function ReforgeLite:UpdateStatWeightList ()
   local rows = ITEM_STAT_COUNT
   local extraRows = 0
-  self.statWeights:ClearCells ()
   self.statWeights.inputs = {}
   rows = ceil(rows / 2) + extraRows
-  while self.statWeights.rows > rows do
-    self.statWeights:DeleteRow (1)
-  end
-  if self.statWeights.rows < rows then
-    self.statWeights:AddRow (1, rows - self.statWeights.rows)
-  end
   for i, v in ipairs (ITEM_STATS) do
     local col = floor ((i - 1) / (self.statWeights.rows - extraRows))
     local row = i - col * (self.statWeights.rows - extraRows) + extraRows
@@ -1078,7 +1097,7 @@ function ReforgeLite:UpdateStatWeightList ()
     self.statWeights:SetCellText (row, col, v.long, "LEFT", addonTable.FONTS.darkyellow, "GameFontNormal")
     self.statWeights.inputs[i] = GUI:CreateEditBox(
       self.statWeights,
-      60,
+      50,
       ITEM_SIZE,
       self.pdb.weights[i],
         function (val)
@@ -1107,9 +1126,10 @@ function ReforgeLite:CreateOptionList ()
   self.statWeightsCategory = self:CreateCategory (L["Stat Weights"])
   self:SetAnchor (self.statWeightsCategory, "TOPLEFT", self.content, "TOPLEFT", 2, -2)
 
-  self.presetsButton = CreateFrame("DropdownButton", nil, self.content, "WowStyle1FilterDropdownTemplate")
-  self.presetsButton:SetText(L["Presets"])
-  self.presetsButton.resizeToTextPadding = 35
+  self.statWeightsHelpButton = GUI:CreateHelpButton(self.content, L["Presets: Load pre-configured stat weights and caps for your spec. Click to select from class-specific presets, custom saved presets, or Pawn imports.\n\nImport: Use stat weights from WoWSims, Pawn, or QuestionablyEpic. WoWSims and QE can also import pre-calculated reforge plans.\n\nTarget Level: Select your raid difficulty to calculate stat caps at the appropriate level (PvP, Heroic Dungeon, or Raid).\n\nBuffs: Enable raid buffs you'll have active (Spell Haste, Melee Haste, Mastery) to account for their stat bonuses in cap calculations.\n\nStat Weights: Assign relative values to each stat. Higher weights mean the optimizer will prioritize that stat more when reforging. For example, if Hit has weight 60 and Crit has weight 20, the optimizer values Hit three times more than Crit.\n\nStat Caps: Set minimum or maximum values for specific stats. Use presets (Hit Cap, Expertise Cap, Haste Breakpoints) or enter custom values. The optimizer will respect these caps when calculating the optimal reforge plan."], {scale = 0.5})
+  self.statWeightsHelpButton:SetPoint("LEFT", self.statWeightsCategory.name, "RIGHT", 4, 0)
+
+  self.presetsButton = GUI:CreateFilterDropdown(self.content, L["Presets"], {resizeToTextPadding = 35})
   self.statWeightsCategory:AddFrame(self.presetsButton)
   self:SetAnchor(self.presetsButton, "TOPLEFT", self.statWeightsCategory, "BOTTOMLEFT", 0, -5)
 
@@ -1120,17 +1140,6 @@ function ReforgeLite:CreateOptionList ()
   self.pawnButton = GUI:CreatePanelButton (self.content, L["Import WoWSims/Pawn/QE"], function(btn) self:ImportData() end)
   self.statWeightsCategory:AddFrame (self.pawnButton)
   self:SetAnchor (self.pawnButton, "LEFT", self.presetsButton, "RIGHT", 8, 0)
-
-  --[===[@debug@
-  self.exportPresetButton = CreateFrame("DropdownButton", nil, self.content, "WowStyle1FilterDropdownTemplate")
-  self.exportPresetButton:SetText(L["Export"])
-  self.exportPresetButton.resizeToTextPadding = 35
-  self.statWeightsCategory:AddFrame(self.exportPresetButton)
-  self.exportPresetButton:SetPoint("LEFT", self.pawnButton, "RIGHT", 5, 0)
-  if self.exportPresetMenuGenerator then
-    self.exportPresetButton:SetupMenu(self.exportPresetMenuGenerator)
-  end
-  --@end-debug@]===]
 
   local levelList = function()
     return {
@@ -1152,9 +1161,7 @@ function ReforgeLite:CreateOptionList ()
   self:SetAnchor(self.targetLevel.text, "TOPLEFT", self.presetsButton, "BOTTOMLEFT", 0, -12)
   self.targetLevel:SetPoint("LEFT", self.targetLevel.text, "RIGHT", 5, 0)
 
-  self.buffsContextMenu = CreateFrame("DropdownButton", nil, self.content, "WowStyle1FilterDropdownTemplate")
-  self.buffsContextMenu:SetText(L["Buffs"])
-  self.buffsContextMenu.resizeToTextPadding = 25
+  self.buffsContextMenu = GUI:CreateFilterDropdown(self.content, L["Buffs"], {resizeToTextPadding = 25})
   self.statWeightsCategory:AddFrame(self.buffsContextMenu)
   self:SetAnchor(self.buffsContextMenu, "LEFT", self.targetLevel, "RIGHT", 10, 0)
 
@@ -1182,6 +1189,9 @@ function ReforgeLite:CreateOptionList ()
   self:SetAnchor (self.statWeights, "TOPLEFT", self.targetLevel.text, "BOTTOMLEFT", 0, -8)
   self.statWeightsCategory:AddFrame (self.statWeights)
   self.statWeights:SetRowHeight (ITEM_SIZE + 2)
+  self.statWeights:SetColumnWidth(2, 61)
+  self.statWeights:SetColumnWidth(4, 61)
+  self.statWeights:EnableColumnAutoWidth(1, 3)
 
   self.statCaps = GUI:CreateTable (2, 4, nil, ITEM_SIZE + 2)
   self.statWeightsCategory:AddFrame (self.statCaps)
@@ -1198,7 +1208,7 @@ function ReforgeLite:CreateOptionList ()
   end
   self.statCaps.ToggleStatDropdownToCorrectState = function(caps)
     for i = 2, #caps do
-      caps[i].stat:SetDropDownEnabled(self.pdb.caps[i-1].stat ~= 0)
+      caps[i].stat:SetEnabled(self.pdb.caps[i-1].stat ~= 0)
     end
     if self.fastModeButton then
       self.fastModeButton:SetShown(self.pdb.caps[#self.pdb.caps].stat ~= 0)  
@@ -1300,7 +1310,7 @@ function ReforgeLite:CreateOptionList ()
         btn:RenderText(KEY_PAUSE)
         btn:Enable()
       end,
-      OnCalculateFinish = function(btn) 
+      OnCalculateFinish = function(btn)
         btn:RenderText(KEY_PAUSE)
         btn:Disable()
       end
@@ -1320,10 +1330,6 @@ function ReforgeLite:CreateOptionList ()
 
 
   self:UpdateStatWeightList ()
-
-  self.statWeightsHelpButton = GUI:CreateHelpButton(self.content, L["Target Level: Select your raid difficulty to calculate stats at the appropriate level.\n\nBuffs: Enable active raid buffs to account for their stat bonuses in calculations.\n\nStat Weights: Assign relative values to each stat. Higher weights mean the optimizer will prioritize that stat more when reforging.\n\nExample: If Hit has weight 60 and Crit has weight 20, the optimizer values Hit three times more than Crit."])
-  self.statWeightsCategory:AddFrame(self.statWeightsHelpButton)
-  self.statWeightsHelpButton:SetPoint("LEFT", self.buffsContextMenu, "RIGHT", 8, 0)
 
   self.settingsCategory = self:CreateCategory (SETTINGS)
   self:SetAnchor (self.settingsCategory, "TOPLEFT", self.computeButton, "BOTTOMLEFT", 0, -10)
@@ -1365,9 +1371,11 @@ function ReforgeLite:GetInactiveWindows()
   end
   local activeWindow = self:GetActiveWindow()
   local bottomWindows = {}
-  for _, frame in ipairs(RFL_FRAMES) do
-    if frame:IsShown() and frame:GetRaisedFrameLevel() < activeWindow:GetRaisedFrameLevel() then
-      tinsert(bottomWindows, frame)
+  if activeWindow then
+    for _, frame in ipairs(RFL_FRAMES) do
+      if frame:IsShown() and frame:GetRaisedFrameLevel() < activeWindow:GetRaisedFrameLevel() then
+        tinsert(bottomWindows, frame)
+      end
     end
   end
   return bottomWindows
@@ -1461,7 +1469,7 @@ function ReforgeLite:FillSettings()
     GUI:CreatePanelButton(
         self.settings,
         L["Run Algorithm Comparison"],
-        function(btn) self:StartAlgorithmComparison() end, 
+        function(btn) self:StartAlgorithmComparison() end,
         {
           OnCalculateFinish = function(btn)
             btn:RenderText(L["Run Algorithm Comparison"])
@@ -1509,23 +1517,23 @@ function ReforgeLite:UpdateMethodCategory()
     self.methodCategory = self:CreateCategory (L["Result"])
     self:SetAnchor (self.methodCategory, "TOPLEFT", self.computeButton, "BOTTOMLEFT", 0, -10)
 
+    self.methodHelpButton = GUI:CreateHelpButton(self.content, L["The Result table shows the stat changes from the optimized reforge.\n\nThe left column shows your total stats after reforging.\n\nThe right column shows how much each stat changed:\n- Green: Stat increased and improved your weighted score\n- Red: Stat decreased and lowered your weighted score\n- Grey: No meaningful change (either unchanged, or changed but weighted score stayed the same)\n\nClick 'Show' to see a detailed breakdown of which items to reforge.\n\nClick 'Reset' to clear the current reforge plan."], {scale = 0.5})
+    self.methodHelpButton:SetPoint("LEFT", self.methodCategory.name, "RIGHT", 4, 0)
+
     self.methodStats = GUI:CreateTable (ITEM_STAT_COUNT - 1, 2, ITEM_SIZE, 60, {0.5, 0.5, 0.5, 1})
     self.methodCategory:AddFrame (self.methodStats)
     self:SetAnchor (self.methodStats, "TOPLEFT", self.methodCategory, "BOTTOMLEFT", 0, -5)
     self.methodStats:SetRowHeight (ITEM_SIZE + 2)
-    self.methodStats:SetColumnWidth (60)
+    self.methodStats:SetColumnWidth(60)
+    self.methodStats:EnableColumnAutoWidth(0)
 
     for i, v in ipairs (ITEM_STATS) do
       local cell = i - 1
-      self.methodStats:SetCellText(cell, 0, v.tip, "LEFT")
+      self.methodStats:SetCellText(cell, 0, v.long, "LEFT")
       self.methodStats:SetCellText(cell, 1, "0")
       self.methodStats:SetCellText(cell, 2, "+0", nil, addonTable.FONTS.grey)
-      self.methodStats[i] = { value = self.methodStats.cells[cell][1], delta = self.methodStats.cells[cell][2] }
+      self.methodStats[i] = { delta = self.methodStats.cells[cell][2] }
     end
-
-    self.methodHelpButton = GUI:CreateHelpButton(self.content, L["The Result table shows the stat changes from the optimized reforge.\n\nThe left column shows your total stats after reforging.\n\nThe right column shows how much each stat increased or decreased compared to your current gear.\n\nClick 'Show' to see a detailed breakdown of which items to reforge.\n\nClick 'Reset' to clear the current reforge plan."])
-    self.methodCategory:AddFrame(self.methodHelpButton)
-    self.methodHelpButton:SetPoint("TOPLEFT", self.methodStats, "TOPRIGHT", 8, 0)
 
     self.methodShow = GUI:CreatePanelButton (self.content, SHOW, function(btn) self:ShowMethodWindow() end)
     self.methodShow:SetSize(85, 22)
@@ -1552,11 +1560,12 @@ function ReforgeLite:RefreshMethodStats()
   if self.pdb.method then
     if self.methodStats then
       for i, v in ipairs (ITEM_STATS) do
+        local cell = i - 1
         local mvalue = v.mgetter (self.pdb.method)
         if v.percent then
-          self.methodStats[i].value:SetFormattedText("%.2f%%", mvalue)
+          self.methodStats:SetCellText(cell, 1, ("%.2f%%"):format(mvalue))
         else
-          self.methodStats[i].value:SetText (mvalue)
+          self.methodStats:SetCellText(cell, 1, mvalue)
         end
         local override
         mvalue = v.mgetter (self.pdb.method, true)
@@ -1627,6 +1636,10 @@ local function GetItemUpgradeLevel(item)
     return (item:GetCurrentItemLevel() - originalIlvl) / 4
 end
 
+---Updates the item table with current equipped gear
+---Reads all equipped items, calculates stats, detects reforges, and updates UI
+---Also dynamically adjusts visible stat columns and window resize bounds
+---@return nil
 function ReforgeLite:UpdateItems()
   local columnHasData = {}
 
@@ -1687,20 +1700,22 @@ function ReforgeLite:UpdateItems()
     end
   end
 
-  local visibleColumns = 0
+  local hasAnyData = next(columnHasData) ~= nil
+
   for i, v in ipairs (ITEM_STATS) do
-    local hasData = columnHasData[i]
-    self.itemTable:SetColumnWidth(i, hasData and 60 or 0)
+    local hasData = columnHasData[i] or not hasAnyData
+    self.itemTable:SetColumnWidth(i, hasData and 55 or 0)
     self.statHeaders[i]:SetShown(hasData)
     self.statTotals[i]:SetShown(hasData)
     self.statTotals[i]:SetText(v.getter())
-    if hasData then
-      visibleColumns = visibleColumns + 1
-    end
   end
 
-  local minWidth = 480 + (visibleColumns * 60)
-  self:SetResizeBounds(minWidth, 500, 1000, 800)
+  -- Calculate minimum width: itemTable + gap + min content width + scrollbar margin
+  local minWidth = self.itemTable:GetWidth() + 10 + 400 + 22
+  self:SetResizeBounds(minWidth, select(2, self:GetResizeBounds()))
+  if self:GetWidth() < minWidth then
+    self:SetWidth(minWidth)
+  end
 
   self:RefreshCaps()
   self:RefreshMethodStats()
