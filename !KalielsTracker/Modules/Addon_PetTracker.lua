@@ -64,7 +64,7 @@ local function SetHooks()
     function PetTracker.Objectives:QUEST_LOG_UPDATE()  -- N
         if PetTracker.sets.zoneTracker then
             C_Timer.After(0, function()
-                KT.forceExpand = not KT.inInstance and not KT.initCollapsed
+                KT.forceExpand = not KT.inInstance and not KT.initCollapsed and KT:IsTrackerEmpty()
             end)
         end
         self:UnregisterEvent("QUEST_LOG_UPDATE")
@@ -139,7 +139,7 @@ local function SetHooks_PetTracker_Journal()
         infoFrame:SetScript("OnEnter", function(self)
             GameTooltip:SetOwner(self, "ANCHOR_TOPLEFT")
             GameTooltip:AddLine(M.Texts.TrackPets, 1, 1, 1)
-            GameTooltip:AddLine("Support can be enabled inside addon "..KT.title, 1, 0, 0, true)
+            GameTooltip:AddLine("Support can be enabled inside addon "..KT.TITLE, 1, 0, 0, true)
             GameTooltip:Show()
         end)
         infoFrame:SetScript("OnLeave", function(self)

@@ -148,7 +148,7 @@ local options = {
 					order = 0,
 					args = {
 						version = {
-							name = "  |cffffd100版本:|r  "..KT.version,
+							name = " |cffffd100版本:|r  "..KT.VERSION,
 							type = "description",
 							width = "normal",
 							fontSize = "medium",
@@ -1420,10 +1420,10 @@ function SetSharedColor(color)
 end
 
 function IsSpecialLocale()
-	return (KT.locale == "deDE" or
-			KT.locale == "esES" or
-			KT.locale == "frFR" or
-			KT.locale == "ruRU")
+	return (KT.LOCALE == "deDE" or
+			KT.LOCALE == "esES" or
+			KT.LOCALE == "frFR" or
+			KT.LOCALE == "ruRU")
 end
 
 local function Init()
@@ -1498,7 +1498,7 @@ local function Setup()
 			order = 0.3,
 		},
 		clearTrackerDataDesc4 = {
-			name = "",
+			name = " ",
 			type = "description",
 			order = 0.4,
 		}

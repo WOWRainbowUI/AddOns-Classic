@@ -8,7 +8,11 @@
 local addonName, KT = ...
 
 -- Constants
+KT.TITLE = C_AddOns.GetAddOnMetadata(addonName, "Title")
+KT.VERSION = C_AddOns.GetAddOnMetadata(addonName, "Version")
 KT.AUTHOR = C_AddOns.GetAddOnMetadata(addonName, "Author")
+KT.GAME_VERSION = GetBuildInfo()
+KT.LOCALE = GetLocale()
 
 KT.MEDIA_PATH = "Interface\\AddOns\\"..addonName.."\\Media\\"
 

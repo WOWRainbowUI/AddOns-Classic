@@ -3,6 +3,7 @@
     <Script file="Constants.lua"/>
     <Script file="Utils.lua"/>
     <Script file="Media.lua"/>
+    <Script file="StaticPopup.lua"/>
     <Script file="KalielsTracker.lua"/>
     <Include file="KalielsTracker.xml"/>
 </Ui>

@@ -19,6 +19,7 @@ local ICON_URL = HELP_PATH.."help_icon-url"
 local ICON_HEART = "|T"..HELP_PATH.."help_patreon:14:14:2:0:256:32:174:190:0:16|t"
 
 local db, dbChar
+local helpTitle = KT.TITLE.." |cffffffff"..KT.VERSION.."|r"
 local helpPath = KT.MEDIA_PATH.."Help\\"
 local helpName = "help"
 local helpNumPages = 10
@@ -82,7 +83,7 @@ local function SetupTutorials()
 	T.RegisterTutorial(helpName, {
 		savedvariable = KT.db.global,
 		key = "helpTutorial",
-		title = KT.title.." |cffffffff"..KT.version.."|r",
+		title = helpTitle,
 		icon = helpPath.."KT_logo",
 		font = "Fonts\\bLEI00D.ttf",
 		width = 582,
@@ -94,7 +95,7 @@ local function SetupTutorials()
 		imageHeight = 256,
 		{	-- 1
 			image = helpPath.."help_kaliels-tracker",
-			text = cTitle..KT.title.." (經典版)|r 取代預設的追蹤清單，並將部分正式服的功能加入經典版中。\n\n"..
+			text = cTitle..KT.TITLE.." (經典版)|r 取代預設的追蹤清單，並將部分正式服的功能加入經典版中。\n\n"..
 					"包含下面這些功能:\n"..
 					"- 追蹤任務\n"..
 					"- 追蹤成就 (經典時期不包含此功能)\n"..
@@ -125,7 +126,7 @@ local function SetupTutorials()
 					"按鈕 |T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:0:2:32:64:16:30:0:14:209:170:0|t 和 "..
 					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:0:2:32:64:16:30:16:30:209:170:0|t 可以在設定選項中停用。\n\n"..
 					"可以設定"..cBold.." [快速鍵]|r 來最小化追蹤清單。\n"..
-					cBold.."Alt+左鍵|r 點擊最小化按鈕會開啟 "..KT.title.."的設定選項。",
+					cBold.."Alt+左鍵|r 點擊最小化按鈕會開啟 "..KT.TITLE.."的設定選項。",
 			paddingBottom = 11,
 			shine = KTF.MinimizeButton,
 			shineTop = 13,
@@ -292,9 +293,16 @@ local function SetupTutorials()
 			heading = "     更新資訊",
 			headingFont = "Fonts\\bLEI00D.ttf",
 			headingSize = 26,
-			text = "如果你喜歡 "..KT.title.."，可以考慮在 Patreon 支持它 "..ICON_HEART.."|r\n"..ebSpace.."\n"..
+			text = "如果你喜歡 "..KT.TITLE.."，可以考慮在 Patreon 支持它 "..ICON_HEART.."|r\n"..ebSpace.."\n"..
+
+					(cTitle.."版本 5.2.0|r\n"..
+					"- 新增 - 支援 WoW 5.5.1.63449\n"..
+					"- 變更 - 插件支援 - Questie 11.5.4\n"..
+					"- 變更 (說明) - Active Patrons\n"..
+					"\n")..
+
 					(cTitle.."版本 5.1.3|r\n"..
-					"- 修復 - 在冷啟動魔獸世界時偶發的錯誤\n"..
+					"- 修復 - 冷啟動魔獸世界時偶爾出現的錯誤\n"..
 					"\n")..
 					(cTitle.."版本 5.1.2|r\n"..
 					"- 修復 - 『追蹤後展開』選項對所有任務無法生效的問題\n"..
@@ -311,31 +319,16 @@ local function SetupTutorials()
 					"- 修復 - PetTracker - 有時候出現 SetWidth 為 nil 的錯誤\n"..
 					"- 效能 - 區域篩選程式碼優化\n"..
 					"\n")..
-					(cTitle.."版本 5.0.1|r\n"..
-					"- 修復 (任務) - 使用自動任務追蹤時依區域篩選的錯誤\n"..
-					"\n")..
-					(cTitle.."版本 5.0.0|r\n"..
-					"- 新增 - 支援 WoW 1.15.7.61582\n"..
-					"- 新增 - 支援 WoW 5.5.0.62258\n"..
-					"- 變更 (說明) - 感謝贊助者\n"..
-					"- 變更 (事件) - 試煉場景未支援（可能會造成錯誤）\n"..
-					"- 變更 (任務) - 狀態持續（完成音效不會重複播放）\n"..
-					"- 變更 (任務) - 改良區域篩選\n"..
-					"- 變更 (任務) - 任務追蹤管理（內部追蹤清單）\n"..
-					"- 變更 - 插件支援 - Questie 11.2.11\n"..
-					"- 變更 (任務) - 右鍵選單改良\n"..
-					"- 變更 - WoW 3.4.4 中的過時函數\n"..
-					"- 修復 - 取得錯誤的任務資料\n"..
-					"- 修復 - 登入後任務追蹤被移除\n"..
-					"\n")..
-					cTitle.."WoW 5.5.0/1.15.7 - 已知但無法解決的問題|r\n"..
+
+					cTitle.."WoW 5.5.1/1.15.7 -  已知但無法解決的問題|r\n"..
 					"- 戰鬥中點擊已追蹤的任務或成就沒有反應。\n"..
 					"- 戰鬥中 Q 和 A 標題按鈕無法使用。\n"..
-					"- 試煉場景未支援。\n\n"..
+					"- 尚未支援試煉場景。\n\n"..
+
 					cTitle.."問題回報|r\n"..
 					"回報問題請使用 "..cBold.."回報單|r，而不是在 CurseForge 留言。\n"..ebSpace.."\n"..
-					cWarning.."在回報錯誤之前，請先停用其他插件，確認不是由與其他插件衝突所導致。|r",
 
+					cWarning.."回報錯誤之前，請先停用其他插件，確認不是由與其他插件衝突所導致。|r",
 			editbox = {
 				{
 					icon = ICON_URL,
@@ -391,7 +384,7 @@ local function SetupTutorials()
 	T.RegisterTutorial("supporters", {
 		savedvariable = KT.db.global,
 		key = "supportersTutorial",
-		title = KT.title.." |cffffffff"..KT.version.."|r",
+		title = helpTitle,
 		icon = helpPath.."KT_logo",
 		font = "Fonts\bLEI00D.ttf",
 		width = 582,
@@ -401,7 +394,7 @@ local function SetupTutorials()
 		paddingBottom = 24,
 		{	-- 1
 			heading = "      成為贊助者",
-			text = "如果你喜歡 "..KT.title.."，請在 Patreon 贊助我。\n\n\n\n"..
+			text = "如果你喜歡 "..KT.TITLE.."，請在 Patreon 贊助我。\n\n\n\n"..
 					"經過了 10 年的插件工作後，我啟用了 Patreon，當作是開發插件所需時間的補償。\n\n"..
 					"                                    非常感謝所有贊助者 "..ICON_HEART.."\n\n"..
 					cTitle.."Active Patrons|r\n"..
@@ -412,6 +405,7 @@ local function SetupTutorials()
 					SetFormatedPatronName("Uncommon", "Charles Howarth")..
 					SetFormatedPatronName("Uncommon", "Illidanclone", "Kazzak")..
 					SetFormatedPatronName("Uncommon", "Mystekal")..
+					SetFormatedPatronName("Uncommon", "Paul Westervelt")..
 					SetFormatedPatronName("Uncommon", "Semy", "Ravencrest")..
 					SetFormatedPatronName("Uncommon", "Xeelee", "Razorfen")..
 					SetFormatedPatronName("Common", "Darren Divecha")..
@@ -445,7 +439,7 @@ function M:OnEnable()
 	_DBG("|cff00ff00啟用|r - "..self:GetName(), true)
 	SetupTutorials()
 	local last = false
-	if KT.version ~= KT.db.global.version then
+	if KT.VERSION ~= KT.db.global.version then
 		local data = T.GetTutorial(helpName)
 		local index = data.savedvariable[data.key]
 		if index then

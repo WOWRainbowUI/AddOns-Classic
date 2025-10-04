@@ -5,9 +5,7 @@
 --- This file is part of addon Kaliel's Tracker.
 
 ---@type KT
-local addonName, KT = ...
-
-KT.title = C_AddOns.GetAddOnMetadata(addonName, "Title")
+local _, KT = ...
 
 -- Lua API
 local floor = math.floor
@@ -59,7 +57,7 @@ end
 
 -- Debug
 function KT.Debug(text)
-    return "\n|cffff6060"..KT.title.." "..KT.db.global.version.." - DEBUG:|r\n|cff00ff00Please copy this error and report it on CurseForge addon page!|r\n"..text
+    return "\n|cffff6060"..KT.TITLE.." "..KT.db.global.version.." - DEBUG:|r\n|cff00ff00Please copy this error and report it on CurseForge addon page!|r\n"..text
 end
 
 -- Table
@@ -349,116 +347,7 @@ function KT.ConvertPixelsToUI(pixels, frameScale)
     return (pixels * 768.0)/(physicalScreenHeight * frameScale);
 end
 
--- ---------------------------------------------------------------------------------------------------------------------
-
-local function StatiPopup_OnShow(self)
-    if self.text.text_arg1 then
-        self.text:SetText(self.text:GetText().." - "..self.text.text_arg1)
-    end
-    if self.text.text_arg2 then
-        if self.data then
-            self.SubText:SetFormattedText(self.text.text_arg2, unpack(self.data))
-        else
-            self.SubText:SetText(self.text.text_arg2)
-        end
-        self.SubText:SetTextColor(1, 1, 1)
-    else
-        self.SubText:Hide()
-    end
-end
-
-StaticPopupDialogs[addonName.."_Info"] = {
-    text = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:0:0|t"..NORMAL_FONT_COLOR_CODE..KT.title.."|r",
-    subText = "...",
-    button2 = CLOSE,
-    OnShow = StatiPopup_OnShow,
-    timeout = 0,
-    whileDead = 1
-}
-
-StaticPopupDialogs[addonName.."_ReloadUI"] = {
-    text = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:0:0|t"..NORMAL_FONT_COLOR_CODE..KT.title.."|r",
-    subText = "...",
-    button1 = RELOADUI,
-    OnShow = StatiPopup_OnShow,
-    OnAccept = function()
-        ReloadUI()
-    end,
-    timeout = 0,
-    whileDead = 1
-}
-
-StaticPopupDialogs[addonName.."_LockUI"] = {
-    text = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:0:0|t"..NORMAL_FONT_COLOR_CODE..KT.title.."|r",
-    subText = "...",
-    button1 = LOCK,
-    OnShow = StatiPopup_OnShow,
-    OnAccept = function()
-        local overlay = KT.frame.ActiveFrame.overlay
-        overlay:Hide()
-    end,
-    timeout = 0,
-    whileDead = 1
-}
-
-StaticPopupDialogs[addonName.."_WowheadURL"] = {
-    text = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:0:-1|t"..NORMAL_FONT_COLOR_CODE..KT.title.."|r - Wowhead URL",
-    button2 = CLOSE,
-    hasEditBox = 1,
-    editBoxWidth = 350,
-    EditBoxOnTextChanged = function(self)
-        self:SetText(self.text)
-        self:HighlightText()
-    end,
-    EditBoxOnEnterPressed = function(self)
-        self:GetParent():Hide()
-    end,
-    EditBoxOnEscapePressed = function(self)
-        self:GetParent():Hide()
-    end,
-    OnShow = function(self)
-        local name = "..."
-        if self.text.text_arg1 == "quest" then
-            name = KT.QuestUtils_GetQuestName(self.text.text_arg2)
-        elseif self.text.text_arg1 == "achievement" then
-            name = select(2, GetAchievementInfo(self.text.text_arg2))
-        elseif self.text.text_arg1 == "spell" then
-            name = C_Spell.GetSpellName(self.text.text_arg2)
-        elseif self.text.text_arg1 == "activity" then
-            local activityInfo = C_PerksActivities.GetPerksActivityInfo(self.text.text_arg2)
-            if activityInfo then
-                name = activityInfo.activityName
-            end
-            param = "trading-post-activity/"..self.text.text_arg2
-        end
-        local url = "https://www.wowhead.com/"
-		if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-			url = url.."classic/"
-		elseif WOW_PROJECT_ID == WOW_PROJECT_MISTS_CLASSIC then
-			url = url.."mop-classic/"
-		elseif WOW_PROJECT_ID == WOW_PROJECT_CATACLYSM_CLASSIC then
-			url = url.."cata/"
-		elseif WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC then
-			url = url.."wotlk/"
-		elseif WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC then
-			url = url.."tbc/"
-		end
-        local lang = KT.locale:sub(1, 2)
-        if lang ~= "en" then
-            if lang == "zh" then lang = "cn" end
-            url = url..lang.."/"
-        end
-        local param = self.text.text_arg1.."="..self.text.text_arg2
-        self.text:SetText(self.text:GetText().."\n|cffff7f00"..name.."|r")
-        self.editBox.text = url..param
-        self.editBox:SetText(self.editBox.text)
-        self.editBox:SetFocus()
-    end,
-    timeout = 0,
-    whileDead = 1,
-    hideOnEscape = 1
-}
-
+-- Alerts
 function KT:Alert_ResetIncompatibleProfiles(version)
     if self.db.global.version and not self.IsHigherVersion(self.db.global.version, version) then
         local profile
@@ -469,19 +358,19 @@ function KT:Alert_ResetIncompatibleProfiles(version)
             end
         end
         self.db:RegisterDefaults(self.db.defaults)
-        StaticPopup_Show(addonName.."_Info", nil, "All profiles have been reset, because the new version %s is not compatible with stored settings.", { self.version })
+        self.StaticPopup_Show("Info", nil, "All profiles have been reset, because the new version %s is not compatible with stored settings.", self.VERSION)
     end
 end
 
 function KT:Alert_IncompatibleAddon(addon, version)
     if not self.IsHigherVersion(C_AddOns.GetAddOnMetadata(addon, "Version"), version) then
         self.db.profile["addon"..addon] = false
-        StaticPopup_Show(addonName.."_ReloadUI", nil, "|cff00ffe3%s|r support has been disabled. Please install version |cff00ffe3%s|r or later and enable addon support.", { C_AddOns.GetAddOnMetadata(addon, "Title"), version })
+        self.StaticPopup_Show("ReloadUI", nil, "|cff00ffe3%s|r support has been disabled. Please install version |cff00ffe3%s|r or later and enable addon support.", C_AddOns.GetAddOnMetadata(addon, "Title"), version)
     end
 end
 
 function KT:Alert_WowheadURL(type, id)
-    StaticPopup_Show(addonName.."_WowheadURL", type, id)
+    KT.StaticPopup_ShowURL("WowheadURL", type, id)
 end
 
 -- Sanitize

@@ -19,7 +19,7 @@ local _G = _G
 local db
 local OTF = KT_ObjectiveTrackerFrame
 
-local KTwarning = "  |cff00ffffAddon "..KT.title.." is active.  "
+local KTwarning = "  |cff00ffffAddon "..KT.TITLE.." is active.  "
 
 --------------
 -- Internal --
