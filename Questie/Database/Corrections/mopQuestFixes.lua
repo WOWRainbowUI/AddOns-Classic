@@ -4512,7 +4512,7 @@ function MopQuestFixes.Load()
             [questKeys.reputationReward] = {{factionIDs.THE_LOREWALKERS,28}},
         },
         [31016] = { -- The Lorewalkers
-            [questKeys.preQuestSingle] = {31003}, -- not entirely sure. could be 31001+31002 instead OR 30259 OR Tillers halfway honored. it has more than this
+            [questKeys.preQuestGroup] = {31001,30637}, -- 100% 31001,30637 if another quest is needed, add to this one
             [questKeys.breadcrumbForQuestId] = 31015,
             [questKeys.exclusiveTo] = {31367,31368},
         },
@@ -5542,43 +5542,43 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {nil,{{211129}}},
         },
         [31367] = { -- The Lorewalkers
-            [questKeys.preQuestSingle] = {31001}, -- 100% 31001, if another quest is needed, add to this one
+            [questKeys.preQuestGroup] = {31001,30637}, -- 100% 31001,30637 if another quest is needed, add to this one
             [questKeys.breadcrumbForQuestId] = 31015,
             [questKeys.exclusiveTo] = {31016,31368},
             [questKeys.objectives] = {{{65716,nil,Questie.ICON_TYPE_TALK}}},
             [questKeys.reputationReward] = {{factionIDs.THE_LOREWALKERS,27}},
         },
         [31368] = { -- The Lorewalkers
-            [questKeys.preQuestSingle] = {31001}, -- 100% 31001, if another quest is needed, add to this one
+            [questKeys.preQuestGroup] = {31001,30637}, -- 100% 31001,30637 if another quest is needed, add to this one
             [questKeys.breadcrumbForQuestId] = 31015,
             [questKeys.exclusiveTo] = {31016,31367},
             [questKeys.objectives] = {{{65716,nil,Questie.ICON_TYPE_TALK}}},
             [questKeys.reputationReward] = {{factionIDs.THE_LOREWALKERS,27}},
         },
         [31369] = { -- The Anglers
-            [questKeys.preQuestGroup] = {30635,30636,30637,31001}, -- 100% 31001, recheck the others!
+            [questKeys.preQuestGroup] = {31001,30637}, -- 100% 31001,30637 if another quest is needed, add to this one
             [questKeys.requiredSkill] = {profKeys.FISHING,1},
             [questKeys.exclusiveTo] = {31371},
         },
         [31370] = { -- The Anglers
-            [questKeys.preQuestGroup] = {30635,30636,30637,31001}, -- 100% 31001, recheck the others!
+            [questKeys.preQuestGroup] = {31001,30637}, -- 100% 31001,30637 if another quest is needed, add to this one
             [questKeys.requiredSkill] = {profKeys.FISHING,1},
             [questKeys.exclusiveTo] = {31371},
         },
         [31372] = { -- The Tillers
-            [questKeys.preQuestSingle] = {30637}, -- wowhead comment, double check
+            [questKeys.preQuestGroup] = {31001,30637}, -- double check if it actually needs 31001
             [questKeys.breadcrumbForQuestId] = 30252,
         },
         [31373] = { -- The Order of the Cloud Serpent
-            [questKeys.preQuestSingle] = {31001}, -- 100% 31001, if another quest is needed, add to this one. it has more than this
+            [questKeys.preQuestGroup] = {31001,30637}, -- 100% 31001,30637 if another quest is needed, add to this one
             [questKeys.breadcrumbForQuestId] = 30134,
         },
         [31374] = { -- The Tillers
-            [questKeys.preQuestSingle] = {30637}, -- wowhead comment, double check
+            [questKeys.preQuestGroup] = {31001,30637}, -- double check if it actually needs 31001
             [questKeys.breadcrumbForQuestId] = 30252,
         },
         [31375] = { -- The Order of the Cloud Serpent
-            [questKeys.preQuestSingle] = {31001}, -- 100% 31001, if another quest is needed, add to this one. it has more than this
+            [questKeys.preQuestGroup] = {31001,30637}, -- 100% 31001,30637 if another quest is needed, add to this one
             [questKeys.breadcrumbForQuestId] = 30134,
         },
         [31376] = { -- Attack At The Temple of the Jade Serpent
@@ -5779,6 +5779,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestSingle] = {30118},
             [questKeys.breadcrumbForQuestId] = 31454,
             [questKeys.exclusiveTo] = {31488},
+            [questKeys.requiredClasses] = classIDs.ROGUE,
         },
         [31490] = { -- Rank and File
             [questKeys.objectives] = {nil,nil,nil,nil,{{{58632,58676,58683,58684,58685,58756,58898,58998,59150,59175,59191,59240,59241,59293,59303,59372,59373},58632}}},
@@ -7080,6 +7081,7 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {{{66557,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31927] = { -- Battle Pet Tamers: Northrend
+            [questKeys.preQuestSingle] = {31920},
             [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66635,nil,Questie.ICON_TYPE_PET_BATTLE},{66636,nil,Questie.ICON_TYPE_PET_BATTLE},{66638,nil,Questie.ICON_TYPE_PET_BATTLE},{66639,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
@@ -7088,6 +7090,7 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {{{66675,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
         [31929] = { -- Battle Pet Tamers: Northrend
+            [questKeys.preQuestSingle] = {31920},
             [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{66635,nil,Questie.ICON_TYPE_PET_BATTLE},{66636,nil,Questie.ICON_TYPE_PET_BATTLE},{66638,nil,Questie.ICON_TYPE_PET_BATTLE},{66639,nil,Questie.ICON_TYPE_PET_BATTLE}}},
         },
@@ -7279,21 +7282,29 @@ function MopQuestFixes.Load()
             [questKeys.nextQuestInChain] = 0, -- not exclusive to 31977!
         },
         [31981] = { -- Exceeding Expectations
+            [questKeys.requiredSpell] = 119467,
             [questKeys.preQuestSingle] = {31920},
+            [questKeys.nextQuestInChain] = 0,
         },
         [31982] = { -- Exceeding Expectations
+            [questKeys.requiredSpell] = 119467,
             [questKeys.preQuestSingle] = {31920},
+            [questKeys.nextQuestInChain] = 0,
         },
         [31983] = { -- A Brief Reprieve
+            [questKeys.requiredSpell] = 119467,
             [questKeys.preQuestSingle] = {31928},
         },
         [31984] = { -- A Brief Reprieve
+            [questKeys.requiredSpell] = 119467,
             [questKeys.preQuestSingle] = {31928},
         },
         [31985] = { -- The Triumphant Return
+            [questKeys.requiredSpell] = 119467,
             [questKeys.preQuestSingle] = {31970},
         },
         [31986] = { -- The Triumphant Return
+            [questKeys.requiredSpell] = 119467,
             [questKeys.preQuestSingle] = {31970},
         },
         [31989] = { -- The Peak of Serenity - Complete Your Training
@@ -7698,11 +7709,15 @@ function MopQuestFixes.Load()
         },
         [32193] = { -- To Mogujia
             [questKeys.preQuestSingle] = {32362},
+            [questKeys.objectives] = {{{67682,nil,Questie.ICON_TYPE_EVENT}}},
             [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,15800},
+            [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_TALK,l10n("Fly to Mogujia"),0,{{"monster",68741}}}},
+            [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,4}},
         },
         [32194] = { -- Bad Blood
             [questKeys.preQuestSingle] = {32193},
             [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,15800},
+            [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,15}},
         },
         [32197] = { -- Mystery Meatloaf
             [questKeys.preQuestSingle] = {32108},
@@ -7765,6 +7780,7 @@ function MopQuestFixes.Load()
         [32243] = { -- The Source of Korune Power
             [questKeys.preQuestSingle] = {32193},
             [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,15800},
+            [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,15}},
         },
         [32244] = { -- The Korune
             [questKeys.preQuestSingle] = {32190},
@@ -8217,6 +8233,19 @@ function MopQuestFixes.Load()
             [questKeys.questLevel] = 90,
             [questKeys.preQuestSingle] = {32427},
         },
+        [32430] = { -- A Change of Command
+            [questKeys.startedBy] = {{64616}},
+            [questKeys.preQuestGroup] = {32429,32476},
+        },
+        [32431] = { -- Glory to the Horde
+            [questKeys.startedBy] = {{64616}},
+            [questKeys.preQuestGroup] = {32429,32476},
+        },
+        [32432] = { -- The Soul of the Horde
+            [questKeys.preQuestGroup] = {32430,32431},
+            [questKeys.startedBy] = {{64616}},
+            [questKeys.objectives] = {{{64616,nil,Questie.ICON_TYPE_TALK}}},
+        },
         [32433] = { -- Undermining the Under Miner
             [questKeys.preQuestSingle] = {32109},
             [questKeys.exclusiveTo] = {32158},
@@ -8282,10 +8311,12 @@ function MopQuestFixes.Load()
         [32474] = { -- A Test of Valor
             [questKeys.startedBy] = {{64616}},
             [questKeys.preQuestSingle] = {32373},
+            [questKeys.objectivesText] = {"Gain the \"A Test of Valor\" Achievement by earning a total of 1600 Valor Points."},
         },
         [32476] = { -- A Test of Valor
             [questKeys.startedBy] = {{64616}},
             [questKeys.preQuestSingle] = {32427},
+            [questKeys.objectivesText] = {"Gain the \"A Test of Valor\" Achievement by earning a total of 1600 Valor Points."},
         },
         [32590] = { -- Meet Me Upstairs
             [questKeys.startedBy] = {{64616}},
@@ -8373,6 +8404,7 @@ function MopQuestFixes.Load()
             [questKeys.objectives] = {{{61093,nil,Questie.ICON_TYPE_TALK},{59653,nil,Questie.ICON_TYPE_TALK},{64528,nil,Questie.ICON_TYPE_TALK},{71954,nil,Questie.ICON_TYPE_TALK}},nil,nil,nil,{{{61093,59653,64528,71954},61093,nil,Questie.ICON_TYPE_TALK}}},
         },
         [32863] = { -- What We've Been Training For
+            [questKeys.requiredSpell] = 119467,
             [questKeys.objectives] = {{{110001}}},
         },
         [32868] = { -- Beasts of Fable Book II

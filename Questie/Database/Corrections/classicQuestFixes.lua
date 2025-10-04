@@ -4535,6 +4535,9 @@ function QuestieQuestFixes:Load()
         [9084] = {
             [questKeys.specialFlags] = specialFlags.REPEATABLE,
         },
+        [9085] = {
+            [questKeys.requiredLevel] = 50,
+        },
         [9086] = {
             [questKeys.specialFlags] = specialFlags.REPEATABLE,
         },
@@ -4558,6 +4561,9 @@ function QuestieQuestFixes:Load()
         },
         [9093] = {
             [questKeys.specialFlags] = specialFlags.REPEATABLE,
+        },
+        [9094] = {
+            [questKeys.requiredLevel] = 50,
         },
         [9095] = {
             [questKeys.specialFlags] = specialFlags.REPEATABLE,
@@ -4652,6 +4658,9 @@ function QuestieQuestFixes:Load()
         [9141] = {
             [questKeys.requiredMinRep] = {529,3000},
         },
+        [9153] = {
+            [questKeys.requiredLevel] = 50,
+        },
         [9154] = {
             [questKeys.questLevel] = 60,
         },
@@ -4709,6 +4718,9 @@ function QuestieQuestFixes:Load()
         [9246] = {
             [questKeys.requiredClasses] = classIDs.HUNTER + classIDs.SHAMAN,
         },
+        [9247] = {
+            [questKeys.requiredLevel] = 1,
+        },
         [9248] = {
             [questKeys.requiredMinRep] = {609,0},
             [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_EVENT, l10n("Summon a Lord using a full Twilight set, neck and ring."),0,{{"object", 180466},{"object", 180539},{"object", 180559},}}},
@@ -4726,21 +4738,54 @@ function QuestieQuestFixes:Load()
         },
         [9263] = {
             [questKeys.triggerEnd] = {"Investigate a circle", {[zoneIDs.DUROTAR] = {{44.9,16.7},{44.6,18.1}}}},
+            [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
         },
         [9264] = {
             [questKeys.triggerEnd] = {"Investigate a circle", {[zoneIDs.MULGORE] = {{38.9,37.1}}}},
+            [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
         },
         [9265] = {
             [questKeys.triggerEnd] = {"Investigate a circle", {[zoneIDs.TIRISFAL_GLADES] = {{60.4,61.7}}}},
+        },
+        [9292] = {
+            [questKeys.requiredLevel] = 1,
+        },
+        [9295] = {
+            [questKeys.requiredLevel] = 45,
+        },
+        [9299] = {
+            [questKeys.requiredLevel] = 45,
+        },
+        [9300] = {
+            [questKeys.requiredLevel] = 45,
+        },
+        [9301] = {
+            [questKeys.requiredLevel] = 45,
+        },
+        [9302] = {
+            [questKeys.requiredLevel] = 45,
+        },
+        [9304] = {
+            [questKeys.requiredLevel] = 45,
+        },
+        [9310] = {
+            [questKeys.requiredLevel] = 1,
+        },
+        [9317] = {
+            [questKeys.requiredLevel] = 50,
+        },
+        [9318] = { -- Blessed Wizard Oil
+            [questKeys.questLevel] = 60,
         },
         [9319] = {
             [questKeys.requiredRaces] = raceIDs.NONE,
         },
         [9320] = { -- Major Mana Potion
-            [questKeys.questLevel] = -1,
+            [questKeys.requiredLevel] = 50,
         },
         [9321] = { -- Major Healing Potion
             [questKeys.zoneOrSort] = sortKeys.INVASION,
+            [questKeys.questLevel] = 60,
         },
         [9322] = {
             [questKeys.requiredLevel] = 1,
@@ -4748,17 +4793,26 @@ function QuestieQuestFixes:Load()
         [9323] = {
             [questKeys.requiredLevel] = 1,
         },
+        [9333] = {
+            [questKeys.requiredLevel] = 50,
+        },
+        [9334] = { -- Blessed Wizard Oil
+            [questKeys.questLevel] = 60,
+        },
+        [9335] = { -- Consecrated Sharpening Stones
+            [questKeys.questLevel] = 60,
+        },
         [9336] = { -- Major Healing Potion
-            [questKeys.questLevel] = -1,
+            [questKeys.questLevel] = 60,
         },
         [9337] = { -- Major Mana Potion
-            [questKeys.questLevel] = -1,
+            [questKeys.questLevel] = 60,
         },
         [9341] = { -- Tabard of the Argent Dawn
-            [questKeys.questLevel] = -1,
+            [questKeys.questLevel] = 60,
         },
         [9343] = { -- Tabard of the Argent Dawn
-            [questKeys.questLevel] = -1,
+            [questKeys.questLevel] = 60,
         },
         [9386] = {
             [questKeys.preQuestSingle] = {9319},
