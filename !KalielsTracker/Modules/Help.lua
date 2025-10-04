@@ -19,6 +19,7 @@ local ICON_URL = HELP_PATH.."help_icon-url"
 local ICON_HEART = "|T"..HELP_PATH.."help_patreon:14:14:2:0:256:32:174:190:0:16|t"
 
 local db, dbChar
+local helpTitle = KT.TITLE.." |cffffffff"..KT.VERSION.."|r"
 local helpPath = KT.MEDIA_PATH.."Help\\"
 local helpName = "help"
 local helpNumPages = 10
@@ -82,7 +83,7 @@ local function SetupTutorials()
 	T.RegisterTutorial(helpName, {
 		savedvariable = KT.db.global,
 		key = "helpTutorial",
-		title = KT.title.." |cffffffff"..KT.version.."|r",
+		title = helpTitle,
 		icon = helpPath.."KT_logo",
 		font = "Fonts\\FRIZQT__.TTF",
 		width = 582,
@@ -94,7 +95,7 @@ local function SetupTutorials()
 		imageHeight = 256,
 		{	-- 1
 			image = helpPath.."help_kaliels-tracker",
-			text = cTitle..KT.title.." (Classic)|r replaces default tracker and adds some features from WoW Retail to WoW Classic.\n\n"..
+			text = cTitle..KT.TITLE.." (Classic)|r replaces default tracker and adds some features from WoW Retail to WoW Classic.\n\n"..
 					"Some features:\n"..
 					"- Tracking Quests\n"..
 					"- Tracking Achievements (not in Classic Era)\n"..
@@ -125,7 +126,7 @@ local function SetupTutorials()
 					"Buttons |T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:0:2:32:64:16:30:0:14:209:170:0|t and "..
 					"|T"..KT.MEDIA_PATH.."UI-KT-HeaderButtons:14:14:0:2:32:64:16:30:16:30:209:170:0|t you can disable in Options.\n\n"..
 					"You can set "..cBold.."[key bind]|r for Minimize button.\n"..
-					cBold.."Alt+Click|r on Minimize button opens "..KT.title.." Options.",
+					cBold.."Alt+Click|r on Minimize button opens "..KT.TITLE.." Options.",
 			paddingBottom = 11,
 			shine = KTF.MinimizeButton,
 			shineTop = 13,
@@ -203,7 +204,7 @@ local function SetupTutorials()
 			image = helpPath.."help_quest-log",
 			heading = "Quest Log",
 			text = cWarning.."Note:|r In Blizzard's Quest Log and supported Quest Log addons is disabled click on Quest Log "..
-					"headers (for collapse / expand). This is because collapsed sections hide contained quests for "..KT.title..".\n\n"..
+					"headers (for collapse / expand). This is because collapsed sections hide contained quests for "..KT.TITLE..".\n\n"..
 
 					cTitle.."Supported addons|r\n\n"..
 					"- Classic Quest Log\n"..ebSpace.."\n"..
@@ -263,7 +264,7 @@ local function SetupTutorials()
 		{	-- 9
 			image = helpPath.."help_addon-pettracker",
 			heading = "Support addon PetTracker",
-			text = "PetTracker support adjusts display of zone pet tracking inside "..KT.title..".\nIt also fix some visual bugs.\n\n"..
+			text = "PetTracker support adjusts display of zone pet tracking inside "..KT.TITLE..".\nIt also fix some visual bugs.\n\n"..
 					AddonInfo("PetTracker"),
 			editbox = {
 				{
@@ -292,7 +293,13 @@ local function SetupTutorials()
 			heading = "     What's New",
 			headingFont = "Fonts\\MORPHEUS.ttf",
 			headingSize = 26,
-			text = "If you like "..KT.title..", consider supporting it on Patreon "..ICON_HEART.."|r\n"..ebSpace.."\n"..
+			text = "If you like "..KT.TITLE..", consider supporting it on Patreon "..ICON_HEART.."|r\n"..ebSpace.."\n"..
+
+					(cTitle.."Version 5.2.0|r\n"..
+					"- ADDED - support for WoW 5.5.1.63449\n"..
+					"- CHANGED - addon support - Questie 11.5.4\n"..
+					"- CHANGED (help) - Active Patrons\n"..
+					"\n")..
 
 					(cTitle.."Version 5.1.3|r\n"..
 					"- FIXED - occasional error when cold starting WoW\n"..
@@ -316,26 +323,7 @@ local function SetupTutorials()
 					"- PERFORMANCE - optimization of zone filtering code\n"..
 					"\n")..
 
-					(cTitle.."Version 5.0.1|r\n"..
-					"- FIXED (quests) - error when filtering by zone with Auto Quest tracking\n"..
-					"\n")..
-
-					(cTitle.."Version 5.0.0|r\n"..
-					"- ADDED - support for WoW 1.15.7.61582\n"..
-					"- ADDED - support for WoW 5.5.0.62258\n"..
-					"- CHANGED (help) - Active Patrons\n"..
-					"- CHANGED (scenario) - Proving Grounds is not supported (it may cause errors)\n"..
-					"- CHANGED (quests) - persistent states (complete sounds no longer play repeatedly)\n"..
-					"- CHANGED (quests) - improved zone filtering\n"..
-					"- CHANGED (quests) - quest tracking management (internal watchlist)\n"..
-					"- CHANGED - addon support - Questie 11.2.11\n"..
-					"- CHANGED (quests) - context menu improvements\n"..
-					"- CHANGED - deprecated functions in WoW 3.4.4\n"..
-					"- FIXED - error getting incorrect quest data\n"..
-					"- FIXED - tracked quests are untracked after login\n"..
-					"\n")..
-
-					cTitle.."WoW 5.5.0/1.15.7 - Known issues w/o solution|r\n"..
+					cTitle.."WoW 5.5.1/1.15.7 - Known issues w/o solution|r\n"..
 					"- Clicking on tracked quests or achievements has no response during combat.\n"..
 					"- Header buttons Q and A don't work during combat.\n"..
 					"- Scenario Proving Grounds is not supported.\n\n"..
@@ -400,7 +388,7 @@ local function SetupTutorials()
 	T.RegisterTutorial("supporters", {
 		savedvariable = KT.db.global,
 		key = "supportersTutorial",
-		title = KT.title.." |cffffffff"..KT.version.."|r",
+		title = helpTitle,
 		icon = helpPath.."KT_logo",
 		font = "Fonts\\FRIZQT__.TTF",
 		width = 582,
@@ -410,7 +398,7 @@ local function SetupTutorials()
 		paddingBottom = 24,
 		{	-- 1
 			heading = "      Become a Patron",
-			text = "If you like "..KT.title..", consider supporting it on Patreon.\n\n\n\n"..
+			text = "If you like "..KT.TITLE..", consider supporting it on Patreon.\n\n\n\n"..
 					"After 10 years of working on an addon, I started Patreon. It's created as\na compensation for "..
 					"the amount of time that addon development requires.\n\n"..
 					"                                    Many thanks to all supporters "..ICON_HEART.."\n\n"..
@@ -422,6 +410,7 @@ local function SetupTutorials()
 					SetFormatedPatronName("Uncommon", "Charles Howarth")..
 					SetFormatedPatronName("Uncommon", "Illidanclone", "Kazzak")..
 					SetFormatedPatronName("Uncommon", "Mystekal")..
+					SetFormatedPatronName("Uncommon", "Paul Westervelt")..
 					SetFormatedPatronName("Uncommon", "Semy", "Ravencrest")..
 					SetFormatedPatronName("Uncommon", "Xeelee", "Razorfen")..
 					SetFormatedPatronName("Common", "Darren Divecha")..
@@ -455,7 +444,7 @@ function M:OnEnable()
 	_DBG("|cff00ff00Enable|r - "..self:GetName(), true)
 	SetupTutorials()
 	local last = false
-	if KT.version ~= KT.db.global.version then
+	if KT.VERSION ~= KT.db.global.version then
 		local data = T.GetTutorial(helpName)
 		local index = data.savedvariable[data.key]
 		if index then

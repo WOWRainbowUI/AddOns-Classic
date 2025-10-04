@@ -9,10 +9,6 @@ local addonName, addon = ...
 ---@class KT
 local KT = LibStub("MSA-AceAddon-3.0"):NewAddon(addon, addonName, "LibSink-2.0", "MSA-Event-1.0", "MSA-ProtRouter-1.0")
 KT:SetDefaultModuleState(false)
-KT.title = C_AddOns.GetAddOnMetadata(addonName, "Title")
-KT.version = C_AddOns.GetAddOnMetadata(addonName, "Version")
-KT.gameVersion = GetBuildInfo()
-KT.locale = GetLocale()
 
 local LSM = LibStub("LibSharedMedia-3.0")
 local _DBG = function(...) if _DBG then _DBG("KT", ...) end end
@@ -166,7 +162,16 @@ local function SlashHandler(msg, editbox)
 end
 
 local function SetScrollbarPosition()
-	KTF.Bar:SetPoint("TOPRIGHT", -5, -round(5+(KTF.Scroll.value*(((db.maxHeight-60)/((OTF.height-db.maxHeight)/KTF.Scroll.step))/KTF.Scroll.step))))
+	local xOffset = -5
+	local yOffset = -5
+	local scrollRange = OTF.height - db.maxHeight
+	if scrollRange > 0 then
+		local barSpace = 60  -- 50 + 2×5
+		local usableHeight = db.maxHeight - barSpace
+		local scrollRatio = KTF.Scroll.value / scrollRange
+		yOffset = -1 * round(5 + (usableHeight * scrollRatio))
+	end
+	KTF.Bar:SetPoint("TOPRIGHT", xOffset, yOffset)
 end
 
 local function GetTaskTimeLeftData(questID)
@@ -334,7 +339,7 @@ local function SetFrames()
 	button:SetScript("OnEnter", function(self)
 		self:GetNormalTexture():SetVertexColor(1, 1, 1)
 		GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
-		local title = (db.keyBindMinimize ~= "") and KT.title.." "..NORMAL_FONT_COLOR_CODE.."("..db.keyBindMinimize..")|r" or KT.title
+		local title = KT.TITLE..((db.keyBindMinimize ~= "") and NORMAL_FONT_COLOR_CODE.." ("..db.keyBindMinimize..")|r" or "")
 		GameTooltip:AddLine(title, 1, 1, 1)
 		GameTooltip:AddLine("Alt+Click - addon Options", 0.5, 0.5, 0.5)
 		GameTooltip:Show()
@@ -1925,8 +1930,8 @@ function KT:OnEnable()
 	self.AddonOthers:Enable()
 	self.Help:Enable()
 
-	if self.db.global.version ~= self.version then
-		self.db.global.version = self.version
+	if self.db.global.version ~= self.VERSION then
+		self.db.global.version = self.VERSION
 	end
 
 	db.modulesOrder = self.ReconcileOrder(self.BLIZZARD_MODULES, db.modulesOrder)

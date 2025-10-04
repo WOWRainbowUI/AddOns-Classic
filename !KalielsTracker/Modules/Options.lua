@@ -133,7 +133,7 @@ local defaults = {
 }
 
 local options = {
-	name = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:-1:7|t"..KT.title,
+	name = "|T"..KT.MEDIA_PATH.."KT_logo:22:22:-1:7|t"..KT.TITLE,
 	type = "group",
 	get = function(info) return db[info[#info]] end,
 	args = {
@@ -148,7 +148,7 @@ local options = {
 					order = 0,
 					args = {
 						version = {
-							name = " |cffffd100Version:|r  "..KT.version,
+							name = " |cffffd100Version:|r  "..KT.VERSION,
 							type = "description",
 							width = "normal",
 							fontSize = "medium",
@@ -1420,10 +1420,10 @@ function SetSharedColor(color)
 end
 
 function IsSpecialLocale()
-	return (KT.locale == "deDE" or
-			KT.locale == "esES" or
-			KT.locale == "frFR" or
-			KT.locale == "ruRU")
+	return (KT.LOCALE == "deDE" or
+			KT.LOCALE == "esES" or
+			KT.LOCALE == "frFR" or
+			KT.LOCALE == "ruRU")
 end
 
 local function Init()
@@ -1497,7 +1497,7 @@ local function Setup()
 			order = 0.3,
 		},
 		clearTrackerDataDesc4 = {
-			name = "",
+			name = " ",
 			type = "description",
 			order = 0.4,
 		}
@@ -1506,11 +1506,11 @@ local function Setup()
 	ACR:RegisterOptionsTable(addonName, options, nil)
 
 	KT.optionsFrame = {}
-	KT.optionsFrame.general = ACD:AddToBlizOptions(addonName, KT.title, nil, "general")
-	KT.optionsFrame.content = ACD:AddToBlizOptions(addonName, options.args.content.name, KT.title, "content")
-	KT.optionsFrame.modules = ACD:AddToBlizOptions(addonName, options.args.modules.name, KT.title, "modules")
-	KT.optionsFrame.addons = ACD:AddToBlizOptions(addonName, options.args.addons.name, KT.title, "addons")
-	KT.optionsFrame.profiles = ACD:AddToBlizOptions(addonName, options.args.profiles.name, KT.title, "profiles")
+	KT.optionsFrame.general = ACD:AddToBlizOptions(addonName, KT.TITLE, nil, "general")
+	KT.optionsFrame.content = ACD:AddToBlizOptions(addonName, options.args.content.name, KT.TITLE, "content")
+	KT.optionsFrame.modules = ACD:AddToBlizOptions(addonName, options.args.modules.name, KT.TITLE, "modules")
+	KT.optionsFrame.addons = ACD:AddToBlizOptions(addonName, options.args.addons.name, KT.TITLE, "addons")
+	KT.optionsFrame.profiles = ACD:AddToBlizOptions(addonName, options.args.profiles.name, KT.TITLE, "profiles")
 
 	KT.db.RegisterCallback(KT, "OnProfileChanged", "InitProfile")
 	KT.db.RegisterCallback(KT, "OnProfileCopied", "InitProfile")
