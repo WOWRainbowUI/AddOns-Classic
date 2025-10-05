@@ -16,7 +16,5 @@ ClassicCalendar_Options.lua
 HolidayData.lua
 Patches.lua
 Patches.xml
-Libs\LibStub\LibStub.lua
-Libs\LibDBIcon-1.0\LibDBIcon-1.0\LibDBIcon-1.0.lua
 ClassicCalendar.lua
 ClassicCalendar.xml
