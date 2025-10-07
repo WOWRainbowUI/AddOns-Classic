@@ -1,6 +1,12 @@
 # Minimal Archaeology
 ## Latest Version
 
+### 11.2
+
+- Updated for Mainline 11.2
+- **11.2.2** Improve digsites window
+- **11.2.2** Fix alt+click "Hide all"
+
 ### 11.1.0
 
 - Updated for Mainline 11.1
@@ -20,6 +26,7 @@
 - **11.1.0.13** Fix lua error with Pandaria digsites
 - **11.1.0.14** Fix conflict with Leatrix Plus (tooltip anchor issue)
 - **11.1.0.16** Fix Companion lua error
+- **11.1.0.17** Fix lua error when manually setting Companion position
 
 ### 11.0.2
 
