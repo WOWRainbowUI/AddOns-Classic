@@ -1,7 +1,9 @@
 # Auctionator
 
-## [294](https://github.com/TheMouseNest/Auctionator/tree/294) (2025-09-15)
-[Full Changelog](https://github.com/TheMouseNest/Auctionator/compare/293...294) 
+## [297](https://github.com/TheMouseNest/Auctionator/tree/297) (2025-10-03)
+[Full Changelog](https://github.com/TheMouseNest/Auctionator/compare/296...297) 
 
-- Remove splash screen (no longer used and shows really outdated text)  
-- Change LICENSE to ARR  
+- Midnight: Fix getting crafting info at merchants  
+- Midnight: Fix ChatEdit\_InsertLink usage so that it won't break on 12.0  
+- Add MoP herbs for milling estimates, thanks to Hantunaar (#1722)  
+    Add MoP herbs for milling estimates  
