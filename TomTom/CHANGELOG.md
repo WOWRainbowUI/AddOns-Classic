@@ -1,8 +1,10 @@
 # TomTom
 
-## [v4.0.17-release](https://github.com/jnwhiteh/TomTom/tree/v4.0.17-release) (2025-09-20)
-[Full Changelog](https://github.com/jnwhiteh/TomTom/commits/v4.0.17-release) [Previous Releases](https://github.com/jnwhiteh/TomTom/releases)
+## [v4.0.18-release](https://github.com/jnwhiteh/TomTom/tree/v4.0.18-release) (2025-10-05)
+[Full Changelog](https://github.com/jnwhiteh/TomTom/commits/v4.0.18-release) [Previous Releases](https://github.com/jnwhiteh/TomTom/releases)
 
+- Initial support for Midnight  
+- Update embedded libraries  
 - Fix remove waypoint  
 - Re-implement dropdowns using MenuUtil  
 - Update TOC for 11.2  
@@ -694,7 +696,3 @@
 - * Added an option to clear waypoints (set the distance > 0)  
     * Altered the callback system to allow for arbitrary distance callbacks  
 - * Re-working the internals of TomTom yet again.  Tooltips for minimap nodes should work  
-- * Uhh.. return  
-- * Fixed the error upon login  
-    * Added a middle color, which is used for proper shading between good and bad  
-    * Fixed the coloring of the crazy arrow so it properly turns green when you're "Arrived"  
