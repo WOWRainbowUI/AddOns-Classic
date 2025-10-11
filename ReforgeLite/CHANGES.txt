@@ -1,84 +1,58 @@
-tag 6cd76191bb74263fb49257a7725d03b2b6c06cb4 v2.2.4
+tag 221985ac7005804e13ef4fb7efed5735f2e8780f v2.2.5
 Author:	skyler-code <skylerh15@github.com>
-Date:	Mon Oct 6 13:40:39 2025 -0500
+Date:	Wed Oct 8 17:31:16 2025 -0500
 
-commit 3a9e0f1f82b7ace48b24e0e7ac2f217c8074cf95
+commit 560c228e8a42221e0b84ed22de9b7686398e4ccc
 Author: skyler-code <skylerh15@github.com>
-Date:   Sun Oct 5 22:27:25 2025 -0500
+Date:   Wed Oct 8 17:30:33 2025 -0500
 
-    Reapply "collapse columns and rows"
+    Fix StaticPopup OnAccept callback parameter
     
-    This reverts commit da20d71101a918339ff620ea493b79ad4bd04e55.
-
-commit 8bacc99736cbbb44a65b5c316cadf8928f6006de
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Oct 5 20:04:24 2025 -0500
-
-    Extract weights script
-
-commit caea7029b7f03ae48ee17e6ce163e273638a909c
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Oct 5 20:00:09 2025 -0500
-
-    affliction typo
-
-commit 3f58da761c69957ca81480e9a8888ecd200ac2aa
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Oct 5 19:58:12 2025 -0500
-
-    update presets for dps
+    EditBoxOnEnterPressed was incorrectly passing text to OnAccept callback instead of the popup frame, causing errors. All OnAccept handlers expect to receive the popup frame to access GetEditBox():GetText().
     
-    Copied directly from WoWSims
+    Also removed unnecessary OnHide handler and simplified OnAccept assignment.
 
-commit 60a12ce4e379f41e2242728c7b55ffdbb0e034a4
+commit 0415b57cb2070030c8e5cb324b8ee78ed7a0a835
 Author: skyler-code <skylerh15@github.com>
-Date:   Sun Oct 5 19:30:27 2025 -0500
+Date:   Wed Oct 8 17:15:21 2025 -0500
 
-    update masterfrost
-
-commit e826351613c41ba021b4514d38b287aebcbce4bb
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Oct 5 19:30:13 2025 -0500
-
-    not needed
-
-commit 375575ac7e6eb2ed43605181859f730820629bfd
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Oct 5 19:23:21 2025 -0500
-
-    Update .gitignore
-
-commit 7892a34aff95878c71176eb43c5bc2391063eb4c
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Oct 5 19:22:54 2025 -0500
-
-    Revert "Update resize bounds when caps change"
+    Add stat weight tooltips to preset menu
     
-    This reverts commit ad949cfa7b1b5670fb853f4eb2f6b8779f6368ab.
-
-commit da20d71101a918339ff620ea493b79ad4bd04e55
-Author: skyler-code <skylerh15@github.com>
-Date:   Sun Oct 5 19:22:46 2025 -0500
-
-    Revert "collapse columns and rows"
+    Show stat weights when hovering over presets in the dropdown menu, sorted by weight (descending) with index as tiebreaker. Tooltips display preset name and stat:weight pairs in a clean double-column format.
     
-    This reverts commit 38ec4d0b4a5331bd6dd4c18966a7dbceb5b6f2d4.
+    Also refactored several presets to use the Preset() helper function for consistency.
 
-commit 38ec4d0b4a5331bd6dd4c18966a7dbceb5b6f2d4
+commit 88d9ac99f24b62c21f32a13e0358299b113235e2
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Oct 3 16:03:33 2025 -0500
+Date:   Wed Oct 8 15:51:06 2025 -0500
 
-    collapse columns and rows
+    Add ST and AoE presets for elemental shaman
+    
+    Split elemental shaman preset into Single Target and AoE options with correct stat weights. ST preset prioritizes haste/mastery while AoE prioritizes mastery/crit.
+    
+    Closes #54
 
-commit ad949cfa7b1b5670fb853f4eb2f6b8779f6368ab
+commit 9a797e82bea0f377e97dff65a229ecf2f7323496
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Oct 3 15:02:07 2025 -0500
+Date:   Wed Oct 8 15:19:29 2025 -0500
 
-    Update resize bounds when caps change
+    small cleanup
 
-commit 30c8b7e2143c6fe960c581e5f50f83292a450358
+commit a060d16e6f7dbeb0f2a0d89f9f60bab03616dd2f
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Oct 3 13:00:08 2025 -0500
+Date:   Tue Oct 7 18:52:27 2025 -0500
 
-    remove no value method
+    fix getitemstats
+
+commit c3c6900ce7d340754a474af5832df0ba97e3a32e
+Author: skyler-code <skylerh15@github.com>
+Date:   Tue Oct 7 03:02:07 2025 -0500
+
+    remove scaling file
+
+commit ba5d2d563d4b8d4ee76809b8c364482e5d2f5659
+Author: skyler-code <skylerh15@github.com>
+Date:   Tue Oct 7 03:01:04 2025 -0500
+
+    dev folder
 
