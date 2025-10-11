@@ -368,6 +368,7 @@ if playerClass == "DRUID" then
 				IUF.units.player.classBar.addOn.mana:RegisterUnitEvent("UNIT_POWER_UPDATE", "player")
 				IUF.units.player.classBar.addOn.mana:RegisterUnitEvent("UNIT_POWER_FREQUENT", "player")
 
+
 			end
 		end
 
@@ -403,8 +404,17 @@ var_Blizzard= IUF.db.classBar.useBlizzard
 
 			end
 
-			if var_Blizzard and TotemFrame  then
-				if TotemFrame:IsShown() then
+
+			if var_Blizzard then
+
+--[[
+					IUF.units.player.classBar:SetAlpha(0)
+					IUF.units.player.classBar:SetHeight(0.001)
+--]]
+					IUF.units.player.classBar.addOn:SetHeight(0.001) --added
+
+				if TotemFrame and TotemFrame:IsShown() then
+
 					IUF.units.player.classBar:SetAlpha(1)
 
  					if EclipseBarFrame:IsShown() then
@@ -421,17 +431,24 @@ var_Blizzard= IUF.db.classBar.useBlizzard
 					end
  
  				elseif EclipseBarFrame:IsShown() then
+
  					IUF.units.player.classBar:SetAlpha(1)
  					PlayerFrameAlternateManaBar:SetAlpha(0)
  					IUF.units.player.classBar:SetHeight(30)
+					
+			
   				elseif PlayerFrameAlternateManaBar:IsShown() then
+
   					IUF.units.player.classBar:SetAlpha(1)
   					IUF.units.player.classBar:SetHeight(13)
   					PlayerFrameAlternateManaBar:SetAlpha(1)
   				else
+
 					IUF.units.player.classBar:SetAlpha(0)
 					IUF.units.player.classBar:SetHeight(0.001)
+					IUF.units.player.classBar.addOn:SetHeight(0.001) --added
 				end
+
 
 			elseif IUF.units.player.classBar.addOn.totem:IsShown() then
 				if IUF.units.player.classBar.addOn.mana:IsShown() or IUF.units.player.classBar.addOn.eclipse:IsShown() then
