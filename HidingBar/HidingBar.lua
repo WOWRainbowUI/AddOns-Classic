@@ -486,9 +486,9 @@ end
 
 function hb:checkProfile(profile)
 	profile.config = profile.config or {}
-	if profile.config.addFromDataBroker == nil then
-		profile.config.addFromDataBroker = false -- 更改預設值
-	end
+	--if profile.config.addFromDataBroker == nil then
+	--	profile.config.addFromDataBroker = true
+	--end
 	if profile.config.grabMinimap == nil then
 		profile.config.grabMinimap = true
 	end
@@ -585,8 +585,8 @@ function hb:addToIgnoreFrameList(name)
 	local frame = self:getFrameFromPath(name)
 	if frame then
 		ignoreFrameList[frame] = true
-	-- else
-		-- print(addon..":", name, "not found")
+	else
+		print(addon..":", name, "not found")
 	end
 end
 
