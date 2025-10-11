@@ -347,7 +347,9 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								PanelTemplates_TabResize(self, 0)
+<!--							PanelTemplates_TabResize(self, 0) -->
+								PanelTemplates_SetNumTabs(self, 0)
+								PanelTemplates_SetTab(self, 1)
 							</OnLoad>
 							<OnClick>
 								PanelTemplates_SetTab(self:GetParent(), 1)
@@ -361,7 +363,7 @@
 						<Size x="104" y="22"/>
                         <Anchors>
 							<Anchor point="BOTTOMRIGHT">
-								<Offset x="-6" y="-23" />
+								<Offset x="-2" y="-23" />
 							</Anchor>
                         </Anchors>
                         <Scripts>
@@ -384,7 +386,7 @@
                             </Anchor>
                             <Anchor point="BOTTOMRIGHT"></Anchor>
                         </Anchors>
-                        <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
+<!--                    <Backdrop bgFile="Interface\Tooltips\UI-Tooltip-Background" edgeFile="Interface\Tooltips\UI-Tooltip-Border" tile="true">
                             <EdgeSize>
                                 <AbsValue val="16"></AbsValue>
                             </EdgeSize>
@@ -394,7 +396,7 @@
                             <BackgroundInsets>
                                 <AbsInset left="4" right="4" top="4" bottom="4" />
                             </BackgroundInsets>
-                        </Backdrop>
+                        </Backdrop> -->
                         <Scripts>
                             <OnLoad>
 <!--							self:SetBackdropColor(0,0,0,.65)  -->
@@ -687,7 +689,8 @@
                 </Frames>
                 <Scripts>
 					<OnLoad>
-						PanelTemplates_SetNumTabs(self, 1) 
+<!--					PanelTemplates_SetNumTabs(self, 1) -->
+                        PanelTemplates_SetNumTabs(self, 0)
                         PanelTemplates_SetTab(self, 1)
                     </OnLoad>
                 </Scripts>

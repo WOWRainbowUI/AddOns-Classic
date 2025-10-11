@@ -44,7 +44,7 @@ Si activé, ce bouton sera situé sur le cadre de cible des joueurs ennemis. En 
 L["GeneralSettings"] = "Configuration générale"
 L["GeneralSettingsDescription"] = [[
 Options lorsque Spy est activé ou désactivé.
-]] 
+]]
 L["EnableSpy"] = "Activer Spy"
 L["EnableSpyDescription"] = "Active ou désactive Spy."
 L["EnabledInBattlegrounds"] = "Activer Spy en champs de bataille"
@@ -53,6 +53,8 @@ L["EnabledInArenas"] = "Activer Spy en arènes"
 L["EnabledInArenasDescription"] = "Active ou désactive Spy lorsque vous êtes dans une arène."
 L["EnabledInWintergrasp"] = "Activer Spy en zone de combat mondiale"
 L["EnabledInWintergraspDescription"] = "Active ou désactive Spy lorsque vous êtes dans des zones de combat mondial comme le Joug-d’Hiver en Northrend."
+L["EnabledInSanctuaries"] = "Enable Spy in Sanctuaries."
+L["EnabledInSanctuariesDescription"] = "Enables or disables Spy when you are in a Sanctuary."
 L["DisableWhenPVPUnflagged"] = "Désactiver Spy lorsque le mode JcJ est désactiver"
 L["DisableWhenPVPUnflaggedDescription"] = "Active ou désactive Spy en fonction de votre statut JcJ."
 L["DisabledInZones"] = "Désactivez Spy lorsque vous vous trouvez dans ces emplacements"
@@ -62,10 +64,10 @@ L["Everlook"] = "Long-Guet"
 L["Gadgetzan"] = "Gadgetzan"
 L["Ratchet"] = "Cabestan"
 L["The Salty Sailor Tavern"] = "La taverne du Loup de mer"
+L["Cenarion Hold"] = "Fort Cénarien"
 L["Shattrath City"] = "Shattrath"
 L["Area 52"] = "Zone 52"
 L["Dalaran"] = "Dalaran"
-L["Dalaran (Northrend)"] = "Dalaran (Norfendre)"
 L["Bogpaddle"] = "Brasse-Tourbe"
 L["The Vindicaar"] = "Le Vindicaar"
 L["Krasus' Landing"] = "Aire de Krasus"
@@ -79,6 +81,9 @@ L["Rustbolt"] = "Mécarouille"
 L["Oribos"] = "Oribos"
 L["Valdrakken"] = "Valdrakken"
 L["The Roasted Ram"] = "Bélier rôti"
+L["Dornogal"] = "Dornogal"
+L["Stonelight Rest"] = "Repos de la Lumière de pierre"
+L["Delver's Headquarters"] = "Quartier général des archéologues"
 
 -- Display
 L["DisplayOptions"] = "Affichage"
@@ -277,10 +282,12 @@ L["ConfigDescription"] = "Ouvre la fenêtre de configuration de Spy"
 L["KOS"] = "TAV"
 L["KOSDescription"] = "Ajouter / retirer un joueur à / de la liste Tuer à vue"
 L["InvalidInput"] = "Saisie invalide"
-L["Ignore"] = "Ignore"
-L["IgnoreDescription"] = "Ajouter/retirer un joueur à/de la liste ingnore."
+L["Ignore"] = "Ignorer"
+L["IgnoreDescription"] = "Ajouter/retirer un joueur à/de la liste Ignorer."
 L["Test"] = "Test"
 L["TestDescription"] = "Affiche un avertissement afin que vous puissiez le repositionner."
+L["Sanctuary"] = "Sanctuary"
+L["SanctuaryDescription"] = "Show/Hide Spy in a Sanctuary area."
 
 -- Lists
 L["Nearby"] = "Proche"
@@ -303,10 +310,10 @@ L["HonorKills"] = "l'honneur tue"
 L["PvPDeaths"] = "JcJ Morts"
 
 -- Output Messages
-L["VersionCheck"] = "|cffc41e3aAttention! La mauvaise version de Spy est installée. Cette version est pour World of Warcraft - Cataclysm Classic."
+L["VersionCheck"] = "|cffc41e3aAttention! La mauvaise version de Spy est installée. Uninstall this version and install the one that matches your current game version."
 L["SpyEnabled"] = "|cff9933ffAddon Spy activé"
 L["SpyDisabled"] = "|cff9933ffAddon Spy désactivé. Taper |cffffffff/spy show|cff9933ff pour l'activer"
-L["UpgradeAvailable"] = "|cff9933ffUne nouvelle version de Spy est disponible. Elle peut être téléchargée à partir de:\n|cffffffffhttps://www.curseforge.com/wow/addons/spy-cataclysm"
+L["UpgradeAvailable"] = "|cff9933ffUne nouvelle version de Spy est disponible. Elle peut être téléchargée à partir de:\n|cffffffffhttps://www.curseforge.com/wow/addons/spy-mop"
 L["AlertStealthTitle"] = "Joueur furtif détecté!"
 L["AlertKOSTitle"] = "Joueur Tuer à vue détecté!"
 L["AlertKOSGuildTitle"] = "Guilde Tuer à vue détecté!"
@@ -319,8 +326,8 @@ L["SpySignatureColored"] = "|cff9933ff[Spy] "
 L["PlayerDetectedColored"] = "Joueur détecté: |cffffffff"
 L["PlayersDetectedColored"] = "Joueurs détectés: |cffffffff"
 L["KillOnSightDetectedColored"] = "Joueur Tuer à vue détecté: |cffffffff"
-L["PlayerAddedToIgnoreColored"] = "Joueur ajouté à la liste Ignore: |cffffffff"
-L["PlayerRemovedFromIgnoreColored"] = "Suppression du joueur de la liste Ignore: |cffffffff"
+L["PlayerAddedToIgnoreColored"] = "Joueur ajouté à la liste Ignorer: |cffffffff"
+L["PlayerRemovedFromIgnoreColored"] = "Suppression du joueur de la liste Ignorer: |cffffffff"
 L["PlayerAddedToKOSColored"] = "Joueur ajouté à la liste Tuer à vue: |cffffffff"
 L["PlayerRemovedFromKOSColored"] = "Suppression du joueur de la liste Tuer à vue: |cffffffff"
 L["PlayerDetected"] = "[Spy] Joueur détecté: "
@@ -334,7 +341,7 @@ L["DaysAgo"] = "jours"
 L["Close"] = "Fermer"
 L["CloseDescription"] = "|cffffffffMasque la fenêtre Espion, elle réapparaîtra lorsque le prochain joueur ennemi sera détecté."
 L["Left/Right"] = "Gauche/Droite"
-L["Left/RightDescription"] = "|cffffffffNavigue entre les listes A proximité, Dernière heure, Ignore et Tuer à vue"
+L["Left/RightDescription"] = "|cffffffffNavigue entre les listes A proximité, Dernière heure, Ignorer et Tuer à vue"
 L["Clear"] = "Effacer"
 L["ClearDescription"] = "|cffffffffEfface la liste des joueurs qui ont été détectés. Control-Click activera ou désactivera Spy. Shift-Click activera ou désactivera tous les sons."
 L["SoundEnabled"] = "Alertes audio activées"
@@ -343,7 +350,7 @@ L["NearbyCount"] = "Comte à proximité"
 L["NearbyCountDescription"] = "|cffffffffNombre d’ennemis à proximité"
 L["Statistics"] = "Statistiques"
 L["StatsDescription"] = "|cffffffffAffiche une liste des joueurs ennemis rencontrés, les statistiques de Victoire/Défaite et l'endroit où ils ont été vus pour la dernière fois."
-L["AddToIgnoreList"] = "Ajouter à votre liste ignore"
+L["AddToIgnoreList"] = "Ajouter à votre liste Ignorer"
 L["AddToKOSList"] = "Ajouter à la liste Tuer à vue"
 L["RemoveFromIgnoreList"] = "Retirer de la liste Ignorer"
 L["RemoveFromKOSList"] = "Retirer de la liste Tuer à vue"
@@ -358,12 +365,13 @@ L["Player"] = " (Joueur)"
 L["KOSReason"] = "Tuer à Vue"
 L["KOSReasonIndent"] = "    "
 L["KOSReasonOther"] = "Saisir votre propre raison..."
+L["EnterKOSReason"] = "Entrez une raison pour tuer à vue pour %s"
 L["KOSReasonClear"] = "Effacer la raison"
 L["StatsWins"] = "|cff40ff00Victoires: "
 L["StatsSeparator"] = "  "
 L["StatsLoses"] = "|cff0070ddDéfaites: "
 L["Located"] = "localisé:"
-L["Yards"] = "mètres"
+L["DistanceUnit"] = "mètres"
 L["LocalDefenseChannelName"] = "Défenselocale"
 
 Spy_KOSReasonListLength = 6
@@ -441,25 +449,6 @@ Spy_KOSReasonList = {
 	},
 }
 
-StaticPopupDialogs["Spy_SetKOSReasonOther"] = {
-	preferredIndex=STATICPOPUPS_NUMDIALOGS,  -- http://forums.wowace.com/showthread.php?p=320956
-	text = "Entrez une raison pour tuer à vue pour %s:",
-	button1 = "Saisir",
-	button2 = "Annuler",
-	timeout = 120,
-	hasEditBox = 1,
-	editBoxWidth = 260,	
-	whileDead = 1,
-	hideOnEscape = 1,
-	OnShow = function(self)
-		self.editBox:SetText("");
-	end,
-    OnAccept = function(self)
-		local reason = self.editBox:GetText()
-		Spy:SetKOSReason(self.playerName, "Saisir votre propre raison...", reason)
-	end,
-};
-
 -- Class descriptions
 L["UNKNOWN"] = "Inconnu"
 L["DRUID"] = "Druide"
@@ -471,12 +460,12 @@ L["ROGUE"] = "Voleur"
 L["SHAMAN"] = "Chaman"
 L["WARLOCK"] = "Démoniste"
 L["WARRIOR"] = "Guerrier"
-L["DEATHKNIGHt"] =" Chevalier de la mort "
+L["DEATHKNIGHt"] ="Chevalier de la mort"
 L["MONK"] = "Moine"
 L["DEMONHUNTER"] = "Chasseur de démons"
 L["EVOKER"] = "Évocateur"
 
---++ Race descriptions
+-- Race descriptions
 L["Human"] = "Humain"
 L["Orc"] = "Orc"
 L["Dwarf"] = "Nain"
@@ -501,12 +490,13 @@ L["Zandalari Troll"] = "Troll zandalari"
 L["Mechagnome"] = "Mécagnome"
 L["Vulpera"] = "Vulpérin"
 L["Dracthyr"] = "Dracthyr"
+L["Earthen"] = "Terrestre"
  
 -- Capacités stealth
 L["Stealth"] = "Camouflage"
 L["Prowl"] = "Rôder"
  
---++ Minimap color codes
+-- Minimap color codes
 L["MinimapGuildText"] = "|cffffffff"
 L["MinimapClassTextUNKNOWN"] = "|cff191919"
 L["MinimapClassTextDRUID"] = "|cffff7c0a"
