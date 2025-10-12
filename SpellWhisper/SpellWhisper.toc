@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 11507, 50501
 ## Version: 2.3.4 Fix
 ## Title: SpellWhisper
 ## Author: Aoikaze
