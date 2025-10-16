@@ -1105,8 +1105,14 @@ function MopItemFixes.Load()
             [itemKeys.startQuest] = 32166,
             [itemKeys.npcDrops] = {67881}, -- it's a vendor, but we are using npcDrops so it shows the quest in tooltips
         },
+        [91874] = { -- Chunk of Mystery Meat
+            [itemKeys.npcDrops] = {67895,67896,68584},
+        },
         [91907] = { -- Lion's Landing Lumber
             [itemKeys.objectDrops] = {216229},
+        },
+        [92072] = { -- Korune Codex
+            [itemKeys.npcDrops] = {67752},
         },
         [92425] = { -- Ancient Korune Tablet
             [itemKeys.npcDrops] = {67833},
@@ -1116,6 +1122,24 @@ function MopItemFixes.Load()
         },
         [92493] = { -- Bilgewater Blasting Cap
             [itemKeys.npcDrops] = {67929},
+        },
+        [92499] = { -- Sturdy Needle
+            [itemKeys.npcDrops] = {68026,68027},
+        },
+        [92539] = { -- Untamed Amber
+            [itemKeys.npcDrops] = {68117},
+        },
+        [92557] = { -- The Metal Brew
+            [itemKeys.objectDrops] = {216362},
+        },
+        [92560] = { -- Mallet Head
+            [itemKeys.objectDrops] = {216421},
+        },
+        [92561] = { -- Mallet Handle
+            [itemKeys.npcDrops] = {68545},
+        },
+        [92562] = { -- Harmonic Ointment
+            [itemKeys.npcDrops] = {61010},
         },
         [92704] = { -- Ancient Mogu Essence
             [itemKeys.npcDrops] = {68070,68073},
@@ -1129,24 +1153,46 @@ function MopItemFixes.Load()
         [92736] = { -- Gen-Li's Essence
             [itemKeys.npcDrops] = {68169},
         },
+        [92763] = { -- Kor'kron Helmet
+            [itemKeys.npcDrops] = {68367},
+            [itemKeys.class] = itemClasses.QUEST,
+        },
+        [92764] = { -- Kor'kron Armor
+            [itemKeys.npcDrops] = {68369},
+        },
+        [92765] = { -- Kor'kron Boots
+            [itemKeys.npcDrops] = {68368},
+        },
+        [92801] = { -- Korune Orders
+            [itemKeys.npcDrops] = {68401},
+        },
+        [92802] = { -- Legacy of the Korune
+            [itemKeys.npcDrops] = {68473},
+        },
+        [92803] = { -- Sealed Korune Artifact
+            [itemKeys.npcDrops] = {68410},
+        },
         [92804] = { -- Weathered Journal
             [itemKeys.objectDrops] = {216664},
         },
         [93009] = { -- Shieldwall Soldier Dog Tag
             [itemKeys.npcDrops] = {68700},
         },
-        [93179] = { -- Scrap Metal
-            [itemKeys.npcDrops] = {67285},
-        },
         [93022] = { -- Animatable Stone
             [itemKeys.npcDrops] = {67929},
             [itemKeys.objectDrops] = {216160},
+        },
+        [93179] = { -- Scrap Metal
+            [itemKeys.npcDrops] = {67285},
         },
         [93189] = { -- Korune Artifact
             [itemKeys.npcDrops] = {67804,67805,67806},
         },
         [93190] = { -- Sha-Touched Claw
             [itemKeys.npcDrops] = {68815},
+        },
+        [93212] = { -- Spirit Essence of Varatus
+            [itemKeys.npcDrops] = {68907},
         },
         [95383] = { -- Pristine Banner of the Mantid Empire
             [itemKeys.startQuest] = 32686,
@@ -1171,6 +1217,9 @@ function MopItemFixes.Load()
         },
         [95390] = { -- Pristine Kypari Sap Container
             [itemKeys.startQuest] = 32693,
+        },
+        [97985] = { -- Dusty Old Robot
+            [itemKeys.startQuest] = 32850,
         },
         [105891] = { -- Moonfang's Pelt
             [itemKeys.startQuest] = 33354,
