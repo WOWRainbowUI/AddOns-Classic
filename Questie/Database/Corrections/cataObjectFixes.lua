@@ -442,6 +442,10 @@ function CataObjectFixes.Load()
         [183441] = { -- Soul Mirror
             [objectKeys.spawns] = {[zoneIDs.AUCHENAI_CRYPTS_BRIDGE_OF_SOULS] = {{74.99,49.99}},[zoneIDs.AUCHENAI_CRYPTS] = {{-1,-1}}},
         }, 
+        [184465] = { -- Cache of the Legion
+            [objectKeys.spawns] = {[zoneIDs.THE_MECHANAR] = {{38.99,28.26},{-1,-1}}},
+            [objectKeys.zoneID] = zoneIDs.THE_MECHANAR,
+        }, 
         [185471] = { -- Mailbox
             [objectKeys.factionID] = 1604,
         }, 
@@ -1415,6 +1419,9 @@ function CataObjectFixes.Load()
         [209928] = { -- Unsecured Vent
             [objectKeys.spawns] = {[zoneIDs.HILLSBRAD_FOOTHILLS] = {{71.35,45.38}}},
             [objectKeys.zoneID] = zoneIDs.HILLSBRAD_FOOTHILLS,
+        },
+        [216484] = { -- Intensifier Disc
+            [objectKeys.spawns] = {[zoneIDs.SILVERMOON_CITY] = {{92.6,37.59}}},
         },
         [259806] = { -- Love Potion Recipe
             [objectKeys.questStarts] = {},

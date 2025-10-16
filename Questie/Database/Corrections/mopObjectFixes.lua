@@ -826,10 +826,28 @@ function MopObjectFixes.Load()
             [objectKeys.questStarts] = nil,
             [objectKeys.questEnds] = {32108},
         },
+        [216347] = { -- Divine Bell
+            [objectKeys.name] = "Divine Bell",
+            [objectKeys.spawns] = {[zoneIDs.DARNASSUS] = {{39.81,39.75}}},
+            [objectKeys.zoneID] = zoneIDs.DARNASSUS,
+        },
+        [216360] = { -- Untamed Amber
+            [objectKeys.spawns] = {[zoneIDs.DREAD_WASTES] = {{65.68,71.66}}},
+            [objectKeys.zoneID] = zoneIDs.DREAD_WASTES,
+        },
+        [216362] = { -- A Keg of Metal Brew
+            [objectKeys.spawns] = {[zoneIDs.THE_JADE_FOREST] = {{33.74,34.44}}},
+            [objectKeys.zoneID] = zoneIDs.THE_JADE_FOREST,
+        },
         [216420] = { -- Portal to The Purple Parlor
             [objectKeys.name] = "Portal to The Purple Parlor",
             [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{89.19,33.56}}},
             [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [216421] = { -- Mallet Head
+            [objectKeys.name] = "Mallet Head",
+            [objectKeys.spawns] = {[zoneIDs.VALLEY_OF_THE_FOUR_WINDS] = {{24.98,28.06}}},
+            [objectKeys.zoneID] = zoneIDs.VALLEY_OF_THE_FOUR_WINDS,
         },
         [216427] = { -- Hammer of Fellowship
             [objectKeys.name] = "Hammer of Fellowship",
@@ -855,6 +873,26 @@ function MopObjectFixes.Load()
         },
         [216664] = { -- Weathered Journal
             [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{58.26,84.21}}},
+            [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
+        },
+        [216678] = { -- Divine Bell
+            [objectKeys.name] = "Divine Bell",
+            [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{61.71,20.75}}},
+            [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
+        },
+        [216710] = { -- Sunreaver Portal: Darnassus
+            [objectKeys.name] = "Sunreaver Portal: Darnassus",
+            [objectKeys.spawns] = {[zoneIDs.KRASARANG_WILDS] = {{9.78,53.3}}},
+            [objectKeys.zoneID] = zoneIDs.KRASARANG_WILDS,
+        },
+        [216720] = { -- Portal to Dalaran
+            [objectKeys.name] = "Portal to Dalaran",
+            [objectKeys.spawns] = {[zoneIDs.TELDRASSIL] = {{39.98,50.6}}},
+            [objectKeys.zoneID] = zoneIDs.TELDRASSIL,
+        },
+        [216721] = { -- Divine Bell
+            [objectKeys.name] = "Divine Bell",
+            [objectKeys.spawns] = {[zoneIDs.KUN_LAI_SUMMIT] = {{55.95,31.8}}},
             [objectKeys.zoneID] = zoneIDs.KUN_LAI_SUMMIT,
         },
         [216743] = { -- Goblin Explosives Crate

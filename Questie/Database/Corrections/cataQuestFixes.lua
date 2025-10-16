@@ -319,6 +319,12 @@ function CataQuestFixes.Load()
         [2950] = { -- Nogg's Ring Redo
             [questKeys.zoneOrSort] = zoneIDs.ORGRIMMAR,
         },
+        [2963] = { -- Portents of Uldum
+            [questKeys.nextQuestInChain] = 0,
+        },
+        [2965] = { -- Portents of Uldum
+            [questKeys.nextQuestInChain] = 0,
+        },
         [3087] = { -- Etched Parchment
             [questKeys.requiredRaces] = raceIDs.ORC,
             [questKeys.startedBy] = {{3143}},
@@ -2382,6 +2388,8 @@ function CataQuestFixes.Load()
         },
         [13129] = { -- Head Games
             [questKeys.preQuestSingle] = {},
+            [questKeys.startedBy] = {{55677}},
+            [questKeys.extraObjectives] = {},
         },
         [13187] = { -- The Faceless Ones
             [questKeys.preQuestSingle] = {29826},
@@ -5139,7 +5147,7 @@ function CataQuestFixes.Load()
         [25157] = { -- The Latest Fashion!
             [questKeys.exclusiveTo] = {25105,25154,25155,25156},
             [questKeys.requiredSkill] = {profKeys.JEWELCRAFTING,475},
-            [questKeys.extraObjectives] = {{{[zoneIDs.STORMWIND_CITY] = {{63.8,60.8}}},Questie.ICON_TYPE_EVENT,l10n("Use Stardust No. 2 on ten Humanoids")}},
+            [questKeys.objectives] = {{{39237,nil,Questie.ICON_TYPE_EVENT}}},
         },
         [25158] = { -- Nibbler!  No!
             [questKeys.exclusiveTo] = {25159,25160,25161,25162},
@@ -5148,7 +5156,7 @@ function CataQuestFixes.Load()
         [25159] = { -- The Latest Fashion!
             [questKeys.exclusiveTo] = {25158,25160,25161,25162},
             [questKeys.requiredSkill] = {profKeys.JEWELCRAFTING,475},
-            [questKeys.extraObjectives] = {{{[zoneIDs.ORGRIMMAR] = {{72.5,36.2}}},Questie.ICON_TYPE_EVENT,l10n("Use Stardust No. 2 on ten Humanoids")}},
+            [questKeys.objectives] = {{{39237,nil,Questie.ICON_TYPE_EVENT}}},
         },
         [25160] = { -- A Present for Lila
             [questKeys.exclusiveTo] = {25158,25159,25161,25162},
@@ -15172,29 +15180,32 @@ function CataQuestFixes.Load()
         },
         [29658] = { -- The Calculator
             [questKeys.preQuestSingle] = {29657},
-            [questKeys.startedBy] = {{100001}},
+            [questKeys.startedBy] = {{19219}},
+        },
+        [29659] = { -- Lost Treasure
+            [questKeys.startedBy] = {{19218,19710}},
         },
         [29660] = { -- Saving the Botanica
             [questKeys.startedBy] = {{100071}},
         },
         [29667] = { -- Culling the Herd
             [questKeys.preQuestSingle] = {29660},
-            [questKeys.startedBy] = {{100001}},
+            [questKeys.startedBy] = {{100073}},
         },
         [29669] = { -- A Most Somber Task
             [questKeys.preQuestSingle] = {29667},
-            [questKeys.startedBy] = {{100001}},
+            [questKeys.startedBy] = {{100074}},
         },
         [29674] = { -- Unbound Darkness
             [questKeys.startedBy] = {{100072}},
         },
         [29675] = { -- Hey There Dalliah
             [questKeys.preQuestSingle] = {29674},
-            [questKeys.startedBy] = {{100001}},
+            [questKeys.startedBy] = {{100075}},
         },
         [29681] = { -- Maximum Security Breakout
             [questKeys.preQuestSingle] = {29675},
-            [questKeys.startedBy] = {{100001}},
+            [questKeys.startedBy] = {{100076}},
         },
         [29682] = { -- Magisters' Terrace
             [questKeys.preQuestSingle] = {},
@@ -15820,6 +15831,10 @@ function CataQuestFixes:LoadFactionFixes()
         [29836] = { -- Just Checkin'
             [questKeys.nextQuestInChain] = 29844,
             [questKeys.exclusiveTo] = {13098},
+        },
+        [30120] = { -- Cleansing Drak'Tharon
+            [questKeys.requiredSourceItems] = {35797,38303},
+            [questKeys.extraObjectives] = {{nil, Questie.ICON_TYPE_EVENT, l10n("Drink Drakuru's Elixir after gathering 5 Enduring Mojo"),0,{{"object", 190629}}}},
         },
     }
 

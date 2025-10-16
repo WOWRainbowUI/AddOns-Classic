@@ -336,9 +336,6 @@ function QuestieTBCNpcFixes:Load()
         [15967] = {
             [npcKeys.waypoints] = {},
         },
-        [16033] = {
-            [npcKeys.spawns] = {[zoneIDs.BURNING_STEPPES]={{32.29,25.8},},[zoneIDs.SEARING_GORGE]={{39.87,96.46},},},
-        },
         [16206] = {
             [npcKeys.waypoints] = {},
         },
@@ -532,6 +529,9 @@ function QuestieTBCNpcFixes:Load()
             [npcKeys.zoneID] = zoneIDs.AZUREMYST_ISLE,
         },
         [17214] = {
+            [npcKeys.waypoints] = {},
+        },
+        [17215] = {
             [npcKeys.waypoints] = {},
         },
         [17219] = { -- Sulaa
