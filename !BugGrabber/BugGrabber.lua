@@ -256,16 +256,22 @@ do
 	local GetErrorData
 	do
 		local GetCallstackHeight, GetErrorCallstackHeight, debugstack, debuglocals = GetCallstackHeight, GetErrorCallstackHeight, debugstack, debuglocals
-		function GetErrorData() -- This code is lifted from Blizzard's error handler
+		function GetErrorData() -- This code is lifted from Blizzard's error handler, and adapted to compensate for GetErrorCallstackHeight sometimes being nil
 			local currentStackHeight = GetCallstackHeight()
 			local errorCallStackHeight = GetErrorCallstackHeight()
-			local errorStackOffset = errorCallStackHeight and (errorCallStackHeight - 1)
-			local debugStackLevel = currentStackHeight - (errorStackOffset or 0)
+			if errorCallStackHeight then
+				local errorStackOffset = errorCallStackHeight - 1
+				local debugStackLevel = currentStackHeight - errorStackOffset
 
-			local stack = debugstack(debugStackLevel)
-			local locals = debuglocals(debugStackLevel)
+				local stack = debugstack(debugStackLevel)
+				local locals = debuglocals(debugStackLevel)
 
-			return stack, locals
+				return stack, locals
+			else
+				local stack = debugstack(3)
+				local locals = debuglocals(3)
+				return stack, locals
+			end
 		end
 	end
 
@@ -274,13 +280,6 @@ do
 	local msgsAllowedLastTime = GetTime()
 	local lastWarningTime = 0
 	function grabError(errorMessage, isSimple)
-		-- 不顯示暴雪專業和觀察視窗未翻譯錯誤
-		if tostring(errorMessage):find("Localization.lua", nil, true) then return end
-		-- 不顯示拍賣場瀏覽複數物品的錯誤
-		if tostring(errorMessage):find("MoneyFrame.lua", nil, true) then return end
-		-- 不顯示 PTR 的錯誤
-		if tostring(errorMessage):find("Blizzard_PTRFeedback", nil, true) then return end
-
 		-- Flood protection --
 		msgsAllowed = msgsAllowed + (GetTime()-msgsAllowedLastTime)*BUGGRABBER_ERRORS_PER_SEC_BEFORE_THROTTLE
 		msgsAllowedLastTime = GetTime()
