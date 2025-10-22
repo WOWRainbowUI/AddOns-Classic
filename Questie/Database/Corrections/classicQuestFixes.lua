@@ -804,7 +804,7 @@ function QuestieQuestFixes:Load()
             [questKeys.preQuestSingle] = {1273}, -- #1574
         },
         [1282] = {
-            [questKeys.exclusiveTo] = {1301}, -- #917
+            [questKeys.exclusiveTo] = {1301,1302}, -- #917
         },
         [1284] = {
             [questKeys.preQuestSingle] = {1302,1282}, -- #1845
@@ -4459,8 +4459,60 @@ function QuestieQuestFixes:Load()
             [questKeys.requiredSourceItems] = {11018},
             [questKeys.preQuestSingle] = {},
         },
+        [8966] = {
+            [questKeys.exclusiveTo] = {8967,8968,8969},
+            [questKeys.preQuestSingle] = {8962,8963,8964,8965},
+        },
+        [8967] = {
+            [questKeys.exclusiveTo] = {8966,8968,8969},
+            [questKeys.preQuestSingle] = {8962,8963,8964,8965},
+        },
+        [8968] = {
+            [questKeys.exclusiveTo] = {8966,8967,8969},
+            [questKeys.preQuestSingle] = {8962,8963,8964,8965},
+        },
+        [8969] = {
+            [questKeys.exclusiveTo] = {8966,8967,8968},
+            [questKeys.preQuestSingle] = {8962,8963,8964,8965},
+        },
         [8980] = { -- bad race data
             [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
+        },
+        [8985] = {
+            [questKeys.preQuestSingle] = {8970},
+            [questKeys.exclusiveTo] = {8986,8987,8988},
+            [questKeys.nextQuestInChain] = 8989,
+        },
+        [8986] = {
+            [questKeys.preQuestSingle] = {8970},
+            [questKeys.exclusiveTo] = {8985,8987,8988},
+            [questKeys.nextQuestInChain] = 8990,
+        },
+        [8987] = {
+            [questKeys.preQuestSingle] = {8970},
+            [questKeys.exclusiveTo] = {8986,8988,8989},
+            [questKeys.nextQuestInChain] = 8991,
+        },
+        [8988] = {
+            [questKeys.preQuestSingle] = {8970},
+            [questKeys.exclusiveTo] = {8986,8987,8989},
+            [questKeys.nextQuestInChain] = 8992,
+        },
+        [8989] = {
+            [questKeys.preQuestSingle] = {8985,8986,8987,8988},
+            [questKeys.exclusiveTo] = {8990,8991,8992},
+        },
+        [8990] = {
+            [questKeys.preQuestSingle] = {8985,8986,8987,8988},
+            [questKeys.exclusiveTo] = {8989,8991,8992},
+        },
+        [8991] = {
+            [questKeys.preQuestSingle] = {8985,8986,8987,8988},
+            [questKeys.exclusiveTo] = {8989,8990,8992},
+        },
+        [8992] = {
+            [questKeys.preQuestSingle] = {8985,8986,8987,8988},
+            [questKeys.exclusiveTo] = {8989,8990,8991},
         },
         [9015] = {
             [questKeys.objectives] = {{{16059,"Theldren's Team Defeated"}},nil,{{22047,nil}},nil}, -- #2408
