@@ -669,7 +669,7 @@ VUHDO_I18N_TT.K607 = "更改有狂怒增益的敵人的顏色。";
 VUHDO_I18N_TT.K608 = "忽略敵人身上可驅散的增益。";
 VUHDO_I18N_TT.K609 = "載入法術配置時，只套用持續性治療的欄位設定 (面板 => HoT 圖示 => 順序)。";
 
--- TBCC game version specific strings (tooltip IDs begin at K900)
+-- Classic Era game version specific strings (tooltip IDs begin at K900)
 
 VUHDO_I18N_TT.K900 = "使用 LibHealComm-4.0 顯示即將治療預估。";
 
@@ -1235,3 +1235,7 @@ VUHDO_I18N_ENRAGE = "狂怒";
 VUHDO_I18N_PURGEABLE_BUFFS = "可驅散\n增益";
 
 VUHDO_I18N_LOAD_HOTS_ONLY_SLOTS = "只有欄位";
+
+-- Classic Era game version specific strings
+
+VUHDO_I18N_LIBHEALCOMM = "使用 Lib\nHealComm";
