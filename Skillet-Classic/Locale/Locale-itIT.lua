@@ -28,9 +28,9 @@ L["Appearance"] = "Aspetto"
 L["APPEARANCEDESC"] = "Le opzioni che controllano come Skillet viene mostrato"
 --[[Translation missing --]]
 L["Auction"] = "Auction"
+L["bank"] = "banca"
 --[[Translation missing --]]
 L["Bank"] = "Bank"
-L["bank"] = "banca"
 L["Blizzard"] = "Tempesta"
 L["Buy Reagents"] = "Compra Reagenti"
 L["buyable"] = "comprabile"
@@ -167,9 +167,9 @@ L["INCLUDEREAGENTSNAME"] = "Include Reagents in Search"
 L["INTERRUPTCLEARDESC"] = "Moving, jumping, closing the frame, or clicking the Pause button clears the in progress queue entry"
 --[[Translation missing --]]
 L["INTERRUPTCLEARNAME"] = "Spell interrupt clears queue entry"
+L["Inventory"] = "Inventario"
 --[[Translation missing --]]
 L["inventory"] = "inventory"
-L["Inventory"] = "Inventario"
 L["INVENTORYDESC"] = "Informazioni dell'Inventario"
 L["InvSlot"] = "InvSlot"
 L["is now disabled"] = "e' ora disabilitato"
