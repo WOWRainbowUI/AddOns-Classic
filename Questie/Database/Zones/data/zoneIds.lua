@@ -89,10 +89,10 @@ ZoneDB.zoneIDs = {
     ZUL_GURUB = 1977,
     STRATHOLME = 2017, -- this is also Crusader's Square map for Stratholme
     SCHOLOMANCE = 2057, -- this is also The Reliquary map for Scholomance
+    ALCAZ_ISLAND = 2079,
     MARAUDON = 2100, -- this is also Caverns of Maraudon map for Maraudon
     ONYXIAS_LAIR = 2159,
     DEEPRUN_TRAM = 2257,
-    SOUTH_SEAS = 2317,
     THE_BLACK_MORASS = 2366,
     OLD_HILLSBRAD_FOOTHILLS = 2367,
     RAGEFIRE_CHASM = 2437,
@@ -361,6 +361,7 @@ ZoneDB.zoneIDs = {
     KALIMDOR = 10073, -- continent map
     EASTERN_KINGDOMS = 10074, -- continent map
     PANDARIA = 10075, -- continent map
+    AZEROTH = 10089, -- continent map
 
     -- Fake IDs for SoD
     DEMON_FALL_CANYON = 15475, -- SoD Dungeon
