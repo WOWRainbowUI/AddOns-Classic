@@ -770,6 +770,10 @@ VUHDO_I18N_TT.K607 = "Click to change color to indicate enemies affected by enra
 VUHDO_I18N_TT.K608 = "Check to ignore purgeable buffs on enemies.";
 VUHDO_I18N_TT.K609 = "Check to only apply HoT slot setup (Panels => HoTs => Order) when spell layout is being loaded.";
 
+-- Classic Era game version specific strings (tooltip IDs begin at K900)
+
+VUHDO_I18N_TT.K900 = "Check to show incoming heal using LibHealComm-4.0.";
+
 VUHDO_I18N_DEFAULT_PROFILE = "Стандартный\nпрофиль";
 VUHDO_I18N_DEFAULT_LAYOUT = "Стандартная раскладка клавиш ";
 VUHDO_I18N_APPLY_TO_ALL = "Применить\nко всем";
@@ -1407,3 +1411,7 @@ VUHDO_I18N_ENRAGE = "Enrage";
 VUHDO_I18N_PURGEABLE_BUFFS = "Purgeable\nBuffs";
 
 VUHDO_I18N_LOAD_HOTS_ONLY_SLOTS = "Only Slots";
+
+-- Classic Era game version specific strings
+
+VUHDO_I18N_LIBHEALCOMM = "Use Lib\nHealComm";

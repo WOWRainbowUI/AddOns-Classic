@@ -24,4 +24,8 @@
 	<Include file="NickTag-1.0\NickTag-1.0.xml" />
 	<Script file="LibSpecialization\LibSpecialization.lua" />
 
+	<Include file="LibHealComm-4.0\LibHealComm-4.0.xml" />
+
+	<Include file="LibClassicDurations\LibClassicDurations.xml" />
+
 </Ui>
