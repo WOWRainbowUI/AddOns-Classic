@@ -9,8 +9,7 @@ local function localeFunc(L, key) return key end
 local L = setmetatable({}, {__index = localeFunc})
 Leatrix_Maps.L = L
 
-if LeatrixGlobalDisableLocalisation then return end
-if LeaMapsDB then print("Leatrix Maps: LeaMapsDB exists.") end
+if LeaMapsDB and LeaMapsDB.UseEnglishLanguage and LeaMapsDB.UseEnglishLanguage == "On" then return end
 
 -- Locale override (enUS, zhCN, zhTW, ruRU, koKR, deDE, esMX, frFR, itIT, ptBR)
 -- GameLocale = "enUS"
@@ -4690,7 +4689,7 @@ L["Blackrock Foundry"] = "Forja Negra"
 L["Blackrock Mountain"] = "Montaña Roca Negra"
 L["Blackrock Spire"] = "Pico Roca Negra"
 L["Blackwing Descent"] = "Descenso de Alanegra"
-L["Blackwing Lair"] = "Guarida de Alanegra"
+L["Blackwing Lair"] = "Guarida Alanegra"
 L["Blade Tooth Canyon"] = "Cañón Colmillo Afilado"
 L["Blade's Edge Mountains"] = "Montañas Filospada"
 L["Blades' Run"] = "Tramo de las Hojas"
