@@ -1,5 +1,5 @@
 ﻿----------------------------------------------------------------------
--- 	Leatrix Plus 1.15.99 (1st October 2025)
+-- 	Leatrix Plus 1.15.103 (22nd October 2025)
 ----------------------------------------------------------------------
 
 --	01:Functions 02:Locks   03:Restart 40:Player   45:Rest
@@ -19,7 +19,7 @@
 	local void
 
 	-- Version
-	LeaPlusLC["AddonVer"] = "1.15.99"
+	LeaPlusLC["AddonVer"] = "1.15.103"
 
 	-- Get locale table
 	local void, Leatrix_Plus = ...
@@ -656,6 +656,9 @@
 		or	(LeaPlusLC["ShowVendorPrice"]		~= LeaPlusDB["ShowVendorPrice"])		-- Show vendor price
 		or	(LeaPlusLC["CombatPlates"]			~= LeaPlusDB["CombatPlates"])			-- Combat plates
 		or	(LeaPlusLC["EasyItemDestroy"]		~= LeaPlusDB["EasyItemDestroy"])		-- Easy item destroy
+
+		-- Settings
+		or	(LeaPlusLC["UseEnglishLanguage"]	~= LeaPlusDB["UseEnglishLanguage"])		-- Use English language
 
 		then
 			-- Enable the reload button
@@ -1685,7 +1688,8 @@
 					tDelay = GetTime()
 					if GetCVarBool("autoLootDefault") ~= IsModifiedClick("AUTOLOOTTOGGLE") then
 						if TSMDestroyBtn and TSMDestroyBtn:IsShown() and TSMDestroyBtn:GetButtonState() == "DISABLED" then tDelay = GetTime() return end
-						if GetLootMethod() == "master" then
+						local lootMethod = C_PartyInfo.GetLootMethod()
+						if lootMethod == 2 then
 							-- Master loot is enabled so fast loot if item should be auto looted
 							local lootThreshold = GetLootThreshold()
 							for i = GetNumLootItems(), 1, -1 do
@@ -7227,12 +7231,12 @@
 
 				-- Show left column slot buttons
 				for i = 1, 7 do
-					MakeSlotButton(i, slotTable[i], "TOPLEFT", 22, -80 + -35 * (i - 1))
+					MakeSlotButton(i, slotTable[i], "TOPLEFT", 12, -68 + -35 * (i - 1))
 				end
 
 				-- Show right column slot buttons
 				for i = 8, 13 do
-					MakeSlotButton(i, slotTable[i], "TOPRIGHT", -46, -80 + -35 * (i - 8))
+					MakeSlotButton(i, slotTable[i], "TOPRIGHT", -14, -68 + -35 * (i - 8))
 				end
 
 				-- Function to set item buttons
@@ -7272,7 +7276,7 @@
 			LeaPlusLC["DressupAnim"] = 0 -- Defined here since the setting is not saved
 			LeaPlusLC:MakeSL(DressUpFrame, "DressupAnim", "", 1, #animTable - 1, 1, 356, -92, "%.0f")
 			LeaPlusCB["DressupAnim"]:ClearAllPoints()
-			LeaPlusCB["DressupAnim"]:SetPoint("BOTTOM", -12, 112)
+			LeaPlusCB["DressupAnim"]:SetPoint("BOTTOM", -12, 34)
 			LeaPlusCB["DressupAnim"]:SetWidth(226)
 			LeaPlusCB["DressupAnim"]:SetFrameLevel(5)
 			LeaPlusCB["DressupAnim"]:HookScript("OnValueChanged", function(self, setting)
@@ -7341,7 +7345,7 @@
 			-- Close
 			SetButton(DressUpFrameCancelButton, "", "Close")
 			DressUpFrameCancelButton:ClearAllPoints()
-			DressUpFrameCancelButton:SetPoint("BOTTOMRIGHT", DressUpFrame, "BOTTOMRIGHT", -40, 80)
+			DressUpFrameCancelButton:SetPoint("BOTTOMRIGHT", DressUpFrame, "BOTTOMRIGHT", -4, 4)
 
 			-- Reset
 			SetButton(DressUpFrameResetButton, "R", "Reset")
@@ -12976,6 +12980,7 @@
 
 				-- Settings
 				LeaPlusLC:LoadVarChk("ShowMinimapIcon", "On")				-- Show minimap button
+				LeaPlusLC:LoadVarChk("UseEnglishLanguage", "Off")			-- Use English language
 				LeaPlusLC:LoadVarNum("PlusPanelScale", 1, 1, 2)				-- Panel scale
 				LeaPlusLC:LoadVarNum("PlusPanelAlpha", 0, 0, 1)				-- Panel alpha
 
@@ -13374,6 +13379,7 @@
 
 			-- Settings
 			LeaPlusDB["ShowMinimapIcon"] 		= LeaPlusLC["ShowMinimapIcon"]
+			LeaPlusDB["UseEnglishLanguage"] 	= LeaPlusLC["UseEnglishLanguage"]
 			LeaPlusDB["PlusPanelScale"] 		= LeaPlusLC["PlusPanelScale"]
 			LeaPlusDB["PlusPanelAlpha"] 		= LeaPlusLC["PlusPanelAlpha"]
 
@@ -15483,6 +15489,8 @@
 				LeaPlusDB["CombatPlates"] = "On"				-- Combat plates
 				LeaPlusDB["EasyItemDestroy"] = "On"				-- Easy item destroy
 
+				LeaPlusDB["UseEnglishLanguage"] = "On"			-- Use English language
+
 				-- Function to assign cooldowns
 				local function setIcon(pclass, pspec, sp1, pt1, sp2, pt2, sp3, pt3, sp4, pt4, sp5, pt5)
 					-- Set spell ID
@@ -15883,6 +15891,7 @@
 
 	LeaPlusLC:MakeTx(LeaPlusLC[pg], "Addon"						, 146, -72);
 	LeaPlusLC:MakeCB(LeaPlusLC[pg], "ShowMinimapIcon"			, "Show minimap button"				, 146, -92,		false,	"If checked, a minimap button will be available.|n|nClick - Toggle options panel.|n|nSHIFT-click - Toggle music.|n|nALT-click - Toggle errors (if enabled).|n|nCTRL/SHIFT-click - Toggle windowed mode.|n|nCTRL/ALT-click - Toggle Zygor (if installed).")
+	LeaPlusLC:MakeCB(LeaPlusLC[pg], "UseEnglishLanguage"		, "Use English language"			, 146, -112,	true,	"If checked, text used throughout the addon will be shown in English regardless of your game locale.")
 
 	LeaPlusLC:MakeTx(LeaPlusLC[pg], "Scale", 340, -72);
 	LeaPlusLC:MakeSL(LeaPlusLC[pg], "PlusPanelScale", "Drag to set the scale of the Leatrix Plus panel.", 1, 2, 0.1, 340, -92, "%.1f")
