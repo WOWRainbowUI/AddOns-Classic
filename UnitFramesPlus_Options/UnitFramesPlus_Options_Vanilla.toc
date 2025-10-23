@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 11508
 ## Title: UnitFramesPlus Options
 ## Title-zhCN: 系统头像增强 设置
 ## Author: Isler

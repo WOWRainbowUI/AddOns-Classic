@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 11508
 ## Author: Lag
 ## Version: SoD v0.9.77 Fix2
 ## SavedVariables: AtlasLootClassicDB

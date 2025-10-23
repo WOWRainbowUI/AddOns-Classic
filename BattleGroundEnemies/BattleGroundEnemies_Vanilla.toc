@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 11508
 ## Title: BattleGroundEnemies
 ## Version: 11.2.0.6
 ## Author: Bullsei

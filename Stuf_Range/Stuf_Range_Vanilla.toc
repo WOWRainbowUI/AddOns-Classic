@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 11508
 ## Title: Stuf_Range
 ## Author: TotalPackage
 ## Notes: Displays estimate distance using LibRangeCheck-3.0.

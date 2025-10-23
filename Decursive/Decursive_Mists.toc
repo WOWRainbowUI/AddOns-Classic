@@ -1,6 +1,6 @@
 ## Interface: 50501
 ## X-Max-Interface: 110200
-## X-Min-Interface: 11507
+## X-Min-Interface: 11508
 ## X-Incompatible-With: 30405, 30406, 30407, 40402, 40403, 40404, 40405
 
 ## Title: Decursive |cffff00ff -Ace3-|r

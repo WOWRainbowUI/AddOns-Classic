@@ -1,4 +1,4 @@
-## Interface: 11507, 50501
+## Interface: 11508, 50501
 ## Author: Snowflame0
 ## Version: v5.0.4
 ## Dependencies: AtlasLootClassic

@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 11508
 ## Title: RangeDisplay
 ## Author: mitch0
 ## Version: v6.1.4

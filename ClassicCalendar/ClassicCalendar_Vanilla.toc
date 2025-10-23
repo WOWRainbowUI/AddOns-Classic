@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 11508
 ## Title: Classic Calendar - Revived
 ## Version: v0.8.7
 ## Author: Pimptasty

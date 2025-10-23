@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 11508
 ## Author: Snowflame0
 ## Version: v4.1.0 Fix
 ## Dependencies: AtlasLootClassic

@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 11508
 ## Plain Title: Glass
 ## Author: mixxorz
 ## Version: 1.8.0 Classic Fix

@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 11508
 ## Title: Extended Vendor UI |cffa335ee[Classic Edition]|r |cffffffffv1.0.6
 ## Notes: Extends the merchant interface for easier browsing.
 ## Author: Germbread

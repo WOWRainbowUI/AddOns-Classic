@@ -1,4 +1,4 @@
-## Interface: 11507
+## Interface: 11508
 ## Title: Kaliel's Tracker
 ## Notes: |nClassic Era Objective Tracker|n|cff999999by Kaliel (Marouan Sabbagh)|n|n
 ## Version: 5.2.0
