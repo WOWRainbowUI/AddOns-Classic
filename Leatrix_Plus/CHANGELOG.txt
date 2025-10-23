@@ -1,4 +1,8 @@
-﻿5.1.01 - 24th September 2025
+﻿5.1.06 - 22nd October 2025
+- For 'Dismount me' ('System'), the remove shapeshift button will now use the same layout regardless of whether 'Enhance flight map' ('Interface') is enabled or not. 
+- For 'Enhance tooltip' ('Interface'), fixed the issue with hide tooltips for world units during combat.
+
+5.1.01 - 24th September 2025
 - Fixed the Lua error with 'Faster auto loot' ('System').
 
 5.1.00 - 24th September 2025
