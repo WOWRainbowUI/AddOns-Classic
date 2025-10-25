@@ -1093,7 +1093,7 @@ L["Unknown Layer"] = "Camada desconhecida";
 
 L["Active"] = "Ativo";
 L["noZonesMappedYet"] = "Nenhuma zona foi mapeada desde a reinicialização do servidor.";
-L["Rend log adjusted"] = "Registro de Rend ajustado";
+L["Rend log adjusted"] = "Registro de Laceral ajustado";
 
 L["flashDisableRendTitle"] = "Desativar iluminação de Rend";
 L["flashDisableRendDesc"] = "Substitui para desativar todos os eventos de iluminação do cliente relacionados a Rend.";
@@ -1142,3 +1142,38 @@ L["Shadow Labyrinth"] = "Labirinto Soturno";
 L["Auchindoun"] = "Auchindoun";
 L["Tempest Keep"] = "Bastilha da Tormenta";
 L["Caverns of Time"] = "Cavernas do Tempo";
+
+L["shortLayerPrefix"] = "C";
+L["expired"] = "expirado";
+
+L["layersHeaderDesc"] = "Opções de camadas";
+
+L["minimapLayerZoneIDTitle"] = "ID da zona no minimapa";
+L["minimapLayerZoneIDDesc"] = "Mostra o ID da sua zona atual ao lado do número da camada atual.";
+
+L["minimapLayerZoneIDTooltipTitle"] = "Dica de ID da zona do minimapa";
+L["minimapLayerZoneIDTooltipDesc"] = "Isso fará com que a dica ao passar o mouse exiba todos os ID da zona de camada da sua zona atual para que você possa compará-los com seu alternativo em outra facção ou por qualquer outro motivo.";
+
+L["Unknown"] = "Desconhecido";
+
+--Abbreviated days/months.
+L["Mon"] = "Seg";
+L["Tue"] = "Ter";
+L["Wed"] = "Qua";
+L["Thu"] = "Qui";
+L["Fri"] = "Sex";
+L["Sat"] = "Sáb";
+L["Sun"] = "Dom";
+
+L["Jan"] = "Jan";
+L["Feb"] = "Fev";
+L["Mar"] = "Mar";
+L["Apr"] = "Abr";
+L["May"] = "Mai";
+L["Jun"] = "Jun";
+L["Jul"] = "Jul";
+L["Aug"] = "Ago";
+L["Sep"] = "Set";
+L["Oct"] = "Out";
+L["Nov"] = "Nov";
+L["Dec"] = "Dez";

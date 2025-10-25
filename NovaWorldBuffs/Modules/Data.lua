@@ -2087,7 +2087,7 @@ function NWB:receivedNpcDied(type, timestamp, distribution, layer, sender)
 	if (tonumber(timestamp) and timestamp > 0) then
 		local timeAgo = GetServerTime() - timestamp;
 		if (timeAgo > -1 and timeAgo < 1800 and (not NWB.receivedNpcDiedCooldown[type] or (GetServerTime() - NWB.receivedNpcDiedCooldown[type]) > 600)) then
-			local typeString = "Unknown";
+			local typeString = L["Unknown"];
 			local dataPrefix;
 			if (NWB.isLayered and layer) then
 				dataPrefix = NWB.data.layers[layer];
@@ -4185,7 +4185,7 @@ function NWB:updateTerokkarMarkers(type, layer)
 				time = time * -1;
 				local minutes = string.format("%02.f", math.floor(time / 60));
 			    local seconds = string.format("%02.f", math.floor(time - minutes * 60));
-				timeString = "|Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+				timeString = "|Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 				if (NWB.data.layers[layer]["terokFaction"] == 2) then
 		    		_G[type .. layer .. "NWBTerokkarMap"].texture:SetTexture("Interface\\worldstateframe\\alliancetower.blp");
 		    	elseif (NWB.data.layers[layer]["terokFaction"] == 3) then
@@ -4229,7 +4229,7 @@ function NWB:updateTerokkarMarkers(type, layer)
 				time = time * -1;
 				local minutes = string.format("%02.f", math.floor(time / 60));
 			    local seconds = string.format("%02.f", math.floor(time - minutes * 60));
-				timeString = "|Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+				timeString = "|Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 				if (NWB.data[layer]["terokFaction"] == 2) then
 		    		_G[type .. "NWBTerokkarMap"].texture:SetTexture("Interface\\worldstateframe\\alliancetower.blp");
 		    	elseif (NWB.data[layer]["terokFaction"] == 3) then
@@ -4279,7 +4279,7 @@ function NWB:updateWintergraspMarkers(type, layer)
 			time = time * -1;
 			local minutes = string.format("%02.f", math.floor(time / 60));
 		    local seconds = string.format("%02.f", math.floor(time - minutes * 60));
-			timeString = "|Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+			timeString = "|Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 			if (wintergraspFaction == 2) then
 	    		_G[type .. "NWBTerokkarMap"].texture:SetTexture("Interface\\worldstateframe\\alliancetower.blp");
 	    	elseif (wintergraspFaction == 3) then

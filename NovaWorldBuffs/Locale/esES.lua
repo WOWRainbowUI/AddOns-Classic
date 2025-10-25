@@ -1194,3 +1194,38 @@ L["Shadow Labyrinth"] = "Laberinto de las Sombras";
 L["Auchindoun"] = "Auchindoun";
 L["Tempest Keep"] = "El Castillo de la Tempestad";
 L["Caverns of Time"] = "Cavernas del Tiempo";
+
+L["shortLayerPrefix"] = "C";
+L["expired"] = "caducado";
+
+L["layersHeaderDesc"] = "Opciones de capas";
+
+L["minimapLayerZoneIDTitle"] = "ID de zona en minimapa";
+L["minimapLayerZoneIDDesc"] = "Muestra el ID de tu zona actual junto al número de capa actual.";
+
+L["minimapLayerZoneIDTooltipTitle"] = "Tooltip de ID de zona";
+L["minimapLayerZoneIDTooltipDesc"] = "Esto hará que el tooltip al pasar el ratón muestre todos los ID de zona de capa de tu zona actual para que puedas compararlos con tu personaje alternativo en otra facción o por cualquier otro motivo.";
+
+L["Unknown"] = "Desconocido";
+
+--Abbreviated days/months.
+L["Mon"] = "Lun";
+L["Tue"] = "Mart";
+L["Wed"] = "Miérc";
+L["Thu"] = "Juev";
+L["Fri"] = "Vier";
+L["Sat"] = "Sáb";
+L["Sun"] = "Dom";
+
+L["Jan"] = "Ene";
+L["Feb"] = "Feb";
+L["Mar"] = "Mar";
+L["Apr"] = "Abr";
+L["May"] = "May";
+L["Jun"] = "Jun";
+L["Jul"] = "Jul";
+L["Aug"] = "Ago";
+L["Sep"] = "Sep";
+L["Oct"] = "Oct";
+L["Nov"] = "Nov";
+L["Dec"] = "Dic";

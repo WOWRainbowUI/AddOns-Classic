@@ -1124,3 +1124,6 @@ L["minimapLayerZoneIDTooltipTitle"] = "Minimap ZoneIDs Tooltip";
 L["minimapLayerZoneIDTooltipDesc"] = "This will make the mouseover tooltip show all layer zoneID's for your current zone so you can compare it with your alt on another faction or whatever reason.";
 			
 L["Unknown"] = "Unknown";
+
+L["shortLayerPrefix"] = "L";
+L["expired"] = "expired";

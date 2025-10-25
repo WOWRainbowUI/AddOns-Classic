@@ -1132,3 +1132,16 @@ L["Shadow Labyrinth"] = "Labyrinthe des ombres";
 L["Auchindoun"] = "Auchindoun";
 L["Tempest Keep"] = "Donjon de la Tempête";
 L["Caverns of Time"] = "Grottes du temps";
+
+L["shortLayerPrefix"] = "C";
+L["expired"] = "expiré";
+
+L["layersHeaderDesc"] = "Options de couches";
+
+L["minimapLayerZoneIDTitle"] = "ID de zone sur la minicarte";
+L["minimapLayerZoneIDDesc"] = "Affiche l’ID de la zone actuelle à côté du numéro de couche actuel.";
+
+L["minimapLayerZoneIDTooltipTitle"] = "Infobulle des ID de zones";
+L["minimapLayerZoneIDTooltipDesc"] = "Fait en sorte que l’infobulle au survol affiche tous les ID de couches de la zone actuelle pour que tu puisses les comparer avec ton personnage secondaire d’une autre faction ou pour toute autre raison.";
+
+L["Unknown"] = "Inconnu";
