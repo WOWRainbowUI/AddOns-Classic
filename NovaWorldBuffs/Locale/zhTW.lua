@@ -947,7 +947,9 @@ L["|cff00ff00[Layer "] = "|cff00ff00[鏡像 "
 L[" |cff9CD6DE(Dropped "] =" |cff9CD6DE(在 "
 L[" ago)|r"] = "之前施放)|r"
 --
-L["Unknown."] = "未知。"
+L["Unknown"] = "未知"
+L["shortLayerPrefix"] = "L";
+L["expired"] = "已過期";
 L["|cffFFFF00Rend handed in by "] = "|cffFFFF00掛頭玩家為 "						
 L["|cFFFF6900Daily|r |cFF9CD6DE(|r|cff00ff00N|r|cFF9CD6DE)|r "] = "|cFFFF6900每日|r |cFF9CD6DE(|r|cff00ff00普通|r|cFF9CD6DE)|r "
 L["|cFFFF6900Daily|r |cFF9CD6DE(|r|cff00ff00N|r|cFF9CD6DE)|r Unknown."] = "|cFFFF6900每日|r |cFF9CD6DE(|r|cff00ff00普通|r|cFF9CD6DE)|r 未知。"

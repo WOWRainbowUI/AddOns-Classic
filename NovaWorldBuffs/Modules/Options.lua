@@ -2335,19 +2335,18 @@ end
 
 function NWB:checkNewVersion()
 	--NWB.db.global.versions = {};
-	local newVersionNotes = 3.14;
+	local newVersionNotes = 3.17;
 	if (NWB.version and NWB.version == newVersionNotes) then
 		if (not NWB.db.global.versions[NWB.version]) then
-			--if (NWB.isMOP) then
+			if (NWB.isClassic) then
 				--if (NWB:GetCurrentRegion() == 1 and not string.match(NWB.realm, "(AU)")) then
 					local notes = {
-						"Added option to show the current zone ID beside your layer on minimap (|cFFFF0000disabled|r by default).",
-						"Added option to show a list of all layers and zone IDs for your current zone when you mouseover the minimap layer text (|cFF00FF00enabled|r by default).",
-						"Merged layer display options into thier own section at the top of the config page.",
+						"The early rend warning when Herald spawned in crossroads has been broken by an API chanhge in the recent patch. The early warning has been changed to detect the nameplate instead, this means you must be waiting within nameplate range of the spawn point at the toip of the tower. If you're Horde you need to turn on friendy nameplates while at the spot for it to work. Everthing should work the same it just means you need to be a lot closer to the spawn now, let me know of any issues.",
+						"Some small layering fixes.",
 					};
 					loadNewVersionFrame(NWB.version, notes, "Nova World Buffs", "Interface\\Icons\\inv_misc_head_dragon_01", -50, 350);
 				--end
-			--end
+			end
 			--Wipe old data.
 			NWB.db.global.versions = {};
 			--Set this version has been loaded before.
@@ -3275,7 +3274,7 @@ function NWB:getSounds(type)
 		for k, v in NWB:pairsByKeys(sounds) do
 			NWB.sounds[k] = k;
 		end
-		NWB.sounds["None"] = "None";
+		NWB.sounds["None"] = NONE;
 	end
 	if (type == "rend") then
 		NWB.sounds["NWB - Rend Voice"] = "NWB - Rend Voice";

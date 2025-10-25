@@ -746,7 +746,7 @@ function NWB:getShortBuffTimers(channel, layerNum)
 		local layer, layerNum = NWB:getShortestTimerLayerBuff("ony");
 		if (layer > 0) then
 			dataPrefix = NWB.data.layers[layer];
-			shortLayerMsg = " [L" .. layerNum .. "]";
+			shortLayerMsg = " [" .. L["shortLayerPrefix"] .. layerNum .. "]";
 		end
 	end
 	if ((dataPrefix.onyNpcDied > dataPrefix.onyTimer) and
@@ -779,7 +779,7 @@ function NWB:getShortBuffTimers(channel, layerNum)
 		local layer, layerNum = NWB:getShortestTimerLayerBuff("nef");
 		if (layer > 0) then
 			dataPrefix = NWB.data.layers[layer];
-			shortLayerMsg = " [L" .. layerNum .. "]";
+			shortLayerMsg = " [" .. L["shortLayerPrefix"] .. layerNum .. "]";
 		end
 	end
 	if ((dataPrefix.nefNpcDied > dataPrefix.nefTimer) and
@@ -3394,6 +3394,31 @@ end
 	end
 end]]
 
+local localizedDays = {
+	["Mon"] = L["Mon"],
+	["Tue"] = L["Tue"],
+	["Wed"] = L["Wed"],
+	["Thu"] = L["Thu"],
+	["Fri"] = L["Fri"],
+	["Sat"] = L["Sat"],
+	["Sun"] = L["Sun"],
+};
+
+local localizedMonths = {
+	["Jan"] = L["Jan"],
+	["Feb"] = L["Feb"],
+	["Mar"] = L["Mar"],
+	["Apr"] = L["Apr"],
+	["May"] = L["May"],
+	["Jun"] = L["Jun"],
+	["Jul"] = L["Jul"],
+	["Aug"] = L["Aug"],
+	["Sep"] = L["Sep"],
+	["Oct"] = L["Oct"],
+	["Nov"] = L["Nov"],
+	["Dec"] = L["Dec"],
+};
+
 --Returns am/pm and lt/st format.
 function NWB:getTimeFormat(timeStamp, fullDate, abbreviate, forceServerTime, suffixST)
 	local suffix = "";
@@ -3423,13 +3448,31 @@ function NWB:getTimeFormat(timeStamp, fullDate, abbreviate, forceServerTime, suf
 			if (abbreviate) then
 				local string = date("%a %b %d", timeStamp);
 				if (date("%x", timeStamp) == date("%x", GetServerTime())) then
-					string = "Today";
+					string = L["Today"];
 				elseif (date("%x", timeStamp) == date("%x", GetServerTime() - 86400)) then
-					string = "Yesterday";
+					string = L["Yesterday"];
+				else
+					local day = date("%a", timeStamp);
+					if (localizedDays[day]) then
+						day = localizedDays[day];
+					end
+					local month = date("%b", timeStamp);
+					if (localizedMonths[month]) then
+						month = localizedMonths[month];
+					end
+					string = day .. " " .. month .. " " .. date("%d", timeStamp);
 				end
 				return string .. " " .. gsub(string.lower(date("%I:%M%p", timeStamp)), "^0", "") .. suffix;
 			else
-				return date("%a %b %d", timeStamp) .. " " .. gsub(string.lower(date("%I:%M%p", timeStamp)), "^0", "") .. suffix;
+				local day = date("%a", timeStamp);
+				if (localizedDays[day]) then
+					day = localizedDays[day];
+				end
+				local month = date("%b", timeStamp);
+				if (localizedMonths[month]) then
+					month = localizedMonths[month];
+				end
+				return day .. " " .. month .. " " .. date("%d", timeStamp) .. " " .. gsub(string.lower(date("%I:%M%p", timeStamp)), "^0", "") .. suffix;
 			end
 		else
 			--if (GetLocale() == "en")
@@ -4344,7 +4387,7 @@ function NWB:updateMinimapButton(tooltip, frame)
 							--5387
 							texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 						end
-						msg = msg .. texture .. L["terokkarTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+						msg = msg .. texture .. L["terokkarTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 						tooltip:AddLine(NWB.chatColor .. msg);
 					elseif (v.terokTowers > GetServerTime()) then
 						local texture = "";
@@ -4400,7 +4443,7 @@ function NWB:updateMinimapButton(tooltip, frame)
 							--5387
 							texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 						end
-						msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+						msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 						tooltip:AddLine(NWB.chatColor .. msg);
 					elseif (wintergrasp > GetServerTime()) then
 						if (wintergraspFaction == 2) then
@@ -4476,7 +4519,7 @@ function NWB:updateMinimapButton(tooltip, frame)
 							--5387
 							texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 						end
-						msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+						msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 						tooltip:AddLine(NWB.chatColor .. msg);
 					elseif (wintergrasp > GetServerTime()) then
 						if (wintergraspFaction == 2) then
@@ -4614,7 +4657,7 @@ function NWB:updateMinimapButton(tooltip, frame)
 						--5387
 						texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 					end
-					msg = msg .. texture .. L["terokkarTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+					msg = msg .. texture .. L["terokkarTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 					tooltip:AddLine(NWB.chatColor .. msg);
 				elseif (NWB.data.terokTowers > GetServerTime()) then
 					if (NWB.data.terokFaction == 2) then
@@ -4669,7 +4712,7 @@ function NWB:updateMinimapButton(tooltip, frame)
 						--5387
 						texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 					end
-					msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+					msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 					tooltip:AddLine(NWB.chatColor .. msg);
 				elseif (wintergrasp > GetServerTime()) then
 					if (wintergraspFaction == 2) then
@@ -4751,7 +4794,7 @@ function NWB:updateMinimapButton(tooltip, frame)
 						--5387
 						texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 					end
-					msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+					msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 					tooltip:AddLine(NWB.chatColor .. msg);
 				elseif (wintergrasp > GetServerTime()) then
 					if (wintergraspFaction == 2) then
@@ -5679,7 +5722,7 @@ function NWB:updateFelwoodWorldmapMarker(type)
 					_G[type .. "NWB"]["timerFrame"].fs2 = _G[type .. "NWB"]["timerFrame"]:CreateFontString(k .. "NWBTimerFrameFS2", "ARTWORK");
 					_G[type .. "NWB"]["timerFrame"].fs2:SetPoint("RIGHT", 17, 1);
 					_G[type .. "NWB"]["timerFrame"].fs2:SetFont(NWB.regionFont, 13);
-					_G[type .. "NWB"]["timerFrame"].fs2:SetText("|cff00ff00[L" .. count .. "]");
+					_G[type .. "NWB"]["timerFrame"].fs2:SetText("|cff00ff00[" .. L["shortLayerPrefix"] .. count .. "]");
 				end
 			else
 				if (_G[type .. "NWB"]["timerFrame" .. count]) then
@@ -5697,7 +5740,7 @@ function NWB:updateFelwoodWorldmapMarker(type)
 					_G[type .. "NWB"]["timerFrame" .. count].fs2 = _G[type .. "NWB"]["timerFrame" .. count]:CreateFontString(k .. "NWBTimerFrameFS2" .. count, "ARTWORK");
 					_G[type .. "NWB"]["timerFrame" .. count].fs2:SetPoint("RIGHT", 17, 1);
 					_G[type .. "NWB"]["timerFrame" .. count].fs2:SetFont(NWB.regionFont, 13);
-					_G[type .. "NWB"]["timerFrame" .. count].fs2:SetText("|cff00ff00[L" .. count .. "]");
+					_G[type .. "NWB"]["timerFrame" .. count].fs2:SetText("|cff00ff00[" .. L["shortLayerPrefix"] .. count .. "]");
 					_G[type .. "NWB"]["timerFrame" .. count]:SetWidth(_G[type .. "NWB"]["timerFrame" .. count].fs:GetStringWidth() + 14);
 					_G[type .. "NWB"]["timerFrame" .. count]:SetHeight(_G[type .. "NWB"]["timerFrame" .. count].fs:GetStringHeight() + 9);
 					frame = _G[type .. count .. "NWB"];
@@ -5718,9 +5761,9 @@ function NWB:updateFelwoodWorldmapMarker(type)
 			    	local minutes = string.format("%02.f", math.floor(time / 60));
 			    	local seconds = string.format("%02.f", math.floor(time - minutes * 60));
 					--tooltipText = tooltipText .. "\n|Cffff2500"
-					--		.. NWB:getTimeFormat(NWB.data[type] + 1500) .. " " .. L["spawn"] .. " (expired) (Layer " .. count .. ")|r";
+					--		.. NWB:getTimeFormat(NWB.data[type] + 1500) .. " " .. L["spawn"] .. " (" .. L["expired"] .. ") (Layer " .. count .. ")|r";
 					tooltipText = "|Cffff2500"
-							.. NWB:getTimeFormat(NWB.data.layers[k][type] + 1500) .. " " .. L["spawn"] .. " (expired) (" .. L["Layer"] .. " " .. count .. ")|r\n" .. tooltipText
+							.. NWB:getTimeFormat(NWB.data.layers[k][type] + 1500) .. " " .. L["spawn"] .. " (" .. L["expired"] .. ") (" .. L["Layer"] .. " " .. count .. ")|r\n" .. tooltipText
 					frame.fs:SetText("|Cffff2500-" .. minutes .. ":" .. seconds);
 					frame:SetWidth(42);
 					frame:SetHeight(24);
@@ -5797,7 +5840,7 @@ function NWB:updateFelwoodWorldmapMarker(type)
 	    	local seconds = string.format("%02.f", math.floor(time - minutes * 60));
 	    	_G[type .. "NWB"].timerFrame:Show();
 	    	local tooltipText = "|CffDEDE42" .. _G[type .. "NWB"].name .. "|r\n" .. _G[type .. "NWB"].subZone .. "\n"
-					.. "|Cffff2500" .. NWB:getTimeFormat(NWB.data[type] + 1500) .. " " .. L["spawn"] .. " (expired)";
+					.. "|Cffff2500" .. NWB:getTimeFormat(NWB.data[type] + 1500) .. " " .. L["spawn"] .. " (" .. L["expired"] .. ")";
 	    	_G[type .. "NWB"].tooltip.fs:SetText(tooltipText);
 			_G[type .. "NWB"].tooltip:SetWidth(_G[type .. "NWB"].tooltip.fs:GetStringWidth() + 18);
 			_G[type .. "NWB"].tooltip:SetHeight(_G[type .. "NWB"].tooltip.fs:GetStringHeight() + 12);
@@ -5852,7 +5895,7 @@ function NWB:updateFelwoodMinimapMarker(type)
 					_G[type .. "NWBMini"]["timerFrame"].fs2 = _G[type .. "NWBMini"]["timerFrame"]:CreateFontString(k .. "NWBMiniTimerFrameFS2", "ARTWORK");
 					_G[type .. "NWBMini"]["timerFrame"].fs2:SetPoint("RIGHT", 17, 1);
 					_G[type .. "NWBMini"]["timerFrame"].fs2:SetFont(NWB.regionFont, 11);
-					_G[type .. "NWBMini"]["timerFrame"].fs2:SetText("|cff00ff00[L" .. count .. "]");
+					_G[type .. "NWBMini"]["timerFrame"].fs2:SetText("|cff00ff00[" .. L["shortLayerPrefix"] .. count .. "]");
 				end
 			else
 				if (_G[type .. "NWBMini"]["timerFrame" .. count]) then
@@ -5870,7 +5913,7 @@ function NWB:updateFelwoodMinimapMarker(type)
 					_G[type .. "NWBMini"]["timerFrame" .. count].fs2 = _G[type .. "NWBMini"]["timerFrame" .. count]:CreateFontString(k .. "NWBMiniTimerFrameFS2" .. count, "ARTWORK");
 					_G[type .. "NWBMini"]["timerFrame" .. count].fs2:SetPoint("RIGHT", 17, 1);
 					_G[type .. "NWBMini"]["timerFrame" .. count].fs2:SetFont(NWB.regionFont, 11);
-					_G[type .. "NWBMini"]["timerFrame" .. count].fs2:SetText("|cff00ff00[L" .. count .. "]");
+					_G[type .. "NWBMini"]["timerFrame" .. count].fs2:SetText("|cff00ff00[" .. L["shortLayerPrefix"] .. count .. "]");
 					_G[type .. "NWBMini"]["timerFrame" .. count]:SetWidth(_G[type .. "NWBMini"]["timerFrame" .. count].fs:GetStringWidth() + 14);
 					_G[type .. "NWBMini"]["timerFrame" .. count]:SetHeight(_G[type .. "NWBMini"]["timerFrame" .. count].fs:GetStringHeight() + 9);
 					frame = _G[type .. count .. "NWBMini"];
@@ -5889,9 +5932,9 @@ function NWB:updateFelwoodMinimapMarker(type)
 			    	local minutes = string.format("%02.f", math.floor(time / 60));
 			    	local seconds = string.format("%02.f", math.floor(time - minutes * 60));
 					--tooltipText = tooltipText .. "\n|Cffff2500"
-					--		.. NWB:getTimeFormat(NWB.data.layers[k][type] + 1500) .. " " .. L["spawn"] .. " (expired) (Layer " .. count .. ")|r";
+					--		.. NWB:getTimeFormat(NWB.data.layers[k][type] + 1500) .. " " .. L["spawn"] .. " (" .. L["expired"] .. ") (Layer " .. count .. ")|r";
 					tooltipText = "|Cffff2500"
-							.. NWB:getTimeFormat(NWB.data.layers[k][type] + 1500) .. " " .. L["spawn"] .. " (expired) (" .. L["Layer"] .. " " .. count .. ")|r\n" .. tooltipText;
+							.. NWB:getTimeFormat(NWB.data.layers[k][type] + 1500) .. " " .. L["spawn"] .. " (" .. L["expired"] .. ") (" .. L["Layer"] .. " " .. count .. ")|r\n" .. tooltipText;
 					frame.fs:SetText("|Cffff2500-" .. minutes .. ":" .. seconds);
 					frame:SetWidth(frame.fs:GetStringWidth() + 14);
 					frame:SetHeight(frame.fs:GetStringHeight() + 9);
@@ -5967,7 +6010,7 @@ function NWB:updateFelwoodMinimapMarker(type)
 	    	local seconds = string.format("%02.f", math.floor(time - minutes * 60));
 	    	_G[type .. "NWBMini"].timerFrame:Show();
 			local tooltipText = "|CffDEDE42" .. _G[type .. "NWB"].name .. "|r\n" .. _G[type .. "NWB"].subZone .. "\n"
-					.. "|Cffff2500" .. NWB:getTimeFormat(NWB.data[type] + 1500) .. " " .. L["spawn"] .. " (expired)";
+					.. "|Cffff2500" .. NWB:getTimeFormat(NWB.data[type] + 1500) .. " " .. L["spawn"] .. " (" .. L["expired"] .. ")";
 	    	_G[type .. "NWBMini"].tooltip.fs:SetText(tooltipText);
 	    	_G[type .. "NWBMini"].tooltip:SetWidth(_G[type .. "NWBMini"].tooltip.fs:GetStringWidth() + 9);
 			_G[type .. "NWBMini"].tooltip:SetHeight(_G[type .. "NWBMini"].tooltip.fs:GetStringHeight() + 9);
@@ -9155,7 +9198,7 @@ function NWB:recalclayerFrame(isLogon, copyPaste)
 							--5387
 							texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 						end
-						msg = msg .. texture .. L["terokkarTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+						msg = msg .. texture .. L["terokkarTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 					elseif (v.terokTowers > GetServerTime()) then
 						if (v.terokFaction == 2) then
 							--5242
@@ -9205,7 +9248,7 @@ function NWB:recalclayerFrame(isLogon, copyPaste)
 							--5387
 							texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 						end
-						msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+						msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 					elseif (wintergrasp > GetServerTime()) then
 						if (wintergraspFaction == 2) then
 							--5242
@@ -9390,7 +9433,7 @@ function NWB:recalclayerFrame(isLogon, copyPaste)
 								--5387
 								texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 							end
-							msg = msg .. texture .. L["terokkarTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+							msg = msg .. texture .. L["terokkarTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 						elseif (v.terokTowers > GetServerTime()) then
 							if (v.terokFaction == 2) then
 								--5242
@@ -9440,7 +9483,7 @@ function NWB:recalclayerFrame(isLogon, copyPaste)
 								--5387
 								texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 							end
-							msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+							msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 						elseif (wintergrasp > GetServerTime()) then
 							if (wintergraspFaction == 2) then
 								--5242
@@ -9590,7 +9633,7 @@ function NWB:recalclayerFrame(isLogon, copyPaste)
 						--5387
 						texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 					end
-					msg = msg .. texture .. L["terokkarTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+					msg = msg .. texture .. L["terokkarTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 				elseif (NWB.data.terokTowers > GetServerTime()) then
 					if (NWB.data.terokFaction == 2) then
 						--5242
@@ -9642,7 +9685,7 @@ function NWB:recalclayerFrame(isLogon, copyPaste)
 						--5387
 						texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 					end
-					msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+					msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 				elseif (wintergrasp > GetServerTime()) then
 					if (wintergraspFaction == 2) then
 						--5242
@@ -9780,7 +9823,7 @@ function NWB:recalclayerFrame(isLogon, copyPaste)
 							--5387
 							texture = "|TInterface\\worldstateframe\\neutraltower.blp:12:12:-2:0:32:32:1:18:1:18|t";
 						end
-						msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (expired)|r";
+						msg = msg .. texture .. L["wintergraspTimer"] .. ": |Cffff2500-" .. minutes .. ":" .. seconds .. " (" .. L["expired"] .. ")|r";
 					elseif (wintergrasp > GetServerTime()) then
 						if (wintergraspFaction == 2) then
 							--5242
@@ -10940,7 +10983,7 @@ local function getMinimapLayerFrameTextZoneIDTooltip(zoneID)
 			end
 		end
 	end
-	local text = "|cFFFFFF00" .. (zoneName or "Unknown") .. "|r";
+	local text = "|cFFFFFF00" .. (zoneName or L["Unknown"]) .. "|r";
 	local count = 0;
 	for k, v in NWB:pairsByKeys(NWB.data.layers) do
 		count = count + 1;
@@ -11016,7 +11059,7 @@ function NWB:recalcMinimapLayerFrame(zoneID, event, unit)
 	if (not NWB.db.global.minimapLayerFrame or not NWB.isLayered) then
 		NWB:toggleMinimapLayerFrame("hide");
 		MinimapLayerFrame.fs:SetText("No Layer");
-		return;
+		--return; --Update the data anyway for external stuff to still acess it, this a bit scuffed tbh.
 	end
 	local _, _, zone = NWB:GetPlayerZonePosition();
 	local foundOldID, foundLayer;
@@ -11119,7 +11162,7 @@ function NWB:toggleMinimapLayerFrame(type)
 	if (NWB:isInArena()) then
 		MinimapLayerFrame:Hide();
 		NWB.minimapLayerFrameState = nil;
-	elseif (type == "show") then
+	elseif (type == "show" and NWB.db.global.minimapLayerFrame) then
 		if (not NWB.db.global.minimapLayerHover) then
 			MinimapLayerFrame:Show();
 		end
@@ -12284,6 +12327,7 @@ hooksecurefunc("StaticPopup_Hide", function(...)
 	end
 end)
 
+addon.c = c;
 --This can't be used to check the button text, it stays as "Enter Battle" after disappearing.
 --[[local lastBattlefieldUpdate = 0;
 MiniMapBattlefieldFrame:HookScript("OnUpdate", function(self, event, ...)
@@ -12315,12 +12359,11 @@ end)]]
 --I've renabled this after many people asked for it back, but blizzard may break it at some point or ask for it to be removed .
 --It's using a loophole the API to find the npc that probably shouldn't work.
 --Using the bugsack addon may also break this, and people using that probably wondered why they get errors in crossroads which was another reason I disabled it in the first place.
-local doScan = false;
+--[[local doScan = false;
 local scanFrame = CreateFrame("Frame");
 local lastPoisChange = 0;
 local lastPoisZone;
 local scanCheckEnabled;
-addon.c = c;
 scanFrame:RegisterEvent("ADDON_ACTION_FORBIDDEN");
 scanFrame:RegisterEvent("PLAYER_ENTERING_WORLD");
 scanFrame:RegisterEvent("AREA_POIS_UPDATED");
@@ -12418,6 +12461,28 @@ function NWB:scanTicker()
 	end
 	C_Timer.After(1, function()
 		NWB:scanTicker();
+	end)
+end]]
+
+if (NWB.isClassic) then
+	--We'll try a nameplate check instead, much less range and people will have to stand close to the spawn point.
+	local scanFrame = CreateFrame("Frame");
+	scanFrame:RegisterEvent("NAME_PLATE_UNIT_ADDED");
+	scanFrame:SetScript("OnEvent", function(self, event, ...)
+		if (event == "NAME_PLATE_UNIT_ADDED") then
+			local GUID = UnitGUID(...);
+			if (GUID) then
+				local unitType, _, _, _, _, npcID = strsplit("-", GUID);
+				if (npcID == "10719" and unitType == "Creature") then
+					local layerNum;
+					if (NWB.isLayered and NWB:checkLayerCount() and NWB.lastKnownLayerMapID and NWB.lastKnownLayerMapID > 0
+							and NWB.lastKnownLayer and NWB.lastKnownLayer > 0) then
+						layerNum = NWB.lastKnownLayer;
+					end
+					NWB:heraldFound(nil, layerNum);
+				end
+			end
+		end
 	end)
 end
 
