@@ -1,3 +1,5 @@
+5.0.3
+    - Fix totem timers for WoW classic
 5.0.2
     - MoP: Fix Water Shield
     - MoP: Show time for Lightning and Water Shields only, show Earth Shield stacks if stacks only enabled in options
