@@ -1,5 +1,5 @@
 ﻿----------------------------------------------------------------------
--- 	Leatrix Plus 1.15.103 (22nd October 2025)
+-- 	Leatrix Plus 1.15.105 (23rd October 2025)
 ----------------------------------------------------------------------
 
 --	01:Functions 02:Locks   03:Restart 40:Player   45:Rest
@@ -19,7 +19,7 @@
 	local void
 
 	-- Version
-	LeaPlusLC["AddonVer"] = "1.15.103"
+	LeaPlusLC["AddonVer"] = "1.15.105"
 
 	-- Get locale table
 	local void, Leatrix_Plus = ...
@@ -675,6 +675,10 @@
 
 	function LeaPlusLC:Player()
 
+		-- LeaPlusLC.NewPatch - Set WorldFrame level to ensure world frame mouse events work (WorldFrame:IsMouseMotionFocus())
+		-- In case invalid WorldFrame frame level is stored in layout-local cache
+		WorldFrame:SetFrameLevel(1)
+
 		----------------------------------------------------------------------
 		-- Hide raid group labels
 		----------------------------------------------------------------------
@@ -968,17 +972,17 @@
 				if (LeaPlusLC["AcceptPartyFriends"] == "On" and LeaPlusLC:FriendCheck(arg1, guid)) then
 					if not LeaPlusLC:IsInLFGQueue() then
 						AcceptGroup()
-						for i=1, STATICPOPUP_NUMDIALOGS do
-							if _G["StaticPopup"..i].which == "PARTY_INVITE" then
-								_G["StaticPopup"..i].inviteAccepted = 1
+						StaticPopup_ForEachShownDialog(function(self)
+							if self.which == "PARTY_INVITE" then
+								self.inviteAccepted = 1
 								StaticPopup_Hide("PARTY_INVITE")
-								break
-							elseif _G["StaticPopup"..i].which == "PARTY_INVITE_XREALM" then
-								_G["StaticPopup"..i].inviteAccepted = 1
+								return
+							elseif self.which == "PARTY_INVITE_XREALM" then
+								self.inviteAccepted = 1
 								StaticPopup_Hide("PARTY_INVITE_XREALM")
-								break
+								return
 							end
-						end
+						end)
 						return
 					end
 				end
@@ -1940,7 +1944,7 @@
 						if progItem.objectType == "item" then
 							local name, texture, numItems = GetQuestItemInfo("required", i)
 							if name then
-								local itemID = GetItemInfoInstant(name)
+								local itemID = C_Item.GetItemInfoInstant(name)
 								if itemID then
 									if itemID == 9999999999 then -- Reserved for future use
 										return true
@@ -1969,63 +1973,63 @@
 					-- Battlemasters
 					elseif title == L["Concerted Efforts"] or title == L["For Great Honor"] then
 						-- Requires 3 Alterac Valley Mark of Honor, 3 Arathi Basin Mark of Honor, 3 Warsong Gulch Mark of Honor (must be before other Mark of Honor quests)
-						if GetItemCount(20560) >= 3 and GetItemCount(20559) >= 3 and GetItemCount(20558) >= 3 then return true end
+						if C_Item.GetItemCount(20560) >= 3 and C_Item.GetItemCount(20559) >= 3 and C_Item.GetItemCount(20558) >= 3 then return true end
 					elseif title == L["Remember Alterac Valley!"] or title == L["Invaders of Alterac Valley"] then
 						-- Requires 3 Alterac Valley Mark of Honor
-						if GetItemCount(20560) >= 3 then return true end
+						if C_Item.GetItemCount(20560) >= 3 then return true end
 					elseif title == L["Claiming Arathi Basin"] or title == L["Conquering Arathi Basin"] then
 						-- Requires 3 Arathi Basin Mark of Honor
-						if GetItemCount(20559) >= 3 then return true end
+						if C_Item.GetItemCount(20559) >= 3 then return true end
 					elseif title == L["Fight for Warsong Gulch"] or title == L["Battle of Warsong Gulch"] then
 						-- Requires 3 Warsong Gulch Mark of Honor
-						if GetItemCount(20558) >= 3 then return true end
+						if C_Item.GetItemCount(20558) >= 3 then return true end
 
 					-- Cloth quartermasters
 					elseif title == L["A Donation of Wool"] then
 						-- Requires 60 Wool Cloth
-						if GetItemCount(2592) >= 60 then return true end
+						if C_Item.GetItemCount(2592) >= 60 then return true end
 					elseif title == L["A Donation of Silk"] then
 						-- Requires 60 Silk Cloth
-						if GetItemCount(4306) >= 60 then return true end
+						if C_Item.GetItemCount(4306) >= 60 then return true end
 					elseif title == L["A Donation of Mageweave"] then
 						-- Requires 60 Mageweave
-						if GetItemCount(4338) >= 60 then return true end
+						if C_Item.GetItemCount(4338) >= 60 then return true end
 					elseif title == L["A Donation of Runecloth"] then
 						-- Requires 60 Runecloth
-						if GetItemCount(14047) >= 60 then return true end
+						if C_Item.GetItemCount(14047) >= 60 then return true end
 					elseif title == L["Additional Runecloth"] then
 						-- Requires 20 Runecloth
-						if GetItemCount(14047) >= 20 then return true end
+						if C_Item.GetItemCount(14047) >= 20 then return true end
 					elseif title == L["Gurubashi, Vilebranch, and Witherbark Coins"] then
 						-- Requires 1 Gurubashi Coin, 1 Vilebranch Coin, 1 Witherbark Coin
-						if GetItemCount(19701) >= 1 and GetItemCount(19702) >= 1 and GetItemCount(19703) >= 1 then return true end
+						if C_Item.GetItemCount(19701) >= 1 and C_Item.GetItemCount(19702) >= 1 and C_Item.GetItemCount(19703) >= 1 then return true end
 					elseif title == L["Sandfury, Skullsplitter, and Bloodscalp Coins"] then
 						-- Requires 1 Sandfury Coin, 1 Skullsplitter Coin, 1 Bloodscalp Coin
-						if GetItemCount(19704) >= 1 and GetItemCount(19705) >= 1 and GetItemCount(19706) >= 1 then return true end
+						if C_Item.GetItemCount(19704) >= 1 and C_Item.GetItemCount(19705) >= 1 and C_Item.GetItemCount(19706) >= 1 then return true end
 					elseif title == L["Zulian, Razzashi, and Hakkari Coins"] then
 						-- Requires 1 Zulian Coin, 1 Razzashi Coin, 1 Hakkari Coin
-						if GetItemCount(19698) >= 1 and GetItemCount(19699) >= 1 and GetItemCount(19700) >= 1 then return true end
+						if C_Item.GetItemCount(19698) >= 1 and C_Item.GetItemCount(19699) >= 1 and C_Item.GetItemCount(19700) >= 1 then return true end
 					elseif title == L["Frostsaber E'ko"] then
 						-- Requires 3 Frostsaber E'ko
-						if GetItemCount(12430) >= 3 then return true end
+						if C_Item.GetItemCount(12430) >= 3 then return true end
 					elseif title == L["Winterfall E'ko"] then
 						-- Requires 3 Winterfall E'ko
-						if GetItemCount(12431) >= 3 then return true end
+						if C_Item.GetItemCount(12431) >= 3 then return true end
 					elseif title == L["Shardtooth E'ko"] then
 						-- Requires 3 Shardtooth E'ko
-						if GetItemCount(12432) >= 3 then return true end
+						if C_Item.GetItemCount(12432) >= 3 then return true end
 					elseif title == L["Wildkin E'ko"] then
 						-- Requires 3 Wildkin E'ko
-						if GetItemCount(12433) >= 3 then return true end
+						if C_Item.GetItemCount(12433) >= 3 then return true end
 					elseif title == L["Chillwind E'ko"] then
 						-- Requires 3 Chillwind E'ko
-						if GetItemCount(12434) >= 3 then return true end
+						if C_Item.GetItemCount(12434) >= 3 then return true end
 					elseif title == L["Ice Thistle E'ko"] then
 						-- Requires 3 Ice Thistle E'ko
-						if GetItemCount(12435) >= 3 then return true end
+						if C_Item.GetItemCount(12435) >= 3 then return true end
 					elseif title == L["Frostmaul E'ko"] then
 						-- Requires 3 Ice Thistle E'ko
-						if GetItemCount(12436) >= 3 then return true end
+						if C_Item.GetItemCount(12436) >= 3 then return true end
 
 					else return true
 					end
@@ -2415,7 +2419,7 @@
 						if tipList[i] then
 							tipList[i] = tonumber(tipList[i])
 							if tipList[i] and tipList[i] > 0 and tipList[i] < 999999999 then
-								local void, tLink, Rarity, void, void, void, void, void, void, void, ItemPrice = GetItemInfo(tipList[i])
+								local void, tLink, Rarity, void, void, void, void, void, void, void, ItemPrice = C_Item.GetItemInfo(tipList[i])
 								if tLink and tLink ~= "" then
 									local linkCol = string.sub(tLink, 1, 10)
 									if linkCol then
@@ -2527,7 +2531,7 @@
 					for BagSlot = 1, C_Container.GetContainerNumSlots(BagID) do
 						CurrentItemLink = C_Container.GetContainerItemLink(BagID, BagSlot)
 						if CurrentItemLink then
-							void, void, Rarity, void, void, void, void, void, void, void, ItemPrice = GetItemInfo(CurrentItemLink)
+							void, void, Rarity, void, void, void, void, void, void, void, ItemPrice = C_Item.GetItemInfo(CurrentItemLink)
 							-- Don't sell whitelisted items
 							local itemID = GetItemInfoFromHyperlink(CurrentItemLink)
 							if itemID and whiteList[itemID] then
@@ -7600,10 +7604,10 @@
 			end)
 
 			DressUpModelFrame:ClearAllPoints()
-			DressUpModelFrame:SetPoint("TOPLEFT", DressUpFrame, 22, -76)
-			DressUpModelFrame:SetPoint("BOTTOMRIGHT", DressUpFrame, -46, 106)
+			DressUpModelFrame:SetPoint("TOPLEFT", DressUpFrame, 8, -64)
+			DressUpModelFrame:SetPoint("BOTTOMRIGHT", DressUpFrame, -8, 30)
 
-			-- Reset dressup when reset button clicked
+			-- Reset dressup frame when reset button clicked
 			DressUpFrameResetButton:HookScript("OnClick", function()
 				DressUpModelFrame.rotation = 0
 				DressUpModelFrame:SetRotation(0)
@@ -8773,7 +8777,7 @@
 				-- Get item
 				local itemName, itemlink = tooltipObject:GetItem()
 				if not itemlink then return end
-				local void, ilink, void, void, void, void, void, void, void, void, sellPrice, classID = GetItemInfo(itemlink)
+				local void, ilink, void, void, void, void, void, void, void, void, sellPrice, classID = C_Item.GetItemInfo(itemlink)
 				if sellPrice and sellPrice > 0 then
 					local count = container and type(container.count) == "number" and container.count or 1
 					if sellPrice and count > 0 then
@@ -10872,19 +10876,18 @@
 		if LeaPlusLC["TipModEnable"] == "On" and not LeaLockList["TipModEnable"] then
 
 			-- Enable mouse hover events for world frame (required for hide tooltips, cursor anchor and maybe other addons)
-			-- WorldFrame:EnableMouseMotion(true) -- LeaPlusLC.NewPatch: Using GetMouseFoci()[1] for now
+			WorldFrame:EnableMouseMotion(true) -- LeaPlusLC.NewPatch: Using GetMouseFoci()[1] for now
 
 			----------------------------------------------------------------------
 			--	Position the tooltip
 			----------------------------------------------------------------------
 
-			-- Position general tooltip
 			hooksecurefunc("GameTooltip_SetDefaultAnchor", function(tooltip, parent)
 				if LeaPlusLC["TooltipAnchorMenu"] ~= 1 then
 					if (not tooltip or not parent) then
 						return
 					end
-					if LeaPlusLC["TooltipAnchorMenu"] == 2 or GetMouseFoci()[1] then -- LeaPlusLC.NewPatch: or not WorldFrame:IsMouseMotionFocus() then
+					if LeaPlusLC["TooltipAnchorMenu"] == 2 or not WorldFrame:IsMouseMotionFocus() then
 						local a,b,c,d,e = tooltip:GetPoint()
 						if a ~= "BOTTOMRIGHT" or c ~= "BOTTOMRIGHT" then
 							tooltip:ClearAllPoints()
@@ -11242,7 +11245,7 @@
 				end
 
 				-- Get unit information
-				if not GetMouseFoci()[1] then -- LeaPlusLC.NewPatch: if WorldFrame:IsMouseMotionFocus() then (previous)
+				if WorldFrame:IsMouseMotionFocus() then
 					LT["Unit"] = "mouseover"
 					-- Hide and quit if tips should be hidden during combat
 					if LeaPlusLC["TipHideInCombat"] == "On" and UnitAffectingCombat("player") then
@@ -14739,8 +14742,8 @@
 								if unitType then
 									if unitType == "rare" or unitType == "rareelite" then unitTag = "(" .. L["Rare"] .. ") " elseif unitType == "worldboss" then unitTag = "(" .. L["Boss"] .. ") " end
 								end
-								SendChatMessage(format("%%t " .. unitTag .. "(%d%%)%s", uHealth / uHealthMax * 100, " " .. string.format("%.0f", pos.x * 100) .. ":" .. string.format("%.0f", pos.y * 100)), "CHANNEL", nil, index)
-								-- SendChatMessage(format("%%t " .. unitTag .. "(%d%%)%s", uHealth / uHealthMax * 100, " " .. string.format("%.0f", pos.x * 100) .. ":" .. string.format("%.0f", pos.y * 100)), "WHISPER", nil, GetUnitName("player")) -- Debug
+								C_ChatInfo.SendChatMessage(format("%%t " .. unitTag .. "(%d%%)%s", uHealth / uHealthMax * 100, " " .. string.format("%.0f", pos.x * 100) .. ":" .. string.format("%.0f", pos.y * 100)), "CHANNEL", nil, index)
+								-- C_ChatInfo.SendChatMessage(format("%%t " .. unitTag .. "(%d%%)%s", uHealth / uHealthMax * 100, " " .. string.format("%.0f", pos.x * 100) .. ":" .. string.format("%.0f", pos.y * 100)), "WHISPER", nil, GetUnitName("player")) -- Debug
 							else
 								LeaPlusLC:Print("Invalid target.")
 							end
