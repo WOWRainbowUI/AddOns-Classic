@@ -1,12 +1,13 @@
 ## Interface: 11508
 ## Title: Classic Calendar - Revived
-## Version: v0.8.7
+## Version: ClassicCalendar-v0.9.0
 ## Author: Pimptasty
-## Version: v0.8.7
+## Version: ClassicCalendar-v0.9.0
 
 ## X-Curse-Project-ID: 1339939
+## Dependencies: Ace3
 
-## SavedVariables: CCConfig
+## SavedVariables: CCConfig, WorldBuffData
 
 ## Title-zhTW: |cffFF7F00[團隊]|r 行事曆
 ## Notes-zhTW: Classic Calendar |n|n在經典版中提供和正式服相同的行事曆的功能。|n|cffffd200使用方法：|r點小地圖按鈕。
@@ -17,4 +18,6 @@ HolidayData.lua
 Patches.lua
 Patches.xml
 ClassicCalendar.lua
+WorldBuff.lua
+DataSync.lua
 ClassicCalendar.xml

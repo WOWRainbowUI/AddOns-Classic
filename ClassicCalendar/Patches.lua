@@ -97,6 +97,7 @@ local isClassicEra = not C_Seasons.HasActiveSeason()
 local isSoD = C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.Placeholder) -- "Placeholder" = SoD
 
 CALENDAR_FILTER_BATTLEGROUND = L.Options[localeString]["CALENDAR_FILTER_BATTLEGROUND"];
+CALENDAR_FILTER_WORLDBUFFS = L.Options[localeString]["CALENDAR_FILTER_WORLDBUFFS"];
 
 -- TODO: Localize these strings
 COMMUNITIES_CALENDAR_CHAT_EVENT_BROADCAST_FORMAT = "%s: %s %s";

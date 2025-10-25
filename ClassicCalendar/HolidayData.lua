@@ -245,8 +245,8 @@ local CLASSIC_CALENDAR_HOLIDAYS = {
 	{
 		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["HarvestFestival"]["name"],
 		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["HarvestFestival"]["description"],
-		startDate={ year=2025, month=9, day=27, hour=9, min=0 },
-		endDate={ year=2025, month=10, day=4, hour=23, min=59 },
+		startDate={ year=2025, month=10, day=2, hour=9, min=0 },
+		endDate={ year=2025, month=10, day=9, hour=23, min=59 },
 		startTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalStart",
 		ongoingTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalOngoing",
 		endTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalEnd",
@@ -267,8 +267,8 @@ local CLASSIC_CALENDAR_HOLIDAYS = {
 	{
 		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["HallowsEnd"]["name"],
 		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["HallowsEnd"]["description"],
-		startDate={ year=2025, month=10, day=18, hour=9, min=0 },
-		endDate={ year=2025, month=11, day=1, hour=23, min=59 },
+		startDate={ year=2025, month=10, day=25, hour=9, min=0 },
+		endDate={ year=2025, month=11, day=8, hour=23, min=59 },
 		startTexture="Interface/Calendar/Holidays/Calendar_HallowsEndStart",
 		ongoingTexture="Interface/Calendar/Holidays/Calendar_HallowsEndOngoing",
 		endTexture="Interface/Calendar/Holidays/Calendar_HallowsEndEnd",
@@ -277,8 +277,8 @@ local CLASSIC_CALENDAR_HOLIDAYS = {
 	{
 		name=L.HolidayLocalization[localeString]["CalendarHolidays"]["PilgrimsBounty"]["name"],
 		description=L.HolidayLocalization[localeString]["CalendarHolidays"]["PilgrimsBounty"]["description"],
-		startDate={ year=2025, month=11, day=22, hour=9, min=0 },
-		endDate={ year=2025, month=11, day=28, hour=23, min=59 },
+		startDate={ year=2025, month=11, day=23, hour=9, min=0 },
+		endDate={ year=2025, month=11, day=30, hour=23, min=59 },
 		startTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalStart",
 		ongoingTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalOngoing",
 		endTexture="Interface/Calendar/Holidays/Calendar_HarvestFestivalEnd",

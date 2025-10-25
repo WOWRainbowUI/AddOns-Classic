@@ -651,6 +651,7 @@ local CALENDAR_FILTER_CVARS = {
 	{text = CALENDAR_FILTER_RAID_LOCKOUTS,		cvar = "calendarShowLockouts"		},
 	{text = CALENDAR_FILTER_RAID_RESETS,		cvar = "calendarShowResets"			},
 	{text = CALENDAR_FILTER_WEEKLY_HOLIDAYS,	cvar = "calendarShowWeeklyHolidays"	},
+	{text = CALENDAR_FILTER_WORLDBUFFS,			cvar = "calendarShowWorldBuffs"		},
 };
 
 -- local data
@@ -1901,6 +1902,33 @@ function CalendarFrame_UpdateFilter()
 	else
 		CalendarFilterButton:Enable();
 	end
+end
+
+-- World Buff Button Support
+
+function CalendarWorldBuffButton_OnClick()
+	-- Open the World Buff frame
+	if WorldBuffFrame then
+		if WorldBuffFrame:IsVisible() then
+			WorldBuffFrame:Hide();
+		else
+			WorldBuffFrame:Show();
+		end
+	else
+		-- If WorldBuff addon isn't loaded, try the slash command
+		SlashCmdList["WORLDBUFF"]("");
+	end
+end
+
+function CalendarWorldBuffButton_OnEnter(self)
+	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
+	GameTooltip:SetText("World Buff Scheduling", 1, 1, 1);
+	GameTooltip:AddLine("Click to open the World Buff addon interface for scheduling guild world buff events.", nil, nil, nil, true);
+	GameTooltip:Show();
+end
+
+function CalendarWorldBuffButton_OnLeave()
+	GameTooltip:Hide();
 end
 
 

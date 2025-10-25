@@ -357,6 +357,62 @@
 					</DropDownToggleButton>
 				</Frames>
 			</Frame>
+			<Frame name="CalendarWorldBuffFrame">
+				<Size x="140" y="20"/>
+				<Anchors>
+					<Anchor point="TOPLEFT" relativeTo="CalendarFrame" relativePoint="TOPLEFT" x="44" y="-21"/>
+				</Anchors>
+				<Layers>
+					<Layer level="BACKGROUND">
+						<Texture name="$parentLeft" file="Interface\Common\Common-Input-Border">
+							<Size x="8" y="16"/>
+							<Anchors>
+								<Anchor point="LEFT" x="-5" y="0"/>
+							</Anchors>
+							<TexCoords left="0" right="0.0625" top="0" bottom="0.625"/>
+						</Texture>
+						<Texture name="$parentRight" file="Interface\Common\Common-Input-Border">
+							<Size x="8" y="16"/>
+							<Anchors>
+								<Anchor point="RIGHT" x="0" y="0"/>
+							</Anchors>
+							<TexCoords left="0.9375" right="1.0" top="0" bottom="0.625"/>
+						</Texture>
+						<Texture name="$parentMiddle" file="Interface\Common\Common-Input-Border">
+							<Size x="10" y="16"/>
+							<Anchors>
+								<Anchor point="LEFT" relativeTo="$parentLeft" relativePoint="RIGHT"/>
+								<Anchor point="RIGHT" relativeTo="$parentRight" relativePoint="LEFT"/>
+							</Anchors>
+							<TexCoords left="0.0625" right="0.9375" top="0" bottom="0.625"/>
+						</Texture>
+						<FontString name="$parentText" inherits="GameFontHighlightSmall" text="World Buff Scheduling" justifyH="LEFT">
+							<Anchors>
+								<Anchor point="LEFT" x="8" y="0"/>
+							</Anchors>
+						</FontString>
+					</Layer>
+				</Layers>
+				<Frames>
+					<Button name="CalendarWorldBuffButton">
+						<Size x="140" y="20"/>
+						<Anchors>
+							<Anchor point="TOPLEFT"/>
+						</Anchors>
+						<Scripts>
+							<OnClick function="CalendarWorldBuffButton_OnClick"/>
+							<OnEnter function="CalendarWorldBuffButton_OnEnter"/>
+							<OnLeave function="CalendarWorldBuffButton_OnLeave"/>
+						</Scripts>
+						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD">
+							<Size x="140" y="20"/>
+							<Anchors>
+								<Anchor point="TOPLEFT"/>
+							</Anchors>
+						</HighlightTexture>
+					</Button>
+				</Frames>
+			</Frame>
 			<Frame name="CalendarFilterDropDown" inherits="UIDropDownMenuTemplate" hidden="true">
 				<Scripts>
 					<OnLoad function="CalendarFilterDropDown_OnLoad"/>
