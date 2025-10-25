@@ -5715,12 +5715,12 @@ function MopQuestFixes.Load()
             [questKeys.breadcrumbForQuestId] = 30814,
         },
         [31390] = { -- The Klaxxi
-            [questKeys.preQuestSingle] = {30935}, -- TO DO not entirely sure, but seems plausible. it's not 31512!
+            [questKeys.preQuestSingle] = {30631}, -- TO DO not entirely sure, but seems plausible. it's not 30935/31512!
             [questKeys.breadcrumbForQuestId] = 31001,
             [questKeys.exclusiveTo] = {31000,31391,31656,31847,31886,31895},
         },
         [31391] = { -- The Klaxxi
-            [questKeys.preQuestSingle] = {30935}, -- TO DO not entirely sure, but seems plausible. it's not 31512!
+            [questKeys.preQuestSingle] = {30649}, -- TO DO not entirely sure, but seems plausible. it's not 30935/31511!
             [questKeys.breadcrumbForQuestId] = 31001,
             [questKeys.exclusiveTo] = {31000,31390,31656,31847,31886,31895},
         },
@@ -8624,20 +8624,6 @@ function MopQuestFixes.Load()
         },
         [33379] = { -- One Final Turn
             [questKeys.preQuestSingle] = {33378},
-        },
-        [64845] = { -- Alliance War Effort
-            [questKeys.triggerEnd] = {"Victory in a battleground match", {
-                [zoneIDs.SHATTRATH_CITY] = {{67.41,33.86}},
-                [zoneIDs.STORMWIND_CITY] = {{86.82,36.09}},
-                [zoneIDs.HILLSBRAD_FOOTHILLS] = {{44.5,46}},
-                [zoneIDs.ASHENVALE] = {{61.8,83.8}},
-                [zoneIDs.THE_EXODAR] = {{26.6,50.06}},
-                [zoneIDs.ARATHI_HIGHLANDS] = {{40.43,45.84}},
-                [zoneIDs.DALARAN] = {{29.79,75.78}},
-                [zoneIDs.DARNASSUS] = {{56.05,47.61}},
-                [zoneIDs.IRONFORGE] = {{70.41,91.10}},
-                [zoneIDs.WINTERGRASP] = {{50.02,15.16}},
-            }},
         },
         [91701] = { -- A Celestial Challenge: Darkmaster Gandling
             [questKeys.name] = "A Celestial Challenge: Darkmaster Gandling",
