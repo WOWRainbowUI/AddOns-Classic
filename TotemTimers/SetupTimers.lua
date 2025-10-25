@@ -296,6 +296,9 @@ function TotemTimers:TotemEvent(event, arg1, arg2, arg3, ...)
         if self.element == arg1 then
             local _, totemName, startTime, duration, icon, _, spellID = GetTotemInfo(arg1)
             local totem = spellID
+            if totem then
+                totem = TotemTimers.GetBaseSpellID(totem)
+            end
             if not totem then
                 totem = TextureToSpellID[icon]
             end
