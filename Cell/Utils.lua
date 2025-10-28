@@ -525,7 +525,7 @@ end
 -------------------------------------------------
 function F.Getn(t)
     local count = 0
-    for k, v in pairs(t) do
+    for _ in next, t do
         count = count + 1
     end
     return count
@@ -930,8 +930,10 @@ function F.IterateAllUnitButtons(func, updateCurrentGroupOnly, updateQuickAssist
         for _, b in pairs(Cell.unitButtons.arena) do
             func(b)
         end
+    end
 
-        -- group pet
+    -- group pet
+    if not updateCurrentGroupOnly or (updateCurrentGroupOnly and Cell.vars.groupType == "raid") or (updateCurrentGroupOnly and Cell.vars.groupType == "party") then
         for index, b in pairs(Cell.unitButtons.pet) do
             if index ~= "units" then
                 func(b)
@@ -1861,7 +1863,42 @@ if Cell.isWrath or Cell.isVanilla then
     local GetNumSpellTabs = GetNumSpellTabs
     local GetSpellTabInfo = GetSpellTabInfo
     local GetSpellBookItemName = GetSpellBookItemName
-    local PATTERN = TRADESKILL_RANK_HEADER:gsub(" ", ""):gsub("%%d", "%%s*(%%d+)")
+
+    local MATCH_PATTERN, FORMAT_PATTERN = "", ""
+    if LOCALE_enUS then
+        MATCH_PATTERN = "Rank (%d+)"
+        FORMAT_PATTERN = "Rank %d"
+    elseif LOCALE_deDE or LOCALE_frFR then
+        MATCH_PATTERN = "Rang (%d+)"
+        FORMAT_PATTERN = "Rang %d"
+    elseif LOCALE_esES or LOCALE_esMX then
+        MATCH_PATTERN = "Rango (%d+)"
+        FORMAT_PATTERN = "Rango %d"
+    -- elseif LOCALE_itIT then -- not supported in classic
+    --     MATCH_PATTERN = "Grado (%d+)"
+    --     FORMAT_PATTERN = "Grado %d"
+    elseif LOCALE_koKR then
+        MATCH_PATTERN = "(%d+) 레벨"
+        FORMAT_PATTERN = "%d 레벨"
+    elseif LOCALE_ptBR then
+        MATCH_PATTERN = "Grau (%d+)"
+        FORMAT_PATTERN = "Grau %d"
+    elseif LOCALE_ruRU then
+        MATCH_PATTERN = "Уровень (%d+)"
+        FORMAT_PATTERN = "Уровень %d"
+    elseif LOCALE_zhCN then
+        MATCH_PATTERN = "等级 (%d+)"
+        FORMAT_PATTERN = "等级 %d"
+    elseif LOCALE_zhTW then
+        MATCH_PATTERN = "等級 (%d+)"
+        FORMAT_PATTERN = "等級 %d"
+    end
+
+    FORMAT_PATTERN = "(" .. FORMAT_PATTERN .. ")"
+
+    function F.GetRankSuffix(rank)
+        return FORMAT_PATTERN:format(rank)
+    end
 
     function F.GetMaxSpellRank(spellId)
         local spellName = select(1, GetSpellInfo(spellId))
@@ -1879,7 +1916,7 @@ if Cell.isWrath or Cell.isVanilla then
         for i = 1, totalSpells do
             local name, subText = GetSpellBookItemName(i, bookType)
             if name == spellName and subText then
-                local rank = tonumber(subText:match(PATTERN))
+                local rank = tonumber(subText:match(MATCH_PATTERN))
                 if rank and rank > maxRank then
                     maxRank = rank
                 end
