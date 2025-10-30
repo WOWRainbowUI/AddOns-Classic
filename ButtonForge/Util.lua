@@ -1900,7 +1900,7 @@ function Util.SetCursor(Command, Data, Subvalue, Subsubvalue)
 		C_Item.PickupItem(Data); -- changed for Mists 5.5.0 05/17/2025
 	elseif (Command == "macro") then
 		PickupMacro(Data);
-	elseif (Command == "mount") then
+	elseif (Command == "mount") and (Subvalue ~= nil) then -- changed for Mists 5.5.1 10/03/2025
 		--if (Subvalue == nil) then
 		--	Data = Util.GetMountIndexFromUselessIndex(Data);
 		--end

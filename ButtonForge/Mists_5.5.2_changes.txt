@@ -1,0 +1,48 @@
+notes for Mists Classic 5.5.2
+
+Look for the following comments in the files changed
+
+ -- changed for Mists 
+ -- removed for Mists 
+ -- added for Mists 
+
+---------------------------------------------------------------------------------------------------------
+
+ButtonForge.toc
+
+---- Updated with
+## Interface: 50502
+
+---------------------------------------------------------------------------------------------------------
+
+
+---------------
+
+Const.lua
+
+---------------
+
+changed from:
+
+Const.VersionMinor			= 0.28;
+
+to:
+
+Const.VersionMinor			= 0.29;   -- Fixed nil Error, toc changed to 5.5.2
+
+
+---------------------------------------------------------------------------------------------------------
+
+ Util.lua
+
+---------------
+
+changed from:
+ 
+ 
+	elseif (Command == "mount") then
+ 
+to:
+
+	elseif (Command == "mount") and (Subvalue ~= nil) then
+
