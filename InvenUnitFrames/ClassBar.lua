@@ -466,6 +466,7 @@ var_Blizzard= IUF.db.classBar.useBlizzard
 				IUF.units.player.classBar.addOn:SetHeight(0.001)
 			end
 		else
+
 			IUF.units.player.classBar:SetHeight(0.001)
 			IUF.units.player.classBar.addOn:SetHeight(0.001)
 		end
@@ -592,6 +593,9 @@ var_Blizzard= IUF.db.classBar.useBlizzard
 		object.eclipse.text:SetPoint("CENTER", 0, 0)
 		object.eclipse:Hide()
 
+--Eclipse exists since MoP(50000)
+		if wowtocversion > 50000 then
+
 		object.eclipse:SetScript("OnEvent", function(self, event, dir, powerType)
 			if event == "UNIT_AURA" then
  				if findBuffById(ECLIPSE_BAR_SOLAR_BUFF_ID, "PLAYER") then
@@ -663,7 +667,7 @@ var_Blizzard= IUF.db.classBar.useBlizzard
 					end
 				end
  				
-			elseif GetPrimaryTalentTree() == 1 and not UnitHasVehicleUI("player") and (not GetShapeshiftFormID() or GetShapeshiftFormID() == MOONKIN_FORM) then
+			elseif GetPrimaryTalentTree() == 1 and not UnitHasVehicleUI("player") and (not GetShapeshiftFormID() or GetShapeshiftFormID() == MOONKIN_FORM or not GetShapeshiftFormID()) then
 
 				if not self:IsShown() then
 					self:Show()
@@ -709,6 +713,10 @@ var_Blizzard= IUF.db.classBar.useBlizzard
 			GameTooltip:Show()
 		end)
 		object.eclipse:SetScript("OnLeave", GameTooltip_Hide)
+	
+		end
+--Eclipse exists since MoP(50000)
+
 
 
 		local maxComboPoints = UnitPowerMax("player", Enum.PowerType.ComboPoints);
@@ -799,10 +807,13 @@ var_Blizzard= IUF.db.classBar.useBlizzard
 		var_Blizzard= true
 	end
 --	var_Blizzard= true
+
 		if var_use then
+
 			if var_Blizzard then
 				IUF.units.player.classBar.addOn:Hide()
 				if not object.classBar.setupBlizzard then
+
 					object.classBar.setupBlizzard = true
  					setClassBar(PlayerFrameAlternateManaBar, object, nil, updateVisible)
  					PlayerFrameAlternateManaBar:SetScript("OnMouseUp", nil)
@@ -810,6 +821,7 @@ var_Blizzard= IUF.db.classBar.useBlizzard
 					setClassBar(EclipseBarFrame, object, nil, updateVisible)
 					if TotemFrame then setClassBar(TotemFrame, object, 4, updateVisible) end
 				end
+
  				PlayerFrameAlternateManaBar:SetStatusBarTexture(SM:Fetch("statusbar", IUF.db.classBar.texture or "Smooth v2"))
  				PlayerFrameAlternateManaBar:SetStatusBarColor(self.colordb.power[0][1], self.colordb.power[0][2], self.colordb.power[0][3])
  				PlayerFrameAlternateManaBar:ClearAllPoints()
@@ -867,7 +879,10 @@ var_Blizzard= IUF.db.classBar.useBlizzard
 				end
 				updateTotemDurationText()
 			else
+
+
 				if object.classBar.setupBlizzard then
+
 					PlayerFrameAlternateManaBar:ClearAllPoints()
 					EclipseBarFrame.SetPoint(PlayerFrameAlternateManaBar, "BOTTOM", UIParent, "TOP", 0, 2000)
 					EclipseBarFrame:ClearAllPoints()
