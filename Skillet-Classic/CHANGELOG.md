@@ -1,6 +1,9 @@
 # Skillet-Classic  -Ace3-
 
-## [2.21](https://github.com/b-morgan/Skillet-Classic/tree/2.21) (2025-10-21)
-[Full Changelog](https://github.com/b-morgan/Skillet-Classic/compare/2.20...2.21) [Previous Releases](https://github.com/b-morgan/Skillet-Classic/releases)
+## [2.22](https://github.com/b-morgan/Skillet-Classic/tree/2.22) (2025-10-23)
+[Full Changelog](https://github.com/b-morgan/Skillet-Classic/compare/2.21...2.22) [Previous Releases](https://github.com/b-morgan/Skillet-Classic/releases)
 
-- Update Vanilla TOC  
+- Add force close  
+- Remove unused code  
+- Fix queue processing  
+- Update News  
