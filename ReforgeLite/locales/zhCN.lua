@@ -1,6 +1,4 @@
 local _, addonTable = ...
-if addonTable.Locale ~= "zhCN" then return end
-
 local L = addonTable.L
 
 L["%s does not match your currently equipped %s. ReforgeLite only supports equipped items."] = "%s 与您当前装备的 %s 不匹配。ReforgeLite 仅支持装备物品。"
@@ -51,6 +49,7 @@ L["No reforge"] = "未能重铸"
 L["Open window when reforging"] = "重铸时打开窗口"
 L["Other/No flask"] = "其他/无合剂"
 L["Other/No food"] = "其他/无食物"
+L["Pause"] = "暂停"
 L["Presets"] = "预设"
 L["Reforging window must be open"] = "必须打开重铸窗口"
 L["Remove cap"] = "移除上限"

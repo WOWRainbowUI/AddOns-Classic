@@ -1,11 +1,4 @@
 local _, addonTable = ...
-addonTable.Locale = GetLocale()
-addonTable.L = setmetatable({}, {
-  __index = function(self, key)
-    rawset(self, key, key or "")
-    return self[key]
-end})
-
 local L = addonTable.L
 
 L["%s does not match your currently equipped %s. ReforgeLite only supports equipped items."] = "%s does not match your currently equipped %s. ReforgeLite only supports equipped items."
@@ -45,6 +38,7 @@ L["No reforge"] = "No reforge"
 L["Open window when reforging"] = "Open window when reforging"
 L["Other/No flask"] = "Other/No flask"
 L["Other/No food"] = "Other/No food"
+L["Pause"] = "Pause"
 L["Presets"] = "Presets"
 L["Reforging window must be open"] = "Reforging window must be open"
 L["Remove cap"] = "Remove cap"

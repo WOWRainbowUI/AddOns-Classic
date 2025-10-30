@@ -1,6 +1,4 @@
 local _, addonTable = ...
-if addonTable.Locale ~= "koKR" then return end
-
 local L = addonTable.L
 
 L["%s does not match your currently equipped %s. ReforgeLite only supports equipped items."] = "%s은(는) 현재 장착된 %s와 일치하지 않습니다. ReforgeLite는 장착된 아이템만 지원합니다."
@@ -53,6 +51,8 @@ L["Open window when reforging"] = "재연마 시 창 열기"
 --[[ L["Other/No flask"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["Other/No food"] = ""--]] 
+--[[Translation missing --]]
+--[[ L["Pause"] = ""--]] 
 L["Presets"] = "프리셋"
 L["Reforging window must be open"] = "재연마 창이 열려 있어야 합니다"
 L["Remove cap"] = "조건 삭제"

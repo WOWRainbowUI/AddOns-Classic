@@ -1,6 +1,4 @@
 local _, addonTable = ...
-if addonTable.Locale ~= "frFR" then return end
-
 local L = addonTable.L
 
 L["%s does not match your currently equipped %s. ReforgeLite only supports equipped items."] = "%s ne correspond pas à votre %s actuellement équipé. ReforgeLite ne prend en charge que les objets équipés."
@@ -51,6 +49,8 @@ L["No reforge"] = "Pas de retouche"
 L["Open window when reforging"] = "Ouvrir la fenêtre lors de la retouche"
 L["Other/No flask"] = "Autre/Pas de flacon"
 L["Other/No food"] = "Autre/Pas de nourriture"
+--[[Translation missing --]]
+--[[ L["Pause"] = ""--]] 
 L["Presets"] = "Pré-établis"
 L["Reforging window must be open"] = "La fenêtre de retouche doit être ouverte"
 L["Remove cap"] = "Enlever ce cap"

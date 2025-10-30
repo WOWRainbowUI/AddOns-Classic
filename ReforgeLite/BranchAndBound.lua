@@ -4,8 +4,8 @@ local REFORGE_COEFF = addonTable.REFORGE_COEFF
 
 local ReforgeLite = addonTable.ReforgeLite
 local print = addonTable.print
-local GetItemStats = addonTable.GetItemStatsUp
-local ITEM_STATS = addonTable.itemStats
+local GetItemStats = addonTable.GetItemStatsFromTooltip
+local ITEM_STATS, ITEM_STAT_COUNT = addonTable.itemStats, addonTable.itemStatCount
 
 local huge = math.huge
 
@@ -79,7 +79,7 @@ function ReforgeLite:GetItemSortingOrder(data, priorityCap)
 
     -- Calculate sum of all reforgeable stats
     local reforgePotential = 0
-    for stat = 1, #ITEM_STATS do
+    for stat = 1, ITEM_STAT_COUNT do
       reforgePotential = reforgePotential + (itemStats[stat] or 0)
     end
 
@@ -837,8 +837,6 @@ function ReforgeLite:ComputeReforgeBranchBound()
   bbConstraintPrunes = 0
   bbScorePrunes = 0
   bbFoundExactDPPath = false
-  bbLastDebugTime = 0
-  bbFoundDPOptimal = false
 
   -- Calculate priority cap once at the beginning
   local priorityCap = self:CalculatePriorityCap(data)
@@ -867,7 +865,7 @@ function ReforgeLite:ComputeReforgeBranchBound()
       local primaryContrib = (priorityCapStat > 0) and (itemStats[priorityCapStat] or 0) or 0
       local secondaryContrib = (otherCapStat > 0) and (itemStats[otherCapStat] or 0) or 0
       local reforgeSum = 0
-      for stat = 1, #ITEM_STATS do
+      for stat = 1, ITEM_STAT_COUNT do
         reforgeSum = reforgeSum + (itemStats[stat] or 0)
       end
       orderStr = orderStr .. (" slot%d(%d/%d/%d)"):format(slot, primaryContrib, secondaryContrib, reforgeSum)
@@ -881,23 +879,15 @@ function ReforgeLite:ComputeReforgeBranchBound()
 
   -- Initialize starting stats
   local initialStats = {}
-  for i = 1, #ITEM_STATS do
+  for i = 1, ITEM_STAT_COUNT do
     initialStats[i] = data.initial[i] or 0
   end
 
   -- Add base item stats to initial
   for i = 1, #data.method.items do
-    for stat = 1, #ITEM_STATS do
+    for stat = 1, ITEM_STAT_COUNT do
       initialStats[stat] = (initialStats[stat] or 0) + (data.method.items[i].stats[stat] or 0)
     end
-  end
-
-  -- Add initial cap values
-  if data.caps[1].stat > 0 then
-    initialStats[data.caps[1].stat] = data.caps[1].init or 0
-  end
-  if data.caps[2].stat > 0 then
-    initialStats[data.caps[2].stat] = data.caps[2].init or 0
   end
 
   -- Run branch and bound search
@@ -1009,7 +999,7 @@ function ReforgeLite:RunAlgorithmComparison()
     -- Get item stats
     local stats = GetItemStats(itemInfo)
     local statsStr = ""
-    for statIdx = 1, #ITEM_STATS do
+    for statIdx = 1, ITEM_STAT_COUNT do
       local statValue = stats[ITEM_STATS[statIdx].name] or 0
       if statValue > 0 then
         statsStr = statsStr .. (" %s:%d"):format(ITEM_STATS[statIdx].tip, statValue)
@@ -1036,9 +1026,9 @@ function ReforgeLite:RunAlgorithmComparison()
 
   -- Run DP algorithm
   print("Running Dynamic Programming...")
-  local dpStart = GetTime()
+  local dpStart = debugprofilestop()
   self:ComputeReforgeClassic()
-  local dpTime = GetTime() - dpStart
+  local dpTime = debugprofilestop() - dpStart
   local dpMethod = CopyTable(self.pdb.method)
   local dpScore = self:CalculateMethodScore(dpMethod)
   local dpConstraintsMet = self:CheckConstraintsSatisfied(dpMethod)
@@ -1088,18 +1078,18 @@ function ReforgeLite:RunAlgorithmComparison()
 
   -- Run Branch and Bound
   print("Running Branch and Bound...")
-  local bbStart = GetTime()
+  local bbStart = debugprofilestop()
   self:ComputeReforgeBranchBound()
-  local bbTime = GetTime() - bbStart
+  local bbTime = debugprofilestop() - bbStart
   local bbMethod = CopyTable(self.pdb.method)
   local bbScore = self:CalculateMethodScore(bbMethod)
   local bbConstraintsMet = self:CheckConstraintsSatisfied(bbMethod)
 
   -- Print comparison
   print("=== Results ===")
-  print(("DP: Score %.1f, Time %.3fs, Constraints %s"):format(
+  print(("DP: Score %.1f, Time %.3fms, Constraints %s"):format(
     dpScore, dpTime, dpConstraintsMet and "Pass" or "Fail"))
-  print(("B&B: Score %.1f, Time %.3fs, Constraints %s"):format(
+  print(("B&B: Score %.1f, Time %.3fms, Constraints %s"):format(
     bbScore, bbTime, bbConstraintsMet and "Pass" or "Fail"))
 
   -- Compare individual choices

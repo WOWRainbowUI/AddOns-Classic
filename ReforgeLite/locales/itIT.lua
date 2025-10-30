@@ -1,6 +1,4 @@
 local _, addonTable = ...
-if addonTable.Locale ~= "itIT" then return end
-
 local L = addonTable.L
 
 --[[Translation missing --]]
@@ -76,6 +74,7 @@ L["^+(%d+) %s$"] = "^+(%d+) %s$"
 --[[ L["Other/No flask"] = ""--]] 
 --[[Translation missing --]]
 --[[ L["Other/No food"] = ""--]] 
+L["Pause"] = "Pausa"
 --[[Translation missing --]]
 --[[ L["Presets"] = ""--]] 
 --[[Translation missing --]]

@@ -89,11 +89,9 @@ end
 ---Gets the expertise bonus from talents and racials
 ---@return number bonus Expertise percentage bonus
 function ReforgeLite:GetExpertiseBonus()
-  if addonTable.playerClass == "HUNTER" then
-    return select(3, GetExpertise()) - GetCombatRatingBonus(CR_EXPERTISE)
-  else
-    return GetExpertise() - GetCombatRatingBonus(CR_EXPERTISE)
-  end
+  local mhExpertise, _, rangedExpertise = GetExpertise()
+  local expertise = addonTable.playerClass == "HUNTER" and rangedExpertise or mhExpertise
+  return RoundToSignificantDigits(expertise - GetCombatRatingBonus(CR_EXPERTISE), 4)
 end
 ---Calculates haste bonus from buffs for melee/ranged haste
 ---@param hasteFunc function Function to get base haste (GetMeleeHaste or GetRangedHaste)
@@ -414,9 +412,15 @@ function ReforgeLite:InitClassPresets()
   local presets = {
     ["DEATHKNIGHT"] = {
       [specs.DEATHKNIGHT.blood] = {
-        [PET_DEFENSIVE] = TankPreset(0, 140, 150, 100, 50, 75, 95, 200, AtMostMeleeCaps),
-        [BALANCE] = TankPreset(0, 140, 150, 200, 125, 100, 200, 25),
-        [PET_AGGRESSIVE] = TankPreset(0, 90, 100, 200, 150, 125, 200, 25),
+        [L["Defensive"]] = Preset(0, 140, 150, 100, 50, 75, 95, 200, AtMostMeleeCaps),
+        [L["Balanced"]] = Preset(0, 140, 150, 200, 100, 125, 200, 25, MeleeCaps),
+        [L["Offensive"]] = {
+          weights = {0, 90, 100, 200, 150, 125, 200, 0},
+          caps = {
+            HitCap,
+            { stat = StatExp, points = { { method = AtLeast, preset = CAPS.ExpSoftCap, after = 50 } } }
+          },
+        },
       },
       [specs.DEATHKNIGHT.frost] = {
         [C_Spell.GetSpellName(49020)] = Preset(0, 0, 0, 87, 44, 48, 87, 35, MeleeCaps, 135771), -- Obliterate
@@ -537,6 +541,10 @@ function ReforgeLite:InitClassPresets()
 
   if self.db.debug then
     self.presets = presets
+    for classFile, className in pairs(LOCALIZED_CLASS_NAMES_MALE) do
+      self.presets[className] = self.presets[classFile]
+      self.presets[classFile] = nil
+    end
     for _,ids in pairs(specs) do
       for _, id in pairs(ids) do
         local _, tabName, _, icon = GetSpecializationInfoByID(id)
@@ -625,7 +633,7 @@ function ReforgeLite:InitPresets()
   self.presetMenuGenerator = function(owner, rootDescription)
     GUI:ClearEditFocus()
 
-    rootDescription:CreateButton(SAVE, function()
+    local saveButton = rootDescription:CreateButton(SAVE, function()
       GUI.CreateStaticPopup("REFORGE_LITE_SAVE_PRESET",
         L["Enter the preset name"],
         function(popup)
@@ -638,6 +646,8 @@ function ReforgeLite:InitPresets()
       StaticPopup_Show("REFORGE_LITE_SAVE_PRESET")
     end)
 
+    saveButton:SetTitleAndTextTooltip(L["Save current stat weights and caps as a custom preset"], L["Custom presets are shared across all characters of this class"])
+
     rootDescription:CreateDivider()
 
     local function FormatWeightsTooltip(tooltip, element, weights, addBlank)
@@ -649,19 +659,17 @@ function ReforgeLite:InitPresets()
         end
       end
       if #statWeights > 0 then
-        tooltip:AddLine(element.text)
+        local rightR, rightG, rightB = addonTable.COLORS.white:GetRGB()
+        tooltip:AddLine(element.text, rightR, rightG, rightB)
         tsort(statWeights, function(a, b)
           if a.weight == b.weight then
             return a.index < b.index
           end
           return a.weight > b.weight
         end)
-        local weightsText = ""
         for _, entry in ipairs(statWeights) do
-          tooltip:AddDoubleLine(entry.stat, entry.weight, addonTable.FONTS.normal:GetRGB())
-          weightsText = weightsText .. entry.stat .. ": " .. entry.weight .. "\n"
+          tooltip:AddDoubleLine(entry.stat, entry.weight, nil, nil, nil, rightR, rightG, rightB)
         end
-        --tooltip:AddLine(weightsText, addonTable.FONTS.normal:GetRGB())
         if addBlank then
           tooltip:AddLine(" ")
         end
