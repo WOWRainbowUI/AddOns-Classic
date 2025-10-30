@@ -5,7 +5,7 @@ Author: Massiner of Nathrezim
 Contributor: xfsbill
 Past Contributors: DT85, DandierSphinx
 
-Version: 1.0.28
+Version: 1.0.29
 
 Description: Graphically create as many Action Bars and Buttons in the game as you choose
 
@@ -23,6 +23,8 @@ Restrictions:
 
 
 History:
+
+28-Oct-2025   v1.0.29  - Toc changed for 5.5.2, Fixed nil error
 
 29-Aug-2025   v1.0.28  - Toc changed for 5.5.1
 
