@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50502
 ## Notes: GatherMate2 data fetched from Wowhead
 ## Title: GatherMate2Data
 ## Author: kagaro, Xinhuan, Spinx, Marrtin

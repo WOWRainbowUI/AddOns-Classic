@@ -1,4 +1,4 @@
-﻿## Interface: 50501
+﻿## Interface: 50502
 ## Title: Spy
 ## Version: 5.0.1
 ## Notes: Detects and alerts you to the presence of nearby enemy players.

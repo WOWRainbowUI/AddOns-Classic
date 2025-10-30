@@ -1,4 +1,4 @@
-## Interface: 11508, 30405, 50501, 110200
+## Interface: 11508, 30405, 50502, 110200
 ## Title: TomTom
 ## Author: Cladhaire, Ludovicus
 ## Version: v4.0.18-release

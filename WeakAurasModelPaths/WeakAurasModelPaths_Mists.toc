@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50502
 ## Title: WeakAuras Model Paths
 ## Author: The WeakAuras Team
 ## Version: 5.20.6

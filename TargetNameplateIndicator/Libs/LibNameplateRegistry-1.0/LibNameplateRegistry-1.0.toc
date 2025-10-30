@@ -1,7 +1,7 @@
 ## Interface: 110007
 ## Interface-Retail: 110007
 ## Interface-Classic: 11508
-## Interface-Cata: 50501
+## Interface-Cata: 50502
 ## X-Max-Interface: 110007
 ## X-Min-Interface:  11508
 

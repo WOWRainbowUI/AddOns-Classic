@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50502
 ## Title: UnitFramesPlus Options
 ## Title-zhCN: 系统头像增强 设置
 ## Author: Isler

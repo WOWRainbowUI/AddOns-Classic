@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50502
 ## X-Max-Interface: 110205
 ## X-Min-Interface: 11508
 ## X-Incompatible-With: 30405, 30406, 30407, 40402, 40403, 40404, 40405

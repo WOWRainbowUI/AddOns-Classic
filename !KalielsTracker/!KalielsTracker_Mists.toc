@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50502
 ## Title: Kaliel's Tracker
 ## Notes: |nMoP Classic Objective Tracker|n|cff999999by Kaliel (Marouan Sabbagh)|n|n
 ## Version: 5.2.0

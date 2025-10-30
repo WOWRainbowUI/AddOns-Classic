@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50502
 ## Title: BigDebuffs
 ## Notes: Increases the debuff size of crowd control effects on the Blizzard raid frames
 ## Version: v55

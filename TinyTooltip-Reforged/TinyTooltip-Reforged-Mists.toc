@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50502
 
 ## Title: TinyTooltip-Reforged |cFF69CCF0by Beezer|r
 ## Description: |cff4488ffTinyTooltip (Reforged)|r|n Options use /ttr|n Reset use /ttr reset

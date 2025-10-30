@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50502
 ## Title: LFG Bulletin Board
 ## Notes: Sort LFG/LFM Messages
 ## Version: 3.47

@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50502
 ## Author: Aznamir, Dyaxler, Es, gallantron
 ## Title: PallyPower Classic
 ## Version: v1.5.14-classic

@@ -1,5 +1,5 @@
-## Interface: 50501
-## X-Min-Interface: 50501
+## Interface: 50502
+## X-Min-Interface: 50502
 ## Category: DBM
 
 ## Title:|cffffe00a<|r|cffff7d0aDBM Mod|r|cffffe00a>|r |cff10ff10World Bosses (Cata)|r

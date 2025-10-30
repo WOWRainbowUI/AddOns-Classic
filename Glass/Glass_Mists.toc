@@ -1,4 +1,4 @@
-## Interface: 50501
+## Interface: 50502
 ## Plain Title: Glass
 ## Author: mixxorz
 ## Version: 1.8.0 Classic Fix
