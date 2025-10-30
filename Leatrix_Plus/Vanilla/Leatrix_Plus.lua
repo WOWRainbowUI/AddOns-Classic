@@ -1,5 +1,5 @@
 ﻿----------------------------------------------------------------------
--- 	Leatrix Plus 1.15.105 (23rd October 2025)
+-- 	Leatrix Plus 1.15.106 (29th October 2025)
 ----------------------------------------------------------------------
 
 --	01:Functions 02:Locks   03:Restart 40:Player   45:Rest
@@ -19,7 +19,7 @@
 	local void
 
 	-- Version
-	LeaPlusLC["AddonVer"] = "1.15.105"
+	LeaPlusLC["AddonVer"] = "1.15.106"
 
 	-- Get locale table
 	local void, Leatrix_Plus = ...
@@ -5799,9 +5799,7 @@
 				Minimap:SetMaskTexture('Interface\\ChatFrame\\ChatFrameBackground')
 
 				-- Hide the North tag
-				hooksecurefunc(MinimapNorthTag, "Show", function()
-					MinimapNorthTag:Hide()
-				end)
+				MinimapNorthTag:Hide()
 
 				-- Tracking button (only visible when needed)
 				C_Timer.After(0.1, function()
