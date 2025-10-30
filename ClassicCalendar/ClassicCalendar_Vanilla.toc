@@ -2,10 +2,9 @@
 ## Title: Classic Calendar - Revived
 ## Version: ClassicCalendar-v0.9.0
 ## Author: Pimptasty
-## Version: ClassicCalendar-v0.9.0
+## Version: ClassicCalendar-v0.9.0 Fix
 
 ## X-Curse-Project-ID: 1339939
-## Dependencies: Ace3
 
 ## SavedVariables: CCConfig, WorldBuffData
 
