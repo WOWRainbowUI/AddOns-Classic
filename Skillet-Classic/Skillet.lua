@@ -869,7 +869,6 @@ function Skillet:OnEnable()
 	self.currentPlayer = UnitName("player")
 	self.currentGroupLabel = "Blizzard"
 	self.currentGroup = nil
-	self.skippedQueue = {}
 	self:UpgradeDataAndOptions()		-- run the upgrade code to convert any old settings
 	self:ConvertIgnoreListData()
 	self:CollectTradeSkillData()
@@ -1526,6 +1525,7 @@ function Skillet:ChangeTradeSkill(tradeID, tradeName)
 				self.closingTrade = true
 				self:SkilletClose()
 				StaticPopup_Show("SKILLET_IGNORE_CHANGE")
+				Skillet:SkilletFrameForceClose()
 				return
 			end
 		end
