@@ -1,58 +1,10 @@
-tag 221985ac7005804e13ef4fb7efed5735f2e8780f v2.2.5
+tag f58b28c370b0584e767a222a624893c6041decf7 v2.3.0
 Author:	skyler-code <skylerh15@github.com>
-Date:	Wed Oct 8 17:31:16 2025 -0500
+Date:	Tue Oct 28 13:43:51 2025 -0500
 
-commit 560c228e8a42221e0b84ed22de9b7686398e4ccc
+commit 3693b2b204fbf92882ed29d6d8d070e2a585a0c0
 Author: skyler-code <skylerh15@github.com>
-Date:   Wed Oct 8 17:30:33 2025 -0500
+Date:   Tue Oct 28 13:42:00 2025 -0500
 
-    Fix StaticPopup OnAccept callback parameter
-    
-    EditBoxOnEnterPressed was incorrectly passing text to OnAccept callback instead of the popup frame, causing errors. All OnAccept handlers expect to receive the popup frame to access GetEditBox():GetText().
-    
-    Also removed unnecessary OnHide handler and simplified OnAccept assignment.
-
-commit 0415b57cb2070030c8e5cb324b8ee78ed7a0a835
-Author: skyler-code <skylerh15@github.com>
-Date:   Wed Oct 8 17:15:21 2025 -0500
-
-    Add stat weight tooltips to preset menu
-    
-    Show stat weights when hovering over presets in the dropdown menu, sorted by weight (descending) with index as tiebreaker. Tooltips display preset name and stat:weight pairs in a clean double-column format.
-    
-    Also refactored several presets to use the Preset() helper function for consistency.
-
-commit 88d9ac99f24b62c21f32a13e0358299b113235e2
-Author: skyler-code <skylerh15@github.com>
-Date:   Wed Oct 8 15:51:06 2025 -0500
-
-    Add ST and AoE presets for elemental shaman
-    
-    Split elemental shaman preset into Single Target and AoE options with correct stat weights. ST preset prioritizes haste/mastery while AoE prioritizes mastery/crit.
-    
-    Closes #54
-
-commit 9a797e82bea0f377e97dff65a229ecf2f7323496
-Author: skyler-code <skylerh15@github.com>
-Date:   Wed Oct 8 15:19:29 2025 -0500
-
-    small cleanup
-
-commit a060d16e6f7dbeb0f2a0d89f9f60bab03616dd2f
-Author: skyler-code <skylerh15@github.com>
-Date:   Tue Oct 7 18:52:27 2025 -0500
-
-    fix getitemstats
-
-commit c3c6900ce7d340754a474af5832df0ba97e3a32e
-Author: skyler-code <skylerh15@github.com>
-Date:   Tue Oct 7 03:02:07 2025 -0500
-
-    remove scaling file
-
-commit ba5d2d563d4b8d4ee76809b8c364482e5d2f5659
-Author: skyler-code <skylerh15@github.com>
-Date:   Tue Oct 7 03:01:04 2025 -0500
-
-    dev folder
+    bump toc
 

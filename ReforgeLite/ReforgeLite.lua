@@ -6,8 +6,14 @@ local addonTitle = C_AddOns.GetAddOnMetadata(addonName, "title")
 local ReforgeLite = CreateFrame("Frame", addonName, UIParent, "BackdropTemplate")
 addonTable.ReforgeLite = ReforgeLite
 
-local L = addonTable.L
 local GUI = addonTable.GUI
+
+local L = setmetatable({}, {
+  __index = function(t, k)
+    rawset(t, k, k or "")
+    return t[k]
+end})
+addonTable.L = L
 
 addonTable.printLog = {}
 local gprint = print
@@ -50,8 +56,8 @@ local DefaultDB = {
     openOnReforge = true,
     updateTooltip = false,
     accuracy = addonTable.MAX_SPEED,
-    activeWindowTitle = {0.6, 0, 0},
-    inactiveWindowTitle = {0.5, 0.5, 0.5},
+    activeWindowTitle = {addonTable.COLORS.maroon:GetRGB()},
+    inactiveWindowTitle = {addonTable.COLORS.grey:GetRGB()},
     specProfiles = false,
     importButton = true,
     clampedToScreen = true,
@@ -178,6 +184,7 @@ local StatAdditives = {
   end
 }
 
+local tooltipStatPrefix = "^%+([%d,]+)%s+"
 local function RatingStat (i, name_, tip_, long_, id_)
   return {
     name = name_,
@@ -192,7 +199,8 @@ local function RatingStat (i, name_, tip_, long_, id_)
     end,
     mgetter = function (method, orig)
       return (orig and method.orig_stats and method.orig_stats[i]) or method.stats[i]
-    end
+    end,
+    tooltipPattern = tooltipStatPrefix .. long_
   }
 end
 
@@ -210,7 +218,8 @@ local ITEM_STATS = {
       end,
       mgetter = function (method, orig)
         return (orig and method.orig_stats and method.orig_stats[statIds.SPIRIT]) or method.stats[statIds.SPIRIT]
-      end
+      end,
+      tooltipPattern = tooltipStatPrefix .. ITEM_MOD_SPIRIT_SHORT
     },
     RatingStat (statIds.DODGE,   "ITEM_MOD_DODGE_RATING",         STAT_DODGE,     STAT_DODGE,           CR_DODGE),
     RatingStat (statIds.PARRY,   "ITEM_MOD_PARRY_RATING",         STAT_PARRY,     STAT_PARRY,           CR_PARRY),
@@ -218,7 +227,7 @@ local ITEM_STATS = {
     {
       name = "ITEM_MOD_HIT_RATING",
       tip = HIT,
-      long = HIT,
+      long = ITEM_MOD_HIT_RATING_SHORT,
       getter = function()
         local hit = GetCombatRating(CR_HIT)
         if (ReforgeLite.conversion[statIds.EXP] or {})[statIds.HIT] then
@@ -228,7 +237,8 @@ local ITEM_STATS = {
       end,
       mgetter = function (method, orig)
         return (orig and method.orig_stats and method.orig_stats[statIds.HIT]) or method.stats[statIds.HIT]
-      end
+      end,
+      tooltipPattern = tooltipStatPrefix .. ITEM_MOD_HIT_RATING_SHORT
     },
     RatingStat (statIds.CRIT,    "ITEM_MOD_CRIT_RATING",          CRIT_ABBR,      CRIT_ABBR,            CR_CRIT),
     RatingStat (statIds.HASTE,   "ITEM_MOD_HASTE_RATING",         STAT_HASTE,     STAT_HASTE,           CR_HASTE),
@@ -238,37 +248,6 @@ local ITEM_STATS = {
 local ITEM_STAT_COUNT = #ITEM_STATS
 addonTable.itemStats, addonTable.itemStatCount = ITEM_STATS, ITEM_STAT_COUNT
 ReforgeLite.itemStats = ITEM_STATS
-
-local RandPropPoints, ItemUpgradeStats, ItemStatsRef = addonTable.RandPropPoints, addonTable.ItemUpgradeStats, addonTable.ItemStatsRef
-local baseGetItemStats = GetItemStats
----Gets item stats adjusted for upgrade level
----Calculates base stats and applies upgrade scaling based on item level
----@param itemInfo table Item information with link, itemId, ilvl, upgradeLevel
----@return table<string, number> stats Table of stat names to values
-function addonTable.GetItemStatsUp(itemInfo)
-    if not (itemInfo or {}).link then return {} end
-    local result = baseGetItemStats(itemInfo.link)
-    if result and itemInfo.upgradeLevel > 0 then
-        local iLvlBase = C_Item.GetDetailedItemLevelInfo(itemInfo.itemId)
-        local budget, ref
-        local upgradeStats = ItemUpgradeStats[itemInfo.itemId]
-        if upgradeStats and RandPropPoints[itemInfo.ilvl] then
-            budget = RandPropPoints[itemInfo.ilvl][upgradeStats[1]]
-            ref = ItemStatsRef[upgradeStats[2] + 1]
-        end
-        for sid, sv in ipairs(addonTable.itemStats) do
-            if result[sv.name] then
-                if budget and ref and ref[sid] then
-                    result[sv.name] = floor(ref[sid][1] * budget * 0.0001 - ref[sid][2] * 160 + 0.5)
-                else
-                    result[sv.name] = floor(tonumber(result[sv.name]) * math.pow(1.15, (itemInfo.ilvl - iLvlBase) / 15))
-                end
-            end
-        end
-    end
-    return result
-end
-local GetItemStats = addonTable.GetItemStatsUp
 
 local REFORGE_TABLE_BASE = 112
 local reforgeTable = {
@@ -283,13 +262,119 @@ local reforgeTable = {
 }
 ReforgeLite.reforgeTable = reforgeTable
 
+local reforgeIdStringCache = setmetatable({}, {
+  __index = function(self, key)
+    local _, itemOptions = GetItemInfoFromHyperlink(key)
+    if not itemOptions then return false end
+    local reforgeId = select(10, LinkUtil.SplitLinkOptions(itemOptions))
+    reforgeId = tonumber(reforgeId)
+    if not reforgeId then
+      reforgeId = UNFORGE_INDEX
+    else
+      reforgeId = reforgeId - REFORGE_TABLE_BASE
+    end
+    rawset(self, key, reforgeId)
+    return reforgeId
+  end
+})
+
+local function GetReforgeIDFromString(item)
+  local id = reforgeIdStringCache[item]
+  if id and id ~= UNFORGE_INDEX then
+    return id
+  end
+end
+
+local function GetReforgeID(slotId)
+  if ignoredSlots[slotId] then return end
+  return GetReforgeIDFromString(PLAYER_ITEM_DATA[slotId]:GetItemLink())
+end
+
+function ReforgeLite:GetReforgeTableIndex(src, dst)
+  for k,v in ipairs(reforgeTable) do
+    if v[1] == src and v[2] == dst then
+      return k
+    end
+  end
+  return UNFORGE_INDEX
+end
+
+
+local scanTooltip = CreateFrame("GameTooltip", "ReforgeLiteScanTooltip", nil, "GameTooltipTemplate")
+local tooltipStatsCache = setmetatable({}, {
+  __index = function(t, k)
+    rawset(t, k, {})
+    return t[k]
+  end
+})
+
+---Scans tooltip to get actual item stats (handles upgraded items accurately)
+---Uses Blizzard's GetItemStats for base items, tooltip scanning for upgraded items
+---Only scans for reforge-able secondary stats (Spirit, Dodge, Parry, Hit, Crit, Haste, Expertise, Mastery)
+---Reverses any active reforge to return original item stats
+---@param itemInfo table Item information with link, itemId, ilvl, upgradeLevel, slotId, reforge
+---@return table<string, number> stats Table of stat names to values (before reforge)
+function addonTable.GetItemStatsFromTooltip(itemInfo)
+  if not (itemInfo or {}).link then return {} end
+
+  if itemInfo.ilvl == itemInfo.originalIlvl then
+    return GetItemStats(itemInfo.link)
+  end
+
+  local cached = tooltipStatsCache[itemInfo.itemId][itemInfo.ilvl]
+  if cached then
+    return CopyTable(cached)
+  end
+
+  local srcName, destName
+  if itemInfo.reforge then
+    local srcId, dstId = unpack(reforgeTable[itemInfo.reforge])
+    srcName, destName = ITEM_STATS[srcId].name, ITEM_STATS[dstId].name
+  end
+
+  local stats = {}
+  scanTooltip:SetOwner(UIParent, "ANCHOR_NONE")
+  scanTooltip:SetInventoryItem("player", itemInfo.slotId)
+  local foundStats = 0
+
+  for _, region in ipairs({scanTooltip:GetRegions()}) do
+    if foundStats == (itemInfo.reforge ~= nil and 3 or 2) then
+      break
+    end
+    if region.GetText then
+      local text = region:GetText()
+      if text and text ~= "" then
+        for _, statInfo in ipairs(ITEM_STATS) do
+          if not stats[statInfo.name] then
+            local value = text:match(statInfo.tooltipPattern)
+            if value then
+              foundStats = foundStats + 1
+              stats[statInfo.name] = tonumber((value:gsub(",", "")))
+              break
+            end
+          end
+        end
+      end
+    end
+  end
+
+  if stats[srcName] and stats[destName] then
+    stats[srcName] = stats[srcName] + stats[destName]
+    stats[destName] = nil
+  end
+
+  tooltipStatsCache[itemInfo.itemId][itemInfo.ilvl] = stats
+  return CopyTable(stats)
+end
+
+local GetItemStats = addonTable.GetItemStatsFromTooltip
+
 addonTable.REFORGE_COEFF = 0.4
 
 ---Saves the current window dimensions to character database
 ---@return nil
-function ReforgeLite:UpdateWindowSize ()
-  self.pdb.windowWidth = self:GetWidth ()
-  self.pdb.windowHeight = self:GetHeight ()
+function ReforgeLite:UpdateWindowSize()
+  self.pdb.windowWidth, self.pdb.windowHeight = self:GetSize()
 end
 
 ---Calculates the score for a stat value with cap points applied
@@ -378,24 +463,6 @@ function ReforgeLite:ApplyWoWSimsImport(newItems, attachToReforge)
   self:ShowMethodWindow(attachToReforge)
 end
 
---[===[@debug@
-addonTable.isDev = true
-function ReforgeLite:ParsePresetString(presetStr)
-  local success, preset = pcall(function () return C_EncodingUtil.DeserializeJSON(presetStr) end)
-  if success and type(preset.caps) == "table" then
-    DevTools_Dump(preset)
-  end
-end
-
-function ReforgeLite:PreviewColors()
-  for _, dbColor in ipairs(C_UIColor.GetColors()) do
-    local color = _G[dbColor.baseTag]
-    print(color:WrapTextInColorCode(string.join(", ", dbColor.baseTag, color:GetRGB())))
-  end
-end
-
---@end-debug@]===]
-
 function ReforgeLite:ValidatePawnString(importStr)
   local pos, _, version, name, values = strfind (importStr, "^%s*%(%s*Pawn%s*:%s*v(%d+)%s*:%s*\"([^\"]+)\"%s*:%s*(.+)%s*%)%s*$")
   version = tonumber (version)
@@ -455,7 +522,7 @@ function ReforgeLite:CreateCategory (name)
   c.name = c:CreateFontString (nil, "OVERLAY", "GameFontNormal")
   c.catname = c.name
   c.name:SetPoint ("TOPLEFT", c, "TOPLEFT", 18, -1)
-  c.name:SetTextColor(addonTable.FONTS.white:GetRGB())
+  c.name:SetTextColor(addonTable.COLORS.white:GetRGB())
   c.name:SetText (name)
 
   c.button = CreateFrame ("Button", nil, c)
@@ -554,11 +621,11 @@ end
 local function SetTextDelta (text, value, cur, override)
   override = override or (value - cur)
   if override == 0 then
-    text:SetTextColor(addonTable.FONTS.grey:GetRGB())
+    text:SetTextColor(addonTable.COLORS.grey:GetRGB())
   elseif override > 0 then
-    text:SetTextColor(addonTable.FONTS.green:GetRGB())
+    text:SetTextColor(addonTable.COLORS.green:GetRGB())
   else
-    text:SetTextColor(addonTable.FONTS.red:GetRGB())
+    text:SetTextColor(addonTable.COLORS.red:GetRGB())
   end
   text:SetFormattedText(value - cur > 0 and "+%s" or "%s", value - cur)
 end
@@ -588,7 +655,7 @@ function ReforgeLite:FixScroll ()
   local height = self.content:GetHeight ()
   if height < viewheight + 2 then
     if self.scrollBarShown then
-      self.scrollBarShown = false
+      self.scrollBarShown = nil
       self.scrollBar:Hide ()
       self.scrollBar:SetValue (0)
     end
@@ -647,8 +714,8 @@ function ReforgeLite:CreateFrame()
     insets = { left = 3, right = 3, top = 22, bottom = 3 }
   }
   self:ApplyBackdrop()
-  self:SetBackdropColor(addonTable.FONTS.panel:GetRGB())
-  self:SetBackdropBorderColor(addonTable.FONTS.panel:GetRGB())
+  self:SetBackdropColor(addonTable.COLORS.panel:GetRGB())
+  self:SetBackdropBorderColor(addonTable.COLORS.panel:GetRGB())
 
   self.titlebar = self:CreateTexture(nil,"BACKGROUND")
   self.titlebar:SetPoint("TOPLEFT", 3, -3)
@@ -693,7 +760,7 @@ function ReforgeLite:CreateFrame()
 
   self.title = self:CreateFontString (nil, "OVERLAY", "GameFontNormal")
   self.title:SetText (addonTitle)
-  self.title:SetTextColor (addonTable.FONTS.white:GetRGB())
+  self.title:SetTextColor (addonTable.COLORS.white:GetRGB())
   self.title:SetPoint ("BOTTOMLEFT", self.titleIcon, "BOTTOMRIGHT", 2, 1)
 
   self.close = CreateFrame ("Button", nil, self, "UIPanelCloseButtonNoScripts")
@@ -734,7 +801,6 @@ function ReforgeLite:CreateFrame()
 
   self.scrollValue = 0
   self.scrollOffset = 0
-  self.scrollBarShown = false
 
   self.scrollFrame = CreateFrame ("ScrollFrame", nil, self)
   self.scrollFrame:ClearAllPoints ()
@@ -814,12 +880,13 @@ function ReforgeLite:CreateItemTable ()
   self.itemTable:SetPoint ("BOTTOM", 0, 10)
   self.itemTable:SetWidth (400)
   for i = 1, ITEM_STAT_COUNT do
-    self.itemTable:SetColumnWidth(i, 55)
+    self.itemTable:SetColumnWidth(i, 45)
+    self.itemTable:EnableColumnAutoWidth(i)
   end
 
   self.itemLevel = self:CreateFontString (nil, "OVERLAY", "GameFontNormal")
   self.itemLevel:SetPoint ("BOTTOMRIGHT", self.itemTable, "TOPRIGHT", 0, 8)
-  self.itemLevel:SetTextColor(addonTable.FONTS.gold:GetRGB())
+  self.itemLevel:SetTextColor(addonTable.COLORS.gold:GetRGB())
   self:RegisterEvent("PLAYER_AVG_ITEM_LEVEL_UPDATE")
   self:PLAYER_AVG_ITEM_LEVEL_UPDATE()
 
@@ -829,7 +896,7 @@ function ReforgeLite:CreateItemTable ()
 
   self.statHeaders = {}
   for i, v in ipairs (ITEM_STATS) do
-    self.itemTable:SetCellText (0, i, v.tip, nil, addonTable.FONTS.darkyellow)
+    self.itemTable:SetCellText (0, i, v.tip, nil, addonTable.COLORS.darkyellow)
     self.statHeaders[i] = self.itemTable.cells[0][i]
   end
   self.itemData = {}
@@ -870,17 +937,16 @@ function ReforgeLite:CreateItemTable ()
     self.itemData[i].quality:SetPoint ("CENTER", self.itemData[i])
     self.itemData[i].itemInfo = {}
     self.itemData[i].stats = {}
-    for j, s in ipairs (ITEM_STATS) do
-      local fontColors = { grey = addonTable.FONTS.lightgrey, red = addonTable.FONTS.red, green = addonTable.FONTS.green, white = addonTable.FONTS.white  }
+    for j = 1, ITEM_STAT_COUNT do
+      local fontColors = { grey = addonTable.COLORS.lightgrey, red = addonTable.COLORS.red, green = addonTable.COLORS.green, white = addonTable.COLORS.white  }
       self.itemTable:SetCellText(i, j, "-", nil, fontColors.grey)
       self.itemData[i].stats[j] = self.itemTable.cells[i][j]
       self.itemData[i].stats[j].fontColors = fontColors
     end
   end
   self.statTotals = {}
-  self.itemTable:SetCellText (ITEM_SLOT_COUNT + 1, 0, L["Sum"], "CENTER", addonTable.FONTS.darkyellow)
-  for i, v in ipairs (ITEM_STATS) do
-    self.itemTable:SetCellText(ITEM_SLOT_COUNT + 1, i, "0", nil, addonTable.FONTS.darkyellow)
+  for i = 1, ITEM_STAT_COUNT do
+    self.itemTable:SetCellText(ITEM_SLOT_COUNT + 1, i, "0", nil, addonTable.COLORS.darkyellow)
     self.statTotals[i] = self.itemTable.cells[ITEM_SLOT_COUNT + 1][i]
   end
 end
@@ -1124,7 +1190,7 @@ function ReforgeLite:UpdateStatWeightList ()
     local row = i - col * (self.statWeights.rows - extraRows) + extraRows
     col = 1 + 2 * col
 
-    self.statWeights:SetCellText (row, col, v.long, "LEFT", addonTable.FONTS.darkyellow, "GameFontNormal")
+    self.statWeights:SetCellText (row, col, v.long, "LEFT", addonTable.COLORS.darkyellow, "GameFontNormal")
     self.statWeights.inputs[i] = GUI:CreateEditBox(
       self.statWeights,
       50,
@@ -1156,7 +1222,7 @@ function ReforgeLite:CreateOptionList ()
   self.statWeightsCategory = self:CreateCategory (L["Stat Weights"])
   self:SetAnchor (self.statWeightsCategory, "TOPLEFT", self.content, "TOPLEFT", 2, -2)
 
-  self.statWeightsHelpButton = GUI:CreateHelpButton(self.content, L["Presets: Load pre-configured stat weights and caps for your spec. Click to select from class-specific presets, custom saved presets, or Pawn imports.\n\nImport: Use stat weights from WoWSims, Pawn, or QuestionablyEpic. WoWSims and QE can also import pre-calculated reforge plans.\n\nTarget Level: Select your raid difficulty to calculate stat caps at the appropriate level (PvP, Heroic Dungeon, or Raid).\n\nBuffs: Enable raid buffs you'll have active (Spell Haste, Melee Haste, Mastery) to account for their stat bonuses in cap calculations.\n\nStat Weights: Assign relative values to each stat. Higher weights mean the optimizer will prioritize that stat more when reforging. For example, if Hit has weight 60 and Crit has weight 20, the optimizer values Hit three times more than Crit.\n\nStat Caps: Set minimum or maximum values for specific stats. Use presets (Hit Cap, Expertise Cap, Haste Breakpoints) or enter custom values. The optimizer will respect these caps when calculating the optimal reforge plan."], {scale = 0.5})
+  self.statWeightsHelpButton = GUI:CreateHelpButton(self.content, L["|cffffffffPresets:|r Load pre-configured stat weights and caps for your spec. Click to select from class-specific presets, custom saved presets, or Pawn imports.\n\n|cffffffffImport:|r Use stat weights from WoWSims, Pawn, or QuestionablyEpic. WoWSims and QE can also import pre-calculated reforge plans.\n\n|cffffffffTarget Level:|r Select your raid difficulty to calculate stat caps at the appropriate level (PvP, Heroic Dungeon, or Raid).\n\n|cffffffffBuffs:|r Enable raid buffs you'll have active (Spell Haste, Melee Haste, Mastery) to account for their stat bonuses in cap calculations.\n\n|cffffffffStat Weights:|r Assign relative values to each stat. Higher weights mean the optimizer will prioritize that stat more when reforging. For example, if Hit has weight 60 and Crit has weight 20, the optimizer values Hit three times more than Crit.\n\n|cffffffffStat Caps:|r Set minimum or maximum values for specific stats. Use presets (Hit Cap, Expertise Cap, Haste Breakpoints) or enter custom values. The optimizer will respect these caps when calculating the optimal reforge plan."], {scale = 0.5})
   self.statWeightsHelpButton:SetPoint("LEFT", self.statWeightsCategory.name, "RIGHT", 4, 0)
 
   self.presetsButton = GUI:CreateFilterDropdown(self.content, L["Presets"], {resizeToTextPadding = 35})
@@ -1322,26 +1388,26 @@ function ReforgeLite:CreateOptionList ()
 
   self.pauseButton = GUI:CreatePanelButton(
     self.content,
-    KEY_PAUSE,
+    L["Pause"],
     function(btn)
       if addonTable.pauseRoutine then
         addonTable.pauseRoutine = 'kill'
-        self:EndCompute(addonTable.pauseRoutine)
+        self:EndCompute()
       else
         addonTable.pauseRoutine = 'pause'
         btn:RenderText(CANCEL)
         self.computeButton:RenderText(CONTINUE)
         addonTable.GUI:UnlockFrame(self.computeButton)
       end
-    end, 
+    end,
     {
       preventLock = true,
       PreCalculateStart = function(btn)
-        btn:RenderText(KEY_PAUSE)
+        btn:RenderText(L["Pause"])
         btn:Enable()
       end,
       OnCalculateFinish = function(btn)
-        btn:RenderText(KEY_PAUSE)
+        btn:RenderText(L["Pause"])
         btn:Disable()
       end
     }
@@ -1561,9 +1627,13 @@ function ReforgeLite:UpdateMethodCategory()
       local cell = i - 1
       self.methodStats:SetCellText(cell, 0, v.long, "LEFT")
       self.methodStats:SetCellText(cell, 1, "0")
-      self.methodStats:SetCellText(cell, 2, "+0", nil, addonTable.FONTS.grey)
+      self.methodStats:SetCellText(cell, 2, "+0", nil, addonTable.COLORS.grey)
       self.methodStats[i] = { delta = self.methodStats.cells[cell][2] }
     end
+
+    self.expertiseToHitHelpButton = GUI:CreateHelpButton(self.methodStats, L["Your Expertise rating is being converted to spell hit.\n\nIn Mists of Pandaria, casters benefit from Expertise due to it automatically converting to Hit at a 1:1 ratio.\n\nThe Hit value shown above includes this converted Expertise rating.\n\nNote: The character sheet is bugged and doesn't show Expertise converted to spell hit, but the conversion works correctly in combat."], { scale = 0.45 })
+    self.expertiseToHitHelpButton:SetPoint("LEFT", self.methodStats.cells[statIds.EXP - 1][0], "RIGHT", -8, 0)
+    self.expertiseToHitHelpButton:Hide()
 
     self.methodShow = GUI:CreatePanelButton (self.content, SHOW, function(btn) self:ShowMethodWindow() end)
     self.methodShow:SetSize(85, 22)
@@ -1587,30 +1657,23 @@ function ReforgeLite:RefreshMethodStats()
   if self.pdb.method then
     self:UpdateMethodStats (self.pdb.method)
   end
-  if self.pdb.method then
-    if self.methodStats then
-      for i, v in ipairs (ITEM_STATS) do
-        local cell = i - 1
-        local mvalue = v.mgetter (self.pdb.method)
-        if v.percent then
-          self.methodStats:SetCellText(cell, 1, ("%.2f%%"):format(mvalue))
-        else
-          self.methodStats:SetCellText(cell, 1, mvalue)
-        end
-        local override
-        mvalue = v.mgetter (self.pdb.method, true)
-        local value = v.getter ()
-        if self:GetStatScore (i, mvalue) == self:GetStatScore (i, value) then
-          override = 0
-        end
-        SetTextDelta (self.methodStats[i].delta, mvalue, value, override)
-        -- Hide rows with zero values by setting row height to 0
-        if mvalue <= 0 or (v.name == "ITEM_MOD_SPIRIT_SHORT" and not UnitHasMana("player")) then
-          self.methodStats:CollapseRow(cell)
-        else
-          self.methodStats:ExpandRow(cell)
-        end
+  if self.pdb.method and self.methodStats then
+    local showSpirit = self.pdb.weights[statIds.SPIRIT] > 0 or self.currentSpecRole == "HEALER" or (self.conversion[statIds.SPIRIT] or {})[statIds.HIT]
+    local showSpellHitHelp = (self.conversion[statIds.EXP] or {})[statIds.HIT] and ITEM_STATS[statIds.EXP].mgetter(self.pdb.method) > 0
+    self.expertiseToHitHelpButton:SetShown(self.db.showHelp and showSpellHitHelp)
+    self.expertiseToHitHelpButton:SetEnabled(showSpellHitHelp)
+    for statId, v in ipairs (ITEM_STATS) do
+      local cell = statId - 1
+      local mvalue = v.mgetter (self.pdb.method)
+      self.methodStats:SetCellText(cell, 1, mvalue)
+      local override
+      mvalue = v.mgetter (self.pdb.method, true)
+      local value = v.getter ()
+      if self:GetStatScore (statId, mvalue) == self:GetStatScore (statId, value) then
+        override = 0
       end
+      SetTextDelta (self.methodStats[statId].delta, mvalue, value, override)
+      self.methodStats:SetRowExpanded(cell, mvalue > 0 and (statId ~= statIds.SPIRIT or showSpirit))
     end
   end
 end
@@ -1619,57 +1682,19 @@ function ReforgeLite:UpdateContentSize ()
   self.content:SetHeight (-self:GetFrameY (self.lastElement))
   RunNextFrame(function() self:FixScroll() end)
 end
-
-function ReforgeLite:GetReforgeTableIndex(src, dst)
-  for k,v in ipairs(reforgeTable) do
-    if v[1] == src and v[2] == dst then
-      return k
-    end
-  end
-  return UNFORGE_INDEX
-end
-
-local reforgeIdStringCache = setmetatable({}, {
-  __index = function(self, key)
-    local _, itemOptions = GetItemInfoFromHyperlink(key)
-    if not itemOptions then return false end
-    local reforgeId = select(10, LinkUtil.SplitLinkOptions(itemOptions))
-    reforgeId = tonumber(reforgeId)
-    if not reforgeId then
-      reforgeId = UNFORGE_INDEX
-    else
-      reforgeId = reforgeId - REFORGE_TABLE_BASE
-    end
-    rawset(self, key, reforgeId)
-    return reforgeId
-  end
-})
-
-local function GetReforgeIDFromString(item)
-  local id = reforgeIdStringCache[item]
-  if id and id ~= UNFORGE_INDEX then
-    return id
-  end
-end
-
-local function GetReforgeID(slotId)
-  if ignoredSlots[slotId] then return end
-  return GetReforgeIDFromString(PLAYER_ITEM_DATA[slotId]:GetItemLink())
-end
-
 local function GetItemUpgradeLevel(item)
     if item:IsItemEmpty()
     or not item:HasItemLocation()
     or item:GetItemQuality() < Enum.ItemQuality.Rare
     or item:GetCurrentItemLevel() < 458 then
-        return 0
+        return 0, item:GetCurrentItemLevel()
     end
     local originalIlvl = C_Item.GetDetailedItemLevelInfo(item:GetItemID())
     if not originalIlvl then
-        return 0
+        return 0, item:GetCurrentItemLevel()
     end
 
-    return (item:GetCurrentItemLevel() - originalIlvl) / 4
+    return (item:GetCurrentItemLevel() - originalIlvl) / 4, originalIlvl
 end
 
 ---Updates the item table with current equipped gear
@@ -1686,15 +1711,18 @@ function ReforgeLite:UpdateItems()
     if item:IsItemEmpty() then
       wipe(v.itemInfo)
       v.texture:SetTexture(v.slotTexture)
-      v.quality:SetVertexColor(addonTable.FONTS.white:GetRGB())
+      v.quality:SetVertexColor(addonTable.COLORS.white:GetRGB())
     else
+      local upgradeLevel, originalIlvl = GetItemUpgradeLevel(item)
       v.itemInfo = {
         link = item:GetItemLink(),
         itemId = item:GetItemID(),
         ilvl = item:GetCurrentItemLevel(),
         itemGUID = item:GetItemGUID(),
-        upgradeLevel = GetItemUpgradeLevel(item),
-        reforge = GetReforgeID(v.slotId)
+        upgradeLevel = upgradeLevel,
+        originalIlvl = originalIlvl,
+        reforge = GetReforgeID(v.slotId),
+        slotId = v.slotId,
       }
       v.texture:SetTexture(item:GetItemIcon())
       v.quality:SetVertexColor(item:GetItemQualityColor().color:GetRGB())
@@ -1736,11 +1764,11 @@ function ReforgeLite:UpdateItems()
     end
   end
 
-  local hasAnyData = next(columnHasData) ~= nil
+  local hasNoData = next(columnHasData) == nil
 
   for i, v in ipairs (ITEM_STATS) do
     self.statTotals[i]:SetText(v.getter())
-    if columnHasData[i] or not hasAnyData then
+    if columnHasData[i] or hasNoData then
       self.itemTable:ExpandColumn(i)
     else
       self.itemTable:CollapseColumn(i)
@@ -1760,10 +1788,11 @@ end
 
 function ReforgeLite:UpdatePlayerSpecInfo()
   if not self.playerSpecTexture then return end
-  local _, specName, _, icon = C_SpecializationInfo.GetSpecializationInfo(C_SpecializationInfo.GetSpecialization())
+  local _, specName, _, icon, specRole = C_SpecializationInfo.GetSpecializationInfo(C_SpecializationInfo.GetSpecialization())
   if specName == "" then
     specName, icon = NONE, 132222
   end
+  self.currentSpecRole = specRole
   self.playerSpecTexture:SetTexture(icon)
   local activeSpecGroup = C_SpecializationInfo.GetActiveSpecGroup()
   for tier = 1, MAX_NUM_TALENT_TIERS do
@@ -1798,25 +1827,24 @@ local queueUpdateEvents = {
   UNIT_SPELL_HASTE = "player",
 }
 
-local queueEventsRegistered = false
 function ReforgeLite:RegisterQueueUpdateEvents()
-  if queueEventsRegistered then return end
   for event, unitID in pairs(queueUpdateEvents) do
-    if unitID == true then
-      self:RegisterEvent(event)
-    else
-      self:RegisterUnitEvent(event, unitID)
+    if not self:IsEventRegistered(event) then
+      if unitID == true then
+        self:RegisterEvent(event)
+      else
+        self:RegisterUnitEvent(event, unitID)
+      end
     end
   end
-  queueEventsRegistered = true
 end
 
 function ReforgeLite:UnregisterQueueUpdateEvents()
-  if not queueEventsRegistered then return end
   for event in pairs(queueUpdateEvents) do
-    self:UnregisterEvent(event)
+    if self:IsEventRegistered(event) then
+      self:UnregisterEvent(event)
+    end
   end
-  queueEventsRegistered = false
 end
 
 function ReforgeLite:QueueUpdate()
@@ -1878,7 +1906,7 @@ function ReforgeLite:CreateMethodWindow()
   tinsert(RFL_FRAMES, self.methodWindow)
 
   self.methodWindow.title = self.methodWindow:CreateFontString (nil, "OVERLAY", "GameFontNormal")
-  self.methodWindow.title:SetTextColor(addonTable.FONTS.white:GetRGB())
+  self.methodWindow.title:SetTextColor(addonTable.COLORS.white:GetRGB())
   self.methodWindow.title.RefreshText = function(frame)
     frame:SetFormattedText(L["Apply %s Output"], self.pdb.methodOrigin)
   end
@@ -1957,7 +1985,7 @@ function ReforgeLite:CreateMethodWindow()
 
     self.methodWindow.items[i].reforge = self.methodWindow.itemTable:CreateFontString (nil, "OVERLAY", "GameFontNormal")
     self.methodWindow.itemTable:SetCell (i, 3, self.methodWindow.items[i].reforge, "LEFT")
-    self.methodWindow.items[i].reforge:SetTextColor(addonTable.FONTS.white:GetRGB())
+    self.methodWindow.items[i].reforge:SetTextColor(addonTable.COLORS.white:GetRGB())
     self.methodWindow.items[i].reforge:SetText ("")
 
     self.methodWindow.items[i].check = GUI:CreateCheckButton (self.methodWindow.itemTable, "", false,
@@ -2008,16 +2036,16 @@ function ReforgeLite:RefreshMethodWindow()
     else
       v.item = nil
       v.texture:SetTexture (v.slotTexture)
-      v.quality:SetVertexColor(addonTable.FONTS.white:GetRGB())
+      v.quality:SetVertexColor(addonTable.COLORS.white:GetRGB())
       v.quality:Hide()
     end
     local slotInfo = self.pdb.method.items[i]
     if slotInfo.reforge and not item:IsItemEmpty() then
       v.reforge:SetFormattedText("%d %s > %s", slotInfo.amount, ITEM_STATS[slotInfo.src].long, ITEM_STATS[slotInfo.dst].long)
-      v.reforge:SetTextColor(addonTable.FONTS.white:GetRGB())
+      v.reforge:SetTextColor(addonTable.COLORS.white:GetRGB())
     else
       v.reforge:SetText (L["No reforge"])
-      v.reforge:SetTextColor(addonTable.FONTS.grey:GetRGB())
+      v.reforge:SetTextColor(addonTable.COLORS.grey:GetRGB())
     end
   end
   self.methodWindow.title:RefreshText()
@@ -2068,6 +2096,8 @@ end
 
 function ReforgeLite:SwapSpecProfiles()
   if not self.db.specProfiles then return end
+  self:Initialize()
+  self:UpdateItems()
 
   local currentSettings = {
     caps = CopyTable(self.pdb.caps),
@@ -2263,8 +2293,11 @@ function ReforgeLite:PLAYER_REGEN_DISABLED()
   RFL_FRAMES:CloseAll()
 end
 
-local currentSpec -- hack because this event likes to fire twice
+local currentSpec -- hack because this event likes to fire twice and when entering world.
 function ReforgeLite:ACTIVE_TALENT_GROUP_CHANGED(curr)
+  if not currentSpec then
+    currentSpec = curr
+  end
   if currentSpec ~= curr then
     currentSpec = curr
     self:SwapSpecProfiles()
@@ -2278,6 +2311,9 @@ end
 
 function ReforgeLite:PLAYER_ENTERING_WORLD()
   self:GetConversion()
+  if not currentSpec then
+    currentSpec = C_SpecializationInfo.GetActiveSpecGroup()
+  end
 end
 
 function ReforgeLite:PLAYER_AVG_ITEM_LEVEL_UPDATE()
