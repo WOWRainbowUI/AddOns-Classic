@@ -1,10 +1,10 @@
-tag f58b28c370b0584e767a222a624893c6041decf7 v2.3.0
+tag 1982e8d3789d2b3b8eff673a5c11cc9862d22481 v2.3.1a
 Author:	skyler-code <skylerh15@github.com>
-Date:	Tue Oct 28 13:43:51 2025 -0500
+Date:	Thu Oct 30 12:40:36 2025 -0500
 
-commit 3693b2b204fbf92882ed29d6d8d070e2a585a0c0
+commit bc220f477b8d49fe08c3eb637d61aaa672f951bd
 Author: skyler-code <skylerh15@github.com>
-Date:   Tue Oct 28 13:42:00 2025 -0500
+Date:   Thu Oct 30 12:40:26 2025 -0500
 
-    bump toc
+    Fixed parsing on numbers >= 1000
 
