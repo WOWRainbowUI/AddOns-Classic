@@ -184,28 +184,32 @@ local StatAdditives = {
   end
 }
 
-local tooltipStatPrefix = "^%+([%d,]+)%s+"
-local function RatingStat (i, name_, tip_, long_, id_)
+local function Stat(options)
+  local tooltipConst = _G[options.tooltipConstant or options.name]
   return {
-    name = name_,
-    tip = tip_,
-    long = long_,
-    getter = function ()
-      local rating = GetCombatRating(id_)
-      if StatAdditives[id_] then
-        rating = StatAdditives[id_](rating)
+    name = options.name,
+    tip = options.tip,
+    long = options.long,
+    getter = options.getter or function()
+      local rating = GetCombatRating(options.ratingId)
+      if StatAdditives[options.ratingId] then
+        rating = StatAdditives[options.ratingId](rating)
       end
       return rating
     end,
-    mgetter = function (method, orig)
-      return (orig and method.orig_stats and method.orig_stats[i]) or method.stats[i]
+    mgetter = options.mgetter or function(method, orig)
+      return (orig and method.orig_stats and method.orig_stats[options.statId]) or method.stats[options.statId]
     end,
-    tooltipPattern = tooltipStatPrefix .. long_
+    tooltipPatterns = {
+      "^%+([%d,]+)%s*" .. tooltipConst,
+      "^" .. tooltipConst .. "%s*%+([%d,]+)"
+    }
   }
 end
 
 local ITEM_STATS = {
-    {
+    Stat {
+      statId = statIds.SPIRIT,
       name = "ITEM_MOD_SPIRIT_SHORT",
       tip = SPELL_STAT5_NAME,
       long = ITEM_MOD_SPIRIT_SHORT,
@@ -216,16 +220,27 @@ local ITEM_STATS = {
         end
         return spirit
       end,
-      mgetter = function (method, orig)
-        return (orig and method.orig_stats and method.orig_stats[statIds.SPIRIT]) or method.stats[statIds.SPIRIT]
-      end,
-      tooltipPattern = tooltipStatPrefix .. ITEM_MOD_SPIRIT_SHORT
     },
-    RatingStat (statIds.DODGE,   "ITEM_MOD_DODGE_RATING",         STAT_DODGE,     STAT_DODGE,           CR_DODGE),
-    RatingStat (statIds.PARRY,   "ITEM_MOD_PARRY_RATING",         STAT_PARRY,     STAT_PARRY,           CR_PARRY),
-    --RatingStat (statIds.HIT,     "ITEM_MOD_HIT_RATING",           HIT,            HIT,                  CR_HIT),
-    {
+    Stat {
+      statId = statIds.DODGE,
+      name = "ITEM_MOD_DODGE_RATING",
+      tooltipConstant = "ITEM_MOD_DODGE_RATING_SHORT",
+      tip = STAT_DODGE,
+      long = STAT_DODGE,
+      ratingId = CR_DODGE,
+    },
+    Stat {
+      statId = statIds.PARRY,
+      name = "ITEM_MOD_PARRY_RATING",
+      tooltipConstant = "ITEM_MOD_PARRY_RATING_SHORT",
+      tip = STAT_PARRY,
+      long = STAT_PARRY,
+      ratingId = CR_PARRY,
+    },
+    Stat {
+      statId = statIds.HIT,
       name = "ITEM_MOD_HIT_RATING",
+      tooltipConstant = "ITEM_MOD_HIT_RATING_SHORT",
       tip = HIT,
       long = ITEM_MOD_HIT_RATING_SHORT,
       getter = function()
@@ -235,31 +250,54 @@ local ITEM_STATS = {
         end
         return hit
       end,
-      mgetter = function (method, orig)
-        return (orig and method.orig_stats and method.orig_stats[statIds.HIT]) or method.stats[statIds.HIT]
-      end,
-      tooltipPattern = tooltipStatPrefix .. ITEM_MOD_HIT_RATING_SHORT
     },
-    RatingStat (statIds.CRIT,    "ITEM_MOD_CRIT_RATING",          CRIT_ABBR,      CRIT_ABBR,            CR_CRIT),
-    RatingStat (statIds.HASTE,   "ITEM_MOD_HASTE_RATING",         STAT_HASTE,     STAT_HASTE,           CR_HASTE),
-    RatingStat (statIds.EXP,     "ITEM_MOD_EXPERTISE_RATING",     EXPERTISE_ABBR, STAT_EXPERTISE,       CR_EXPERTISE),
-    RatingStat (statIds.MASTERY, "ITEM_MOD_MASTERY_RATING_SHORT", STAT_MASTERY,   STAT_MASTERY,         CR_MASTERY),
+    Stat {
+      statId = statIds.CRIT,
+      name = "ITEM_MOD_CRIT_RATING",
+      tooltipConstant = "ITEM_MOD_CRIT_RATING_SHORT",
+      tip = CRIT_ABBR,
+      long = CRIT_ABBR,
+      ratingId = CR_CRIT,
+    },
+    Stat {
+      statId = statIds.HASTE,
+      name = "ITEM_MOD_HASTE_RATING",
+      tooltipConstant = "ITEM_MOD_HASTE_RATING_SHORT",
+      tip = STAT_HASTE,
+      long = STAT_HASTE,
+      ratingId = CR_HASTE,
+    },
+    Stat {
+      statId = statIds.EXP,
+      name = "ITEM_MOD_EXPERTISE_RATING",
+      tooltipConstant = "ITEM_MOD_EXPERTISE_RATING_SHORT",
+      tip = EXPERTISE_ABBR,
+      long = STAT_EXPERTISE,
+      ratingId = CR_EXPERTISE,
+    },
+    Stat {
+      statId = statIds.MASTERY,
+      name = "ITEM_MOD_MASTERY_RATING_SHORT",
+      tip = STAT_MASTERY,
+      long = STAT_MASTERY,
+      ratingId = CR_MASTERY,
+    },
 }
 local ITEM_STAT_COUNT = #ITEM_STATS
 addonTable.itemStats, addonTable.itemStatCount = ITEM_STATS, ITEM_STAT_COUNT
 ReforgeLite.itemStats = ITEM_STATS
 
 local REFORGE_TABLE_BASE = 112
-local reforgeTable = {
-  {statIds.SPIRIT, statIds.DODGE}, {statIds.SPIRIT, statIds.PARRY}, {statIds.SPIRIT, statIds.HIT}, {statIds.SPIRIT, statIds.CRIT}, {statIds.SPIRIT, statIds.HASTE}, {statIds.SPIRIT, statIds.EXP}, {statIds.SPIRIT, statIds.MASTERY},
-  {statIds.DODGE, statIds.SPIRIT}, {statIds.DODGE, statIds.PARRY}, {statIds.DODGE, statIds.HIT}, {statIds.DODGE, statIds.CRIT}, {statIds.DODGE, statIds.HASTE}, {statIds.DODGE, statIds.EXP}, {statIds.DODGE, statIds.MASTERY},
-  {statIds.PARRY, statIds.SPIRIT}, {statIds.PARRY, statIds.DODGE}, {statIds.PARRY, statIds.HIT}, {statIds.PARRY, statIds.CRIT}, {statIds.PARRY, statIds.HASTE}, {statIds.PARRY, statIds.EXP}, {statIds.PARRY, statIds.MASTERY},
-  {statIds.HIT, statIds.SPIRIT}, {statIds.HIT, statIds.DODGE}, {statIds.HIT, statIds.PARRY}, {statIds.HIT, statIds.CRIT}, {statIds.HIT, statIds.HASTE}, {statIds.HIT, statIds.EXP}, {statIds.HIT, statIds.MASTERY},
-  {statIds.CRIT, statIds.SPIRIT}, {statIds.CRIT, statIds.DODGE}, {statIds.CRIT, statIds.PARRY}, {statIds.CRIT, statIds.HIT}, {statIds.CRIT, statIds.HASTE}, {statIds.CRIT, statIds.EXP}, {statIds.CRIT, statIds.MASTERY},
-  {statIds.HASTE, statIds.SPIRIT}, {statIds.HASTE, statIds.DODGE}, {statIds.HASTE, statIds.PARRY}, {statIds.HASTE, statIds.HIT}, {statIds.HASTE, statIds.CRIT}, {statIds.HASTE, statIds.EXP}, {statIds.HASTE, statIds.MASTERY},
-  {statIds.EXP, statIds.SPIRIT}, {statIds.EXP, statIds.DODGE}, {statIds.EXP, statIds.PARRY}, {statIds.EXP, statIds.HIT}, {statIds.EXP, statIds.CRIT}, {statIds.EXP, statIds.HASTE}, {statIds.EXP, statIds.MASTERY},
-  {statIds.MASTERY, statIds.SPIRIT}, {statIds.MASTERY, statIds.DODGE}, {statIds.MASTERY, statIds.PARRY}, {statIds.MASTERY, statIds.HIT}, {statIds.MASTERY, statIds.CRIT}, {statIds.MASTERY, statIds.HASTE}, {statIds.MASTERY, statIds.EXP},
-}
+
+local reforgeTable = {}
+for srcIdx in ipairs(ITEM_STATS) do
+  for dstIdx in ipairs(ITEM_STATS) do
+    if srcIdx ~= dstIdx then
+      tinsert(reforgeTable, {srcIdx, dstIdx})
+    end
+  end
+end
+
 ReforgeLite.reforgeTable = reforgeTable
 
 local reforgeIdStringCache = setmetatable({}, {
@@ -346,10 +384,16 @@ function addonTable.GetItemStatsFromTooltip(itemInfo)
       if text and text ~= "" then
         for _, statInfo in ipairs(ITEM_STATS) do
           if not stats[statInfo.name] then
-            local value = text:match(statInfo.tooltipPattern)
+            local value
+            for _, pattern in ipairs(statInfo.tooltipPatterns) do
+              value = text:match(pattern)
+              if value then
+                break
+              end
+            end
             if value then
               foundStats = foundStats + 1
-              stats[statInfo.name] = tonumber((value:gsub(",", "")))
+              stats[statInfo.name] = tonumber((value:gsub("[^%d]", "")))
               break
             end
           end
@@ -1121,7 +1165,7 @@ function ReforgeLite:RefreshCaps()
 end
 function ReforgeLite:CollapseStatCaps()
   local caps = CopyTable(self.pdb.caps)
-  table.sort(caps, function(a,b)
+  sort(caps, function(a,b)
     local aIsNone = a.stat == 0 and 1 or 0
     local bIsNone = b.stat == 0 and 1 or 0
     return aIsNone < bIsNone
