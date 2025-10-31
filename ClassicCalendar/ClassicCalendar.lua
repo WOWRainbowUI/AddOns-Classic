@@ -71,6 +71,22 @@ f:SetScript("OnEvent", function()
 	if LibDBIcon and not LibDBIcon.objects["ClassicCalendar"] then
 		LibDBIcon:Register("ClassicCalendar", iconData, ClassicCalendarDB.minimap)
 	end
+	
+	-- Enable VersionCheck-1.0 addon integration (following SandPacker's working approach)
+	do
+		local VC = LibStub:GetLibrary("VersionCheck-1.0", true)
+		if VC and VC.Enable then
+			-- Create a host addon object for VersionCheck (exactly like SandPacker)
+			local hostAddon = {
+				GetName = function() return "Classic Calendar - Revived" end,
+				Version = (C_AddOns and C_AddOns.GetAddOnMetadata("ClassicCalendar", "Version")) or GetAddOnMetadata("ClassicCalendar", "Version") or "ClassicCalendar-v0.9.6"
+			}
+			VC:Enable(hostAddon)
+			print("ClassicCalendar: VersionCheck-1.0 integration enabled (v" .. hostAddon.Version .. ")")
+		else
+			print("ClassicCalendar: VersionCheck-1.0 library not found or Enable method missing")
+		end
+	end
 end)
 
 -- CalendarMenus is an ORDERED table of frames, one of which will close when you press Escape.
@@ -131,11 +147,11 @@ local date = date;
 local abs = abs;
 local min = min;
 local max = max;
-local floor = floor;
-local mod = mod;
+local floor = math.floor;
+local mod = math.fmod;
 local tonumber = tonumber;
-local random = random;
-local format = format;
+local random = math.random;
+local format = string.format;
 local select = select;
 local tinsert = tinsert;
 local band = bit.band;
@@ -745,6 +761,21 @@ local function _CalendarFrame_GetFullDateFromDay(dayButton)
 	return _CalendarFrame_GetFullDate(weekday, monthInfo.month, day, monthInfo.year);
 end
 
+local function _CalendarFrame_IsWorldBuffEvent(eventTitle)
+	-- Centralized World Buff detection logic
+	-- Only match specific World Buff patterns, not general dungeon/raid names
+	return eventTitle and (
+		string.find(eventTitle, "Dropping.*Head") or 
+		string.find(eventTitle, "Dropping.*Heart") or
+		string.find(eventTitle, "Dropping.*Rend") or
+		string.find(eventTitle, "Dropping.*Onyxia") or
+		string.find(eventTitle, "Dropping.*Nefarian") or
+		string.find(eventTitle, "Dropping.*Hakkar") or
+		string.find(eventTitle, "Dropping.*Hakar") or  -- Handle typo in existing events
+		string.find(eventTitle, "World Buff")
+	)
+end
+
 local function _CalendarFrame_IsTodayOrLater(month, day, year)
 	local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime();
 	local presentWeekday = currentCalendarTime.weekday;
@@ -966,8 +997,12 @@ local function _CalendarFrame_InviteToRaid(maxInviteCount)
 			 inviteInfo.inviteStatus == Enum.CalendarStatus.Confirmed or
 			 inviteInfo.inviteStatus == Enum.CalendarStatus.Signedup or
 			 inviteInfo.inviteStatus == Enum.CalendarStatus.Tentative)  ) then
-			--C_PartyInfo.InviteUnit(inviteInfo.name);
-			InviteToGroup(inviteInfo.name);
+			-- Use appropriate API based on availability
+			if C_PartyInfo and C_PartyInfo.InviteUnit then
+				C_PartyInfo.InviteUnit(inviteInfo.name);
+			elseif InviteUnit then
+				InviteUnit(inviteInfo.name);
+			end
 			inviteCount = inviteCount + 1;
 		end
 		i = i + 1;
@@ -1476,6 +1511,34 @@ local function ShouldDisplayEventOnCalendar(event)
 	if ( event.sequenceType == "END" and event.dontDisplayEnd ) then
 		shouldDisplayBeginEnd = false;
 	end
+	
+	-- Filter World Buff events based on CCConfig.calendarShowWorldBuffs
+	if shouldDisplayBeginEnd and event.calendarType == "GUILD_EVENT" then
+		-- Use CCConfig instead of CVar since custom CVars don't work properly
+		local worldBuffsEnabled = CCConfig and CCConfig.calendarShowWorldBuffs
+		if worldBuffsEnabled == nil then
+			worldBuffsEnabled = true -- Default to enabled
+			if CCConfig then
+				CCConfig.calendarShowWorldBuffs = true
+			end
+		end
+		
+		local eventTitle = event.isCustomTitle and event.title or (event.title and _G[event.title] or "")
+		
+		-- Use centralized World Buff detection
+		local isWorldBuffEvent = _CalendarFrame_IsWorldBuffEvent(eventTitle)
+		
+		if isWorldBuffEvent then
+			if DEBUG_MODE then
+				print("WorldBuff Filter: Found World Buff event '" .. eventTitle .. "' via TITLE_PATTERN - Filter: " .. (worldBuffsEnabled and "SHOW" or "HIDE"))
+			end
+			if not worldBuffsEnabled then
+				-- Filter is disabled, hide the event
+				shouldDisplayBeginEnd = false;
+			end
+		end
+	end
+	
 	return shouldDisplayBeginEnd;
 end
 
@@ -1601,7 +1664,16 @@ function CalendarFrame_UpdateDayEvents(index, day, monthOffset, selectedEventInd
 			end
 			-- set the event color
 			eventColor = _CalendarFrame_GetEventColor(event.calendarType, event.modStatus, event.inviteStatus);
-			eventButtonText1:SetTextColor(eventColor.r, eventColor.g, eventColor.b);
+			
+			-- Check if this is a World Buff event to apply green color (title pattern only)
+			local isWorldBuffEvent = _CalendarFrame_IsWorldBuffEvent(eventTitle)
+			
+			if isWorldBuffEvent then
+				-- Apply guild chat green color (same as |cff40ff40)
+				eventButtonText1:SetTextColor(0.25, 1.0, 0.25);
+			else
+				eventButtonText1:SetTextColor(eventColor.r, eventColor.g, eventColor.b);
+			end
 
 			-- anchor the event button
 			eventButton:SetPoint("BOTTOMLEFT", dayButton, "BOTTOMLEFT", CALENDAR_DAYEVENTBUTTON_XOFFSET, -CALENDAR_DAYEVENTBUTTON_YOFFSET);
@@ -1881,17 +1953,58 @@ function CalendarFilterDropDown_Initialize(self)
 		info.text = value.text;
 		info.isNotRadio = true;
 		info.func = CalendarFilterDropDown_OnClick;
-		if ( GetCVarBool(value.cvar) ) then
-			info.checked = 1;
+		
+		-- Handle WorldBuffs filter specially using CCConfig
+		if value.cvar == "calendarShowWorldBuffs" then
+			if not CCConfig then
+				CCConfig = {}
+				CCConfig.calendarShowWorldBuffs = true  -- Default to enabled
+			end
+			
+			if CCConfig.calendarShowWorldBuffs then
+				info.checked = 1;
+			else
+				info.checked = nil;
+			end
 		else
-			info.checked = nil;
+			-- Handle other filters using normal CVars
+			-- Ensure CVar exists with a default value
+			local cvarValue = GetCVar(value.cvar)
+			if cvarValue == nil or cvarValue == "" then
+				SetCVar(value.cvar, "1") -- Default all filters to enabled
+				cvarValue = "1"
+			end
+			
+			if ( GetCVarBool(value.cvar) ) then
+				info.checked = 1;
+			else
+				info.checked = nil;
+			end
 		end
+		
 		UIDropDownMenu_AddButton(info);
 	end
 end
 
 function CalendarFilterDropDown_OnClick(self)
-	SetCVar(CALENDAR_FILTER_CVARS[self:GetID()].cvar, UIDropDownMenuButton_GetChecked(self) and "1" or "0");
+	local filterData = CALENDAR_FILTER_CVARS[self:GetID()];
+	local newValue = UIDropDownMenuButton_GetChecked(self) and "1" or "0";
+	
+	-- Handle WorldBuffs filter specially using CCConfig
+	if filterData.cvar == "calendarShowWorldBuffs" then
+		if not CCConfig then
+			CCConfig = {}
+		end
+		CCConfig.calendarShowWorldBuffs = (newValue == "1")
+		if DEBUG_MODE then
+			print("WorldBuff Filter: Toggled to", newValue == "1" and "enabled" or "disabled");
+			print("WorldBuff Filter: CCConfig value now:", CCConfig.calendarShowWorldBuffs);
+		end
+	else
+		-- Handle other filters using normal CVars
+		SetCVar(filterData.cvar, newValue);
+	end
+	
 	CalendarFrame_Update();
 end
 
@@ -1904,31 +2017,155 @@ function CalendarFrame_UpdateFilter()
 	end
 end
 
--- World Buff Button Support
+-- Calendar Addon Dropdown Support (matching filter dropdown style)
 
-function CalendarWorldBuffButton_OnClick()
-	-- Open the World Buff frame
-	if WorldBuffFrame then
-		if WorldBuffFrame:IsVisible() then
-			WorldBuffFrame:Hide();
+function CalendarAddonButton_OnMouseDown()
+	ToggleDropDownMenu(1, nil, CalendarAddonDropDown, CalendarAddonButton, 0, 0)
+end
+
+function CalendarAddonDropDown_OnLoad(self)
+	UIDropDownMenu_Initialize(self, CalendarAddonDropDown_Initialize)
+	UIDropDownMenu_SetText(self, "Add Events")
+	UIDropDownMenu_SetAnchor(self, 0, 0, "TOPRIGHT", CalendarAddonButton, "BOTTOMRIGHT")
+end
+
+function CalendarAddonDropDown_Initialize(self, level)
+	local info = UIDropDownMenu_CreateInfo()
+	
+	-- World Buffs option
+	info.text = "World Buffs"
+	info.value = "worldbuffs"
+	info.func = CalendarAddonDropDown_OnClick
+	info.arg1 = "worldbuffs"
+	UIDropDownMenu_AddButton(info, level)
+	
+	-- Calendar Helper Raids option
+	info.text = "Raid Events"
+	info.value = "raids"
+	info.func = CalendarAddonDropDown_OnClick
+	info.arg1 = "raids"
+	UIDropDownMenu_AddButton(info, level)
+end
+
+function CalendarAddonDropDown_OnClick(self, arg1)
+	if arg1 == "worldbuffs" then
+		-- Open World Buff frame
+		if WorldBuffFrame then
+			if WorldBuffFrame:IsVisible() then
+				WorldBuffFrame:Hide()
+			else
+				WorldBuffFrame:Show()
+			end
 		else
-			WorldBuffFrame:Show();
+			-- If WorldBuff addon isn't loaded, try the slash command
+			SlashCmdList["WORLDBUFF"]("")
 		end
-	else
-		-- If WorldBuff addon isn't loaded, try the slash command
-		SlashCmdList["WORLDBUFF"]("");
+	elseif arg1 == "raids" then
+		-- Open Calendar Helper raid selection
+		CalendarHelper_ShowRaidSelection()
 	end
+	
+	-- Close the dropdown after selection
+	CloseDropDownMenus()
 end
 
-function CalendarWorldBuffButton_OnEnter(self)
-	GameTooltip:SetOwner(self, "ANCHOR_RIGHT");
-	GameTooltip:SetText("World Buff Scheduling", 1, 1, 1);
-	GameTooltip:AddLine("Click to open the World Buff addon interface for scheduling guild world buff events.", nil, nil, nil, true);
-	GameTooltip:Show();
+-- Calendar Helper Raid Selection Window
+function CalendarHelper_ShowRaidSelection()
+	-- Create raid selection frame if it doesn't exist
+	if not CalendarHelperRaidFrame then
+		CalendarHelperRaidFrame = CreateFrame("Frame", "CalendarHelperRaidFrame", UIParent, "BasicFrameTemplateWithInset")
+		CalendarHelperRaidFrame:SetSize(400, 300)
+		CalendarHelperRaidFrame:SetPoint("CENTER")
+		CalendarHelperRaidFrame:SetFrameStrata("HIGH")
+		CalendarHelperRaidFrame:SetClampedToScreen(true)
+		CalendarHelperRaidFrame:SetToplevel(true)
+		CalendarHelperRaidFrame.TitleText:SetText("Select Raid Event")
+		
+		-- Make it draggable
+		CalendarHelperRaidFrame:SetMovable(true)
+		CalendarHelperRaidFrame:EnableMouse(true)
+		CalendarHelperRaidFrame:RegisterForDrag("LeftButton")
+		CalendarHelperRaidFrame:SetScript("OnDragStart", CalendarHelperRaidFrame.StartMoving)
+		CalendarHelperRaidFrame:SetScript("OnDragStop", CalendarHelperRaidFrame.StopMovingOrSizing)
+		
+		-- Create scroll frame for events list
+		local scrollFrame = CreateFrame("ScrollFrame", nil, CalendarHelperRaidFrame, "UIPanelScrollFrameTemplate")
+		scrollFrame:SetPoint("TOPLEFT", CalendarHelperRaidFrame, "TOPLEFT", 10, -30)
+		scrollFrame:SetPoint("BOTTOMRIGHT", CalendarHelperRaidFrame, "BOTTOMRIGHT", -30, 10)
+		
+		local content = CreateFrame("Frame", nil, scrollFrame)
+		content:SetSize(360, 1) -- Width matches scroll frame, height will be set dynamically
+		scrollFrame:SetScrollChild(content)
+		
+		CalendarHelperRaidFrame.scrollFrame = scrollFrame
+		CalendarHelperRaidFrame.content = content
+		CalendarHelperRaidFrame.eventButtons = {}
+	end
+	
+	-- Populate with events
+	CalendarHelper_PopulateRaidEvents()
+	
+	-- Show the frame
+	CalendarHelperRaidFrame:Show()
 end
 
-function CalendarWorldBuffButton_OnLeave()
-	GameTooltip:Hide();
+function CalendarHelper_PopulateRaidEvents()
+	if not CalendarHelperRaidFrame then return end
+	
+	-- Clear existing buttons
+	for _, button in pairs(CalendarHelperRaidFrame.eventButtons) do
+		button:Hide()
+	end
+	wipe(CalendarHelperRaidFrame.eventButtons)
+	
+	-- Get events from CalendarHelper
+	local eventList = CalendarHelper:ListAvailableEvents()
+	if not eventList or #eventList == 0 then
+		-- Show "no events" message
+		local noEventsText = CalendarHelperRaidFrame.content:CreateFontString(nil, "OVERLAY", "GameFontNormal")
+		noEventsText:SetPoint("TOP", CalendarHelperRaidFrame.content, "TOP", 0, -20)
+		noEventsText:SetText("No raid events found in saved data")
+		return
+	end
+	
+	-- Create buttons for each event
+	local yOffset = -10
+	for i, event in ipairs(eventList) do
+		local button = CreateFrame("Button", nil, CalendarHelperRaidFrame.content, "GameMenuButtonTemplate")
+		button:SetSize(340, 30)
+		button:SetPoint("TOP", CalendarHelperRaidFrame.content, "TOP", 0, yOffset)
+		
+		-- Set button text
+		local buttonText = string.format("%s - %s at %s", event.title, event.date, event.time)
+		button:SetText(buttonText)
+		
+		-- Set click handler
+		button:SetScript("OnClick", function()
+			CalendarHelper:CreateGuildEventFromData(event.id)
+			CalendarHelperRaidFrame:Hide()
+		end)
+		
+		-- Tooltip
+		button:SetScript("OnEnter", function(self)
+			GameTooltip:SetOwner(self, "ANCHOR_RIGHT")
+			GameTooltip:SetText(event.title, 1, 1, 1)
+			GameTooltip:AddLine("Date: " .. event.date)
+			GameTooltip:AddLine("Time: " .. event.time .. " PST")
+			GameTooltip:AddLine("Status: " .. event.status)
+			GameTooltip:AddLine("Click to create guild event", 0, 1, 0)
+			GameTooltip:Show()
+		end)
+		
+		button:SetScript("OnLeave", function()
+			GameTooltip:Hide()
+		end)
+		
+		table.insert(CalendarHelperRaidFrame.eventButtons, button)
+		yOffset = yOffset - 35
+	end
+	
+	-- Set content height for scrolling
+	CalendarHelperRaidFrame.content:SetHeight(math.max(200, #eventList * 35 + 20))
 end
 
 
@@ -2543,16 +2780,16 @@ function CalendarViewHolidayFrame_Update()
 			end
 
 			CalendarViewHolidayFrame.ScrollingFont:SetText(description);
-			CalendarViewHolidayFrame.Texture:SetTexture();
+			CalendarViewHolidayFrameTexture:SetTexture();
 			
 			local texture = CALENDAR_CALENDARTYPE_TEXTURES["HOLIDAY"]["INFO"];
 			local tcoords = CALENDAR_CALENDARTYPE_TCOORDS["HOLIDAY"];
 			if ( texture ) then
-				CalendarViewHolidayFrame.Texture:SetTexture(texture);
-				CalendarViewHolidayFrame.Texture:SetTexCoord(tcoords.left, tcoords.right, tcoords.top, tcoords.bottom);
-				CalendarViewHolidayFrame.Texture:Show();
+				CalendarViewHolidayFrameTexture:SetTexture(texture);
+				CalendarViewHolidayFrameTexture:SetTexCoord(tcoords.left, tcoords.right, tcoords.top, tcoords.bottom);
+				CalendarViewHolidayFrameTexture:Show();
 			else
-				CalendarViewHolidayFrame.Texture:Hide();
+				CalendarViewHolidayFrameTexture:Hide();
 			end
 		end
 	end
@@ -2560,7 +2797,12 @@ end
 
 function CalendarViewHolidayFrame_OnLoad(self)
 	self.update = CalendarViewHolidayFrame_Update;
-	CalendarViewHolidayFrame.Texture:SetAlpha(0.4);
+	-- Create child references for Classic Era compatibility
+	self.Border = CalendarViewHolidayFrameBorder;
+	self.Header = CalendarViewHolidayFrameHeader;
+	self.ScrollingFont = CalendarViewHolidayFrameScrollingFont;
+	self.Texture = CalendarViewHolidayFrameTexture;
+	CalendarViewHolidayFrameTexture:SetAlpha(0.4);
 end
 
 function CalendarViewHolidayFrame_OnShow(self)
@@ -2571,6 +2813,10 @@ end
 
 function CalendarViewRaidFrame_OnLoad(self)
 	self.update = CalendarViewRaidFrame_Update;
+	-- Create child references for Classic Era compatibility
+	self.Border = CalendarViewRaidFrameBorder;
+	self.Header = CalendarViewRaidFrameHeader;
+	self.ScrollingFont = CalendarViewRaidFrameScrollingFont;
 end
 
 function CalendarViewRaidFrame_OnShow(self)
@@ -2791,6 +3037,9 @@ function CalendarViewEventFrame_OnLoad(self)
 --	self:RegisterEvent("GROUP_ROSTER_UPDATE");
 
 	self.update = CalendarViewEventFrame_Update;
+	-- Create child references for Classic Era compatibility
+	self.Border = CalendarViewEventFrameBorder;
+	self.Header = CalendarViewEventFrameHeader;
 	self.selectedInvite = nil;
 	self.myInviteIndex = nil;
 
@@ -2843,6 +3092,8 @@ function CalendarViewEventFrame_OnShow(self)
 end
 
 function CalendarViewEventDescriptionContainer_OnLoad(self)
+	-- Create child references for Classic Era compatibility
+	self.ScrollingFont = CalendarViewEventDescriptionContainerScrollingFont;
 	local scrollBox = self.ScrollingFont:GetScrollBox();
 	local scrollBar = _G["CalendarCreateEventDescriptionContainerScrollBar"]
 	ScrollUtil.InitScrollBar(scrollBox, scrollBar);
@@ -2915,8 +3166,16 @@ function CalendarViewEventFrame_Update()
 		CalendarViewEventCreatorName:SetTextColor(GRAY_FONT_COLOR.r, GRAY_FONT_COLOR.g, GRAY_FONT_COLOR.b);
 		CalendarViewEventDescriptionContainer.ScrollingFont:SetTextColor(GRAY_FONT_COLOR);
 	else
-		-- set the event title
-		CalendarViewEventTitle:SetText(eventInfo.title);
+		-- Check if this is a World Buff event to apply green color (title pattern only)
+		local isWorldBuffEvent = _CalendarFrame_IsWorldBuffEvent(eventInfo.title)
+		
+		-- set the event title with green color for World Buff events
+		if isWorldBuffEvent then
+			CalendarViewEventTitle:SetText("|cff40ff40" .. eventInfo.title .. "|r");
+		else
+			CalendarViewEventTitle:SetText(eventInfo.title);
+		end
+		
 		SetDesaturation(CalendarViewEventIcon, false);
 		CalendarViewEventTypeName:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
 		CalendarViewEventCreatorName:SetTextColor(NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b);
@@ -3202,7 +3461,8 @@ function CalendarViewEventInviteList_OnLoad(self)
 	};
 
 	local view = CreateScrollBoxListLinearView();
-	view:SetElementExtent(14);
+	local buttonHeight = 14;
+	view:SetElementExtent(buttonHeight);
 	view:SetElementInitializer("CalendarViewEventInviteListButtonTemplate", function(button, elementData)
 		CalendarViewEventInviteList_InitButton(button, elementData);
 	end);
@@ -3278,6 +3538,7 @@ function CalendarCreateEventFrame_OnLoad(self)
 	self.defaultHeight = self:GetHeight();
 
 	-- initialize UI elements
+	self.Header = CalendarCreateEventFrameHeader;
 	UIDropDownMenu_Initialize(CalendarCreateEventTypeDropDown, CalendarCreateEventTypeDropDown_Initialize);
 	UIDropDownMenu_SetWidth(CalendarCreateEventTypeDropDown, 100);
 	UIDropDownMenu_Initialize(CalendarCreateEventHourDropDown, CalendarCreateEventHourDropDown_Initialize);
@@ -3573,6 +3834,10 @@ function CalendarCreateEventTitleEdit_OnEditFocusLost(self)
 end
 
 function CalendarCreateEventDescriptionContainer_OnLoad(self)
+	-- Create child references for Classic Era compatibility
+	self.ScrollingEditBox = CalendarCreateEventDescriptionContainerScrollingEditBox;
+	self.ScrollBar = CalendarCreateEventDescriptionContainerScrollBar;
+	
 	local scrollingEditBox = _G["CalendarCreateEventDescriptionContainerScrollingEditBox"]
 	local function OnTextChanged(o, editBox, userChanged)
 		if userChanged then
@@ -4396,6 +4661,12 @@ function CalendarEventPickerFrame_OnLoad(self)
 	self.dayButton = nil;
 	self.selectedEvent = nil;
 	
+	-- Create child references for Classic Era compatibility
+	self.Border = CalendarEventPickerFrameBorder;
+	self.Header = CalendarEventPickerFrameHeader;
+	self.ScrollBox = CalendarEventPickerFrameScrollBox;
+	self.ScrollBar = CalendarEventPickerFrameScrollBar;
+	
 	local view = CreateScrollBoxListLinearView();
 	view:SetElementExtent(16);
 	view:SetElementInitializer("CalendarEventPickerButtonTemplate", function(button, elementData)
@@ -4583,6 +4854,12 @@ end
 
 function CalendarTexturePickerFrame_OnLoad(self)
 	self.selectedTextureIndex = nil;
+	
+	-- Create child references for Classic Era compatibility
+	self.Border = CalendarTexturePickerFrameBorder;
+	self.Header = CalendarTexturePickerFrameHeader;
+	self.ScrollBox = CalendarTexturePickerFrameScrollBox;
+	self.ScrollBar = CalendarTexturePickerFrameScrollBar;
 	
 	local view = CreateScrollBoxListLinearView();
 	view:SetElementExtent(16);

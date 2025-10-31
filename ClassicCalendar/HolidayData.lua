@@ -32,7 +32,37 @@ local WEEKDAYS = {
 	Saturday = 7
 }
 
-local isSoD = C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.Placeholder) -- "Placeholder" = SoD
+-- API availability checks for Classic Era compatibility
+local function SafeC_Seasons()
+    -- Use rawget to safely check for globals without triggering lint errors
+    local seasonsTable = rawget(_G, "C_Seasons")
+    if seasonsTable and type(seasonsTable.HasActiveSeason) == "function" then
+        return seasonsTable
+    end
+    
+    -- Return a safe fallback for Classic Era
+    return {
+        HasActiveSeason = function() return false end,
+        GetActiveSeason = function() return nil end
+    }
+end
+
+local function SafeEnumSeasonID()
+    -- Use rawget to safely check for globals without triggering lint errors
+    local enumTable = rawget(_G, "Enum")
+    if enumTable and enumTable.SeasonID and enumTable.SeasonID.Placeholder then
+        return enumTable.SeasonID
+    end
+    
+    -- Return a safe fallback for Classic Era
+    return {
+        Placeholder = 0
+    }
+end
+
+local SeasonsAPI = SafeC_Seasons()
+local SeasonID = SafeEnumSeasonID()
+local isSoD = SeasonsAPI.HasActiveSeason() and (SeasonsAPI.GetActiveSeason() == SeasonID.Placeholder) -- "Placeholder" = SoD
 
 local function addDaysToDate(eventDate, dayCount)
 	local dateSeconds = time(eventDate)
@@ -833,7 +863,16 @@ local function addHolidayToSchedule(holiday, schedule)
 	end
 	tinsert(schedule, holiday)
 	if holiday.frequency ~= nil then
-		local currentTime = time(currentCalendarTime)
+		-- Convert CalendarTime to standard date table
+		local currentDateTable = {
+			year = currentCalendarTime.year,
+			month = currentCalendarTime.month,
+			day = currentCalendarTime.monthDay,
+			hour = currentCalendarTime.hour or 0,
+			min = currentCalendarTime.minute or 0,
+			sec = 0
+		}
+		local currentTime = time(currentDateTable)
 		local oneYearFromNow = currentTime + (365 * SECONDS_IN_DAY)
 		
 		-- Generate recurring events for 1 year rolling window from current date
@@ -903,7 +942,7 @@ end
 
 function GetClassicHolidays()
 	-- Clear cache if it's a new day or if it has too many entries (indicates old buggy generation)
-	local currentDate = string.format("%d-%d-%d", currentCalendarTime.year, currentCalendarTime.month, currentCalendarTime.day)
+	local currentDate = string.format("%d-%d-%d", currentCalendarTime.year, currentCalendarTime.month, currentCalendarTime.monthDay)
 	if (lastCacheDate ~= currentDate) or (next(holidaySchedule) ~= nil and #holidaySchedule > 500) then
 		if DEBUG_MODE and next(holidaySchedule) ~= nil then
 			print("ClassicCalendar: Refreshing holiday cache (" .. (#holidaySchedule > 500 and "oversized: " .. #holidaySchedule .. " entries" or "new day") .. ")")
@@ -972,9 +1011,9 @@ end
 function GetClassicRaidResets()
 	local raidResets
 	if isSoD then
-		local bfdName, _ = L.DungeonLocalization[localeString][136325][1]
-		local gnomerName, _ = L.DungeonLocalization[localeString][136336][1]
-		local templeName, _ = L.DungeonLocalization[localeString][136360][1]
+		local bfdName = L.DungeonLocalization[localeString][136325][1]
+		local gnomerName = L.DungeonLocalization[localeString][136336][1]
+		local templeName = L.DungeonLocalization[localeString][136360][1]
 		local azuregosName = "Azuregos" -- WIP, to be replaced with proper localization if possible?
 		local kazzakName = "Kazzak" -- WIP, to be replaced with proper localization if possible?
 		local thunderName = "Prince Thunderaan" -- WIP, to be replaced with proper localization if possible?
@@ -1206,14 +1245,14 @@ function GetClassicRaidResets()
 			end
 		end
 	else
-		local MCName, _ = L.RaidLocalization[localeString][136346]
-		local OnyName, _ = L.RaidLocalization[localeString][136351]
-		local NaxxName, _ = L.RaidLocalization[localeString][136347]
-		local AQTempleName, _ = L.RaidLocalization[localeString][136321]
-		local AQRuinsName, _ = L.RaidLocalization[localeString][136320]
-		local BWLName, _ = L.RaidLocalization[localeString][136329]
-		local ZGName, _ = L.RaidLocalization[localeString][136369]
-		local UBRSName, _ = L.RaidLocalization[localeString][136327]
+		local MCName = L.RaidLocalization[localeString][136346]
+		local OnyName = L.RaidLocalization[localeString][136351]
+		local NaxxName = L.RaidLocalization[localeString][136347]
+		local AQTempleName = L.RaidLocalization[localeString][136321]
+		local AQRuinsName = L.RaidLocalization[localeString][136320]
+		local BWLName = L.RaidLocalization[localeString][136329]
+		local ZGName = L.RaidLocalization[localeString][136369]
+		local UBRSName = L.RaidLocalization[localeString][136327]
 		local regionHourAdjustment = 1
 		if region == "EU" then
 			regionHourAdjustment = -2

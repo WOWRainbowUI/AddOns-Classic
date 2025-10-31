@@ -386,32 +386,53 @@
 							</Anchors>
 							<TexCoords left="0.0625" right="0.9375" top="0" bottom="0.625"/>
 						</Texture>
-						<FontString name="$parentText" inherits="GameFontHighlightSmall" text="World Buff Scheduling" justifyH="LEFT">
+						<FontString name="$parentText" inherits="GameFontHighlightSmall" text="Add Events" justifyH="LEFT">
 							<Anchors>
-								<Anchor point="LEFT" x="8" y="0"/>
+								<Anchor point="LEFT" x="30" y="0"/>
 							</Anchors>
 						</FontString>
 					</Layer>
 				</Layers>
 				<Frames>
-					<Button name="CalendarWorldBuffButton">
-						<Size x="140" y="20"/>
+					<DropDownToggleButton name="CalendarAddonButton">
+						<Size x="20" y="20"/>
 						<Anchors>
-							<Anchor point="TOPLEFT"/>
+							<Anchor point="LEFT" x="-7" y="0"/>
 						</Anchors>
 						<Scripts>
-							<OnClick function="CalendarWorldBuffButton_OnClick"/>
-							<OnEnter function="CalendarWorldBuffButton_OnEnter"/>
-							<OnLeave function="CalendarWorldBuffButton_OnLeave"/>
+							<OnMouseDown function="CalendarAddonButton_OnMouseDown"/>
 						</Scripts>
-						<HighlightTexture file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD">
-							<Size x="140" y="20"/>
+						<NormalTexture name="$parentNormalTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Up">
+							<Size x="20" y="20"/>
 							<Anchors>
-								<Anchor point="TOPLEFT"/>
+								<Anchor point="CENTER" x="0" y="0"/>
+							</Anchors>
+						</NormalTexture>
+						<PushedTexture name="$parentPushedTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Down">
+							<Size x="20" y="20"/>
+							<Anchors>
+								<Anchor point="CENTER" x="0" y="0"/>
+							</Anchors>
+						</PushedTexture>
+						<DisabledTexture name="$parentDisabledTexture" file="Interface\ChatFrame\UI-ChatIcon-ScrollDown-Disabled">
+							<Size x="20" y="20"/>
+							<Anchors>
+								<Anchor point="CENTER" x="0" y="0"/>
+							</Anchors>
+						</DisabledTexture>
+						<HighlightTexture name="$parentHighlightTexture" file="Interface\Buttons\UI-Common-MouseHilight" alphaMode="ADD">
+							<Size x="20" y="20"/>
+							<Anchors>
+								<Anchor point="CENTER" x="0" y="0"/>
 							</Anchors>
 						</HighlightTexture>
-					</Button>
+					</DropDownToggleButton>
 				</Frames>
+			</Frame>
+			<Frame name="CalendarAddonDropDown" inherits="UIDropDownMenuTemplate" hidden="true">
+				<Scripts>
+					<OnLoad function="CalendarAddonDropDown_OnLoad"/>
+				</Scripts>
 			</Frame>
 			<Frame name="CalendarFilterDropDown" inherits="UIDropDownMenuTemplate" hidden="true">
 				<Scripts>
@@ -490,7 +511,7 @@
 		</Anchors>
 		<Layers>
 			<Layer level="BORDER">
-				<Texture parentKey="Texture" hidden="true">
+				<Texture name="CalendarViewHolidayFrameTexture" hidden="true">
 					<Anchors>
 						<Anchor point="TOPLEFT" x="12" y="-13"/>
 						<Anchor point="BOTTOMRIGHT" x="-11" y="11"/>
@@ -499,9 +520,9 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame parentKey="Border" inherits="DialogBorderDarkTemplate"/>
-			<Frame parentKey="Header" inherits="BC_DialogHeaderTemplate"/>
-			<Frame parentKey="ScrollingFont" inherits="ScrollingFontTemplate" frameStrata="HIGH">
+			<Frame name="CalendarViewHolidayFrameBorder" inherits="DialogBorderDarkTemplate"/>
+			<Frame name="CalendarViewHolidayFrameHeader" inherits="BC_DialogHeaderTemplate"/>
+			<Frame name="CalendarViewHolidayFrameScrollingFont" inherits="ScrollingFontTemplate" frameStrata="HIGH">
 				<Size x="270" y="278"/>
 				<Anchors>
 					<Anchor point="TOPLEFT" x="15" y="-30"/>
@@ -527,9 +548,9 @@
 			<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="0" y="-24"/>
 		</Anchors>
 		<Frames>
-			<Frame parentKey="Border" inherits="DialogBorderDarkTemplate"/>
-			<Frame parentKey="Header" inherits="BC_DialogHeaderTemplate"/>
-			<Frame parentKey="ScrollingFont" inherits="ScrollingFontTemplate" frameStrata="HIGH">
+			<Frame name="CalendarViewRaidFrameBorder" inherits="DialogBorderDarkTemplate"/>
+			<Frame name="CalendarViewRaidFrameHeader" inherits="BC_DialogHeaderTemplate"/>
+			<Frame name="CalendarViewRaidFrameScrollingFont" inherits="ScrollingFontTemplate" frameStrata="HIGH">
 				<Size x="270" y="108"/>
 				<Anchors>
 					<Anchor point="TOPLEFT" x="15" y="-30"/>
@@ -556,7 +577,7 @@
 			<Anchor point="TOPLEFT" relativePoint="TOPRIGHT" x="0" y="-24"/>
 		</Anchors>
 		<Frames>
-			<Button parentKey="HeaderFrame">
+			<Button>
 				<Size x="320" y="100"/>
 				<Anchors>
 					<Anchor point="TOPLEFT"/>
@@ -612,8 +633,8 @@
 					<OnLeave function="GameTooltip_Hide"/>
 				</Scripts>
 			</Button>
-			<Frame parentKey="Border" inherits="DialogBorderDarkTemplate"/>
-			<Frame parentKey="Header" inherits="BC_DialogHeaderTemplate"/>
+			<Frame name="CalendarViewEventFrameBorder" inherits="DialogBorderDarkTemplate"/>
+			<Frame name="CalendarViewEventFrameHeader" inherits="BC_DialogHeaderTemplate"/>
 			<Frame name="CalendarViewEventDescriptionContainer" inherits="TooltipBackdropTemplate">
 				<Size x="287" y="65"/>
 				<Anchors>
@@ -624,7 +645,7 @@
 					<KeyValue key="backdropColorAlpha" value="0.9" type="number"/>
 				</KeyValues>
 				<Frames>
-					<Frame parentKey="ScrollingFont" inherits="ScrollingFontTemplate" frameStrata="HIGH">
+					<Frame name="CalendarViewEventDescriptionContainerScrollingFont" inherits="ScrollingFontTemplate" frameStrata="HIGH">
 						<Size x="270" y="108"/>
 						<Anchors>
 							<Anchor point="TOPLEFT" x="15" y="-30"/>
@@ -733,7 +754,7 @@
 								<Anchor point="CENTER"/>
 							</Anchors>
 						</FontString>
-						<FontString name="$parentDots" inherits="GameFontNormal" text="." parentKey="dots">
+						<FontString name="$parentDots" inherits="GameFontNormal" text=".">
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="$parentText" relativePoint="RIGHT"/>
 							</Anchors>
@@ -811,8 +832,8 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame parentKey="Border" inherits="DialogBorderDarkTemplate"/>
-			<Frame parentKey="Header" inherits="BC_DialogHeaderTemplate"/>
+			<Frame inherits="DialogBorderDarkTemplate"/>
+			<Frame name="CalendarCreateEventFrameHeader" inherits="BC_DialogHeaderTemplate"/>
 			<EditBox name="CalendarCreateEventTitleEdit" letters="31" inherits="InputBoxTemplate" autoFocus="false">
 				<Size x="120" y="20"/>
 				<Anchors>
@@ -975,7 +996,7 @@
 					<KeyValue key="backdropBorderColor" value="TOOLTIP_DEFAULT_COLOR" type="global"/>
 				</KeyValues>
 				<Frames>
-					<Frame name="CalendarCreateEventDescriptionContainerScrollingEditBox" parentKey="ScrollingEditBox" inherits="ScrollingEditBoxTemplate" frameStrata="HIGH">
+					<Frame name="CalendarCreateEventDescriptionContainerScrollingEditBox" inherits="ScrollingEditBoxTemplate" frameStrata="HIGH">
 						<KeyValues>
 							<KeyValue key="fontName" value="GameFontHighlightSmall" type="string"/>
 							<KeyValue key="defaultFontName" value="GameFontDisableSmall" type="string"/>
@@ -987,7 +1008,7 @@
 							<Anchor point="BOTTOMRIGHT" x="-3" y="4"/>
 						</Anchors>
 					</Frame>
-					<EventFrame parentKey="ScrollBar" inherits="WowClassicScrollBar" frameStrata="HIGH">
+					<EventFrame name="CalendarCreateEventDescriptionContainerScrollBar" inherits="WowClassicScrollBar" frameStrata="HIGH">
 						<KeyValues>
 							<KeyValue key="hideBackground" value="true" type="boolean"/>
 						</KeyValues>
@@ -1096,7 +1117,7 @@
 								<Anchor point="CENTER"/>
 							</Anchors>
 						</FontString>
-						<FontString name="$parentDots" inherits="GameFontNormal" text="." parentKey="dots">
+						<FontString name="$parentDots" inherits="GameFontNormal" text=".">
 							<Anchors>
 								<Anchor point="LEFT" relativeTo="$parentText" relativePoint="RIGHT"/>
 							</Anchors>
@@ -1152,13 +1173,13 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame parentKey="Border" inherits="DialogBorderDarkTemplate"/>
+			<Frame inherits="DialogBorderDarkTemplate"/>
 			<Frame name="CalendarMassInviteCommunityDropDown" inherits="UIDropDownMenuTemplate">
 				<Anchors>
 					<Anchor point="TOP" x="0" y="-30"/>
 				</Anchors>
 			</Frame>
-			<Frame parentKey="Header" inherits="BC_DialogHeaderTemplate">
+			<Frame inherits="BC_DialogHeaderTemplate">
 				<KeyValues>
 					<KeyValue key="textString" value="CALENDAR_MASS_INVITE" type="global"/>
 				</KeyValues>
@@ -1242,22 +1263,22 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame parentKey="Border" inherits="DialogBorderDarkTemplate"/>
-			<Frame parentKey="Header" inherits="BC_DialogHeaderTemplate">
+			<Frame name="CalendarEventPickerFrameBorder" inherits="DialogBorderDarkTemplate"/>
+			<Frame name="CalendarEventPickerFrameHeader" inherits="BC_DialogHeaderTemplate">
 				<KeyValues>
 					<KeyValue key="textString" value="CALENDAR_EVENT_PICKER_TITLE" type="global"/>
 				</KeyValues>
 			</Frame>
-			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+			<Frame name="CalendarEventPickerFrameScrollBox" inherits="WowScrollBoxList">
 				<Size x="235" y="163"/>
 				<Anchors>
 					<Anchor point="TOPLEFT" x="20" y="-26"/>
 				</Anchors>
 			</Frame>
-			<EventFrame parentKey="ScrollBar" inherits="WowClassicScrollBar">
+			<EventFrame name="CalendarEventPickerFrameScrollBar" inherits="WowClassicScrollBar">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" x="4" y="14"/>
-					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT" x="4"/>
+					<Anchor point="TOPLEFT" relativeTo="CalendarEventPickerFrameScrollBox" relativePoint="TOPRIGHT" x="4" y="14"/>
+					<Anchor point="BOTTOMLEFT" relativeTo="CalendarEventPickerFrameScrollBox" relativePoint="BOTTOMRIGHT" x="4"/>
 				</Anchors>
 			</EventFrame>
 			<Button name="CalendarEventPickerCloseButton" inherits="CalendarEventButtonTemplate" text="CLOSE">
@@ -1307,18 +1328,18 @@
 			</Layer>
 		</Layers>
 		<Frames>
-			<Frame parentKey="Border" inherits="DialogBorderDarkTemplate"/>
-			<Frame parentKey="Header" inherits="BC_DialogHeaderTemplate"/>
-			<Frame parentKey="ScrollBox" inherits="WowScrollBoxList">
+			<Frame name="CalendarTexturePickerFrameBorder" inherits="DialogBorderDarkTemplate"/>
+			<Frame name="CalendarTexturePickerFrameHeader" inherits="BC_DialogHeaderTemplate"/>
+			<Frame name="CalendarTexturePickerFrameScrollBox" inherits="WowScrollBoxList">
 				<Size x="239" y="224"/>
 				<Anchors>
 					<Anchor point="TOPLEFT" x="20" y="-26"/>
 				</Anchors>
 			</Frame>
-			<EventFrame parentKey="ScrollBar" inherits="WowClassicScrollBar">
+			<EventFrame name="CalendarTexturePickerFrameScrollBar" inherits="WowClassicScrollBar">
 				<Anchors>
-					<Anchor point="TOPLEFT" relativeKey="$parent.ScrollBox" relativePoint="TOPRIGHT" y="14"/>
-					<Anchor point="BOTTOMLEFT" relativeKey="$parent.ScrollBox" relativePoint="BOTTOMRIGHT"/>
+					<Anchor point="TOPLEFT" relativeTo="CalendarTexturePickerFrameScrollBox" relativePoint="TOPRIGHT" y="14"/>
+					<Anchor point="BOTTOMLEFT" relativeTo="CalendarTexturePickerFrameScrollBox" relativePoint="BOTTOMRIGHT"/>
 				</Anchors>
 			</EventFrame>
 			<Button name="CalendarTexturePickerCancelButton" inherits="CalendarEventButtonTemplate" text="CANCEL">
