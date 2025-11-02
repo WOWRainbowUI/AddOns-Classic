@@ -547,6 +547,9 @@ function CataQuestFixes.Load()
             [questKeys.reputationReward] = {{factionIDs.TIMBERMAW_HOLD,8}},
             [questKeys.zoneOrSort] = 1769,
         },
+        [6181] = { -- A Swift Message
+            [questKeys.requiredRaces] = raceIDs.HUMAN,
+        },
         [6261] = { -- Dungar Longdrink
             [questKeys.requiredRaces] = raceIDs.HUMAN,
         },
@@ -2840,6 +2843,7 @@ function CataQuestFixes.Load()
         },
         [13845] = { -- Sealed Vial of Poison
             [questKeys.zoneOrSort] = 4613,
+            [questKeys.specialFlags] = specialFlags.REPEATABLE,
         },
         [13848] = { -- Bad News Bear-er
             [questKeys.preQuestSingle] = {13805},
@@ -3929,6 +3933,12 @@ function CataQuestFixes.Load()
         [14442] = { -- My Favorite Subject
             [questKeys.exclusiveTo] = {14408},
             [questKeys.preQuestSingle] = {14322},
+        },
+        [14447] = { -- Takes One to Know One
+            [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
+        },
+        [14448] = { -- Takes One to Know One
+            [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
         },
         [14449] = { -- The First Step
             [questKeys.zoneOrSort] = 215,
@@ -15290,6 +15300,9 @@ function CataQuestFixes.Load()
         [29692] = { -- Bring Me Another Shrubbery!
             [questKeys.preQuestSingle] = {29691},
             [questKeys.specialFlags] = specialFlags.REPEATABLE,
+        },
+        [29761] = { -- Master Pit Fighter
+            [questKeys.preQuestSingle] = {29760},
         },
         [29802] = { -- A Hidden Message
             [questKeys.objectives] = {{{57800,nil,Questie.ICON_TYPE_TALK},{55488,nil,Questie.ICON_TYPE_TALK}},nil,{{74752}}},
