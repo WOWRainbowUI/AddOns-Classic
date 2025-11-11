@@ -12,7 +12,6 @@ local DT = __private.DT;
 	local hooksecurefunc = hooksecurefunc;
 	local UnitGUID, UnitName, UnitLevel, UnitClassBase = UnitGUID, UnitName, UnitLevel, UnitClassBase;
 	local CreateFrame = CreateFrame;
-	local _G = _G;
 	local UIParent = UIParent;
 
 -->
@@ -53,8 +52,9 @@ MT.BuildEnv('INSPECT');
 			local name = info[2];
 			local class = info[3];
 			local level = info[4];
-			local code, numGroup, activeGroup, data1, data2 = VT.__dep.__emulib.EncodeInspectTalentDataV2(class, level);
+			local code, numGroup, activeGroup, data1, data2 = VT.__dep.__emulib.EncodeInspectTalentDataV2(class, level, unit);
 			if data1 ~= nil and (numGroup == 1 or data2 ~= nil) and code ~= nil then
+				local Tick = MT.GetUnifiedTime();
 				local cache = VT.TQueryCache[name];
 				if cache == nil then
 					cache = MT.NewCache();
@@ -68,13 +68,23 @@ MT.BuildEnv('INSPECT');
 				TalData.num = numGroup;
 				TalData.active = activeGroup;
 				TalData.code = code;
-				TalData.Tick = MT.GetUnifiedTime();
+				TalData.Tick = Tick;
+				local _, _, _, gdata1, gdata2 = VT.__dep.__emulib.EncodeInspectGlyphDataV2(unit);
+				if gdata1 ~= nil or gdata2 ~= nil then
+					local GlyData = cache.GlyData;
+					GlyData[1] = gdata1;
+					GlyData[2] = gdata2;
+					GlyData.Tick = Tick;
+				end
 				local _, changed = VT.__dep.__emulib.GetEquipmentData(cache.EquData, unit);
 				if changed then
 					MT._TriggerCallback("CALLBACK_INVENTORY_DATA_CHANGED", name);
 				end
 				MT._TriggerCallback("CALLBACK_DATA_RECV", name);
 				MT._TriggerCallback("CALLBACK_TALENT_DATA_RECV", name, false);
+				if gdata1 ~= nil or gdata2 ~= nil then
+					MT._TriggerCallback("CALLBACK_GLYPH_DATA_RECV", name, true);
+				end
 				MT._TriggerCallback("CALLBACK_INVENTORY_DATA_RECV", name, false);
 			end
 			if not self.Scheduled then
