@@ -52,7 +52,7 @@ SAO.defaults = {
                 [96171] = { -- Will of the Necropolis (Cataclysm+)
                     [48982] = true, -- Rune Tap
                 },
-                [101568] = { -- Glyph of Dark Succor (MoP)
+                [101568] = { -- Glyph of Dark Succor (Mists of Pandaria)
                     [49998] = true, -- Death Strike
                 },
             }
@@ -98,6 +98,9 @@ SAO.defaults = {
                 [81093] = { -- Fury of Stormrage (Cataclysm)
                     [0] = true,
                 },
+                [93622] = { -- Mangle! (Mists of Pandaria)
+                    [0] = true,
+                },
                 [414800]= { -- Fury of Stormrage (Season of Discovery)
                     [0] = true,
                 },
@@ -117,6 +120,9 @@ SAO.defaults = {
                 },
                 [5176] = { -- Wrath (Season of Discovery, Wrath+)
                     [5176] = true, -- Wrath
+                },
+                [93622] = { -- Mangle! (Mists of Pandaria)
+                    [33878] = true, -- Mangle (Bear form)
                 },
                 [93400] = { -- Shooting Stars (Cataclysm+)
                     [78674] = true, -- Starsurge
@@ -709,6 +715,9 @@ SAO.defaults = {
                 [88448] = { -- Demonic Rebirth (Mists of Pandaria)
                     [0] = true,
                 },
+                [108508] = { -- Mannoroth's Fury (Mists of Pandaria)
+                    [0] = false,
+                },
                 [108683] = { -- Fire and Brimstone (Mists of Pandaria)
                     [0] = false,
                 },
@@ -752,6 +761,11 @@ SAO.defaults = {
                 },
                 [89937] = { -- Fel Spark (Cataclysm)
                     [77799]  = true, -- Fel Flame
+                },
+                [108508] = { -- Mannoroth's Fury (Mists of Pandaria)
+                    [1949] = false, -- Hellfire
+                    [27285] = false, -- Seed of Corruption
+                    [104232] = false, -- Rain of Fire
                 },
                 [108683] = { -- Fire and Brimstone (Mists of Pandaria)
                     [108685] = false, -- Conflagrate + Fire and Brimstone
@@ -827,7 +841,7 @@ SAO.defaults = {
                 [86627] = { -- Incite (Cataclysm)
                     [78]  = true, -- Heroic Strike
                 },
-                [122016] = { -- Glyph of Incite (MoP)
+                [122016] = { -- Glyph of Incite (Mists of Pandaria)
                     [78]  = true, -- Heroic Strike
                     [845] = true, -- Cleave
                 },
@@ -863,7 +877,19 @@ SAO.defaults = {
                 }
             },
         },
-    }
+    },
+    shared = {
+        alert = {
+            [92572] = { -- Leap of Faith (Priest) (Cataclysm+)
+                [0] = true,
+            },
+            [110724] = { -- Leap of Faith (Druid) (Mists of Pandaria)
+                [0] = true,
+            },
+        },
+        glow = {
+        },
+    },
 }
 
 if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then

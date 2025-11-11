@@ -2,7 +2,6 @@ local AddonName, SAO = ...
 local Module = "warlock"
 
 -- Optimize frequent calls
-local GetTalentTabInfo = GetTalentTabInfo
 local UnitCanAttack = UnitCanAttack
 local UnitHealth = UnitHealth
 local UnitHealthMax = UnitHealthMax
@@ -19,12 +18,15 @@ local curseEnfeeblementFAB = 109468;
 local drainSoul = 1120;
 local felFlame = 77799;
 local felSpark = 89937;
+local hellfire = 1949;
 local immolateFAB = 108686;
 local incinerate = 29722;
 local incinerateFAB = 114654;
+local rainOfFire = 104232;
 local shadowBolt = 686;
 local shadowburn = 17877;
 local shadowCleave = 403841;
+local seedOfCorruption = 27285;
 local soulFire = 6353;
 
 -- Pre-MoP buffs
@@ -62,10 +64,9 @@ local DrainSoulHandler = {
             return true;
         elseif option == "spec:1" then
             -- If 'affliction only' option is chosen, check if Affliction is the majority spec
-            local selector = SAO.IsCata() and 5 or 3;
-            local afflictionPoints = select(selector, GetTalentTabInfo(1));
-            local demonologyPoints = select(selector, GetTalentTabInfo(2));
-            local destructionPoints = select(selector, GetTalentTabInfo(3));
+            local afflictionPoints = SAO:GetTotalPointsInTree(1);
+            local demonologyPoints = SAO:GetTotalPointsInTree(2);
+            local destructionPoints = SAO:GetTotalPointsInTree(3);
             return afflictionPoints > demonologyPoints and afflictionPoints > destructionPoints;
         end
         return false;
@@ -192,7 +193,7 @@ local function useSoulburn(self)
         74434, -- Soulburn (buff)
         "aura",
         {
-            overlay = { texture = "shadow_word_insanity", position = "Left + Right (Flipped)", level = 1, pulse = false, scale = 1.1, color = { 222, 222, 222 } },
+            overlay = { texture = "shadow_word_insanity", position = "Left + Right (Flipped)", level = 2, pulse = false, scale = 1.1, color = { 222, 222, 222 } },
             -- buttons = { ... }, -- Buttons already glowing natively
         }
     );
@@ -512,11 +513,27 @@ local function useFireAndBrimstone(self)
     self:CreateEffect(
         "fire_and_brimstone",
         SAO.MOP,
-        108683, -- Fire and Bromstone (buff)
+        108683, -- Fire and Brimstone (buff)
         "aura",
         {
-            overlay = { texture = "imp_empowerment", position = "Left + Right (Flipped)", level = 1, pulse = false, scale = 1.1, color = { 222, 222, 222 } },
+            overlay = { texture = "imp_empowerment", position = "Left + Right (Flipped)", level = 2, pulse = false, scale = 1.1, color = { 222, 222, 222 } },
             buttons = { immolateFAB, incinerateFAB, conflagrateFAB, curseElementsFAB, curseEnfeeblementFAB },
+        }
+    );
+end
+
+local function useMannorothsFury(self)
+    self:CreateEffect(
+        "mannoroths_fury",
+        SAO.MOP,
+        108508, -- Mannoroth's Fury (buff)
+        "aura",
+        {
+            overlays = {
+                { texture = "ultimatum", position = "Left (CCW)", level = 1, pulse = false, scale = 1.4, color = { 150, 255, 150 } },
+                { texture = "ultimatum", position = "Right (CW)", level = 1, pulse = false, scale = 1.4, color = { 150, 255, 150 }, option = false },
+            },
+            buttons = { hellfire, seedOfCorruption, rainOfFire },
         }
     );
 end
@@ -558,6 +575,9 @@ local function registerClass(self)
     useBacklash(self);
     useEmpoweredImp(self);
     useFireAndBrimstone(self);
+
+    -- Talents
+    useMannorothsFury(self);
 
     -- Tier 11
     useFelSpark(self);
