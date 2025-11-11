@@ -1,8 +1,8 @@
-## Interface: 50500
-## Title: |TInterface/Icons/Spell_Frost_Stun:16:16:0:0:512:512:64:448:64:448|t SpellActivationOverlay |cff00ff962.5.7|r |TInterface/Icons/achievement_character_pandaren_female:16:16:0:0:512:512:64:448:64:448|t
+## Interface: 50502
+## Title: |TInterface/Icons/Spell_Frost_Stun:16:16:0:0:512:512:64:448:64:448|t SpellActivationOverlay |cff00ff962.6.0|r |TInterface/Icons/achievement_character_pandaren_female:16:16:0:0:512:512:64:448:64:448|t
 ## Notes: Display overlays and glow buttons to improve your gameplay!
 ## Author: Vinny/Ennvina
-## Version: 2.5.7
+## Version: 2.6.0
 ## SavedVariables: SpellActivationOverlayDB
 ## X-SAO-Build: mop
 

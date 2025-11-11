@@ -104,6 +104,11 @@ function SpellActivationOverlayOptionsPanel_Init(self)
                 optimizedForText = SAO:optimizedFor(string.format(BNET_FRIEND_ZONE_WOW_CLASSIC, addonBuild));
             end
 
+            local subProjectName = SAO.GetSubProjectName(xSaoBuild);
+            if subProjectName then
+                optimizedForText = optimizedForText .. " (" .. subProjectName .. ")";
+            end
+
             buildInfoLabel:SetText(titleText.."\n"..optimizedForText);
         end
     end
@@ -507,8 +512,10 @@ function SpellActivationOverlayOptionsPanel_OnShow(self)
         return;
     end
 
-    if SAO.CurrentClass and type(SAO.CurrentClass.LoadOptions) == 'function' then
-        SAO.CurrentClass.LoadOptions(SAO);
+    for _, classDef in ipairs({ SAO.CurrentClass, SAO.SharedClass }) do -- Iteration may fail if CurrentClass is nil and SharedClass is not, but this shouldn't happen
+        if classDef and type(classDef.LoadOptions) == 'function' then
+            classDef.LoadOptions(SAO);
+        end
     end
 
     SAO:AddEffectOptions();

@@ -1,5 +1,49 @@
 ## SpellActivationOverlay Changelog
 
+#### v2.6.0 (2025-11-10)
+
+Thank you to our amazing contributors for helping out. Thanks!
+- Jokke, COI3RA79 and Cowmance for reporting Classic Era issues at start
+
+Bump in TOC file for routine updates (Classic Era, Mists of Pandaria)
+Bump in TOC file for Throne of Thunder patch (Mists of Pandaria PTR)
+
+New Spell Alert
+- Druid's Mangle! (Mists of Pandaria)
+
+New Glowing Button
+- Druid's Mangle (Bear form), during Mangle! (Mists of Pandaria)
+
+Bug Fixes
+- Checking talents at start triggered an error (Classic Era)
+- The question asked at start triggered an error (Mists of Pandaria PTR)
+
+#### v2.6.0-rc2 (2025-08-06)
+
+New Spell Alert
+- Warlock's Mannoroth's Fury (Mists of Pandaria)
+
+New Glowing Buttons
+- Warlock's Hellfire during Mannoroth's Fury (Mists of Pandaria)
+- Warlock's Rain of Fire during Mannoroth's Fury (Mists of Pandaria)
+- Warlock's Seed of Corruption during Mannoroth's Fury (Mists of Pandaria)
+
+#### v2.6.0-rc1 (2025-07-22)
+
+Thank you to our amazing contributors for helping out. Thanks!
+- Yume and Amanthuul for helping on the unorthodox Leap of Faith
+- Fractale, luitzifa, bambitten and Valto for reporting unsupported effects
+
+This release introduces a new type of Spell Alert: Shared Spell Alerts
+- Usually, Spell Alerts are exclusive to the player's class toolkit
+- For example, Hot Streak is a Mage alert, and only Mages can have it
+- Shared Spell Alerts, on the other hand, are available to all classes
+- For example, Leap of Faith is cast by Priests but anyone can be the recipient
+
+New Shared Spell Alerts
+- Priest's Leap of Faith (Mists of Pandaria)
+- Druid's Leap of Faith (Mists of Pandaria)
+
 #### v2.5.7 (2025-07-15)
 
 Thank you to our amazing contributors for helping out. Thanks!
