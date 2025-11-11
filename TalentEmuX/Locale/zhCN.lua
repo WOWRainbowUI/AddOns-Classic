@@ -43,6 +43,7 @@ l10n.PointsUsed = "已用";
 l10n.PointsRemaining = "剩余";
 l10n.PointsToLevel = "等级";
 l10n.ExpandButton = "扩展";
+l10n.DisplaySpecSpell = "选择一个专精查看其主要技能";
 
 --	左
 l10n.EquipmentListButton = "装备列表";
@@ -97,6 +98,7 @@ l10n.Setting_AutoShowEquipmentFrame = "自动显示装备列表";
 l10n.Setting_IconOnMinimap = "显示小地图图标";
 l10n.Setting_ResizableBorder = "允许调整大小";
 l10n.Setting_SingleFrame = "单窗口显示";
+l10n.Setting_Style = "风格";
 l10n.Setting_TripleTrees = "三列天赋";
 l10n.Setting_SingleTree = "单列天赋";
 l10n.Setting_TalentsInTip = "鼠标提示显示天赋";
@@ -136,8 +138,11 @@ l10n.CLASS = {
 	SHAMAN = "萨满",
 	WARLOCK = "术士",
 	WARRIOR = "战士",
+	MONK = "武僧",
 };
 l10n.SPEC = {
+	[0] = "无",
+
 	[398] = "鲜血",
 	[399] = "冰霜",
 	[400] = "邪恶",
@@ -268,6 +273,9 @@ l10n.SLOTSHORT = {
 };
 
 --	其它
+l10n.Tooltip_SpecLabel = "|cffffffff专精|r|cff9f9f9f:|r |cffffffff%s|r";
+l10n.Tooltip_SpecPrimary = "|cff00ff00主要|r|cff9f9f9f:|r |cffffffff%s|r";
+l10n.Tooltip_SpecSecondary = "|cffffffff次要|r|cff9f9f9f:|r |cffffffff%s|r";
 l10n.Tooltip_CalaculatingItemLevel = "|cffffffff装等|r|cff9f9f9f:|r |cff9f9f9f正在读取...|r";
 l10n.Tooltip_ItemLevel = "|cffffffff装等|r|cff9f9f9f:|r |cffffffff%s|r";
 

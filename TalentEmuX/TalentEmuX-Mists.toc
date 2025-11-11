@@ -1,5 +1,5 @@
-## Interface: 40402
-## Title: Talent Emu
+## Interface: 50501, 50502
+## Title: Talent Emu Cata
 ## Title-zhCN: ala天赋模拟器
 ## Title-zhTW: ala天賦模擬器
 ## SavedVariablesPerCharacter: 
@@ -14,4 +14,4 @@
 ## Author-zhTW: |cff00ff00ALA|r
 ## Version: 404r.251107
 
-TalentEmu-Clasic.xml
+TalentEmu-Mists.xml

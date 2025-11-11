@@ -12,8 +12,9 @@ local DT = __private.DT;
 	local pcall = pcall;
 	local type = type;
 	local next = next;
-	local select = select;
 	local tremove, concat = table.remove, table.concat;
+	local strsplit = string.split;
+	local strfind = string.find;
 	local strtrim, strupper, strsub, strmatch, format, gsub = string.trim, string.upper, string.sub, string.match, string.format, string.gsub;
 	local min, max = math.min, math.max;
 	local band = bit.band;
@@ -627,13 +628,13 @@ MT.BuildEnv('METHOD');
 		local pos = 1;
 		local len = #data;
 		local stats = { 0, 0, 0, };
-		for TreeIndex = 1, 3 do
+		for TreeIndex = 1, #SpecList do
 			local total = 0;
 			for j = 1, #ClassTDB[SpecList[TreeIndex]] do
 				if pos > len then
 					break;
 				end
-				local val = strsub(data, pos, pos);
+				local val = data:sub(pos, pos);
 				total = total + tonumber(val);
 				pos = pos + 1;
 			end
@@ -641,16 +642,17 @@ MT.BuildEnv('METHOD');
 		end
 		return stats;
 	end
-	function MT.GenerateTitle(class, stats, uncolored)
+	function MT.GenerateTitle(class, data, uncolored)
+		local stats = MT.CountTreePoints(data, class);
 		local SpecList = DT.ClassSpec[class];
 		if uncolored then
-			local title = l10n.CLASS[class];
+			local title = "[" ..  l10n.CLASS[class] .. "] -";
 			for TreeIndex = 1, 3 do
 				title = title .. " " .. l10n.SPEC[SpecList[TreeIndex]] .. format("%2d", stats[TreeIndex]);
 			end
 			return title;
 		else
-			local title = "|c" .. CT.RAID_CLASS_COLORS[class].colorStr .. l10n.CLASS[class] .. "|r-";
+			local title = "[|c" .. CT.RAID_CLASS_COLORS[class].colorStr .. l10n.CLASS[class] .. "|r] -";
 			local temp = max(stats[1], stats[2], stats[3]);
 			if temp == stats[1] and temp == stats[2] and temp == stats[3] then
 				temp = temp + 1023;
@@ -668,19 +670,86 @@ MT.BuildEnv('METHOD');
 	function MT.GenerateTitleFromRawData(data, class, uncolored)
 		local Type = type(data);
 		if Type == 'table' then
-			local TreeFrames = data.TreeFrames;
-			return MT.GenerateTitle(data.class, { TreeFrames[1].TalentSet.Total, TreeFrames[2].TalentSet.Total, TreeFrames[3].TalentSet.Total, }, uncolored);
+			return MT.GenerateTitle(data.class, MT.GetFrameData(data), uncolored);
 		elseif Type == 'string' and type(class) == 'string' and DT.TalentDB[class] ~= nil then
-			return MT.GenerateTitle(class, MT.CountTreePoints(data, class), uncolored);
+			return MT.GenerateTitle(class, data, uncolored);
 		end
 	end
 	function MT.GenerateLink(title, class, code)
 		return "|Hemu:" .. code .. "|h|c" .. CT.RAID_CLASS_COLORS[class].colorStr .. "[" .. title .. "]|r|h";
 	end
+	function MT.GenerateTalentTipString(class, data)
+		local line = nil;
+		local stats = MT.CountTreePoints(data, class);
+		local SpecList = DT.ClassSpec[class];
+		local cap = -1;
+		if stats[1] ~= stats[2] or stats[1] ~= stats[3] then
+			cap = max(stats[1], stats[2], stats[3]);
+		end
+		for TreeIndex = 1, 3 do
+			local SpecID = SpecList[TreeIndex];
+			if cap == stats[TreeIndex] then
+				if VT.SET.talents_in_tip_icon then
+					if line == nil then
+						line = "|T" .. (DT.TalentSpecIcon[SpecID] or CT.TEXTUREUNK) .. format(":16|t |cffff7f1f%2d|r", stats[TreeIndex]);
+					else
+						line = line .. "  |T" .. (DT.TalentSpecIcon[SpecID] or CT.TEXTUREUNK) .. format(":16|t |cffff7f1f%2d|r", stats[TreeIndex]);
+					end
+				else
+					if line == nil then
+						line = "|cffff7f1f" .. l10n.SPEC[SpecID] .. format(":%2d|r", stats[TreeIndex]);
+					else
+						line = line .. "  |cffff7f1f" .. l10n.SPEC[SpecID] .. format(":%2d|r", stats[TreeIndex]);
+					end
+				end
+			else
+				if VT.SET.talents_in_tip_icon then
+					if line == nil then
+						line = "|T" .. (DT.TalentSpecIcon[SpecID] or CT.TEXTUREUNK) .. format(":16|t |cffffffff%2d|r", stats[TreeIndex]);
+					else
+						line = line .. "  |T" .. (DT.TalentSpecIcon[SpecID] or CT.TEXTUREUNK) .. format(":16|t |cffffffff%2d|r", stats[TreeIndex]);
+					end
+				else
+					if line == nil then
+						line = "|cffbfbfff" .. l10n.SPEC[SpecID] .. format(":%2d|r", stats[TreeIndex]);
+					else
+						line = line .. "  |cffbfbfff" .. l10n.SPEC[SpecID] .. format(":%2d|r", stats[TreeIndex]);
+					end
+					line = line .. "  |cffbfbfff" .. l10n.SPEC[SpecID] .. format(":%2d|r", stats[TreeIndex]);
+				end
+			end
+		end
+		return line;
+	end
 	function MT.GetTreeNodeIndex(TalentDef)
 		return TalentDef[1] * DT.MAX_NUM_COL + TalentDef[2] + 1;
 	end
 
+	--	arg			Frame
+	--	return		data
+	function MT.GetFrameData(Frame)
+		local TreeFrames = Frame.TreeFrames;
+		if type(TreeFrames) == 'table' and
+					type(TreeFrames[1]) == 'table' and type(TreeFrames[1].TalentSet) == 'table' and
+					type(TreeFrames[2]) == 'table' and type(TreeFrames[2].TalentSet) == 'table' and
+					type(TreeFrames[3]) == 'table' and type(TreeFrames[3].TalentSet) == 'table'
+			then
+		--
+			local D1, D2, D3, N1, N2, N3 = TreeFrames[1].TalentSet, TreeFrames[2].TalentSet, TreeFrames[3].TalentSet,
+						#TreeFrames[1].TreeTDB, #TreeFrames[2].TreeTDB, #TreeFrames[3].TreeTDB
+			local T1 = {  };
+			local len = 0;
+			for index = 1, N1 do len = len + 1; T1[len] = D1[index] or 0; end
+			for index = 1, N2 do len = len + 1; T1[len] = D2[index] or 0; end
+			for index = 1, N3 do len = len + 1; T1[len] = D3[index] or 0; end
+			return T1;
+		else
+					return VT.__dep.__emulib.EncodeFrameTalentDataV2(DT.ClassToIndex[Frame.class], Frame.level,
+								TreeFrames[1].TalentSet, TreeFrames[2].TalentSet, TreeFrames[3].TalentSet,
+								#TreeFrames[1].TreeTDB, #TreeFrames[2].TreeTDB, #TreeFrames[3].TreeTDB
+							);
+		end
+	end
 	function MT.TalentConversion(class, level, numGroup, activeGroup, data1, data2)
 		if CT.TOCVERSION < 30000 then
 			return class, level, numGroup, activeGroup, data1, data2;
@@ -694,7 +763,7 @@ MT.BuildEnv('METHOD');
 				local TreeTDB = ClassTDB[SpecList[SpecIndex]];
 				local num = #TreeTDB;
 				for TalentSeq = 1, num do
-					local val = tonumber(strsub(data1, ofs + TalentSeq, ofs + TalentSeq)) or 0;
+					local val = tonumber(data1:sub(ofs + TalentSeq, ofs + TalentSeq)) or 0;
 					if val > TreeTDB[TalentSeq][4] then
 						return nil;
 					end
@@ -714,7 +783,7 @@ MT.BuildEnv('METHOD');
 			local num = #VM;
 			for TalentSeq = 1, num do
 				local TalentIndex = VM[TalentSeq];
-				local val = tonumber(strsub(data1, ofs + TalentIndex, ofs + TalentIndex)) or 0;
+				local val = tonumber(data1:sub(ofs + TalentIndex, ofs + TalentIndex)) or 0;
 				if val > TreeTDB[TalentSeq][4] then
 					return class, level, 1, 1, data1;
 				end
@@ -729,7 +798,7 @@ MT.BuildEnv('METHOD');
 	--	return		class, level, data
 	function MT.DecodeTalent(code)
 		local version, class, level, numGroup, activeGroup, data1, data2 = VT.__dep.__emulib.DecodeTalentData(code);
-		if version == "V1" and CT.TOCVERSION >= 30000 and class ~= nil then
+		if version == "V1" and CT.TOCVERSION >= 30000 and CT.TOCVERSION < 50000 and class ~= nil then
 			return MT.TalentConversion(class, level, numGroup, activeGroup, data1, data2);
 		else
 			return class, level, numGroup, activeGroup, data1, data2;
@@ -764,21 +833,21 @@ MT.BuildEnv('METHOD');
 							local code1, data1, lenc1, lend1 = VT.__dep.__emulib.EncodeTalentBlock(T1, len);
 							local code2, data2, lenc2, lend2 = VT.__dep.__emulib.EncodeTalentBlock(T2, #T2);
 							if activeGroup == 1 then
-							return VT.__dep.__emulib.MergeTalentCodeV2(DT.ClassToIndex[Frame.class], Frame.level, activeGroup, 2, T1, len, T2, #T2);
+								return VT.__dep.__emulib.MergeTalentCodeV2(DT.ClassToIndex[Frame.class], Frame.level, activeGroup, 2, T1, len, T2, #T2);
 							else
-							return VT.__dep.__emulib.MergeTalentCodeV2(DT.ClassToIndex[Frame.class], Frame.level, activeGroup, 2, T2, #T2, T1, len);
+								return VT.__dep.__emulib.MergeTalentCodeV2(DT.ClassToIndex[Frame.class], Frame.level, activeGroup, 2, T2, #T2, T1, len);
 							end
 						else
-							return VT.__dep.__emulib.EncodeFrameTalentDataV2(DT.ClassToIndex[Frame.class], Frame.level,
-										TreeFrames[1].TalentSet, TreeFrames[2].TalentSet, TreeFrames[3].TalentSet,
-										#TreeFrames[1].TreeTDB, #TreeFrames[2].TreeTDB, #TreeFrames[3].TreeTDB
-									);
+								return VT.__dep.__emulib.EncodeFrameTalentDataV2(DT.ClassToIndex[Frame.class], Frame.level,
+											TreeFrames[1].TalentSet, TreeFrames[2].TalentSet, TreeFrames[3].TalentSet,
+											#TreeFrames[1].TreeTDB, #TreeFrames[2].TreeTDB, #TreeFrames[3].TreeTDB
+										);
 						end
 					else
-							return VT.__dep.__emulib.EncodeFrameTalentDataV2(DT.ClassToIndex[Frame.class], Frame.level,
-										TreeFrames[1].TalentSet, TreeFrames[2].TalentSet, TreeFrames[3].TalentSet,
-										#TreeFrames[1].TreeTDB, #TreeFrames[2].TreeTDB, #TreeFrames[3].TreeTDB
-									);
+								return VT.__dep.__emulib.EncodeFrameTalentDataV2(DT.ClassToIndex[Frame.class], Frame.level,
+											TreeFrames[1].TalentSet, TreeFrames[2].TalentSet, TreeFrames[3].TalentSet,
+											#TreeFrames[1].TreeTDB, #TreeFrames[2].TreeTDB, #TreeFrames[3].TreeTDB
+										);
 					end
 				else
 							return VT.__dep.__emulib.EncodeFrameTalentDataV2(DT.ClassToIndex[Frame.class], Frame.level,
@@ -908,7 +977,7 @@ MT.BuildEnv('METHOD');
 		VT.QuerySent[name] = Tick;
 		VT.AutoShowEquipmentFrameOnComm[name] = Tick;
 		VT.ImportTargetFrame[name] = { Frame, };
-		local verkey = strsub(code, 1, 1);
+		local verkey = code:sub(1, 1);
 		if verkey ~= "_" and verkey ~= "!" then
 			return MT._CommDistributor.OnTalent("", name, code, "V1", VT.__dep.__emulib.DecodeTalentDataV1, false);
 		end
@@ -1130,6 +1199,10 @@ MT.BuildEnv('METHOD');
 			end
 			if MT.GetPointsReqLevel(Frame.class, Frame.TotalUsedPoints) > UnitLevel('player') then
 				return MT.Notice(l10n["CANNOT APPLY : NEED MORE TALENT POINTS."]);
+			end
+			if CT.TOCVERSION >= 50000 then
+				--todo
+				return
 			end
 			local Map = VT.__dep.__emulib.GetTalentMap(CT.SELFCLASS);
 			if Map == nil then

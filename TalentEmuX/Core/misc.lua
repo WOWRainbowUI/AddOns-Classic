@@ -10,7 +10,6 @@ local DT = __private.DT;
 
 --		upvalue
 	local next = next;
-	local select = select;
 	local GetPlayerInfoByGUID = GetPlayerInfoByGUID;
 	local GetTalentInfo = GetTalentInfo;
 	local GetAddOnInfo, IsAddOnLoaded = GetAddOnInfo, IsAddOnLoaded;
@@ -51,6 +50,7 @@ MT.BuildEnv('MISC');
 		VT.__dep.__poplib:AddEntry("_BRFF_RAID_PLAYER", "QUERY_TALENT");
 		VT.__dep.__poplib:AddEntry("CHAT_ROSTER", "QUERY_TALENT");
 		VT.__dep.__poplib:AddEntry("GUILD", "QUERY_TALENT");
+		VT.__dep.__poplib:AddEntry("COMMUNITIES_GUILD_MEMBER", "QUERY_TALENT");
 
 	--
 	--	TalentFrameCall
@@ -178,7 +178,7 @@ MT.BuildEnv('MISC');
 	MT.RegisterOnInit('MISC', function(LoggedIn)
 	end);
 	MT.RegisterOnLogin('MISC', function(LoggedIn)
-		if CT.TOCVERSION >= 30000 then
+		if CT.TOCVERSION >= 30000 and CT.TOCVERSION < 50000 then
 			local Map = VT.__dep.__emulib.GetTalentMap(CT.SELFCLASS);
 			VT.MAP[CT.SELFCLASS] = { VMap = Map.VMap, RMap = Map.RMap, };
 		end

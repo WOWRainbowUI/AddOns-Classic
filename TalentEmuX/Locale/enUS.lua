@@ -43,6 +43,7 @@ l10n.PointsUsed = "Used";
 l10n.PointsRemaining = "Idle";
 l10n.PointsToLevel = "Lv";
 l10n.ExpandButton = "Expand";
+l10n.DisplaySpecSpell = "Display primary spells after selecting a spec";
 
 --	Left
 l10n.EquipmentListButton = "Equipment list";
@@ -97,6 +98,7 @@ l10n.Setting_AutoShowEquipmentFrame = "Show Equipments Automatically";
 l10n.Setting_IconOnMinimap = "Show DBIcon";
 l10n.Setting_ResizableBorder = "Resizing by Dragging";
 l10n.Setting_SingleFrame = "Single Window";
+l10n.Setting_Style = "Style";
 l10n.Setting_TripleTrees = "Triple talent trees";
 l10n.Setting_SingleTree = "Single talent tree";
 l10n.Setting_TalentsInTip = "Talents in tip";
@@ -136,8 +138,11 @@ l10n.CLASS = {
 	SHAMAN = "shaman",
 	WARLOCK = "warlock",
 	WARRIOR = "warrior",
+	MONK = "monk",
 };
 l10n.SPEC = {
+	[0] = "None",
+
 	[398] = "Blood",
 	[399] = "Frost",
 	[400] = "Unholy",
@@ -268,6 +273,9 @@ l10n.SLOTSHORT = {
 };
 
 --	Others
+l10n.Tooltip_SpecLabel = "|cffffffffSpecialization|r|cff9f9f9f:|r |cffffffff%s|r";
+l10n.Tooltip_SpecPrimary = "|cff00ff00Primary|r|cff9f9f9f:|r |cffffffff%s|r";
+l10n.Tooltip_SpecSecondary = "|cffffffffSecondary|r|cff9f9f9f:|r |cffffffff%s|r";
 l10n.Tooltip_CalaculatingItemLevel = "|cffffffffItemLevel|r|cff9f9f9f:|r |cff9f9f9fInspecting...|r";
 l10n.Tooltip_ItemLevel = "|cffffffffItemLevel|r|cff9f9f9f:|r |cffffffff%s|r";
 
