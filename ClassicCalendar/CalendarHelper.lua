@@ -692,12 +692,12 @@ frame:RegisterEvent("PLAYER_LOGIN")
 frame:SetScript("OnEvent", function(self, event, addonName)
     if event == "ADDON_LOADED" and addonName == "ClassicCalendar" then
         CalendarHelper:Initialize()
-    elseif event == "PLAYER_LOGIN" then
+    -- elseif event == "PLAYER_LOGIN" then
         -- Print status after login when all saved variables should be loaded
-        C_Timer.After(2, function()
-            CalendarHelper:PrintSavedVariableStatus()
-            print("CalendarHelper: Use '/ch list' to see available events for guild event creation")
-        end)
+    --     C_Timer.After(2, function()
+    --         CalendarHelper:PrintSavedVariableStatus()
+    --         print("CalendarHelper: Use '/ch list' to see available events for guild event creation")
+    --     end)
     end
 end)
 
@@ -711,12 +711,12 @@ frame:RegisterEvent("PLAYER_LOGIN")
 frame:SetScript("OnEvent", function(self, event, addonName)
     if event == "ADDON_LOADED" and addonName == "ClassicCalendar" then
         CalendarHelper:Initialize()
-    elseif event == "PLAYER_LOGIN" then
+    -- elseif event == "PLAYER_LOGIN" then
         -- Print status after login when all saved variables should be loaded
-        C_Timer.After(2, function()
-            CalendarHelper:PrintSavedVariableStatus()
-            print("CalendarHelper: Use '/ch list' to see available events for guild event creation")
-        end)
+    --     C_Timer.After(2, function()
+    --         CalendarHelper:PrintSavedVariableStatus()
+    --         print("CalendarHelper: Use '/ch list' to see available events for guild event creation")
+    --     end)
     end
 end)
 
