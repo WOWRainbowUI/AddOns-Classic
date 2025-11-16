@@ -73,6 +73,7 @@ f:SetScript("OnEvent", function()
 	end
 	
 	-- Enable VersionCheck-1.0 addon integration (following SandPacker's working approach)
+	--[[
 	do
 		local VC = LibStub:GetLibrary("VersionCheck-1.0", true)
 		if VC and VC.Enable then
@@ -87,6 +88,7 @@ f:SetScript("OnEvent", function()
 			print("ClassicCalendar: VersionCheck-1.0 library not found or Enable method missing")
 		end
 	end
+	--]]
 end)
 
 -- CalendarMenus is an ORDERED table of frames, one of which will close when you press Escape.
