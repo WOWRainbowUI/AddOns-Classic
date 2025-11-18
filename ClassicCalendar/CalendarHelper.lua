@@ -2,6 +2,7 @@
 -- Helper functions for reading calendar data from saved variables
 
 local CalendarHelper = {}
+_G.CalendarHelper = CalendarHelper  -- Export immediately
 
 -- Initialize the CalendarHelper
 function CalendarHelper:Initialize()
@@ -267,8 +268,51 @@ function CalendarHelper:CreateGuildEventFromData(eventID)
     return true
 end
 
+-- Check if an event with the same title and date already exists
+function CalendarHelper:EventAlreadyExists(eventTitle, month, day, year, hour, minute)
+    -- Get the month offset for the target date
+    local currentCalendarTime = C_DateAndTime.GetCurrentCalendarTime()
+    local currentYear = currentCalendarTime.year
+    local currentMonth = currentCalendarTime.month
+    
+    local yearDiff = year - currentYear
+    local monthOffset = yearDiff * 12 + (month - currentMonth)
+    
+    -- Get number of events on that day
+    local numEvents = C_Calendar.GetNumDayEvents(monthOffset, day)
+    
+    -- Check each event on that day
+    for i = 1, numEvents do
+        local event = C_Calendar.GetDayEvent(monthOffset, day, i)
+        if event and event.calendarType == "GUILD_EVENT" then
+            local existingTitle = event.isCustomTitle and event.title or (event.title and _G[event.title] or "")
+            
+            -- Check if title matches (case-insensitive)
+            if existingTitle and existingTitle:lower() == eventTitle:lower() then
+                -- Check if time matches (within 5 minutes tolerance)
+                local eventTime = event.startTime
+                if eventTime and eventTime.hour == hour and math.abs(eventTime.minute - minute) <= 5 then
+                    if DEBUG_MODE then
+                        print("CalendarHelper: Duplicate event found - '" .. existingTitle .. "' at " .. hour .. ":" .. string.format("%02d", minute))
+                    end
+                    return true
+                end
+            end
+        end
+    end
+    
+    return false
+end
+
 -- Create guild event with specified date (based on WorldBuffs implementation)
 function CalendarHelper:CreateGuildEventWithDate(eventData, selectedDate)
+    -- Check for duplicate events first
+    local eventTitle = self:SanitizeEventTitle(eventData.title)
+    if self:EventAlreadyExists(eventTitle, selectedDate.month, selectedDate.day, selectedDate.year, selectedDate.hour, selectedDate.minute) then
+        print("CalendarHelper: Déjà vu! '" .. eventTitle .. "' is already etched into the annals of " .. selectedDate.month .. "/" .. selectedDate.day .. "/" .. selectedDate.year .. ". Rally thyself elsewhere, brave adventurer.")
+        return
+    end
+    
     -- Ensure the calendar window is open first
     if not CalendarFrame or not CalendarFrame:IsShown() then
         if ShowUIPanel and CalendarFrame then
@@ -363,8 +407,32 @@ function CalendarHelper:CreateGuildEventWithDate(eventData, selectedDate)
         -- Generate witty canonical descriptions based on raid type
         local raidDescriptions = self:GetRaidDescriptions()
         
-        -- Wait for UI to load, then populate fields
-        C_Timer.After(0.3, function()
+        -- Wait longer for UI to fully load before setting fields
+        C_Timer.After(0.5, function()
+            -- Set the event date explicitly
+            if C_Calendar and C_Calendar.EventSetDate then
+                C_Calendar.EventSetDate(selectedDate.month, selectedDate.day, selectedDate.year)
+                
+                if DEBUG_MODE then
+                    print("CalendarHelper: Set event date to " .. selectedDate.month .. "/" .. selectedDate.day .. "/" .. selectedDate.year)
+                end
+            end
+            
+            -- Set event type to Raid
+            if C_Calendar and C_Calendar.EventSetType then
+                C_Calendar.EventSetType(Enum.CalendarEventType.Raid)
+                CalendarCreateEventFrame.selectedEventType = Enum.CalendarEventType.Raid
+                
+                if DEBUG_MODE then
+                    print("CalendarHelper: Set event type to Raid")
+                end
+                
+                -- Update the event type dropdown to reflect the change
+                if CalendarCreateEvent_UpdateEventType then
+                    CalendarCreateEvent_UpdateEventType()
+                end
+            end
+            
             -- Set the event title
             local eventTitle = self:SanitizeEventTitle(eventData.title)
             
@@ -384,47 +452,12 @@ function CalendarHelper:CreateGuildEventWithDate(eventData, selectedDate)
                 CalendarCreateEventDescriptionContainer.ScrollingEditBox:SetText(description)
             end
             
-            -- Set the event time using WoW's calendar system
-            -- Convert hour to 12-hour format for the dropdown
-            local hour12 = selectedDate.hour
-            local isAM = true
-            
-            if selectedDate.hour == 0 then
-                hour12 = 12
-                isAM = true
-            elseif selectedDate.hour == 12 then
-                hour12 = 12
-                isAM = false
-            elseif selectedDate.hour > 12 then
-                hour12 = selectedDate.hour - 12
-                isAM = false
-            else
-                isAM = true
-            end
-            
-            -- Set time using Calendar API
-            if C_Calendar and C_Calendar.EventSetTime then
-                C_Calendar.EventSetTime(selectedDate.hour, selectedDate.minute)
+            -- Actually set the description via API
+            if C_Calendar and C_Calendar.EventSetDescription then
+                C_Calendar.EventSetDescription(description)
                 if DEBUG_MODE then
-                    print("CalendarHelper: Setting event time to " .. selectedDate.hour .. ":" .. string.format("%02d", selectedDate.minute) .. " (" .. selectedDate.timezone .. ")")
+                    print("CalendarHelper: Set event description (" .. string.len(description) .. " chars)")
                 end
-            end
-            
-            -- Alternative method: try to set dropdown values directly
-            if CalendarCreateEventHourDropDown and CalendarCreateEventMinuteDropDown then
-                -- Set hour (try both 24-hour and 12-hour formats)
-                UIDropDownMenu_SetSelectedValue(CalendarCreateEventHourDropDown, selectedDate.hour)
-                UIDropDownMenu_SetSelectedValue(CalendarCreateEventMinuteDropDown, selectedDate.minute)
-                
-                -- Also try 12-hour format if 24-hour doesn't work
-                if not UIDropDownMenu_GetSelectedValue(CalendarCreateEventHourDropDown) then
-                    UIDropDownMenu_SetSelectedValue(CalendarCreateEventHourDropDown, hour12)
-                end
-            end
-            
-            -- Set AM/PM if there's a separate control
-            if CalendarCreateEventAMPMDropDown then
-                UIDropDownMenu_SetSelectedValue(CalendarCreateEventAMPMDropDown, isAM and 1 or 2)
             end
             
             -- Set the lock event checkbox to checked
@@ -435,9 +468,140 @@ function CalendarHelper:CreateGuildEventWithDate(eventData, selectedDate)
                 end
             end
             
-            if DEBUG_MODE then
-                print("CalendarHelper: Guild event created for " .. eventData.title .. " on " .. selectedDate.month .. "/" .. selectedDate.day .. "/" .. selectedDate.year .. " at " .. selectedDate.hour .. ":" .. string.format("%02d", selectedDate.minute) .. " " .. (selectedDate.timezone or "PST"))
-            end
+            -- Wait a bit more, then set time after event is fully initialized
+            C_Timer.After(0.3, function()
+                -- CRITICAL: WoW Calendar uses 12-hour format internally
+                -- Need to convert 24-hour time from SavedVariables to 12-hour + AM/PM
+                local hour24 = selectedDate.hour
+                local minute = selectedDate.minute
+                
+                -- Convert 24-hour to 12-hour + AM/PM
+                local hour12, isAM
+                if hour24 == 0 then
+                    hour12 = 12
+                    isAM = true  -- midnight
+                elseif hour24 < 12 then
+                    hour12 = hour24
+                    isAM = true  -- morning
+                elseif hour24 == 12 then
+                    hour12 = 12
+                    isAM = false  -- noon
+                else
+                    hour12 = hour24 - 12
+                    isAM = false  -- afternoon/evening
+                end
+                
+                if DEBUG_MODE then
+                    local timeLabel = ""
+                    if hour24 == 12 then
+                        timeLabel = "noon"
+                    elseif hour24 == 0 then
+                        timeLabel = "midnight"
+                    end
+                    print("CalendarHelper: Converting 24-hour " .. hour24 .. ":" .. string.format("%02d", minute) .. " to 12-hour " .. hour12 .. ":" .. string.format("%02d", minute) .. " " .. (isAM and "AM" or "PM") .. " (" .. timeLabel .. ")")
+                end
+                
+                -- Set the UI fields directly before calling the API
+                if CalendarCreateEventFrame then
+                    CalendarCreateEventFrame.selectedHour = hour12
+                    CalendarCreateEventFrame.selectedMinute = minute
+                    CalendarCreateEventFrame.selectedAM = isAM
+                    
+                    if DEBUG_MODE then
+                        print("CalendarHelper: Set UI fields - Hour: " .. hour12 .. ", Minute: " .. minute .. ", AM: " .. tostring(isAM))
+                    end
+                    
+                    -- Update the dropdowns to reflect the new values
+                    if CalendarCreateEvent_UpdateEventTime then
+                        CalendarCreateEvent_UpdateEventTime()
+                        
+                        if DEBUG_MODE then
+                            print("CalendarHelper: Updated dropdowns via CalendarCreateEvent_UpdateEventTime()")
+                        end
+                    end
+                end
+                
+                -- Now call the API to set the time
+                -- We need to use CalendarCreateEvent_SetEventTime() which properly converts 12-hour + AM/PM to 24-hour
+                if CalendarCreateEvent_SetEventTime then
+                    if DEBUG_MODE then
+                        print("CalendarHelper: Calling CalendarCreateEvent_SetEventTime() to convert and set time")
+                    end
+                    CalendarCreateEvent_SetEventTime()
+                    
+                    -- Wait a moment for the time to be set, then verify
+                    C_Timer.After(0.1, function()
+                        if DEBUG_MODE then
+                            -- Try to read back the time from the event form fields
+                            if CalendarCreateEventFrame and CalendarCreateEventFrame.selectedHour then
+                                local uiHour = CalendarCreateEventFrame.selectedHour
+                                local uiMinute = CalendarCreateEventFrame.selectedMinute
+                                local uiAM = CalendarCreateEventFrame.selectedAM
+                                print("CalendarHelper: UI shows - Hour: " .. uiHour .. ", Minute: " .. uiMinute .. ", AM: " .. tostring(uiAM))
+                                
+                                -- Calculate what 24-hour value this represents
+                                local ui24Hour = uiHour
+                                if not CalendarFrame.militaryTime then
+                                    -- Convert from 12-hour + AM/PM to 24-hour
+                                    if uiAM then
+                                        if uiHour == 12 then
+                                            ui24Hour = 0  -- 12 AM = midnight = 0
+                                        else
+                                            ui24Hour = uiHour  -- 1-11 AM stays same
+                                        end
+                                    else
+                                        if uiHour == 12 then
+                                            ui24Hour = 12  -- 12 PM = noon = 12
+                                        else
+                                            ui24Hour = uiHour + 12  -- 1-11 PM adds 12
+                                        end
+                                    end
+                                end
+                                print("CalendarHelper: UI represents 24-hour: " .. ui24Hour .. ":" .. string.format("%02d", uiMinute))
+                            end
+                        end
+                    end)
+                    
+                    -- Verify what time was actually set
+                    if DEBUG_MODE and C_Calendar.EventGetTime then
+                        local setHour, setMinute = C_Calendar.EventGetTime()
+                        print("CalendarHelper: Verified time after set: " .. (setHour or "nil") .. ":" .. (setMinute or "nil"))
+                    end
+                    
+                    -- Force UI refresh
+                    if CalendarCreateEventFrame and CalendarCreateEventFrame.Update then
+                        CalendarCreateEventFrame:Update()
+                    end
+                    
+                    if DEBUG_MODE then
+                        print("CalendarHelper: Time set via API")
+                    end
+                end
+                
+                -- Add comprehensive event validation logging
+                C_Timer.After(0.1, function()
+                    print("=== CalendarHelper: Event Form State Before Create ===")
+                    print("  Title: " .. (CalendarCreateEventTitleEdit and CalendarCreateEventTitleEdit:GetText() or "nil"))
+                    print("  Type: " .. (CalendarCreateEventFrame.selectedEventType or "nil"))
+                    print("  Hour: " .. (CalendarCreateEventFrame.selectedHour or "nil"))
+                    print("  Minute: " .. (CalendarCreateEventFrame.selectedMinute or "nil"))
+                    print("  AM: " .. tostring(CalendarCreateEventFrame.selectedAM))
+                    
+                    if C_Calendar.EventGetDate then
+                        local month, day, year = C_Calendar.EventGetDate()
+                        print("  Date from API: " .. (month or "nil") .. "/" .. (day or "nil") .. "/" .. (year or "nil"))
+                    end
+                    
+                    if CalendarCreateEventDescriptionContainer and CalendarCreateEventDescriptionContainer.ScrollingEditBox then
+                        local desc = CalendarCreateEventDescriptionContainer.ScrollingEditBox:GetText()
+                        print("  Description length: " .. (desc and string.len(desc) or 0))
+                    end
+                    
+                    print("  Calendar view month/year: " .. (CalendarFrame.viewedMonth or "nil") .. "/" .. (CalendarFrame.viewedYear or "nil"))
+                    print("  Target event month/year: " .. selectedDate.month .. "/" .. selectedDate.year)
+                    print("=== End Event Form State ===")
+                end)
+            end)
         end)
         
     else
@@ -487,105 +651,43 @@ function CalendarHelper:IdentifyRaidType(title)
     end
 end
 
--- Get raid-specific witty descriptions
+-- Get raid-specific witty descriptions (max 256 chars)
 function CalendarHelper:GetRaidDescriptions()
     return {
         Horde = {
-            MOLTEN_CORE = "🔥 Heroes of the Horde! The fiery depths of Molten Core await your conquest!\n\n" ..
-                         "⚔️ Gather your courage and finest gear - Ragnaros himself trembles at our approach!\n" ..
-                         "🏺 Rally at Blackrock Mountain - the Dark Iron dwarves shall witness Horde supremacy!\n" ..
-                         "⏰ Arrive prepared and on time - legends are forged in the flames of battle!\n\n" ..
-                         "Lok'tar Ogar! For the Horde!",
+            MOLTEN_CORE = "Heroes of the Horde! Molten Core awaits!\nGather your finest gear - Ragnaros trembles!\nRally at Blackrock Mountain on time.\n\nLok'tar Ogar!",
             
-            BLACKWING_LAIR = "🐲 The Black Dragonflight shall know fear! Nefarian's domain beckons the bravest of the Horde!\n\n" ..
-                            "⚔️ Sharpen your blades and steady your hearts - dragon bones await our collection!\n" ..
-                            "🏔️ Venture to Blackrock Spire where darkness shall be purged by Horde might!\n" ..
-                            "⏰ Punctuality is the mark of a true warrior - be ready for glorious battle!\n\n" ..
-                            "Victory or death! The Horde endures!",
+            BLACKWING_LAIR = "Nefarian's domain beckons the brave!\nSharpen your blades - dragon bones await!\nVenture to Blackrock Spire prepared.\n\nVictory or death!",
             
-            ONYXIA = "🐲 Behold! The Broodmother's lair shall echo with the roars of the Horde!\n\n" ..
-                    "⚔️ Steel yourselves, warriors - Onyxia's flames shall be extinguished by our valor!\n" ..
-                    "🏺 Journey to Dustwallow Marsh where legends are born and dragons fall!\n" ..
-                    "⏰ Time waits for no orc - arrive ready for the hunt of a lifetime!\n\n" ..
-                    "For honor and glory! Lok'tar!",
+            ONYXIA = "The Broodmother's lair awaits the Horde!\nSteel yourselves - Onyxia's flames shall fall!\nJourney to Dustwallow Marsh on time.\n\nLok'tar!",
             
-            ZUL_GURUB = "🌴 The ancient troll empire calls to the Horde! Zul'Gurub's secrets await our discovery!\n\n" ..
-                       "⚔️ Prepare for jungle warfare - the Gurubashi trolls respect only strength!\n" ..
-                       "🗡️ Navigate to Stranglethorn Vale where blood and gold flow in equal measure!\n" ..
-                       "⏰ The jungle keeps its own time - arrive early to claim your destiny!\n\n" ..
-                       "May the loa guide our blades! Victory to the Horde!",
+            ZUL_GURUB = "Zul'Gurub's secrets await discovery!\nPrepare for jungle warfare and glory!\nNavigate to Stranglethorn Vale ready.\n\nVictory to the Horde!",
             
-            AQ20 = "🏺 The Ruins of Ahn'Qiraj call to the worthy! Ancient treasures await the bold!\n\n" ..
-                  "⚔️ Twenty champions shall delve where lesser beings fear to tread!\n" ..
-                  "🏜️ Journey to Silithus where the sands hide both fortune and peril!\n" ..
-                  "⏰ Desert winds shift swiftly - be present when opportunity calls!\n\n" ..
-                  "For the Horde's eternal glory!",
+            AQ20 = "The Ruins of Ahn'Qiraj await the worthy!\nTwenty champions shall claim ancient treasures!\nJourney to Silithus prepared.\n\nFor the Horde!",
             
-            AQ40 = "👑 The Temple of Ahn'Qiraj opens its forbidden halls to the mightiest of the Horde!\n\n" ..
-                  "⚔️ Forty heroes shall face the Old God's corruption - are you among them?\n" ..
-                  "🏜️ Venture to Silithus where C'Thun's whispers drive mortals to madness!\n" ..
-                  "⏰ Time itself bends in those accursed halls - arrive promptly or be lost!\n\n" ..
-                  "Death to the Old Gods! Lok'tar Ogar!",
+            AQ40 = "The Temple of Ahn'Qiraj opens to the mighty!\nForty heroes shall face C'Thun's corruption!\nVenture to Silithus on time.\n\nLok'tar Ogar!",
             
-            NAXXRAMAS = "💀 The necropolis of Naxxramas floats above - will you answer death's challenge?\n\n" ..
-                       "⚔️ Only the most elite warriors dare face the Lich King's chosen servants!\n" ..
-                       "❄️ Steel yourselves for the Eastern Plaguelands' ultimate test!\n" ..
-                       "⏰ In death's domain, tardiness means true death - be ready!\n\n" ..
-                       "Victory over undeath! For the living Horde!",
+            NAXXRAMAS = "Naxxramas floats above - answer the challenge!\nOnly elite warriors face the Lich King's servants!\nSteel yourselves for the Plaguelands.\n\nFor the Horde!",
             
-            DEFAULT = "⚔️ Champions of the Horde unite! <title> awaits your legendary prowess!\n\n" ..
-                     "🏺 Gather your courage and finest equipment for this epic endeavor!\n" ..
-                     "⏰ Punctuality is the hallmark of true warriors - arrive ready for glory!\n\n" ..
-                     "For honor, for glory, for the Horde! Lok'tar Ogar!"
+            DEFAULT = "Champions of the Horde unite!\n<title> awaits your legendary prowess!\nGather your courage and arrive on time.\n\nLok'tar Ogar!"
         },
         
         Alliance = {
-            MOLTEN_CORE = "🔥 Champions of the Alliance! The fires of Molten Core shall test our mettle!\n\n" ..
-                         "⚔️ Don your finest armor and steel your hearts - Ragnaros awaits justice!\n" ..
-                         "🏺 Gather at Blackrock Mountain where Light shall triumph over darkness!\n" ..
-                         "⏰ Arrive prepared and punctual - honor demands nothing less!\n\n" ..
-                         "For the Alliance! By the Light!",
+            MOLTEN_CORE = "Champions of the Alliance! Molten Core awaits!\nDon your finest armor - Ragnaros faces justice!\nGather at Blackrock Mountain on time.\n\nFor the Alliance!",
             
-            BLACKWING_LAIR = "🐲 The corruption of Nefarian ends now! The Alliance shall cleanse Blackwing Lair!\n\n" ..
-                            "⚔️ Prepare for battle against the Black Dragonflight's vilest spawn!\n" ..
-                            "🏔️ Journey to Blackrock Spire where righteousness shall prevail!\n" ..
-                            "⏰ Discipline and timing are our strengths - be ready for victory!\n\n" ..
-                            "Light guide our blades! For the Alliance!",
+            BLACKWING_LAIR = "Nefarian's corruption ends now!\nPrepare for battle against the Black Dragonflight!\nJourney to Blackrock Spire ready.\n\nLight guide us!",
             
-            ONYXIA = "🐲 Justice comes for the Broodmother! Onyxia's reign of terror ends today!\n\n" ..
-                    "⚔️ Ready your weapons, heroes - the dragoness shall face Alliance might!\n" ..
-                    "🏺 Venture to Dustwallow Marsh where legends are forged in dragonfire!\n" ..
-                    "⏰ Valor waits for no one - arrive ready to claim victory!\n\n" ..
-                    "By the Light, we shall prevail!",
+            ONYXIA = "Justice comes for the Broodmother!\nReady your weapons - the dragoness shall fall!\nVenture to Dustwallow Marsh on time.\n\nBy the Light!",
             
-            ZUL_GURUB = "🌴 The cursed troll empire shall know Alliance justice! Zul'Gurub awaits liberation!\n\n" ..
-                       "⚔️ Prepare for jungle combat - ancient evils lurk in every shadow!\n" ..
-                       "🗡️ Navigate to Stranglethorn Vale where courage conquers corruption!\n" ..
-                       "⏰ The jungle hides many dangers - arrive early to ensure success!\n\n" ..
-                       "May the Light illuminate our path to victory!",
+            ZUL_GURUB = "The cursed troll empire faces Alliance justice!\nPrepare for jungle combat against ancient evils!\nNavigate to Stranglethorn Vale ready.\n\nLight guide us!",
             
-            AQ20 = "🏺 The Ruins of Ahn'Qiraj yield their secrets to the worthy Alliance!\n\n" ..
-                  "⚔️ Twenty heroes shall brave what lesser mortals dare not face!\n" ..
-                  "🏜️ Journey to Silithus where ancient treasures await the bold!\n" ..
-                  "⏰ Desert sands shift with time - be present when glory calls!\n\n" ..
-                  "For the Alliance's eternal honor!",
+            AQ20 = "The Ruins of Ahn'Qiraj yield their secrets!\nTwenty heroes shall brave ancient treasures!\nJourney to Silithus prepared.\n\nFor the Alliance!",
             
-            AQ40 = "👑 The Temple of Ahn'Qiraj opens to the Alliance's finest champions!\n\n" ..
-                  "⚔️ Forty heroes shall face the Old God's madness - stand with us!\n" ..
-                  "🏜️ Venture to Silithus where C'Thun's corruption shall be cleansed!\n" ..
-                  "⏰ In the Old Gods' realm, precision is survival - arrive on time!\n\n" ..
-                  "Light triumph over shadow! For the Alliance!",
+            AQ40 = "The Temple of Ahn'Qiraj opens to the finest!\nForty heroes shall face C'Thun's madness!\nVenture to Silithus on time.\n\nFor the Alliance!",
             
-            NAXXRAMAS = "💀 The floating necropolis challenges the Alliance's bravest souls!\n\n" ..
-                       "⚔️ Only the most dedicated heroes can face Kel'Thuzad's domain!\n" ..
-                       "❄️ Prepare for the Eastern Plaguelands' ultimate confrontation!\n" ..
-                       "⏰ Death waits for no one - arrive ready to defy the grave!\n\n" ..
-                       "Light preserve us! Victory over the undead!",
+            NAXXRAMAS = "The floating necropolis challenges the brave!\nOnly the most dedicated face Kel'Thuzad's domain!\nPrepare for the Plaguelands.\n\nLight preserve us!",
             
-            DEFAULT = "⚔️ Noble heroes of the Alliance! <title> calls for your legendary skill!\n\n" ..
-                     "🏺 Gather your courage and finest gear for this noble quest!\n" ..
-                     "⏰ Honor demands punctuality - arrive ready for glory!\n\n" ..
-                     "For king and country! For the Alliance!"
+            DEFAULT = "Noble heroes of the Alliance!\n<title> calls for your legendary skill!\nGather your courage and arrive on time.\n\nFor the Alliance!"
         }
     }
 end
@@ -613,8 +715,15 @@ end
 -- List all available events from saved data
 function CalendarHelper:ListAvailableEvents()
     local calendarData = self:ReadCalendarHelperData()
-    if not calendarData or not calendarData.events then
-        print("CalendarHelper: No events found in saved data")
+    if not calendarData then
+        print("CalendarHelper: CalendarHelperDB not loaded")
+        print("CalendarHelper: Make sure CalendarHelper.lua exists in SavedVariables folder")
+        return {}
+    end
+    
+    if not calendarData.events then
+        print("CalendarHelper: CalendarHelperDB loaded but no 'events' table found")
+        print("CalendarHelper: Data structure: " .. tostring(calendarData))
         return {}
     end
     
@@ -680,6 +789,25 @@ SlashCmdList["CALENDARHELPER"] = function(msg)
         end
     elseif command == "status" then
         CalendarHelper:PrintSavedVariableStatus()
+        
+        -- Additional debugging info
+        if CalendarHelperDB then
+            print("CalendarHelperDB exists")
+            if CalendarHelperDB.events then
+                local count = 0
+                for _ in pairs(CalendarHelperDB.events) do
+                    count = count + 1
+                end
+                print("  Events table found with " .. count .. " entries")
+            else
+                print("  Events table NOT found")
+            end
+            if CalendarHelperDB.metadata then
+                print("  Metadata found - Last import: " .. (CalendarHelperDB.metadata.last_import or "unknown"))
+            end
+        else
+            print("CalendarHelperDB does NOT exist - check SavedVariables folder")
+        end
     else
         print("CalendarHelper: Unknown command '" .. command .. "'. Use /ch for help.")
     end

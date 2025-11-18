@@ -80,7 +80,7 @@ f:SetScript("OnEvent", function()
 			-- Create a host addon object for VersionCheck (exactly like SandPacker)
 			local hostAddon = {
 				GetName = function() return "Classic Calendar - Revived" end,
-				Version = (C_AddOns and C_AddOns.GetAddOnMetadata("ClassicCalendar", "Version")) or GetAddOnMetadata("ClassicCalendar", "Version") or "ClassicCalendar-v0.9.6"
+				Version = (C_AddOns and C_AddOns.GetAddOnMetadata("ClassicCalendar", "Version")) or GetAddOnMetadata("ClassicCalendar", "Version") or "ClassicCalendar-v1.0.0"
 			}
 			VC:Enable(hostAddon)
 			print("ClassicCalendar: VersionCheck-1.0 integration enabled (v" .. hostAddon.Version .. ")")
@@ -2064,7 +2064,13 @@ function CalendarAddonDropDown_OnClick(self, arg1)
 		end
 	elseif arg1 == "raids" then
 		-- Open Calendar Helper raid selection
-		CalendarHelper_ShowRaidSelection()
+		-- Close dropdown first to prevent it from interfering
+		CloseDropDownMenus()
+		-- Small delay to ensure dropdown is closed before showing frame
+		C_Timer.After(0.1, function()
+			CalendarHelper_ShowRaidSelection()
+		end)
+		return -- Return early to skip the CloseDropDownMenus call below
 	end
 	
 	-- Close the dropdown after selection
@@ -2073,8 +2079,11 @@ end
 
 -- Calendar Helper Raid Selection Window
 function CalendarHelper_ShowRaidSelection()
+	print("CalendarHelper: ShowRaidSelection called")
+	
 	-- Create raid selection frame if it doesn't exist
 	if not CalendarHelperRaidFrame then
+		print("CalendarHelper: Creating raid selection frame")
 		CalendarHelperRaidFrame = CreateFrame("Frame", "CalendarHelperRaidFrame", UIParent, "BasicFrameTemplateWithInset")
 		CalendarHelperRaidFrame:SetSize(400, 300)
 		CalendarHelperRaidFrame:SetPoint("CENTER")
@@ -2102,17 +2111,32 @@ function CalendarHelper_ShowRaidSelection()
 		CalendarHelperRaidFrame.scrollFrame = scrollFrame
 		CalendarHelperRaidFrame.content = content
 		CalendarHelperRaidFrame.eventButtons = {}
+		print("CalendarHelper: Frame created successfully")
+	else
+		print("CalendarHelper: Using existing frame")
 	end
 	
 	-- Populate with events
+	print("CalendarHelper: Populating events...")
 	CalendarHelper_PopulateRaidEvents()
 	
 	-- Show the frame
+	print("CalendarHelper: Showing frame")
 	CalendarHelperRaidFrame:Show()
+	print("CalendarHelper: Frame shown, isShown=" .. tostring(CalendarHelperRaidFrame:IsShown()))
 end
 
 function CalendarHelper_PopulateRaidEvents()
-	if not CalendarHelperRaidFrame then return end
+	if not CalendarHelperRaidFrame then 
+		print("CalendarHelper: ERROR - CalendarHelperRaidFrame not found")
+		return 
+	end
+	
+	-- Check if CalendarHelper is available
+	if not CalendarHelper then
+		print("CalendarHelper: ERROR - CalendarHelper object not loaded")
+		return
+	end
 	
 	-- Clear existing buttons
 	for _, button in pairs(CalendarHelperRaidFrame.eventButtons) do
@@ -2121,7 +2145,10 @@ function CalendarHelper_PopulateRaidEvents()
 	wipe(CalendarHelperRaidFrame.eventButtons)
 	
 	-- Get events from CalendarHelper
+	print("CalendarHelper: Fetching event list...")
 	local eventList = CalendarHelper:ListAvailableEvents()
+	print("CalendarHelper: Got " .. (#eventList or 0) .. " events")
+	
 	if not eventList or #eventList == 0 then
 		-- Show "no events" message
 		local noEventsText = CalendarHelperRaidFrame.content:CreateFontString(nil, "OVERLAY", "GameFontNormal")

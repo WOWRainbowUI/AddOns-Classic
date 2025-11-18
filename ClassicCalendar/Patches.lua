@@ -377,6 +377,9 @@ function newEventGetTextures(eventType)
 	return {}
 end
 
+-- Track if we've already printed holiday debug info this session
+local holidayDebugPrinted = false
+
 function stubbedGetNumDayEvents(monthOffset, monthDay)
 	-- Stubbing C_Calendar.getNumDayEvents to return fake events
 	local originalEventCount = C_Calendar.GetNumDayEvents(monthOffset, monthDay)
@@ -390,10 +393,6 @@ function stubbedGetNumDayEvents(monthOffset, monthDay)
 
 	local holidays = GetClassicHolidays()
 	
-	if DEBUG_MODE then
-		print("ClassicCalendar Debug: Number of holidays:", #holidays)
-	end
-	
 	-- Limit processing to prevent script timeout
 	if #holidays > 500 then
 		if DEBUG_MODE then
@@ -405,7 +404,10 @@ function stubbedGetNumDayEvents(monthOffset, monthDay)
 		end
 	end
 	
-	if DEBUG_MODE then
+	-- Only print holiday debug once per session to avoid spam (data is cached in GetClassicHolidays)
+	if DEBUG_MODE and not holidayDebugPrinted then
+		print("ClassicCalendar Debug: Number of holidays:", #holidays)
+		holidayDebugPrinted = true
 		-- Only show first 10 and last 10 holidays for debugging
 		for i = 1, math.min(10, #holidays) do
 			local holiday = holidays[i]

@@ -300,6 +300,35 @@ function WorldBuffs:StyleCalendarButton(button, width)
     highlight:SetBlendMode("ADD")
 end
 
+-- Save WorldBuff frame position
+function WorldBuffs:SaveFramePosition()
+    if not WorldBuffFrame or not CCConfig then return end
+    
+    local point, relativeTo, relativePoint, xOfs, yOfs = WorldBuffFrame:GetPoint()
+    CCConfig.WorldBuffFramePos = {
+        point = point,
+        relativePoint = relativePoint,
+        xOfs = xOfs,
+        yOfs = yOfs
+    }
+end
+
+-- Restore WorldBuff frame position
+function WorldBuffs:RestoreFramePosition()
+    if not WorldBuffFrame or not CCConfig or not CCConfig.WorldBuffFramePos then
+        WorldBuffFrame:SetPoint("CENTER")
+        return
+    end
+    
+    local pos = CCConfig.WorldBuffFramePos
+    if pos.point and pos.relativePoint and pos.xOfs and pos.yOfs then
+        WorldBuffFrame:ClearAllPoints()
+        WorldBuffFrame:SetPoint(pos.point, UIParent, pos.relativePoint, pos.xOfs, pos.yOfs)
+    else
+        WorldBuffFrame:SetPoint("CENTER")
+    end
+end
+
 -- Create the main WorldBuff window
 function WorldBuffs:CreateMainFrame()
     if WorldBuffFrame then
@@ -309,13 +338,18 @@ function WorldBuffs:CreateMainFrame()
     -- Create main frame
     WorldBuffFrame = CreateFrame("Frame", "ClassicCalendarWorldBuffFrame", UIParent, "BasicFrameTemplateWithInset")
     WorldBuffFrame:SetSize(600, 450)
-    WorldBuffFrame:SetPoint("CENTER")
     WorldBuffFrame:SetMovable(true)
     WorldBuffFrame:EnableMouse(true)
     WorldBuffFrame:RegisterForDrag("LeftButton")
     WorldBuffFrame:SetScript("OnDragStart", WorldBuffFrame.StartMoving)
-    WorldBuffFrame:SetScript("OnDragStop", WorldBuffFrame.StopMovingOrSizing)
+    WorldBuffFrame:SetScript("OnDragStop", function(self)
+        self:StopMovingOrSizing()
+        WorldBuffs:SaveFramePosition()
+    end)
     WorldBuffFrame:Hide()
+    
+    -- Restore saved position or default to center
+    WorldBuffs:RestoreFramePosition()
     
     -- Make background transparent
     self:HideFrameBackground(WorldBuffFrame)
@@ -820,14 +854,9 @@ function WorldBuffs:SaveEntry()
         self.addDialog.selectedDate.day, 
         self.addDialog.selectedDate.year)
 
-    -- If player name is blank but main name exists, use consistent filler
-    if (playerName == "" or playerName == nil) and mainName and mainName ~= "" then
-        playerName = "[Alt of " .. mainName .. "]"
-        print("Using '[Alt of " .. mainName .. "]' as player name for blank entry")
-    end
-    
-    if playerName == "" or playerName == nil then
-        print("Player name cannot be empty (and no main name provided)")
+    -- Require valid player name - no placeholders
+    if playerName == "" or playerName == nil or playerName:match("^%s*$") then
+        print("|cFFFF0000ClassicCalendar:|r Player name is required.")
         return
     end
     
@@ -859,10 +888,10 @@ function WorldBuffs:SaveEntry()
         end
         
         dataTable[self.editIndex] = {
-            playerName = playerName,
-            mainName = mainName,
-            receivedDate = receivedDate,
-            dropped = dropped,
+            playerName = tostring(playerName or ""),
+            mainName = tostring(mainName or ""),
+            receivedDate = tostring(receivedDate or ""),
+            dropped = tostring(dropped or "No"),
             lastModified = time()
         }
         
@@ -877,10 +906,10 @@ function WorldBuffs:SaveEntry()
         local dropped = "No" -- Default to No for new entries
         
         table.insert(dataTable, {
-            playerName = playerName,
-            mainName = mainName,
-            receivedDate = receivedDate,
-            dropped = dropped,
+            playerName = tostring(playerName or ""),
+            mainName = tostring(mainName or ""),
+            receivedDate = tostring(receivedDate or ""),
+            dropped = tostring(dropped or "No"),
             lastModified = time()
         })
         
@@ -1378,6 +1407,181 @@ SlashCmdList["WORLDBUFF"] = function()
     end
 end
 
+-- Sanitize an entry by removing invalid fields and creating a clean copy
+function WorldBuffs:SanitizeEntry(entry)
+    if not entry then return nil end
+    
+    -- Valid field names that should exist in a world buff entry
+    local validFields = {
+        playerName = true,
+        mainName = true,
+        receivedDate = true,
+        dropped = true,
+        lastModified = true,
+        deleted = true,
+        deletedTime = true
+    }
+    
+    -- Create a clean new entry with only valid fields (with explicit string copies)
+    local cleanEntry = {}
+    
+    for key, value in pairs(entry) do
+        if validFields[key] then
+            -- Force string copy to prevent memory corruption
+            if type(value) == "string" then
+                cleanEntry[key] = tostring(value)
+            else
+                cleanEntry[key] = value
+            end
+        elseif DEBUG_MODE then
+            print("WorldBuff Debug: Removing invalid field '" .. tostring(key) .. "' from entry")
+        end
+    end
+    
+    -- Validate and fix data types
+    if cleanEntry.lastModified and type(cleanEntry.lastModified) ~= "number" then
+        cleanEntry.lastModified = time()
+    end
+    
+    if cleanEntry.deletedTime and type(cleanEntry.deletedTime) ~= "number" then
+        cleanEntry.deletedTime = time()
+    end
+    
+    -- Ensure required fields exist
+    if not cleanEntry.playerName or cleanEntry.playerName == "" or cleanEntry.playerName:match("^%s*$") then
+        -- Entry has no valid player name, reject it
+        if DEBUG_MODE then
+            print("WorldBuff Debug: Rejecting entry with no valid player name")
+        end
+        return nil
+    end
+    
+    -- Reject [Alt of X] placeholder entries from old design
+    if cleanEntry.playerName:match("^%[Alt of .+%]$") then
+        if DEBUG_MODE then
+            print("WorldBuff Debug: Rejecting [Alt of X] placeholder entry")
+        end
+        return nil
+    end
+    
+    if not cleanEntry.mainName or cleanEntry.mainName == "" then
+        cleanEntry.mainName = cleanEntry.playerName
+    end
+    
+    -- Validate mainName for corruption patterns
+    if cleanEntry.mainName then
+        local mName = cleanEntry.mainName
+        
+        -- Reject if mainName is corrupted (dates, truncated [Alt of X], timestamp digits)
+        if mName:match("%d%d?/%d%d?/%d%d%d%d") or  -- Date pattern
+           mName:match("%d%d%d%d%d%d") or          -- 6+ consecutive digits (timestamp)
+           mName:match("^%[Alt of [^%]]*$") or     -- Truncated [Alt of X]
+           mName:match("/%d") or                    -- Slash followed by digit (date fragment)
+           #mName < 2 then                          -- Too short
+            if DEBUG_MODE then
+                print("WorldBuff Debug: Rejecting entry with corrupted mainName: " .. mName)
+            end
+            return nil
+        end
+    end
+    
+    -- Reject entries with "Unknown Player" as the name
+    if cleanEntry.playerName == "Unknown Player" or cleanEntry.mainName == "Unknown Player" then
+        if DEBUG_MODE then
+            print("WorldBuff Debug: Rejecting Unknown Player entry")
+        end
+        return nil
+    end
+    
+    -- Reject obviously corrupted player names (dates, short names, weird characters)
+    if cleanEntry.playerName then
+        local pName = cleanEntry.playerName
+        
+        -- Reject if playerName looks like a date (contains / or has year pattern)
+        if pName:match("%d%d?/%d%d?/%d%d%d%d") or pName:match("20%d%d") then
+            if DEBUG_MODE then
+                print("WorldBuff Debug: Rejecting entry with date in playerName: " .. pName)
+            end
+            return nil
+        end
+        
+        -- Reject very short names - likely truncated
+        if #pName < 3 then
+            if DEBUG_MODE then
+                print("WorldBuff Debug: Rejecting entry with truncated playerName: " .. pName)
+            end
+            return nil
+        end
+        
+        -- Reject names with 6+ consecutive digits (timestamp fragments)
+        if pName:match("%d%d%d%d%d%d") then
+            if DEBUG_MODE then
+                print("WorldBuff Debug: Rejecting entry with timestamp digits in playerName: " .. pName)
+            end
+            return nil
+        end
+        
+        -- Reject truncated [Alt of X] entries (missing closing bracket or too short after "Alt of")
+        if pName:match("^%[Alt of [^%]]*$") or pName:match("^%[Alt of .?.?%]$") then
+            if DEBUG_MODE then
+                print("WorldBuff Debug: Rejecting truncated [Alt of X] entry: " .. pName)
+            end
+            return nil
+        end
+        
+        -- Reject names with slash followed by digits (date fragments like H/2025)
+        if pName:match("/%d") then
+            if DEBUG_MODE then
+                print("WorldBuff Debug: Rejecting entry with date fragment in playerName: " .. pName)
+            end
+            return nil
+        end
+    end
+    
+    -- Validate lastModified timestamp (should be reasonable unix timestamp)
+    if cleanEntry.lastModified and (cleanEntry.lastModified < 1700000000 or cleanEntry.lastModified > 2000000000) then
+        if DEBUG_MODE then
+            print("WorldBuff Debug: Fixing corrupted timestamp: " .. cleanEntry.lastModified)
+        end
+        cleanEntry.lastModified = time()
+    end
+    
+    -- Validate and fix receivedDate format
+    if not cleanEntry.receivedDate or cleanEntry.receivedDate == "" then
+        cleanEntry.receivedDate = date("%m/%d/%Y")
+    else
+        -- Check if date format is valid (MM/DD/YYYY)
+        local month, day, year = cleanEntry.receivedDate:match("^(%d%d?)/(%d%d?)/(%d%d%d%d)$")
+        if not month or not day or not year then
+            if DEBUG_MODE then
+                print("WorldBuff Debug: Fixing malformed receivedDate: " .. cleanEntry.receivedDate)
+            end
+            cleanEntry.receivedDate = date("%m/%d/%Y")
+        else
+            -- Validate date ranges
+            month = tonumber(month)
+            day = tonumber(day)
+            year = tonumber(year)
+            if month < 1 or month > 12 or day < 1 or day > 31 or year < 2019 or year > 2030 then
+                if DEBUG_MODE then
+                    print("WorldBuff Debug: Fixing out-of-range receivedDate: " .. cleanEntry.receivedDate)
+                end
+                cleanEntry.receivedDate = date("%m/%d/%Y")
+            end
+        end
+    end
+    
+    if not cleanEntry.dropped then
+        cleanEntry.dropped = "No"
+    end
+    
+    if not cleanEntry.lastModified then
+        cleanEntry.lastModified = time()
+    end
+    
+    return cleanEntry
+end
+
 -- Clean up corrupted data entries
 function WorldBuffs:CleanupCorruptedData()
     local tables = {
@@ -1387,75 +1591,92 @@ function WorldBuffs:CleanupCorruptedData()
         {name = "WorldBuffNefarianData", data = WorldBuffNefarianData}
     }
     
-    local totalFixed = 0
+    local totalCleaned = 0
+    local totalRemoved = 0
+    local corruptionTypes = {
+        ["[Alt of X]"] = 0,
+        ["Unknown Player"] = 0,
+        ["Date as Name"] = 0,
+        ["Timestamp Digits"] = 0,
+        ["Invalid Fields"] = 0,
+        ["Truncated"] = 0
+    }
     
     for _, tableInfo in ipairs(tables) do
         if tableInfo.data then
-            for i, entry in ipairs(tableInfo.data) do
-                local fixed = false
+            local i = 1
+            local tableRemoved = 0
+            while i <= #tableInfo.data do
+                local entry = tableInfo.data[i]
+                local removed = false
                 
-                -- Fix missing receivedDate field (check for various typos)
-                if not entry.receivedDate then
-                    if entry.playerNameedDate then
-                        entry.receivedDate = entry.playerNameedDate
-                        entry.playerNameedDate = nil -- Remove the typo field
-                        fixed = true
-                    elseif entry.droppededDate then
-                        entry.receivedDate = entry.droppededDate
-                        entry.droppededDate = nil -- Remove the typo field
-                        fixed = true
+                -- Track corruption types
+                if entry.playerName then
+                    if entry.playerName:match("^%[Alt of .+%]$") then
+                        corruptionTypes["[Alt of X]"] = corruptionTypes["[Alt of X]"] + 1
+                        removed = true
+                    elseif entry.playerName == "Unknown Player" then
+                        corruptionTypes["Unknown Player"] = corruptionTypes["Unknown Player"] + 1
+                        removed = true
+                    elseif entry.playerName:match("%d%d?/%d%d?/%d%d%d%d") then
+                        corruptionTypes["Date as Name"] = corruptionTypes["Date as Name"] + 1
+                        removed = true
+                    elseif entry.playerName:match("%d%d%d%d%d%d") then
+                        corruptionTypes["Timestamp Digits"] = corruptionTypes["Timestamp Digits"] + 1
+                        removed = true
+                    elseif #entry.playerName < 3 then
+                        corruptionTypes["Truncated"] = corruptionTypes["Truncated"] + 1
+                        removed = true
                     end
                 end
                 
-                -- Ensure receivedDate exists (default to today if missing)
-                if not entry.receivedDate or entry.receivedDate == "" then
-                    local currentDate = date("*t")
-                    entry.receivedDate = string.format("%02d/%02d/%d", currentDate.month, currentDate.day, currentDate.year)
-                    fixed = true
-                end
+                -- Sanitize the entry to remove corrupted fields
+                local cleanEntry = self:SanitizeEntry(entry)
                 
-                -- Standardize blank player names - use consistent filler when main name exists
-                if not entry.playerName or entry.playerName == "" then
-                    if entry.mainName and entry.mainName ~= "" then
-                        entry.playerName = "[Alt of " .. entry.mainName .. "]"
-                        fixed = true
-                    else
-                        entry.playerName = "Unknown Player"
-                        fixed = true
+                if cleanEntry and not removed then
+                    -- Replace with clean entry
+                    tableInfo.data[i] = cleanEntry
+                    totalCleaned = totalCleaned + 1
+                    i = i + 1
+                else
+                    -- Entry is too corrupted, remove it
+                    if DEBUG_MODE and entry.playerName then
+                        print("WorldBuff Debug: Removing corrupted entry from " .. tableInfo.name .. ": " .. tostring(entry.playerName))
                     end
-                -- Standardize existing variations of unknown players
-                elseif entry.playerName == "[Unknown Player]" then
-                    if entry.mainName and entry.mainName ~= "" then
-                        entry.playerName = "[Alt of " .. entry.mainName .. "]"
-                        fixed = true
-                    else
-                        entry.playerName = "Unknown Player"
-                        fixed = true
-                    end
+                    table.remove(tableInfo.data, i)
+                    totalRemoved = totalRemoved + 1
+                    tableRemoved = tableRemoved + 1
                 end
-                
-                -- Ensure mainName exists
-                if not entry.mainName or entry.mainName == "" then
-                    entry.mainName = entry.playerName
-                    fixed = true
-                end
-                
-                -- Ensure dropped field exists
-                if not entry.dropped then
-                    entry.dropped = "No"
-                    fixed = true
-                end
-                
-                if fixed then
-                    totalFixed = totalFixed + 1
+            end
+            
+            if tableRemoved > 0 and DEBUG_MODE then
+                print("WorldBuff Debug: Removed " .. tableRemoved .. " corrupted entries from " .. tableInfo.name)
+            end
+        end
+    end
+    
+    -- Print summary
+    if totalRemoved > 0 then
+        print("|cFFFF9900ClassicCalendar:|r Cleaned up " .. totalRemoved .. " corrupted world buff entries")
+        
+        if DEBUG_MODE then
+            for cType, count in pairs(corruptionTypes) do
+                if count > 0 then
+                    print("  - " .. cType .. ": " .. count)
                 end
             end
         end
     end
     
-    if totalFixed > 0 then
-        print("WorldBuff Debug: Fixed", totalFixed, "corrupted data entries")
+    if totalCleaned > 0 and DEBUG_MODE then
+        print("WorldBuff Debug: Sanitized " .. totalCleaned .. " entries (removed invalid fields)")
     end
+end
+
+-- Fix corrupted saved variable data (legacy function - now uses sanitization)
+function WorldBuffs:FixCorruptedData()
+    -- Just call the cleanup function which now includes sanitization
+    self:CleanupCorruptedData()
 end
 
 -- Migrate old WorldBuffData format to new separate tables
@@ -1511,7 +1732,14 @@ function WorldBuffs:Initialize()
 		print("WorldBuff Debug: Initialized calendarShowWorldBuffs in CCConfig with default value true")
 	else
 		print("WorldBuff Debug: calendarShowWorldBuffs already exists in CCConfig, value:", CCConfig.calendarShowWorldBuffs)
-	end    -- Initialize saved variables - separate tables for each buff type
+	end
+	
+	-- Initialize WorldBuff frame position storage
+	if not CCConfig.WorldBuffFramePos then
+		CCConfig.WorldBuffFramePos = {}
+	end
+	
+    -- Initialize saved variables - separate tables for each buff type
     WorldBuffRendData = WorldBuffRendData or {}
     WorldBuffHakkarData = WorldBuffHakkarData or {}
     WorldBuffOnyxiaData = WorldBuffOnyxiaData or {}
