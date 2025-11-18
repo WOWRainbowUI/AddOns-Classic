@@ -1,5 +1,5 @@
 ﻿----------------------------------------------------------------------
--- 	Leatrix Plus 5.1.07 (29th October 2025)
+-- 	Leatrix Plus 5.1.10 (15th November 2025)
 ----------------------------------------------------------------------
 
 --	01:Functions 02:Locks   03:Restart 40:Player   45:Rest
@@ -19,7 +19,7 @@
 	local void
 
 	-- Version
-	LeaPlusLC["AddonVer"] = "5.1.07"
+	LeaPlusLC["AddonVer"] = "5.1.10"
 
 	-- Get locale table
 	local void, Leatrix_Plus = ...
@@ -1067,17 +1067,17 @@
 				if (LeaPlusLC["AcceptPartyFriends"] == "On" and LeaPlusLC:FriendCheck(arg1, guid)) then
 					if not LeaPlusLC:IsInLFGQueue() then
 						AcceptGroup()
-						for i=1, STATICPOPUP_NUMDIALOGS do
-							if _G["StaticPopup"..i].which == "PARTY_INVITE" then
-								_G["StaticPopup"..i].inviteAccepted = 1
+						StaticPopup_ForEachShownDialog(function(self)
+							if self.which == "PARTY_INVITE" then
+								self.inviteAccepted = 1
 								StaticPopup_Hide("PARTY_INVITE")
-								break
-							elseif _G["StaticPopup"..i].which == "PARTY_INVITE_XREALM" then
-								_G["StaticPopup"..i].inviteAccepted = 1
+								return
+							elseif self.which == "PARTY_INVITE_XREALM" then
+								self.inviteAccepted = 1
 								StaticPopup_Hide("PARTY_INVITE_XREALM")
-								break
+								return
 							end
-						end
+						end)
 						return
 					end
 				end
