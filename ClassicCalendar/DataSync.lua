@@ -133,33 +133,77 @@ function DataSync:MergeGuildSyncData(syncData, sender)
         
         -- Merge entries based on player name, using timestamps to resolve conflicts
         for _, entry in ipairs(entries) do
-            local foundIndex = nil
-            for i, ourEntry in ipairs(buffDataTable) do
-                if ourEntry.playerName == entry.playerName then
-                    foundIndex = i
-                    break
+            local shouldProcess = true
+            
+            -- Sanitize incoming entry to prevent corruption
+            if not WorldBuffs or not WorldBuffs.SanitizeEntry then
+                if DEBUG_MODE then
+                    print("ClassicCalendar: WorldBuffs not ready, skipping sync entry")
                 end
+                shouldProcess = false
             end
             
-            if foundIndex then
-                -- Player exists, check timestamps to see if we should update
-                local ourTimestamp = buffDataTable[foundIndex].lastModified or 0
-                local entryTimestamp = entry.lastModified or 0
+            if shouldProcess then
+                local cleanEntry = WorldBuffs:SanitizeEntry(entry)
                 
-                if entryTimestamp > ourTimestamp then
-                    -- Incoming entry is newer, replace our entry
-                    buffDataTable[foundIndex] = entry
-                    hasChanges = true
+                if not cleanEntry then
+                    -- Entry is too corrupted, skip it and log in debug mode
+                    if DEBUG_MODE then
+                        local playerName = entry.playerName or "unknown"
+                        print("ClassicCalendar: Rejected corrupted sync entry: " .. tostring(playerName))
+                    end
+                    shouldProcess = false
                 end
-            else
-                -- New player, add the entry
-                table.insert(buffDataTable, entry)
-                hasChanges = true
+                
+                -- Additional validation: ensure entry has required fields after sanitization
+                if shouldProcess and (not cleanEntry.playerName or not cleanEntry.lastModified) then
+                    if DEBUG_MODE then
+                        print("ClassicCalendar: Rejected sync entry missing required fields")
+                    end
+                    shouldProcess = false
+                end
+                
+                if shouldProcess then
+                    local foundIndex = nil
+                    for i, ourEntry in ipairs(buffDataTable) do
+                        if ourEntry.playerName == cleanEntry.playerName then
+                            foundIndex = i
+                            break
+                        end
+                    end
+                    
+                    if foundIndex then
+                        -- Player exists, check timestamps to see if we should update
+                        local ourTimestamp = buffDataTable[foundIndex].lastModified or 0
+                        local entryTimestamp = cleanEntry.lastModified or 0
+                        
+                        if entryTimestamp > ourTimestamp then
+                            -- Incoming entry is newer, replace our entry with clean copy
+                            buffDataTable[foundIndex] = cleanEntry
+                            hasChanges = true
+                            if DEBUG_MODE then
+                                print("ClassicCalendar: Updated entry for " .. cleanEntry.playerName)
+                            end
+                        end
+                    else
+                        -- New player, add the clean entry
+                        table.insert(buffDataTable, cleanEntry)
+                        hasChanges = true
+                        if DEBUG_MODE then
+                            print("ClassicCalendar: Added new entry for " .. cleanEntry.playerName)
+                        end
+                    end
+                end
             end
         end
     end
     
     if hasChanges then
+        -- Run cleanup to catch any corruption that slipped through
+        if WorldBuffs and WorldBuffs.CleanupCorruptedData then
+            WorldBuffs:CleanupCorruptedData()
+        end
+        
         -- Refresh display if WorldBuffs frame is available and shown
         if WorldBuffFrame and WorldBuffFrame:IsShown() and WorldBuffs then
             local currentTab = nil
