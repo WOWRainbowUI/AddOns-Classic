@@ -1,28 +1,48 @@
-tag 999aca3ccbcdf79978fe4f11355ce33908f00c65 v2.3.2
+tag b8fd30dce4058bde207b2b6d41f2d41547df6a06 v2.3.3
 Author:	skyler-code <skylerh15@github.com>
-Date:	Fri Oct 31 19:24:26 2025 -0500
+Date:	Wed Nov 19 13:21:55 2025 -0600
 
-commit 292b380660ba94703721cbeb333176f927ccb53f
+commit 79d4d40d3398f188ef5ac28c98c05707250685be
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Oct 31 19:12:57 2025 -0500
+Date:   Wed Nov 19 13:21:32 2025 -0600
 
-    fix for Brazilian clients
+    Removed bad pattern
 
-commit 5bf0953ebfe3b0148f906199b859f9c8ede4f02f
+commit 26a86fedd9d3ade168141c83f63e77d879d64cb2
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Oct 31 13:04:28 2025 -0500
+Date:   Wed Nov 19 13:02:03 2025 -0600
 
-    Leftover code was causing column expanding to break
+    Extract wowsims to current directory
 
-commit c8f394daf6e3409bb3963d04f5c8776adad81ff2
+commit 9f4010a7ed5ec5b132df00809b9e5d9be952fbb4
 Author: skyler-code <skylerh15@github.com>
-Date:   Fri Oct 31 01:27:25 2025 -0500
+Date:   Wed Nov 19 12:56:13 2025 -0600
 
-    cleanup
+    wowsims compare script
 
-commit 52bc6aa86a5916cfa5893b53f6501458c5bbf9ba
+commit bd2742b4851745fe9ec33cf99950a707cc9fe4e8
 Author: skyler-code <skylerh15@github.com>
-Date:   Thu Oct 30 13:23:35 2025 -0500
+Date:   Wed Nov 19 12:46:19 2025 -0600
 
-    utilize FormatLargeNumber
+    ilvl cleanup so it looks better on different locales
+
+commit 66f903cd78d595fa51df755936a47d84eb3d4090
+Author: skyler-code <skylerh15@github.com>
+Date:   Tue Nov 18 09:52:44 2025 -0600
+
+    dev util: track how much was spent on reforging
+
+commit afbe4c78077d04e9e20b28d4fa08cd19f50d6afa
+Author: skyler-code <skylerh15@github.com>
+Date:   Sat Nov 15 23:45:26 2025 -0600
+
+    Update WoWSims presets
+    
+    Balance, Hunter, Affli
+
+commit 6211811dac6a0f0d39c13f7211c912c5d726e348
+Author: skyler-code <skylerh15@github.com>
+Date:   Sun Nov 9 14:39:52 2025 -0600
+
+    move GetActiveItemSet to util
 
