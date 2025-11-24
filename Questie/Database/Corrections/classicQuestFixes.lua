@@ -1697,7 +1697,7 @@ function QuestieQuestFixes:Load()
             [questKeys.finishedBy] = {nil,{152097}},
         },
         [3526] = { -- Goblin Engineering (Undercity)
-            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING, -- engineering skill, no specializations
             [questKeys.exclusiveTo] = {3633,3642},
         },
         [3625] = {
@@ -1710,31 +1710,31 @@ function QuestieQuestFixes:Load()
         },
         [3629] = { -- Goblin Engineering (Stormwind)
             [questKeys.specialFlags] = specialFlags.NONE,
-            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING, -- engineering skill, no specializations
             [questKeys.exclusiveTo] = {3633,3640,4181},
         },
         [3630] = { -- Gnome Engineering (Stormwind)
-            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING, -- engineering skill, no specializations
             [questKeys.exclusiveTo] = {3632,3634,3638},
         },
         [3632] = { -- Gnome Engineering (Ironforge)
-            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING, -- engineering skill, no specializations
             [questKeys.exclusiveTo] = {3630,3634,3638},
         },
         [3633] = { -- Goblin Engineering (Ratchet Neutral)
-            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING, -- engineering skill, no specializations
             [questKeys.exclusiveTo] = {3526,3629,3640,3642,4181},
         },
         [3634] = { -- Gnome Engineering (Ratchet Alliance)
-            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING, -- engineering skill, no specializations
             [questKeys.exclusiveTo] = {3630,3632,3638}
         },
         [3635] = { -- Gnome Engineering (Undercity)
-            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING, -- engineering skill, no specializations
             [questKeys.exclusiveTo] = {3637,3638},
         },
         [3637] = { -- Gnome Engineering (Ratchet Horde)
-            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING, -- engineering skill, no specializations
             [questKeys.exclusiveTo] = {3635,3638},
         },
         [3639] = {
@@ -1748,23 +1748,23 @@ function QuestieQuestFixes:Load()
         },
         [3644] = {
             [questKeys.preQuestSingle] = {3639,3641,3643},
-            [questKeys.requiredSpell] = 20222,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING_GOBLIN,
         },
         [3645] = {
             [questKeys.preQuestSingle] = {3639,3641,3643},
             [questKeys.startedBy] = {{7406},nil,nil},
             [questKeys.finishedBy] = {{7406},nil},
-            [questKeys.requiredSpell] = 20219,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING_GNOMISH,
         },
         [3646] = {
             [questKeys.preQuestSingle] = {3639,3641,3643},
-            [questKeys.requiredSpell] = 20222,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING_GOBLIN,
         },
         [3647] = {
             [questKeys.preQuestSingle] = {3639,3641,3643},
             [questKeys.startedBy] = {{7944},nil,nil},
             [questKeys.finishedBy] = {{7944},nil},
-            [questKeys.requiredSpell] = 20219,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING_GNOMISH,
         },
         [3681] = {
             [questKeys.exclusiveTo] = {1642,1646,2997,2998,2999,3000},
@@ -1792,10 +1792,10 @@ function QuestieQuestFixes:Load()
             [questKeys.breadcrumbForQuestId] = 3761,
         },
         [3785] = {
-            [questKeys.requiredSourceItems] = {11022,11018},
+            [questKeys.requiredSourceItems] = {11018,11022},
         },
         [3786] = {
-            [questKeys.requiredSourceItems] = {11022,11018},
+            [questKeys.requiredSourceItems] = {11018,11022},
         },
         [3787] = {
             [questKeys.preQuestSingle] = {3781},
@@ -1812,7 +1812,8 @@ function QuestieQuestFixes:Load()
             [questKeys.breadcrumbForQuestId] = 3764,
         },
         [3791] = {
-            [questKeys.requiredSourceItems] = {11022,11018},
+            [questKeys.requiredSourceItems] = {11018,11022},
+            [questKeys.preQuestSingle] = {3781}, -- #7241
             [questKeys.breadcrumbs] = {3787,3788}, -- #885
         },
         [3903] = {
@@ -1938,7 +1939,7 @@ function QuestieQuestFixes:Load()
             [questKeys.zoneOrSort] = zoneIDs.UN_GORO_CRATER,
         },
         [4181] = { -- Goblin Engineering (Ironforge)
-            [questKeys.requiredSpecialization] = specKeys.ENGINEERING,
+            [questKeys.requiredSpecialization] = specKeys.ENGINEERING, -- engineering skill, no specializations
             [questKeys.exclusiveTo] = {3629,3633,3640},
         },
         [4185] = {
@@ -2960,6 +2961,9 @@ function QuestieQuestFixes:Load()
         [6661] = {
             [questKeys.objectives] = {{{13016,"Rats Captured",Questie.ICON_TYPE_INTERACT}}},
         },
+        [6681] = {
+            [questKeys.startedBy] = {{332,918,3327,3328,3401,4214,4215,4163,4582,4583,4584,5165,5166,5167},nil,{17126}}, -- #7244
+        },
         [6721] = {
             [questKeys.startedBy] = {{5116},nil,nil},
             [questKeys.exclusiveTo] = {6071,6072,6073,6722},
@@ -3554,6 +3558,14 @@ function QuestieQuestFixes:Load()
         [8227] = {
             [questKeys.zoneOrSort] = zoneIDs.ZUL_GURUB,
         },
+        [8228] = {
+            [questKeys.startedBy] = {{15116},nil,nil},
+            [questKeys.finishedBy] = {{15116},nil},
+        },
+        [8229] = {
+            [questKeys.startedBy] = {{15119},nil,nil},
+            [questKeys.finishedBy] = {{15119},nil},
+        },
         [8233] = {
             [questKeys.startedBy] = {{918,3328,4163,4583,5165}},
         },
@@ -3571,6 +3583,9 @@ function QuestieQuestFixes:Load()
         },
         [8246] = {
             [questKeys.zoneOrSort] = zoneIDs.ZUL_GURUB,
+        },
+        [8249] = {
+            [questKeys.requiredClasses] = classIDs.NONE,
         },
         [8250] = {
             [questKeys.startedBy] = {{331,3047,4567,7311,7312}},
@@ -3722,6 +3737,7 @@ function QuestieQuestFixes:Load()
             [questKeys.objectives] = {nil,{{180449,"Clean up a stink bomb that's been dropped on Southshore!"}}},
         },
         [8374] = { -- Claiming Arathi Basin
+            [questKeys.exclusiveTo] = {8393,8394,8395,8396}, -- #6068
             [questKeys.requiredMaxLevel] = 29,
         },
         [8375] = { -- Remember Alterac Valley!
@@ -3755,6 +3771,7 @@ function QuestieQuestFixes:Load()
         },
         [8390] = { -- Conquering Arathi Basin
             [questKeys.requiredMaxLevel] = 29,
+            [questKeys.objectivesText] = {},
         },
         [8391] = { -- Claiming Arathi Basin
             [questKeys.preQuestSingle] = {8374,8393},
@@ -3783,6 +3800,7 @@ function QuestieQuestFixes:Load()
         },
         [8397] = { -- Claiming Arathi Basin
             [questKeys.preQuestSingle] = {8374,8393,8394,8395},
+            [questKeys.requiredMaxLevel] = 59,
             [questKeys.objectivesText] = {},
         },
         [8398] = { -- Claiming Arathi Basin
@@ -3915,9 +3933,13 @@ function QuestieQuestFixes:Load()
             [questKeys.exclusiveTo] = {8370,8436,8437,8439},
             [questKeys.requiredMaxLevel] = 59,
         },
+        [8439] = { -- Conquering Arathi Basin
+            [questKeys.exclusiveTo] = {8370,8436,8437,8438},
+        },
         [8440] = { -- Conquering Arathi Basin
             [questKeys.preQuestSingle] = {8370,8436},
             [questKeys.requiredMaxLevel] = 39,
+            [questKeys.objectivesText] = {},
         },
         [8441] = { -- Conquering Arathi Basin
             [questKeys.preQuestSingle] = {8370,8436,8437},
@@ -5138,7 +5160,7 @@ function QuestieQuestFixes:LoadFactionFixes()
             [questKeys.startedBy] = {{8403},nil,nil}
         },
         [6681] = {
-            [questKeys.startedBy] = {{332,918,3327,3328,3401,4214,4215,4163,4582,4583,4584,5165,5166,5167,6467,13283},nil,{17126}}
+            [questKeys.startedBy] = {{3327,3328,3401,4582,4583,4584},nil,{17126}} -- #7244
         },
         [7562] = {
             [questKeys.startedBy] = {{5753,5815},nil,nil},
@@ -5181,7 +5203,7 @@ function QuestieQuestFixes:LoadFactionFixes()
             [questKeys.startedBy] = {{3520},nil,nil}
         },
         [6681] = {
-            [questKeys.startedBy] = {{918,4163,5165},nil,{17126}}
+            [questKeys.startedBy] = {{332,918,4214,4215,4163,5165,5166,5167},nil,{17126}} -- #7244
         },
         [7562] = {
             [questKeys.startedBy] = {{5520,6382},nil,nil},
