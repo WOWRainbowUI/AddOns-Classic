@@ -691,17 +691,21 @@ function NRC:getEnchantsData(guid)
 	end
 end
 
-function NRC:getGemsData(guid) --/dump NRC:getGemsData(UnitGUID("target")) /dump NRC.gearCache[UnitGUID("target")]
+function NRC:getGemsData(guid) --/dump NRC:getGemsData(UnitGUID("player")) /dump NRC.gearCache[UnitGUID("target")]
 	if (NRC.gearCache[guid]) then
+		local slotsWithMissingGem = {};
 		local sockets, equipped = 0, 0;
 		local gearData = NRC.gearCache[guid];
 		for slot, slotData in pairs(gearData) do
 			if (type(slotData) == "table" and slotData.gems) then
 				equipped = equipped + slotData.gems.equipped
 				sockets = sockets + slotData.gems.sockets;
+				if (slotData.gems.equipped < slotData.gems.sockets) then
+					slotsWithMissingGem[slot] = true;
+				end
 			end
 		end
-		return sockets, sockets - equipped;
+		return sockets, sockets - equipped, slotsWithMissingGem;
 	end
 end
 
@@ -784,6 +788,7 @@ function NRC:updateIssuesCache(guid, unit)
 			--Ranged slot removed in MoP.
 			slots[18] = nil;
 		end
+		local issueSlots = {};
 		local numSlots = 0;
 		local totalIssues, enchantIssues, glyphIssues, gearMissingIssues, talentsMissing, fishingIssues, gemIssues, beltBuckleIssues, armorBonusIssues = 0, 0, 0, 0, 0, 0, 0, 0, 0;
 		local data = NRC.gearCache[guid];
@@ -804,6 +809,7 @@ function NRC:updateIssuesCache(guid, unit)
 					if (NRC.fishingGear[itemID]) then
 						fishingIssues = fishingIssues + 1;
 						totalIssues = totalIssues + 1;
+						issueSlots[16] = "fishing";
 					end
 				end
 			end
@@ -816,12 +822,14 @@ function NRC:updateIssuesCache(guid, unit)
 			if (not data[k]) then
 				gearMissingIssues = gearMissingIssues + 1;
 				totalIssues = totalIssues + 1;
+				issueSlots[k] = "gearMissing";
 			else
 				if (wrongArmorTypes and data[k].itemLink and k ~= 15) then
 					local name, _, _, _, _, _, _, _, _, _, _, itemClassID, itemSubTypeID = C_Item.GetItemInfo(data[k].itemLink);
 					if (itemSubTypeID and wrongArmorTypes[itemSubTypeID] and itemClassID == Enum.ItemClass.Armor) then
 						armorBonusIssues = armorBonusIssues + 1;
 						totalIssues = totalIssues + 1;
+						issueSlots[k] = "armorBonusIssue";
 						--NRC:debug("Wrong armor type:", UnitName(unit), name)
 					end
 				end
@@ -832,13 +840,21 @@ function NRC:updateIssuesCache(guid, unit)
 			if (#missingEnchants > 0) then
 				enchantIssues = #missingEnchants;
 				totalIssues = totalIssues + enchantIssues;
+				for k, v in pairs(missingEnchants) do
+					if (v.slot) then
+						issueSlots[v.slot] = "missingEnchant";
+					end
+				end
 			end
 		end
 		if (checkGems) then
-			local _, missingGems = NRC:getGemsData(guid);
+			local _, missingGems, slotsWithMissingGem = NRC:getGemsData(guid);
 			if (missingGems and missingGems > 0) then
 				gemIssues = missingGems;
 				totalIssues = totalIssues + gemIssues;
+				for k, v in pairs(slotsWithMissingGem) do
+					issueSlots[k] = "missingGem";
+				end
 			end
 		end
 		--[[if (checkBeltBuckle and data[6] and NRC:isMaxLevel(guid)) then
@@ -852,6 +868,7 @@ function NRC:updateIssuesCache(guid, unit)
 		if (checkBeltBuckle and data[6] and not data[6].hasBeltBuckle) then
 			beltBuckleIssues = 1;
 			totalIssues = totalIssues + 1;
+			issueSlots[6] = "beltBuckle";
 		end
 		local name, level = NRC:getNameFromGUID(guid), NRC:getLevelFromGUID(guid);
 		if (NRC.glyphs[name]) then
@@ -872,6 +889,7 @@ function NRC:updateIssuesCache(guid, unit)
 			if (bootsID == "227923") then
 				totalIssues = totalIssues + 1;
 				tinsert(otherIssues, "Water Treads equipped");
+				issueSlots[8] = "waterTreads";
 			end
 		end
 		if (data[13]) then
@@ -880,6 +898,7 @@ function NRC:updateIssuesCache(guid, unit)
 			if (pvpTrinkets[trinketID]) then
 				totalIssues = totalIssues + 1;
 				tinsert(otherIssues, "PvP Trinket equipped");
+				issueSlots[13] = "pvpTrinket";
 			end
 		end
 		if (data[14]) then
@@ -888,6 +907,7 @@ function NRC:updateIssuesCache(guid, unit)
 			if (pvpTrinkets[trinketID]) then
 				totalIssues = totalIssues + 1;
 				tinsert(otherIssues, "PvP Trinket equipped");
+				issueSlots[14] = "pvpTrinket";
 			end
 		end
 		local t = {
@@ -901,6 +921,7 @@ function NRC:updateIssuesCache(guid, unit)
 			beltBuckleIssues = beltBuckleIssues;
 			armorBonusIssues = armorBonusIssues,
 			otherIssues = otherIssues,
+			issueSlots = issueSlots,
 		};
 		NRC.issuesCache[guid] = t;
 	end
@@ -1320,7 +1341,7 @@ function NRC:recalcEquipmentFrame(firstOpen)
 	else
 		equipmentFrame:SetHeight(equipmentFrame.defaultHeight);
 	end
-	equipmentFrame.loadEquipment(data.class, equipmentData);
+	equipmentFrame.loadEquipment(guid, data.class, equipmentData);
 end
 
 

@@ -82,17 +82,22 @@ function NRC:loadTalentFrame()
 end
 
 function NRC:openTalentFrame(name, talentString, frame, talentString2, showOffspec, glyphString, glyphString2, guid, isInspect, fromRaidStatus)
+	if (not talentFrame) then
+		NRC:loadTalentFrame();
+	end
 	local talentFrame = frame or talentFrame;
-	 local isError = NRC:updateTalentFrame(name, talentString, talentFrame, talentString2, showOffspec, glyphString, glyphString2, guid, isInspect, fromRaidStatus);
-	 if (not isError) then
-	 	talentFrame:Show();
-	 	talentFrame:Raise();
-	 end
+	local isError = NRC:updateTalentFrame(name, talentString, talentFrame, talentString2, showOffspec, glyphString, glyphString2, guid, isInspect, fromRaidStatus);
+	if (not isError) then
+		talentFrame:Show();
+		talentFrame:Raise();
+	end
 end
 
 function NRC:updateTalentFrame(name, talentString, frame, talentString2, showOffspec, glyphString, glyphString2, guid, isInspect, fromRaidStatus)
 	local talentFrame = frame or talentFrame;
-	
+	if (not talentFrame) then
+		NRC:loadTalentFrame();
+	end
 	--For OnUpdate save some data.
 	local name = name or talentFrame.name;
 	local talentString = talentString or talentFrame.talentString;
