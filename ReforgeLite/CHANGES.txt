@@ -1,48 +1,30 @@
-tag b8fd30dce4058bde207b2b6d41f2d41547df6a06 v2.3.3
+tag cf1d8b0bebacf004c31bd45a9bb9537b942779f2 v2.3.4
 Author:	skyler-code <skylerh15@github.com>
-Date:	Wed Nov 19 13:21:55 2025 -0600
+Date:	Sat Nov 22 01:39:46 2025 -0600
 
-commit 79d4d40d3398f188ef5ac28c98c05707250685be
+commit 20cc23420b6c59aa5bc9cffe98fbed4fe810bd31
 Author: skyler-code <skylerh15@github.com>
-Date:   Wed Nov 19 13:21:32 2025 -0600
+Date:   Fri Nov 21 00:16:16 2025 -0600
 
-    Removed bad pattern
+    use specids in conversion
 
-commit 26a86fedd9d3ade168141c83f63e77d879d64cb2
+commit 56fa186440048f99b120caa7082dea93b8578c06
 Author: skyler-code <skylerh15@github.com>
-Date:   Wed Nov 19 13:02:03 2025 -0600
+Date:   Thu Nov 20 20:55:00 2025 -0600
 
-    Extract wowsims to current directory
-
-commit 9f4010a7ed5ec5b132df00809b9e5d9be952fbb4
-Author: skyler-code <skylerh15@github.com>
-Date:   Wed Nov 19 12:56:13 2025 -0600
-
-    wowsims compare script
-
-commit bd2742b4851745fe9ec33cf99950a707cc9fe4e8
-Author: skyler-code <skylerh15@github.com>
-Date:   Wed Nov 19 12:46:19 2025 -0600
-
-    ilvl cleanup so it looks better on different locales
-
-commit 66f903cd78d595fa51df755936a47d84eb3d4090
-Author: skyler-code <skylerh15@github.com>
-Date:   Tue Nov 18 09:52:44 2025 -0600
-
-    dev util: track how much was spent on reforging
-
-commit afbe4c78077d04e9e20b28d4fa08cd19f50d6afa
-Author: skyler-code <skylerh15@github.com>
-Date:   Sat Nov 15 23:45:26 2025 -0600
-
-    Update WoWSims presets
+    Haste Breakpoint Cleanup
     
-    Balance, Hunter, Affli
+    No longer need "FirstHasteBreak", "SecondHasteBreak", etc. enums
 
-commit 6211811dac6a0f0d39c13f7211c912c5d726e348
+commit 4472439e4a727d45d34498bfa9a3f2013b309e03
 Author: skyler-code <skylerh15@github.com>
-Date:   Sun Nov 9 14:39:52 2025 -0600
+Date:   Thu Nov 20 15:26:09 2025 -0600
 
-    move GetActiveItemSet to util
+    HPal haste breakpoint corrections
+
+commit bda38057ba783fd7e6623b94f3cad48976a6f08f
+Author: skyler-code <skylerh15@github.com>
+Date:   Wed Nov 19 23:00:14 2025 -0600
+
+    Caught error when new user uses algo compare
 
