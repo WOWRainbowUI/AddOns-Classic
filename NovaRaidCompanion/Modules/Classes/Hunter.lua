@@ -68,6 +68,14 @@ local function getThreatValue(unit, spellID, amount)
 	return math.floor(value);
 end
 
+local function cancelMisdirect(name)
+	hits[name] = nil;
+	if (not next(hits)) then
+		--No MD buffs currently up, disable combat log checking.
+		misdirection = nil;
+	end
+end
+
 local function tallyMisdirection(name)
 	if (not misdirection or not next(hits[name])) then
 		--We may have done this calc already if we're not waiting for aoe dmg.
@@ -299,11 +307,7 @@ local function tallyMisdirection(name)
 			end
 		end
 	end
-	hits[name] = nil;
-	if (not next(hits)) then
-		--No MD buffs currently up, disable combat log checking.
-		misdirection = nil;
-	end
+	cancelMisdirect(name);
 end
 
 --This only worked for our md.
@@ -347,6 +351,23 @@ local function misdirectionStarted(name, target, inOurGroup, destGUID)
 			local _, classEnglish  = GetPlayerInfoByGUID(destGUID);
 			hits[name].targetClass = classEnglish;
 		end
+	end
+	local timeout;
+	if (NRC.isMOP) then
+		timeout = 25;
+	end
+	if (timeout) then
+		--Backup timeout needs to be a time between the buff falling off from no dmg triggering the spell + the time md can redirect threat incase it was triggered at ther last second.
+		--And be lower than the cooldown.
+		--So for MoP it would be 20 seconds md lasts, plus 4 seconds it md's threat for, but lower than the 30 second recharge.
+		--Between 24 and 30 seconds.
+		--This is just a abackup incase a pet with md goes out of range, or someone with md leaves out of range to not see the buff fall off or whatever.
+		--There is no chance the md can be usable between that 24 and 30 seconds.
+		C_Timer.After(timeout, function()
+			if (hits[name]) then
+				cancelMisdirect(name);
+			end
+		end)
 	end
 end
 
@@ -461,6 +482,12 @@ local function combatLogEventUnfiltered(...)
 			--If it's an aoe spell like sapper then keep counting and wait for misdirect to fall off before calcing.
 			--Otherwise we're counting dmg hits and calc after 3 are recorded.
 			local tableID = #hits[sourceName] + 1;
+			if (tableID > 500) then
+				--If for some reason we get stuck, end the calc.
+				--500 hits likely never happens normally.
+				cancelMisdirect(sourceName);
+				return;
+			end
 			if (NRC.isTBC and aoeSpells[spellID]) then
 				--Exceed the 3 hit cap if it's an aoe spell (for wrath we just record all hits within the 4 second buff).
 				--Player may do 2 regular hits and then a multi shot, bombs etc.

@@ -64,6 +64,24 @@ local function getThreatValue(unit, spellID, amount)
 	return math.floor(value);
 end
 
+local function cancelDamage(name)
+	NRC:debug("Cancelled ticks damage calc", name);
+	hitsDamage[name] = nil;
+	if (not next(hitsDamage)) then
+		--No tricks buffs currently up, disable combat log checking.
+		damage = nil;
+	end
+end
+
+local function cancelTricks(name)
+	hits[name] = nil;
+	if (not next(hits)) then
+		--No tricks buffs currently up, disable combat log checking.
+		tricks = nil;
+	end
+	cancelDamage(name);
+end
+
 local function tallyTricks(name)
 	if (not tricks or not next(hits[name])) then
 		--We may have done this calc already if we're not waiting for aoe dmg.
@@ -374,19 +392,7 @@ local function tallyTricks(name)
 			NRC:sreTricksEvent(name, target, data.targetClass, total);
 		end
 	end
-	hits[name] = nil;
-	if (not next(hits)) then
-		--No tricks buffs currently up, disable combat log checking.
-		tricks = nil;
-	end
-end
-
-local function cancelTricks(name)
-	hits[name] = nil;
-	if (not next(hits)) then
-		--No tricks buffs currently up, disable combat log checking.
-		tricks = nil;
-	end
+	cancelTricks(name);
 end
 
 local function tallyDamage(name)
@@ -504,20 +510,7 @@ local function tallyDamage(name)
 			NRC:print(string.format(L["otherTransferedDamageTricksMine"], "|cFF00C800" .. NRC:commaValue(total) .. "|r", "|cFFFFF468" .. source .. "|r"));
 		end
 	end
-	hitsDamage[name] = nil;
-	if (not next(hitsDamage)) then
-		--No tricks buffs currently up, disable combat log checking.
-		damage = nil;
-	end
-end
-
-local function cancelDamage(name)
-	NRC:debug("Cancelled ticks damage calc", name);
-	hitsDamage[name] = nil;
-	if (not next(hitsDamage)) then
-		--No tricks buffs currently up, disable combat log checking.
-		damage = nil;
-	end
+	cancelDamage(name);
 end
 
 --Create a tricks table for this player if it doesn't exist, so both needed events can add their data no matter the event fire order.
@@ -540,6 +533,23 @@ local function tricksStarted(name, target, inOurGroup, destGUID)
 			local _, classEnglish  = GetPlayerInfoByGUID(destGUID);
 			hits[name].targetClass = classEnglish;
 		end
+	end
+	local timeout;
+	if (NRC.isMOP) then
+		timeout = 27;
+	end
+	if (timeout) then
+		--Backup timeout needs to be a time between the buff falling off from no dmg triggering the spell + the time tricks can redirect threat incase it was triggered at ther last second.
+		--And be lower than the cooldown.
+		--So for MoP it would be 20 seconds tricks lasts, plus 6 seconds it tricks threat for, but lower than the 30 second recharge.
+		--Between 26 and 30 seconds.
+		--This is just a baackup incase tricks target leaves out of range to not see the buff fall off or whatever.
+		--There is no chance the tricks can be usable between that 26 and 30 seconds.
+		C_Timer.After(timeout, function()
+			if (hits[name]) then
+				cancelTricks(name);
+			end
+		end)
 	end
 end
 
@@ -597,6 +607,12 @@ local function combatLogEventUnfiltered(...)
 							glancing, crushing, isOffHand = select(12, ...);
 				end
 				local tableID = #hits[sourceName] + 1;
+				if (tableID > 500) then
+					--If for some reason we get stuck, end the calc.
+					--500 hits likely never happens normally.
+					cancelTricks(sourceName);
+					return;
+				end
 				if (amount and amount > 0) then
 					if (subEvent == "SPELL_PERIODIC_DAMAGE" and not ignoredDots[spellID] and not poisons[spellID]) then
 						--This will never trigger in TBC.

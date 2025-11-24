@@ -18,6 +18,15 @@ local GetSpellLink = GetSpellLink or C_Spell.GetSpellLink;
 local GetSpellInfo = NRC.GetSpellInfo;
 local piFrame = CreateFrame("Frame");
 
+local function cancelDamage(name)
+	NRC:debug("Cancelled PI ticks damage calc", name);
+	hitsDamage[name] = nil;
+	if (not next(hitsDamage)) then
+		--No tricks buffs currently up, disable combat log checking.
+		damage = nil;
+	end
+end
+
 local function tallyDamage(name)
 	if (not next(hitsDamage[name])) then
 		NRC:debug("Name not found in hitsDamage for PI calc");
@@ -142,20 +151,7 @@ local function tallyDamage(name)
 		--	NRC:print(string.format(L["otherDamagePIMine"], "|cFF00C800" .. NRC:commaValue(total) .. "|r", "|cFFFFFFFF" .. source .. "|r"));
 		--end
 	end
-	hitsDamage[name] = nil;
-	if (not next(hitsDamage)) then
-		--No tricks buffs currently up, disable combat log checking.
-		damage = nil;
-	end
-end
-
-local function cancelDamage(name)
-	NRC:debug("Cancelled PI ticks damage calc", name);
-	hitsDamage[name] = nil;
-	if (not next(hitsDamage)) then
-		--No tricks buffs currently up, disable combat log checking.
-		damage = nil;
-	end
+	cancelDamage(name);
 end
 
 --Create a tricks table for this player if it doesn't exist, so both needed events can add their data no matter the event fire order.
@@ -175,6 +171,18 @@ local function damageStarted(source, target, targetGUID, inOurGroup)
 			damage = true;
 		end
 	end
+	local timeout;
+	if (NRC.isMOP) then
+		timeout = 25;
+	end
+	if (timeout) then
+		--Backup timeout incase someone with pi leaves out of range to not see the buff fall off or whatever.
+		C_Timer.After(timeout, function()
+			if (hitsDamage[target]) then
+				cancelDamage(target);
+			end
+		end)
+	end
 end
 
 local function combatLogEventUnfiltered(...)
@@ -187,6 +195,12 @@ local function combatLogEventUnfiltered(...)
 				local spellID, spellName, school, amount, overkill, school, resisted, blocked, absorbed, critical,
 							glancing, crushing, isOffHand = select(12, ...);
 				local tableID = #hitsDamage[sourceName] + 1;
+				if (tableID > 500) then
+					--If for some reason we get stuck, end the calc.
+					--500 hits likely never happens normally.
+					cancelDamage(sourceName);
+					return;
+				end
 				if (amount and amount > 0) then
 					hitsDamage[sourceName][tableID] = {
 						spellID = spellID,

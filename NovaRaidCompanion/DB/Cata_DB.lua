@@ -9862,6 +9862,17 @@ NRC.ignoredLoot = {
 	[45624] = "Emblem of Conquest",
 	[49426] = "Emblem of Frost",
 	--No badges in cata?
+	
+	--DMF quest items, probably don't need all these these some don't drop in dungeons, but whatever.
+	[71953] = "Fallen Adventurer's Journal",
+	[71951] = "Banner of the Fallen",
+	[71952] = "Captured Insignia",
+	[71635] = "Imbued Crystal",
+	[71636] = "Monstrous Egg",
+	[71637] = "Mysterious Grimoire",
+	[71638] = "Ornate Weapon",
+	[71716] = "Soothsayer's Runes",
+	[71715] = "A Treatise on Strategy",
 };
 
 NRC.distractingShot = {

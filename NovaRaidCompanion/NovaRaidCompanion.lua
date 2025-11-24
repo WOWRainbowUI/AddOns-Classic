@@ -152,7 +152,7 @@ f:SetScript("OnEvent", function(self, event, addon)
 		end
 	elseif (event == "PLAYER_ENTERING_WORLD") then
 		NRC:setRegionName();
-		NRC:loadTalentFrame();
+		--NRC:loadTalentFrame();
 		f:UnregisterEvent("PLAYER_ENTERING_WORLD");
 	end
 end)

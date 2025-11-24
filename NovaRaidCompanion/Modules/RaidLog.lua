@@ -118,9 +118,9 @@ function NRC:chatMsgLoot(...)
     	itemName, _, itemRarity, itemLevel, itemMinLevel, itemType,
 				itemSubType, itemStackCount, itemEquipLoc, itemTexture, itemSellPrice, itemClassID, itemSubClassID = GetItemInfo(itemLink);
 		--if ((itemClassID == 12 and bindType  == 4) or (itemClassID == "Trade Goods" and itemSubType == "Enchanting")) then
-		if (itemClassID == 7 and itemSubClassID == 12) then
-			--Enchanting items.
-			--We don't need to exclude quest items because we don't track white items and we don't want to exlude mags head etc.
+		if ((itemClassID == 3 and NRC.expansionNum > 4) or (itemClassID == 7 and itemSubClassID == 12)) then
+			--Gems and Enchanting items.
+			--We don't need to exclude quest items because we don't track white items and we don't want to exclude mags head etc.
 			return;
 		end
 		--Some addons change the payload of the chat loot event, extract the itemLink and reform it.

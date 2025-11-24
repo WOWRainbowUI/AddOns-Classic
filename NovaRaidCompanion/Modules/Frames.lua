@@ -3292,7 +3292,6 @@ function NRC:createTalentTiersFrame(name, width, height, x, y, borderSpacing)
 			end
 		end
 	end)
-	
 	--We need to load the templates.
 	C_AddOns.LoadAddOn("Blizzard_TalentUI");
 	--Base frame used for positioning and size to sit the blizzard talent frame on, this saves changing anchors etc in the xml.
@@ -5277,6 +5276,7 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 	frame:SetFrameStrata("MEDIUM");
 	frame:SetFrameLevel(11);
 	frame:SetClampedToScreen(true);
+	tinsert(UISpecialFrames, name);
 	frame:SetPoint("CENTER", 0, 0);
 	frame.dots = 0;
 	frame.fsTitle = frame:CreateFontString(name .. "FSTitle", "ARTWORK");
@@ -5595,12 +5595,14 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 	--frame.tooltipScanner = CreateFrame("GameTooltip", "NRCEquipTooltipScanner", nil, "GameTooltipTemplate");
 	--frame.tooltipScanner:SetOwner(WorldFrame, "ANCHOR_NONE");
 	--data is the table for this guid from NRC.gearCache.
-	frame.loadEquipment = function(class, data)
+	frame.loadEquipment = function(guid, class, data)
 		--local tooltipScanner = frame.tooltipScanner;
 		--local tooltipLines = {};
 		--for i = 1, 10 do
 		--	tinsert(tooltipLines, _G["NRCEquipTooltipScannerTextLeft" .. i]);
 		--end
+		local issuesCache = NRC.issuesCache[guid];
+		local issueSlots = issuesCache and issuesCache.issueSlots;
 		for k, v in ipairs(frame.lineFrames) do
 			local slot = v.slot;
 			--print(slot)
@@ -5649,55 +5651,41 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 				end
 				v.fs:SetText(itemLink .. itemLevelString);
 				foundItemLink = true;
+				local upgradeLevelText, enchantText, beltBuckleText = "", "", "";
+				if (itemData.currentUpgradeLevel and itemData.maxUpgradeLevel) then
+					if (itemData.currentUpgradeLevel == 0) then
+						upgradeLevelText = "|cFFFFFFFF(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ") ";
+					elseif (itemData.currentUpgradeLevel == itemData.maxUpgradeLevel) then
+						upgradeLevelText = "|cFFFFFF00(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ")|r ";
+					else
+						upgradeLevelText = "|cFFFFFFFF(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ") ";
+					end
+					--text = "|cFF9CD6DE(|cFFFFFFFF1|r|cFFFFFF00/" .. itemData.maxUpgradeLevel .. ")|r " .. text;
+					--text = "|cFF9CD6DE(1/" .. itemData.maxUpgradeLevel .. ") " .. text;
+					--text = "|cFFFFFFFF(1/" .. itemData.maxUpgradeLevel .. ") " .. text;
+					--text = "|cFFFFFFFF(|cFFFF0000" .. itemData.currentUpgradeLevel .. "|r/" .. itemData.maxUpgradeLevel .. ") " .. text;
+				end
 				if (not itemData.skipEnchantCheck) then
 					if (enchantID) then
 						local enchantName = NRC:getEnchantName(itemLink);
-						local text;
 						if (enchantName) then
-							text = "|cFF1EFF00" .. enchantName;
+							enchantText = "|cFF1EFF00" .. enchantName;
 						else
-							text = "|cFF1EFF00Enchant ID " .. enchantID .. " (Can't find name)";
+							enchantText = "|cFF1EFF00Enchant ID " .. enchantID .. " (Can't find name)";
 						end
-						if (itemData.currentUpgradeLevel and itemData.maxUpgradeLevel) then
-							if (itemData.currentUpgradeLevel == 0) then
-								--text = "|cFFFFFF00(|cFFFF0000" .. itemData.currentUpgradeLevel .. "|r|cFFFFFF00/" .. itemData.maxUpgradeLevel .. ")|r " .. text;
-								text = "|cFFFFFFFF(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ") " .. text;
-							elseif (itemData.currentUpgradeLevel == itemData.maxUpgradeLevel) then
-								text = "|cFFFFFF00(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ")|r " .. text;
-							else
-								--text = "|cFFFFFF00(|cFFFFFFFF" .. itemData.currentUpgradeLevel .. "|r|cFFFFFF00/" .. itemData.maxUpgradeLevel .. ")|r " .. text;
-								text = "|cFFFFFFFF(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ") " .. text;
-							end
-							--text = "|cFF9CD6DE(|cFFFFFFFF1|r|cFFFFFF00/" .. itemData.maxUpgradeLevel .. ")|r " .. text;
-							--text = "|cFF9CD6DE(1/" .. itemData.maxUpgradeLevel .. ") " .. text;
-							--text = "|cFFFFFFFF(1/" .. itemData.maxUpgradeLevel .. ") " .. text;
-							--text = "|cFFFFFFFF(|cFFFF0000" .. itemData.currentUpgradeLevel .. "|r/" .. itemData.maxUpgradeLevel .. ") " .. text;
-						end
-						v.fs2:SetText(text);
-						v.fs:ClearAllPoints();
-						v.fs:SetPoint("TOPLEFT", 5 + size, -2);
-						v.fs:SetPoint("RIGHT", -5, 0);
-					elseif (itemData.currentUpgradeLevel and itemData.maxUpgradeLevel) then
-						local text;
-						if (itemData.currentUpgradeLevel == 0) then
-							text = "|cFFFFFFFF(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ")";
-						elseif (itemData.currentUpgradeLevel == itemData.maxUpgradeLevel) then
-							text = "|cFFFFFF00(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ")";
-						else
-							text = "|cFFFFFFFF(" .. itemData.currentUpgradeLevel .. "/" .. itemData.maxUpgradeLevel .. ")";
-						end
-						v.fs2:SetText(text);
-						v.fs:ClearAllPoints();
-						v.fs:SetPoint("TOPLEFT", 5 + size, -2);
-						v.fs:SetPoint("RIGHT", -5, 0);
 					elseif (enchantSlots[slot]) then
-						--v.fs2:SetText("|cFFFF6900(Missing enchant)");
-						--v.fs2:SetText("|cFFFF5100(Missing enchant)");
-						v.fs2:SetText("|cFFFF0000No enchant");
-						v.fs:ClearAllPoints();
-						v.fs:SetPoint("TOPLEFT", 5 + size, -2);
-						v.fs:SetPoint("RIGHT", -5, 0);
+						enchantText = "|cFFFF0000No enchant";
 					end
+				end
+				if (v.slot == 6 and issuesCache and issuesCache.beltBuckleIssues and issuesCache.beltBuckleIssues > 0) then
+					beltBuckleText = " |cFFFF0000Missing Belt Buckle";
+				end
+				local text = upgradeLevelText .. enchantText .. beltBuckleText;
+				v.fs2:SetText(gsub(text, "^%s", ""));
+				if (text ~= "") then
+					v.fs:ClearAllPoints();
+					v.fs:SetPoint("TOPLEFT", 5 + size, -2);
+					v.fs:SetPoint("RIGHT", -5, 0);
 				end
 				--[[if (itemData.gems and not itemData.skipGemCheck) then
 					local gemString = "";
@@ -5733,6 +5721,13 @@ function NRC:createEquipmentFrame(name, width, borderSpacing, lineFrameSize)
 			if (not foundItemLink) then
 				v.itemLink = nil;
 				v.itemID = nil;
+			end
+			
+			--Set colors based on issues.
+			if (issueSlots and issueSlots[slot]) then
+				v.borderFrame:SetBackdropBorderColor(1, 0, 0, 1);
+			else
+				v.borderFrame:SetBackdropBorderColor(1, 1, 1, 0.2);
 			end
 		end
 	end

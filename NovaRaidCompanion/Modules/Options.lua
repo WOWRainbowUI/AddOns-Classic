@@ -5854,24 +5854,15 @@ end
 
 function NRC:checkNewVersion()
 	--NRC.db.global.versions = {};
-	local newVersionNotes = 1.79;
+	local newVersionNotes = 1.81;
 	if (NRC.version and NRC.version == newVersionNotes) then
 		if (not NRC.db.global.versions[NRC.version]) then
 			if (NRC.isMOP) then
 				local notes = {
-					"|cFF00FF00[Version 1.79]|r",
-					"Added tracking of upgraded levels on gear in the raid status window, mouseover the someone's sword icon to view upgrade levels and click on someones gear icon to view full gear with upgraded levels displayed.",
-					"Average item level calcs now also factor in upgraded gear levels.",
-					"|cFF00FF00[Version 1.78]|r",
-					"The battle res icon now properly generates new battle res charges as the fight goes on and shows a timer until next.",
-					"Added option to resize the battle res icon and made it a bit bigger by default (bres options are in raid cooldowns section).",
-					"Fixed bonus rolls log not recording your own bonus loot.",
-					"Fixed missing sporebat buff in haste column.",
-					"Fixed missing dalaran brilliance in crit column.",
-					"Added soulwell to list of items announced when placed on the ground during raid (can be disabled under feast/repair bot options).",
-					"Fixed classic era Power Infusion outgoing whisper to other players telling them how much dmg they gained from PI in priest options.",
-					"Fixed some lua errors in new MoP patch.",
-					"A bunch of other small bug fixes and display tweaks.",
+					"Fixed some display issues with enchants and item upgrade levels.",
+					"Added a red border to make equipment slots that have an issue easier to see in the raid members gear viewer.",
+					"Attemped some fixes with tricks/md/pi that on rare occasions wouldn't calc at the end if the target went out of range or other reasons.",
+					"Removed gems and dmf quest items from the loot log.",
 				};
 				loadNewVersionFrame(NRC.version, notes, "Nova Raid Companion", "Interface\\AddOns\\NovaRaidCompanion\\Media\\nrc_icon2", 0, 300);
 			end
