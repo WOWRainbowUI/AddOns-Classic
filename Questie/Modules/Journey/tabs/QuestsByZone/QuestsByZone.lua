@@ -17,6 +17,8 @@ local QuestieQuestBlacklist = QuestieLoader:ImportModule("QuestieQuestBlacklist"
 local QuestieEvent = QuestieLoader:ImportModule("QuestieEvent")
 ---@type QuestieLink
 local QuestieLink = QuestieLoader:ImportModule("QuestieLink")
+---@type QuestieProfessions
+local QuestieProfessions = QuestieLoader:ImportModule("QuestieProfessions")
 ---@type l10n
 local l10n = QuestieLoader:ImportModule("l10n")
 
@@ -162,6 +164,7 @@ function _QuestieJourney.questsByZone:CollectZoneQuests(zoneId)
                         "requiredMinRep",
                         "requiredMaxRep",
                         "requiredSpell",
+                        "requiredSpecialization",
                         "requiredMaxLevel"
                         }
                 ) or {}
@@ -173,7 +176,8 @@ function _QuestieJourney.questsByZone:CollectZoneQuests(zoneId)
                 local requiredMinRep = queryResult[6]
                 local requiredMaxRep = queryResult[7]
                 local requiredSpell = queryResult[8]
-                local requiredMaxLevel = queryResult[9]
+                local requiredSpecialization = queryResult[9]
+                local requiredMaxLevel = queryResult[10]
 
                 -- Exclusive quests will never be available since another quests permanently blocks them.
                 -- Marking them as complete should be the most satisfying solution for user
@@ -188,6 +192,10 @@ function _QuestieJourney.questsByZone:CollectZoneQuests(zoneId)
                 elseif not QuestieReputation.HasReputation(requiredMinRep, requiredMaxRep) then
                     tinsert(zoneTree[5].children, temp)
                     unobtainableQuestIds[questId] = true
+                    unobtainableCounter = unobtainableCounter + 1
+                -- Profession specialization
+                elseif (not QuestieProfessions.HasSpecialization(requiredSpecialization)) then
+                    tinsert(zoneTree[5].children, temp)
                     unobtainableCounter = unobtainableCounter + 1
                 -- A single pre Quest is missing
                 elseif not QuestieDB:IsPreQuestSingleFulfilled(preQuestSingle) then

@@ -267,8 +267,8 @@ function QuestieQuestBlacklist:Load()
         [8224] = HIDE_ON_MAP,
         [8225] = HIDE_ON_MAP,
         [8193] = HIDE_ON_MAP,
-        [8228] = true, -- No evidence that this quest is actually implemented in the game
-        [8229] = true, -- No evidence that this quest is actually implemented in the game
+        [8228] = HIDE_ON_MAP,
+        [8229] = HIDE_ON_MAP,
         --love is in the air
         [8903] = true,
         [8904] = true,
@@ -276,8 +276,8 @@ function QuestieQuestBlacklist:Load()
         [8898] = true,
         [8899] = true,
         [9029] = true,
-        [8981] = Expansions.Current >= Expansions.Wotlk,
-        [8993] = Expansions.Current >= Expansions.Wotlk,
+        [8981] = true,
+        [8993] = true,
         [8900] = true,
         [8901] = true,
         [8902] = true,
@@ -986,24 +986,36 @@ function QuestieQuestBlacklist:Load()
         [10501] = Expansions.Current >= Expansions.Tbc,
 
         -- Classic Phase 6 Invasion quests
-        [9247] = true, -- It appears that Blizzard forgot to implement this quest during Classic 2019 and also Anniversary, so blacklisting unless can be proven otherwise
-        [9085] = Expansions.Current >= Expansions.Wotlk, -- Shadows of Doom
-        [9153] = Expansions.Current >= Expansions.Wotlk, -- Under the Shadow
-        [9154] = Expansions.Current >= Expansions.Wotlk, -- Light's Hope Chapel
-        [9260] = Expansions.Current >= Expansions.Wotlk, -- Investigate the Scourge of Stormwind
-        [9261] = Expansions.Current >= Expansions.Wotlk, -- Investigate the Scourge of Ironforge
-        [9262] = Expansions.Current >= Expansions.Wotlk, -- Investigate the Scourge of Darnassus
-        [9263] = Expansions.Current >= Expansions.Wotlk, -- Investigate the Scourge of Orgrimmar
-        [9264] = Expansions.Current >= Expansions.Wotlk, -- Investigate the Scourge of Thunder Bluff
-        [9265] = Expansions.Current >= Expansions.Wotlk, -- Investigate the Scourge of the Undercity
-        [9292] = Expansions.Current >= Expansions.Wotlk, -- Cracked Necrotic Crystal
-        [9295] = Expansions.Current >= Expansions.Wotlk, -- Letter from the Front
-        [9299] = Expansions.Current >= Expansions.Wotlk, -- Note from the Front
-        [9300] = Expansions.Current >= Expansions.Wotlk, -- Page from the Front
-        [9301] = Expansions.Current >= Expansions.Wotlk, -- Envelope from the Front
-        [9302] = Expansions.Current >= Expansions.Wotlk, -- Missive from the Front
-        [9304] = Expansions.Current >= Expansions.Wotlk, -- Document from the Front
-        [9310] = Expansions.Current >= Expansions.Wotlk, -- Faint Necrotic Crystal
+        [9085] = true, -- Shadows of Doom
+        [9094] = true, -- Argent Dawn Gloves
+        [9153] = true, -- Under the Shadow
+        [9154] = true, -- Light's Hope Chapel
+        [9247] = true, -- The Keeper's Call (Blizzard forgot to implement in Era and Anniversary)
+        [9260] = true, -- Investigate the Scourge of Stormwind
+        [9261] = true, -- Investigate the Scourge of Ironforge
+        [9262] = true, -- Investigate the Scourge of Darnassus
+        [9263] = true, -- Investigate the Scourge of Orgrimmar
+        [9264] = true, -- Investigate the Scourge of Thunder Bluff
+        [9265] = true, -- Investigate the Scourge of the Undercity
+        [9292] = true, -- Cracked Necrotic Crystal
+        [9295] = true, -- Letter from the Front
+        [9299] = true, -- Note from the Front
+        [9300] = true, -- Page from the Front
+        [9301] = true, -- Envelope from the Front
+        [9302] = true, -- Missive from the Front
+        [9304] = true, -- Document from the Front
+        [9310] = true, -- Faint Necrotic Crystal
+        [9317] = true, -- Consecrated Sharpening Stones
+        [9318] = true, -- Blessed Wizard Oil
+        [9320] = true, -- Major Mana Potion
+        [9321] = true, -- Major Healing Potion
+        [9333] = true, -- Argent Dawn Gloves
+        [9334] = true, -- Blessed Wizard Oil
+        [9335] = true, -- Consecrated Sharpening Stones
+        [9336] = true, -- Major Healing Potion
+        [9337] = true, -- Major Mana Potion
+        [9341] = true, -- Tabard of the Argent Dawn
+        [9343] = true, -- Tabard of the Argent Dawn
 
         ----- TBC -------------- TBC quests --------------- TBC -----
         ----- TBC ------------- starting here -------------- TBC -----
@@ -1446,18 +1458,6 @@ function QuestieQuestBlacklist:Load()
 
         [6804] = Expansions.Current >= Expansions.Wotlk,
         [7737] = Expansions.Current == Expansions.Wotlk, -- replaced by 13662 in wotlk
-        [9094] = Expansions.Current >= Expansions.Wotlk,
-        [9317] = Expansions.Current >= Expansions.Wotlk,
-        [9318] = Expansions.Current >= Expansions.Wotlk,
-        [9320] = Expansions.Current >= Expansions.Wotlk,
-        [9321] = Expansions.Current >= Expansions.Wotlk,
-        [9333] = Expansions.Current >= Expansions.Wotlk,
-        [9334] = Expansions.Current >= Expansions.Wotlk,
-        [9335] = Expansions.Current >= Expansions.Wotlk,
-        [9336] = Expansions.Current >= Expansions.Wotlk,
-        [9337] = Expansions.Current >= Expansions.Wotlk,
-        [9341] = Expansions.Current >= Expansions.Wotlk,
-        [9343] = Expansions.Current >= Expansions.Wotlk,
 
         -- Old Naxx quests (Naxx40 goes away in wotlk)
         [9120] = Expansions.Current >= Expansions.Wotlk, -- The Fall of Kel'Thuzad
@@ -5422,6 +5422,7 @@ function QuestieQuestBlacklist:Load()
         [12952] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [13002] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [13004] = Expansions.Current >= Expansions.Cata, -- Removed with cata
+        [13052] = true, -- Not in the game
         [13096] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [13097] = Expansions.Current >= Expansions.Cata, -- Removed with cata
         [13098] = Expansions.Current >= Expansions.Cata, -- Removed with cata
@@ -5924,6 +5925,7 @@ function QuestieQuestBlacklist:Load()
         [28936] = true, -- Hidden quest
         [28937] = true, -- Hidden quest
         [28938] = true, -- Hidden quest
+        [28939] = true, -- Hidden quest
         [28940] = true, -- Hidden quest
         [28941] = true, -- Hidden quest
         [28942] = true, -- Hidden quest
@@ -6336,21 +6338,77 @@ function QuestieQuestBlacklist:Load()
         [32015] = true, -- Not in the game
         [32112] = true, -- Hidden quest
         [32113] = true, -- Hidden quest
+        [32114] = true, -- Hidden quest
         [32129] = true, -- Not in the game
+        [32147] = true, -- Hidden quest
+        [32155] = true, -- Not in the game
+        [32159] = true, -- Not in the game
         [32173] = true, -- Not in the game
         [32174] = true, -- Not in the game
+        [32195] = true, -- Not in the game
+        [32202] = true, -- Not in the game
+        [32203] = true, -- Not in the game
+        [32210] = true, -- Not in the game
+        [32211] = true, -- Not in the game
+        [32229] = true, -- Not in the game
+        [32231] = true, -- Not in the game
+        [32253] = true, -- Not in the game
+        [32263] = true, -- Not in the game
+        [32267] = true, -- Not in the game
+        [32270] = true, -- Not in the game
+        [32271] = true, -- Not in the game
+        [32272] = true, -- Not in the game
+        [32273] = true, -- Not in the game
+        [32280] = true, -- Not in the game
+        [32281] = true, -- Not in the game
+        [32286] = true, -- Not in the game
+        [32289] = true, -- Not in the game
+        [32290] = true, -- Not in the game
+        [32291] = true, -- Not in the game
+        [32339] = true, -- Hidden quest
+        [32341] = true, -- Not in the game
+        [32356] = true, -- Hidden quest
+        [32357] = true, -- Hidden quest
         [32364] = true, -- Not in the game
+        [32365] = true, -- Hidden quest
+        [32366] = true, -- Not in the game
+        [32367] = true, -- Not in the game
+        [32375] = true, -- Not in the game
+        [32395] = true, -- Hidden quest
         [32396] = true, -- Not in the game
+        [32407] = true, -- Not in the game
+        [32415] = true, -- Not in the game
+        [32422] = true, -- Not in the game
+        [32424] = true, -- Not in the game
+        [32425] = true, -- Not in the game
+        [32433] = true, -- Not in the game
         [32435] = HIDE_ON_MAP, -- Hidden quest
         [32436] = HIDE_ON_MAP, -- Hidden quest
+        [32437] = true, -- Hidden quest
+        [32438] = true, -- Hidden quest
         [32444] = true, -- Hidden quest
+        [32458] = true, -- Not in the game
         [32475] = true, -- Not in the game
         [32504] = true, -- Not in the game
+        [32534] = true, -- Not in the game
+        [32651] = true, -- Hidden quest
         [32666] = true, -- Hidden quest
+        [32696] = true, -- Not in the game
+        [32699] = true, -- Not in the game
+        [32702] = true, -- Not in the game
+        [32705] = true, -- Not in the game
         [32717] = true, -- Not in the game
         [32718] = true, -- Not in the game
+        [32723] = true, -- Hidden quest
+        [32826] = true, -- Hidden quest
+        [32827] = true, -- Hidden quest
+        [32832] = true, -- Not in the game
+        [32860] = true, -- Hidden quest
+        [32872] = true, -- Not in the game
         [32890] = true, -- Not in the game
         [32891] = true, -- Not in the game
+        [32895] = true, -- Not in the game
+        [32910] = true, -- Hidden quest
         [32952] = true, -- Not in the game
         [33008] = true, -- Not in the game
         [33019] = true, -- Not in the game
@@ -6902,6 +6960,9 @@ function QuestieQuestBlacklist:Load()
     if Questie.IsSoD then
         Questie:Debug(Questie.DEBUG_DEVELOP, "Blacklisting quests for SoD...")
         questsToBlacklist = ContentPhases.BlacklistSoDQuestsByPhase(questsToBlacklist, ContentPhases.activePhases.SoD)
+    elseif Questie.IsTBC then
+        Questie:Debug(Questie.DEBUG_DEVELOP, "Blacklisting quests for TBC...")
+        questsToBlacklist = ContentPhases.BlacklistTbcQuestsByPhase(questsToBlacklist, ContentPhases.activePhases.TBC)
     elseif Questie.IsAnniversary or Questie.IsAnniversaryHardcore then
         Questie:Debug(Questie.DEBUG_DEVELOP, "Blacklisting quests for Anniversary...")
         questsToBlacklist = ContentPhases.BlacklistAnniversaryQuestsByPhase(questsToBlacklist, ContentPhases.activePhases.Anniversary)

@@ -2737,6 +2737,7 @@ function MopQuestFixes.Load()
             [questKeys.requiredMinRep] = {factionIDs.GOLDEN_LOTUS,9000},
             [questKeys.objectives] = {nil,nil,{{85582}},nil,{{{63640,63651,63652,63653,63654,63655,63656,63657},63640,nil,Questie.ICON_TYPE_EVENT}}}, -- 63651,63655 -> 63657 are the NPCs after you rescue them
             [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_INTERACT,l10n("Open the cage"),0,{{"object",213289}}}},
+            [questKeys.reputationReward] = {{factionIDs.GOLDEN_LOTUS,33}},
         },
         [30301] = { -- Offering a Warm Welcome
             [questKeys.startedBy] = {{59332}},
@@ -2862,6 +2863,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestSingle] = {30257},
             [questKeys.exclusiveTo] = {30317,30318,30319,30321},
             [questKeys.reputationReward] = {{factionIDs.THE_TILLERS,4},{factionIDs.GINA_MUDCLAW,18}},
+            [questKeys.objectives] = {nil,nil,{{80213,nil,Questie.ICON_TYPE_TALK},{80214,nil,Questie.ICON_TYPE_TALK},{80215,nil,Questie.ICON_TYPE_TALK},{80216,nil,Questie.ICON_TYPE_TALK}}},
         },
         [30323] = { -- They Don't Even Wear Them
             [questKeys.preQuestSingle] = {30257},
@@ -3890,6 +3892,7 @@ function MopQuestFixes.Load()
             [questKeys.preQuestGroup] = {30635,30636,30637},
         },
         [30639] = { -- The Secrets of Guo-Lai
+            [questKeys.preQuestSingle] = {30638},
             [questKeys.startedBy] = {{58408,59332,59340}},
             [questKeys.requiredMinRep] = {factionIDs.GOLDEN_LOTUS,9000},
             [questKeys.objectives] = {{{64647,nil,Questie.ICON_TYPE_TALK},{64663,nil,Questie.ICON_TYPE_EVENT}}},
@@ -5653,19 +5656,19 @@ function MopQuestFixes.Load()
         },
         [31320] = { -- Buy A Fish A Drink?
             [questKeys.requiredMinRep] = {1273,8400}, -- Aquaintance level with Jogu
-            [questKeys.reputationReward] = {{factionIDs.JOGU,8}},
+            [questKeys.reputationReward] = {{factionIDs.JOGU_THE_DRUNK,8}},
         },
         [31321] = { -- Buy A Fish A Round?
             [questKeys.requiredMinRep] = {1273,16800}, -- Buddy level with Jogu
-            [questKeys.reputationReward] = {{factionIDs.JOGU,19}},
+            [questKeys.reputationReward] = {{factionIDs.JOGU_THE_DRUNK,19}},
         },
         [31322] = { -- Buy A Fish A Keg?
             [questKeys.requiredMinRep] = {1273,25200}, -- Friend level with Jogu
-            [questKeys.reputationReward] = {{factionIDs.JOGU,35}},
+            [questKeys.reputationReward] = {{factionIDs.JOGU_THE_DRUNK,35}},
         },
         [31323] = { -- Buy A Fish A Brewery?
             [questKeys.requiredMinRep] = {1273,36000}, -- within 6000 rep of Best Friend (wowhead comment)
-            [questKeys.reputationReward] = {{factionIDs.JOGU,26}},
+            [questKeys.reputationReward] = {{factionIDs.JOGU_THE_DRUNK,26}},
         },
         [31325] = { -- A Very Nice Necklace
             [questKeys.requiredMinRep] = {1280,8400}, -- Tina at Acquaintance level (8400-16800)
@@ -6139,6 +6142,7 @@ function MopQuestFixes.Load()
         [31534] = { -- The Beginner's Brew
             [questKeys.requiredMinRep] = {1275,16800}, -- Buddy level with Ella
             [questKeys.reputationReward] = {{factionIDs.ELLA,35}},
+            [questKeys.objectives] = {nil,nil,{{87554,nil,Questie.ICON_TYPE_TALK},{87555,nil,Questie.ICON_TYPE_TALK},{87556,nil,Questie.ICON_TYPE_TALK},{87553,nil,Questie.ICON_TYPE_TALK}}},
         },
         [31535] = { -- Replenishing the Pantry
             [questKeys.preQuestSingle] = {31536},
@@ -8108,6 +8112,7 @@ function MopQuestFixes.Load()
         [32318] = { -- Regeneration Takes Time
             [questKeys.preQuestSingle] = {32284},
             [questKeys.requiredMinRep] = {factionIDs.DOMINANCE_OFFENSIVE,7900},
+            [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
         },
         [32319] = { -- Find Thrall!
             [questKeys.preQuestSingle] = {32318},
@@ -8170,16 +8175,19 @@ function MopQuestFixes.Load()
             [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,35500},
             [questKeys.extraObjectives] = {{nil,Questie.ICON_TYPE_OBJECT,l10n("Open the amber"),0,{{"object",216360}}}},
             [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,4}},
+            [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
         },
         [32333] = { -- The Second Riddle: Fellowship
             [questKeys.preQuestSingle] = {32321},
             [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,35500},
             [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,4}},
+            [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
         },
         [32334] = { -- The Third Riddle: Strength
             [questKeys.preQuestSingle] = {32321},
             [questKeys.requiredMinRep] = {factionIDs.OPERATION_SHIELDWALL,35500},
             [questKeys.reputationReward] = {{factionIDs.OPERATION_SHIELDWALL,4}},
+            [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
         },
         [32335] = { -- The Greatest Prank
             [questKeys.preQuestSingle] = {},
@@ -8636,9 +8644,8 @@ function MopQuestFixes.Load()
         },
         [32457] = { -- The Thunder King
             [questKeys.startedBy] = {{64616}},
-            [questKeys.preQuestSingle] = {32390},
+            [questKeys.preQuestSingle] = {32390,32457},
             [questKeys.breadcrumbForQuestId] = 32591,
-            [questKeys.requiredRaces] = raceIDs.ALL_ALLIANCE,
         },
         [32460] = { -- Tracking the Thieves
             [questKeys.preQuestSingle] = {32414},
@@ -8658,9 +8665,8 @@ function MopQuestFixes.Load()
         },
         [32590] = { -- Meet Me Upstairs
             [questKeys.startedBy] = {{64616}},
-            [questKeys.preQuestSingle] = {32432},
+            [questKeys.preQuestSingle] = {32390,32432},
             [questKeys.breadcrumbForQuestId] = 32591,
-            [questKeys.requiredRaces] = raceIDs.ALL_HORDE,
         },
         [32591] = { -- Secrets of the First Empire
             [questKeys.preQuestSingle] = {32390,32432},
