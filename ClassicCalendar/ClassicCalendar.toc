@@ -1,13 +1,13 @@
 ## Interface: 11508
 ## Title: Classic Calendar - Revived
-## Version: ClassicCalendar-v1.1.0
+## Version: ClassicCalendar-v1.1.1
 ## Author: Pimptasty
-## Version: ClassicCalendar-v1.1.0
+## Version: ClassicCalendar-v1.1.1
 
 ## X-Curse-Project-ID: 1339939
 ## Dependencies: Ace3, VersionCheck-1.0
 
-## SavedVariables: CCConfig, WorldBuffRendData, WorldBuffHakkarData, WorldBuffOnyxiaData, WorldBuffNefarianData, ClassicCalendarDB, CalendarHelper
+## SavedVariables: CCConfig, WorldBuffRendData, WorldBuffHakkarData, WorldBuffOnyxiaData, WorldBuffNefarianData, ClassicCalendarDB, CalendarHelperDB
 
 locales\localization-world.lua
 ClassicCalendar_Options.lua

@@ -79,7 +79,7 @@ f:SetScript("OnEvent", function()
 			-- Create a host addon object for VersionCheck (exactly like SandPacker)
 			local hostAddon = {
 				GetName = function() return "Classic Calendar - Revived" end,
-				Version = (C_AddOns and C_AddOns.GetAddOnMetadata("ClassicCalendar", "Version")) or GetAddOnMetadata("ClassicCalendar", "Version") or "ClassicCalendar-v1.1.0"
+				Version = (C_AddOns and C_AddOns.GetAddOnMetadata("ClassicCalendar", "Version")) or GetAddOnMetadata("ClassicCalendar", "Version") or "ClassicCalendar-v1.1.1"
 			}
 			VC:Enable(hostAddon)
 			print("ClassicCalendar: VersionCheck-1.0 integration enabled (v" .. hostAddon.Version .. ")")

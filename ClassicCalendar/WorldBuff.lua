@@ -405,9 +405,20 @@ function WorldBuffs:CreateMainFrame()
     -- Create scrollable table for current tab (positioned below the button, within inset bounds)
     WorldBuffFrame.scrollFrame = CreateFrame("ScrollFrame", "ClassicCalendarWorldBuffScrollFrame", WorldBuffFrame, "UIPanelScrollFrameTemplate")
     WorldBuffFrame.scrollFrame:SetPoint("TOPLEFT", WorldBuffFrame, "TOPLEFT", 15, -65)
-    WorldBuffFrame.scrollFrame:SetPoint("BOTTOMRIGHT", WorldBuffFrame, "BOTTOMRIGHT", -35, 15)
+    WorldBuffFrame.scrollFrame:SetPoint("BOTTOMRIGHT", WorldBuffFrame, "BOTTOMRIGHT", -35, 55) -- Leave space for placeholder button
     
     WorldBuffFrame.scrollChild = CreateFrame("Frame", nil, WorldBuffFrame.scrollFrame)
+    WorldBuffFrame.scrollChild:SetSize(1, 1)
+    WorldBuffFrame.scrollFrame:SetScrollChild(WorldBuffFrame.scrollChild)
+    
+    -- Create Placeholder button (positioned below the scroll frame)
+    WorldBuffFrame.placeholderButton = CreateFrame("Button", nil, WorldBuffFrame, "UIPanelButtonTemplate")
+    WorldBuffFrame.placeholderButton:SetPoint("BOTTOMRIGHT", WorldBuffFrame, "BOTTOMRIGHT", -25, 20)
+    WorldBuffFrame.placeholderButton:SetSize(130, 22)
+    WorldBuffFrame.placeholderButton:SetText("Create Placeholder")
+    WorldBuffFrame.placeholderButton:SetScript("OnClick", function()
+        WorldBuffs:ShowPlaceholderDialog()
+    end)
     WorldBuffFrame.scrollChild:SetSize(1, 1)
     WorldBuffFrame.scrollFrame:SetScrollChild(WorldBuffFrame.scrollChild)
     
@@ -842,6 +853,33 @@ function WorldBuffs:ShowAddEntryDialog()
     self.addDialog:Show()
 end
 
+-- Show placeholder dialog (same as add dialog but with TBD pre-filled)
+function WorldBuffs:ShowPlaceholderDialog()
+    -- Get current tab to determine item type
+    local currentTab = nil
+    local itemType = nil
+    if WorldBuffFrame and WorldBuffFrame.selectedTab and WorldBuffFrame.tabs[WorldBuffFrame.selectedTab] then
+        currentTab = WorldBuffFrame.tabs[WorldBuffFrame.selectedTab].itemType
+        itemType = currentTab
+    end
+    
+    if not itemType then
+        print("Error: Could not determine item type for placeholder event")
+        return
+    end
+    
+    -- Create placeholder data with "TBD" as player name
+    local placeholderData = {
+        playerName = "TBD",
+        mainName = "",
+        receivedDate = date("%m/%d/%Y"),
+        dropped = "No"
+    }
+    
+    -- Show date picker popup for the placeholder event (same flow as normal event)
+    self:ShowDatePickerPopup(itemType, placeholderData)
+end
+
 
 
 -- Save entry from dialog
@@ -854,7 +892,7 @@ function WorldBuffs:SaveEntry()
         self.addDialog.selectedDate.day, 
         self.addDialog.selectedDate.year)
 
-    -- Require valid player name - no placeholders
+    -- Require valid player name
     if playerName == "" or playerName == nil or playerName:match("^%s*$") then
         print("|cFFFF0000ClassicCalendar:|r Player name is required.")
         return
@@ -1243,52 +1281,52 @@ function WorldBuffs:CreateGuildEventWithDate(itemType, data, selectedDate)
         local eventDescriptionTemplates = {
             Horde = {
                 REND_HEAD = "Heed the call, heroes of the Horde! <playername> has conquered the mighty Rend Blackhand and shall present his severed head as tribute to our great Warchief!\n\n" ..
-                           "🏺 Rally at Orgrimmar or the Crossroads for this momentous ceremony!\n" ..
-                           "⚔️ The Rallying Cry of the Dragonslayer awaits - granting +140 Attack Power and +5% Critical Strike!\n" ..
-                           "⏰ Arrive 5 minutes early to secure your place in this glorious gathering!\n\n" ..
+                           "Rally at Orgrimmar or the Crossroads for this momentous ceremony!\n" ..
+                           "The Rallying Cry of the Dragonslayer awaits - granting +140 Attack Power and +5% Critical Strike!\n" ..
+                           "Arrive 5 minutes early to secure your place in this glorious gathering!\n\n" ..
                            "For the Horde! Lok'tar Ogar!",
                 
                 NEFARIAN_HEAD = "Witness the fall of a dragon! <playername> has slain the dread Nefarian, Lord of Blackrock, and returns with proof of this legendary victory!\n\n" ..
-                                "🏺 Gather at Orgrimmar or the Crossroads to honor this heroic deed!\n" ..
-                                "🐲 The Dragonslayer's blessing shall flow through all present - +140 Attack Power and +5% Critical Strike!\n" ..
-                                "⏰ Be present 5 minutes before the ceremony begins!\n\n" ..
+                                "Gather at Orgrimmar or the Crossroads to honor this heroic deed!\n" ..
+                                "The Dragonslayer's blessing shall flow through all present - +140 Attack Power and +5% Critical Strike!\n" ..
+                                "Be present 5 minutes before the ceremony begins!\n\n" ..
                                 "The Black Dragonflight trembles! Victory to the Horde!",
                 
                 ONYXIA_HEAD = "Behold! <playername> returns victorious from the depths of Onyxia's Lair, bearing the head of the Broodmother herself!\n\n" ..
-                              "🏺 All members of the Horde are summoned to Orgrimmar or the Crossroads!\n" ..
-                              "🐲 Receive the Rallying Cry of the Dragonslayer - +140 Attack Power and +5% Critical Strike chance!\n" ..
-                              "⏰ Assemble 5 minutes prior to witness this triumph!\n\n" ..
+                              "All members of the Horde are summoned to Orgrimmar or the Crossroads!\n" ..
+                              "Receive the Rallying Cry of the Dragonslayer - +140 Attack Power and +5% Critical Strike chance!\n" ..
+                              "Assemble 5 minutes prior to witness this triumph!\n\n" ..
                               "Let the Alliance tremble at our might! For the Horde!",
                 
                 HAKKAR_HEART = "The Soulflayer has fallen! <playername> has ventured into the accursed depths of Zul'Gurub and torn the very heart from the blood god Hakkar!\n\n" ..
-                               "🌴 Journey to Booty Bay or the sacred grounds of Zandalar Isle!\n" ..
-                               "✨ The Spirit of Zandalar shall bless all who attend - +15% to all stats!\n" ..
-                               "⏰ Arrive early to partake in this ancient Trollish ritual!\n\n" ..
+                               "Journey to Booty Bay or the sacred grounds of Zandalar Isle!\n" ..
+                               "The Spirit of Zandalar shall bless all who attend - +15% to all stats!\n" ..
+                               "Arrive early to partake in this ancient Trollish ritual!\n\n" ..
                                "May the loa smile upon us! Victory to those who dare!"
             },
             Alliance = {
                 REND_HEAD = "Citizens of the Alliance! <playername> has struck down the orc warlord Rend Blackhand and returns bearing proof of this noble victory!\n\n" ..
-                           "⚔️ Gather at Stormwind City or Ironforge to witness this heroic display!\n" ..
-                           "🏆 The Rallying Cry of the Dragonslayer shall inspire all - +140 Attack Power and +5% Critical Strike!\n" ..
-                           "⏰ Arrive 5 minutes early to honor this champion of justice!\n\n" ..
+                           "Gather at Stormwind City or Ironforge to witness this heroic display!\n" ..
+                           "The Rallying Cry of the Dragonslayer shall inspire all - +140 Attack Power and +5% Critical Strike!\n" ..
+                           "Arrive 5 minutes early to honor this champion of justice!\n\n" ..
                            "For the Alliance! For honor and glory!",
                 
                 NEFARIAN_HEAD = "A great evil has fallen! <playername> has vanquished Nefarian, the corrupted dragon lord, and brings forth evidence of this legendary triumph!\n\n" ..
-                                "⚔️ All Alliance members are called to Stormwind City or Ironforge!\n" ..
-                                "🐲 Receive the Dragonslayer's blessing - +140 Attack Power and +5% Critical Strike!\n" ..
-                                "⏰ Assemble 5 minutes before this ceremony of valor!\n\n" ..
+                                "All Alliance members are called to Stormwind City or Ironforge!\n" ..
+                                "Receive the Dragonslayer's blessing - +140 Attack Power and +5% Critical Strike!\n" ..
+                                "Assemble 5 minutes before this ceremony of valor!\n\n" ..
                                 "Light be with us! The Alliance stands strong!",
                 
                 ONYXIA_HEAD = "Victory is ours! <playername> has conquered the dreaded Onyxia in her own lair and returns with the head of the Broodmother!\n\n" ..
-                              "⚔️ Citizens of the Alliance, gather at Stormwind City or Ironforge!\n" ..
-                              "🐲 The Rallying Cry of the Dragonslayer will strengthen all who attend - +140 Attack Power and +5% Critical Strike!\n" ..
-                              "⏰ Be present 5 minutes early to witness this triumph over darkness!\n\n" ..
+                              "Citizens of the Alliance, gather at Stormwind City or Ironforge!\n" ..
+                              "The Rallying Cry of the Dragonslayer will strengthen all who attend - +140 Attack Power and +5% Critical Strike!\n" ..
+                              "Be present 5 minutes early to witness this triumph over darkness!\n\n" ..
                               "By the Light, the Alliance prevails!",
                 
                 HAKKAR_HEART = "The blood god falls! <playername> has braved the cursed halls of Zul'Gurub and ripped the heart from Hakkar the Soulflayer!\n\n" ..
-                               "🌴 Journey to Booty Bay or brave the wilds of Stranglethorn!\n" ..
-                               "✨ All shall receive the Spirit of Zandalar - +15% to all attributes!\n" ..
-                               "⏰ Gather early for this ancient ritual of power!\n\n" ..
+                               "Journey to Booty Bay or brave the wilds of Stranglethorn!\n" ..
+                               "All shall receive the Spirit of Zandalar - +15% to all attributes!\n" ..
+                               "Gather early for this ancient ritual of power!\n\n" ..
                                "May the Light guide us to victory!"
             }
         }
