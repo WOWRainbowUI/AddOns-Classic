@@ -667,6 +667,31 @@ function SlashCmdList.CALDEBUG(_msg, _editBox)
 	print("ClassicCalendar Debug Mode: " .. (DEBUG_MODE and "ON" or "OFF"))
 end
 
+-- Slash command /calwbclear to clear all WorldBuff tables (nuclear option for corruption)
+
+SLASH_CALWBCLEAR1 = '/calwbclear'
+
+function SlashCmdList.CALWBCLEAR(_msg, _editBox)
+	if _msg == "confirm" then
+		WorldBuffRendData = {}
+		WorldBuffHakkarData = {}
+		WorldBuffOnyxiaData = {}
+		WorldBuffNefarianData = {}
+		print("ClassicCalendar: All WorldBuff tables cleared locally. /reload to save.")
+	elseif _msg == "guild" then
+		-- Guild-wide wipe (officer only)
+		if ClassicCalendarDataSync and ClassicCalendarDataSync.SendGuildWipe then
+			ClassicCalendarDataSync:SendGuildWipe()
+		else
+			print("ClassicCalendar: DataSync not available")
+		end
+	else
+		print("ClassicCalendar: Clear WorldBuff data:")
+		print("  /calwbclear confirm - Clear your local data only")
+		print("  /calwbclear guild - Clear data for entire guild (officer only)")
+	end
+end
+
 -- Slash command /caldarkmoon to check Darkmoon Faire status
 
 SLASH_CALDARKMOON1 = '/caldarkmoon'

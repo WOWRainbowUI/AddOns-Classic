@@ -623,6 +623,15 @@ function CalendarHelper:GenerateEventDescription(eventData)
     description = description:gsub("<time>", eventData.time)
     description = description:gsub("<date>", eventData.date)
     
+    -- Remove any emojis and special UTF-8 characters that WoW can't handle
+    -- Keep only ASCII printable characters, newlines, and basic punctuation
+    description = description:gsub("[^\32-\126\n\r]", "")
+    
+    -- Ensure description doesn't exceed 256 characters
+    if #description > 256 then
+        description = description:sub(1, 253) .. "..."
+    end
+    
     return description
 end
 
