@@ -1,13 +1,14 @@
 # XIV_Databar Continued
 
-## [3.7.5](https://github.com/ZelionGG/XIV_Databar-Continued/releases/tag/3.7.5) (2025-10-09)
+## [3.8](https://github.com/ZelionGG/XIV_Databar-Continued/releases/tag/3.8) (2025-12-04)
 
-[Full Changelog](https://github.com/ZelionGG/XIV_Databar-Continued/compare/v3.7.4...v3.7.5) [Previous Releases](https://github.com/ZelionGG/XIV_Databar-Continued/releases)
+[Full Changelog](https://github.com/ZelionGG/XIV_Databar-Continued/compare/v3.7.6...v3.8) [Previous Releases](https://github.com/ZelionGG/XIV_Databar-Continued/releases)
 
 ### _Retail :_
 
-- Updated for patch **11.2.5**.
+- Added Housing Dashboard button to **Micromenu** module (enabled by default).
+- Disabled all **Micromenu** buttons in combat to avoid Taint errors.
 
-### _Midnight Alpha :_
+### _Improvements :_
 
-- Midnight Alpha prep for patch **12.0**.
+- Improved French locale.
