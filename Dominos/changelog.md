@@ -1,5 +1,23 @@
 # Dominos Changelog
 
+## 11.2.11
+
+* Refactored the progress bar to use a data provider interface instead of metatable manipulation (which broke with the last Midnight fix)
+
+## 11.2.10
+
+* Added a workaround Dominos frame class inheritance to fix the Invalid 'self' frame handle errors in the latest Midnight build (Thanks, [Tyler Fleckenstein](https://github.com/tpfleck))
+
+## 11.2.9
+
+* (Midnight) Added a workaround for GetUnitEmpowerHoldAtMaxTime returning
+  secret values to prevent error messages when casting empowered spells.
+  Hopefully Blizzard will drop this restriction.
+
+## 11.2.8
+
+* (Classic) Fixed the missing Monk class bar
+
 ## 11.2.7
 
 * (Retail, Midnight) Reuse the existing pet bar action buttons and logic. This should make the bar usable in Midnight
