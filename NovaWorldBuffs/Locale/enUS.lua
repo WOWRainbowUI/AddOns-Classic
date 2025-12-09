@@ -1131,3 +1131,5 @@ L["Unknown"] = "Unknown";
 
 L["shortLayerPrefix"] = "L";
 L["expired"] = "expired";
+L["for"] = "for";
+L["Crossroads"] = "Crossroads";

@@ -565,7 +565,7 @@ function NWB:recalcBuffListFrame()
 								else
 									resting = " " .. L["Not Rested"] .. "";
 								end
-								nameString = nameString .. " |cFFA0A0A0(" .. L["Offline"] .. " for " .. NWB:getTimeString(GetServerTime() - v.lo, true, "short") .. resting .. ")|r";
+								nameString = nameString .. " |cFFA0A0A0(" .. L["Offline"] .. " " .. L["for"] .. " " .. NWB:getTimeString(GetServerTime() - v.lo, true, "short") .. resting .. ")|r";
 								foundActiveBuff = true;
 							end
 							local charName = k;
@@ -1104,7 +1104,7 @@ function NWB:recalcBuffsLineFramesTooltip(obj)
 					else
 						resting = " " .. L["Not Rested"] .. "";
 					end
-					text = text .. "\n  |cFFA0A0A0(" .. L["Offline"] .. " for " .. NWB:getTimeString(GetServerTime() - data.lo, true, "short") .. resting .. ")|r";
+					text = text .. "\n  |cFFA0A0A0(" .. L["Offline"] .. " " .. L["for"] .. " " .. NWB:getTimeString(GetServerTime() - data.lo, true, "short") .. resting .. ")|r";
 				end
 				obj.tooltip.fs:SetText(text);
 			else
