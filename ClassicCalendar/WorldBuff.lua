@@ -1587,6 +1587,12 @@ function WorldBuffs:SanitizeEntry(entry)
     -- Validate and fix receivedDate format
     if not cleanEntry.receivedDate or cleanEntry.receivedDate == "" then
         cleanEntry.receivedDate = date("%m/%d/%Y")
+    elseif type(cleanEntry.receivedDate) == "number" then
+        -- Convert Unix timestamp to date string
+        cleanEntry.receivedDate = date("%m/%d/%Y", cleanEntry.receivedDate)
+        if DEBUG_MODE then
+            print("WorldBuff Debug: Converted timestamp receivedDate to date string")
+        end
     else
         -- Check if date format is valid (MM/DD/YYYY)
         local month, day, year = cleanEntry.receivedDate:match("^(%d%d?)/(%d%d?)/(%d%d%d%d)$")
