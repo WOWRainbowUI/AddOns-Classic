@@ -1,5 +1,5 @@
 ## Interface: 100002
-## Version: v3.192-mopc
+## Version: v3.193-mopc
 
 ## Title: Lib: UTF8
 ## Notes: A library for manipulating UTF-8 strings
