@@ -1,7 +1,6 @@
 # Lib: HereBeDragons
 
-## [2.14.3-release](https://github.com/Nevcairiel/HereBeDragons/tree/2.14.3-release) (2024-07-24)
-[Full Changelog](https://github.com/Nevcairiel/HereBeDragons/compare/2.14.2-release...2.14.3-release) [Previous Releases](https://github.com/Nevcairiel/HereBeDragons/releases)
+## [2.15-release-1-ga6aa604](https://github.com/Nevcairiel/HereBeDragons/tree/a6aa6049178d2242fda8f74f5a6e73de827525ac) (2025-10-27)
+[Full Changelog](https://github.com/Nevcairiel/HereBeDragons/compare/2.15-release...a6aa6049178d2242fda8f74f5a6e73de827525ac) [Previous Releases](https://github.com/Nevcairiel/HereBeDragons/releases)
 
-- Fix classic compat, which lacks GetMapWorldSize  
-    ... for reasons, why such a base API is missing  
+- Incrase max map id to 3000, as Midnight crosses the 2500 boundary  
