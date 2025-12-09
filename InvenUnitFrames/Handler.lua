@@ -55,6 +55,8 @@ local UnitAlternatePowerInfo = _G.UnitAlternatePowerInfo
 local UnitGetIncomingHeals = _G.UnitGetIncomingHeals
 local UnitIsQuestBoss = _G.UnitIsQuestBoss
 
+if not CastingBarFrame then CastingBarFrame = PlayerCastingBarFrame end
+
 local targetFrame, targetUnit, _
 
 --classic
@@ -65,7 +67,7 @@ local UnitIsQuestBoss = function() return false end
 
 local updateEvents = {}
 if (select(4,GetBuildInfo()) <= 90000) then
-	updateEvents = { "OnUpdate", "UNIT_NAME_UPDATE", "UNIT_MAXHEALTH", "UNIT_HEALTH", "UNIT_HEALTH_FREQUENT", "UNIT_DISPLAYPOWER", "RAID_TARGET_UPDATE", "PLAYER_UPDATE_RESTING", "UNIT_SPELLCAST_START", "UNIT_AURA", "UNIT_POWER_UPDATE", "UNIT_HEAL_PREDICTION", "UNIT_HAPPINESS" }
+	updateEvents = { "OnUpdate", "UNIT_NAME_UPDATE", "UNIT_MAXHEALTH", "UNIT_HEALTH", "UNIT_HEALTH_FREQUENT", "UNIT_DISPLAYPOWER", "RAID_TARGET_UPDATE", "PLAYER_UPDATE_RESTING", "UNIT_SPELLCAST_START", "UNIT_AURA", "UNIT_POWER_UPDATE", "UNIT_HEAL_PREDICTION" }
 else
 	updateEvents = { "OnUpdate", "UNIT_NAME_UPDATE", "UNIT_MAXHEALTH", "UNIT_HEALTH", "UNIT_DISPLAYPOWER", "RAID_TARGET_UPDATE", "PLAYER_UPDATE_RESTING", "UNIT_SPELLCAST_START", "UNIT_AURA", "UNIT_POWER_UPDATE", "UNIT_HEAL_PREDICTION", "UNIT_HAPPINESS" }
 end
@@ -518,9 +520,7 @@ function handlers:UNIT_NAME_UPDATE()
 	end
 end
 
-function handlers:UNIT_HAPPINESS()
-	PetFrame_SetHappiness()
-end
+
 
 function handlers:UNIT_HEALTH()
 	if not self then return end

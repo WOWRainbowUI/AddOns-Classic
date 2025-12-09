@@ -8,11 +8,11 @@ local type = _G.type
 local pairs = _G.pairs
 local select = _G.select
 local tinsert = _G.table.insert
-local GetNumAddOns = _G.GetNumAddOns
-local GetAddOnInfo = _G.GetAddOnInfo
-local GetAddOnMetadata = _G.GetAddOnMetadata
-local LoadAddOn = _G.LoadAddOn
-local IsAddOnLoaded = _G.IsAddOnLoaded
+local GetNumAddOns = _G.GetNumAddOns or C_AddOns.GetNumAddOns
+local GetAddOnInfo = _G.GetAddOnInfo or C_AddOns.GetAddOnInfo
+local GetAddOnMetadata = _G.GetAddOnMetadata or C_AddOns.GetAddOnMetadata
+local LoadAddOn = _G.LoadAddOn or C_AddOns.LoadAddOn
+local IsAddOnLoaded = _G.IsAddOnLoaded or C_AddOns.IsAddOnLoaded
 
 local loadedSkins, skinAddOns, skinAddOnsIndex = {}, {}, {}
 local moduleAddOns = {}

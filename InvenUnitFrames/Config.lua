@@ -6,6 +6,7 @@ local ipairs = _G.ipairs
 local UnitName = _G.UnitName
 local GetRealmName = _G.GetRealmName
 local InCombatLockdown = _G.InCombatLockdown
+local GetAddOnMetadata = _G.GetAddOnMetadata or C_AddOns.GetAddOnMetadata
 
 local units = { "player", "pet", "pettarget", "target", "targettarget", "targettargettarget", "focus", "focustarget", "focustargettarget", "party", "partypet", "partytarget", "boss" }
 
