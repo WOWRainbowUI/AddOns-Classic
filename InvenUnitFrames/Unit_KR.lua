@@ -459,6 +459,13 @@ local function updateStatusText(text, value, valuemax, combat)
 end
 
 function callbacks:Health()
+
+-- adjustment health error by API for ghost
+
+	if self.values.ghost then
+		self.values.health = 0
+	end
+
 	if self.healthBar:SetBar(self.values.health, self.values.healthmax) then
 		for i = 1, 5 do
 			updateStatusText(self["healthText"..i], self.values.health, self.values.healthmax, self.values.combat)
@@ -677,6 +684,9 @@ function callbacks:StateColor()
 	if self.stateText:IsShown() then
 		if self.values.dead or self.values.ghost or not self.values.connect then
 			self.stateText:SetTextColor(0.58, 0.58, 0.58)
+			self.healthBar:SetBar(0, self.values.healthmax) -- adjustment health error by API for ghost
+			self.values.health = 0 -- adjustment health error by API for ghost
+
 		elseif self.values.tapped then
 			self.stateText:SetTextColor(0.76, 0.76, 0.76)
 --		elseif self.values.threatvalue and self.values.threatvalue > 0 then
