@@ -484,7 +484,7 @@ L["24 hour"] = "24 horas";
 
 L["Molten Core"] = "Núcleo de Magma";
 L["Onyxia's Lair"] = "Guarida de Onyxia";
-L["Blackwing Lair"] = "Guarida de Alanegra";
+L["Blackwing Lair"] = "Guarida Alanegra";
 L["Naxxramas"] = "Naxxramas";
 L["Karazhan"] = "Karazhan";
 L["The Shattered Halls"] = "Las Salas Arrasadas";

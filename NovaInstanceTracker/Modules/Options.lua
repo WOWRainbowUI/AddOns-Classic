@@ -1042,15 +1042,15 @@ end
 
 function NIT:checkNewVersion()
 	--NIT.db.global.versions = {}; --To test.
-	local newVersionNotes = 2.04;
+	local newVersionNotes = 2.08;
 	if (NIT.version and NIT.version == newVersionNotes) then
 		if (not NIT.db.global.versions[NIT.version]) then
 			if (NIT.isMOP) then
 				local notes = {
-					"|cFF00FF00[Version 2.04]|r",
-					"Fixed some issues with auto celestial buff for healers and caster dps.",
-					"|cFF00FF00[Version 2.03]|r",
-					"Added Celestial dungeon buff helper that auto selects a buff based on spec from the signet NPC, or you can set an overide in config. This also does auto gossip for the 4 npcs at the start.",
+					"Added arena type (2v2/3v3/5v5) and rating changes to the instance log for expansions without teams (MoP+).",
+					"Improved a bunch of other stuff with arena log entries.",
+					"Fixed some issues with recording rep gains that gave a bonus amount (like account wide MoP unlocks).",
+					"Fixed ret paladin auto celestial buff, it chooses melee but can be changed to magical in options (they seem to do about the same dmg for rets?).",
 				};
 				loadNewVersionFrame(NIT.version, notes, "Nova Instance Tracker", "Interface\\AddOns\\NovaInstanceTracker\\Media\\portal", 30, 200);
 			end

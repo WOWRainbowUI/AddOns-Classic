@@ -914,21 +914,38 @@ ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_LEADER", NIT.addClickLinks);
 ChatFrame_AddMessageEventFilter("CHAT_MSG_RAID_WARNING", NIT.addClickLinks);
 
 --Hook the chat link click func.
-hooksecurefunc("ChatFrame_OnHyperlinkShow", function(...)
-	local chatFrame, link, text, button = ...;
-    if (link == "NITCustomLink:instancelog") then
-		NIT:openInstanceLogFrame();
-	end
-	if (link == "NITCustomLink:tradelog") then
-		NIT:openTradeLogFrame();
-	end
-	if (link == "NITCustomLink:deletelast") then
-		NIT:openDeleteConfirmFrame(1);
-	end
-	if (link == "NITCustomLink:addinstance") then
-		NIT:enteredInstance();
-	end
-end)
+if (ChatFrame_OnHyperlinkShow) then
+	hooksecurefunc("ChatFrame_OnHyperlinkShow", function(...)
+		local chatFrame, link, text, button = ...;
+	    if (link == "NITCustomLink:instancelog") then
+			NIT:openInstanceLogFrame();
+		end
+		if (link == "NITCustomLink:tradelog") then
+			NIT:openTradeLogFrame();
+		end
+		if (link == "NITCustomLink:deletelast") then
+			NIT:openDeleteConfirmFrame(1);
+		end
+		if (link == "NITCustomLink:addinstance") then
+			NIT:enteredInstance();
+		end
+	end)
+elseif (SetItemRef) then
+	hooksecurefunc("SetItemRef", function(link, text, button, chatFrame, ...)
+	    if (link == "NITCustomLink:instancelog") then
+			NIT:openInstanceLogFrame();
+		end
+		if (link == "NITCustomLink:tradelog") then
+			NIT:openTradeLogFrame();
+		end
+		if (link == "NITCustomLink:deletelast") then
+			NIT:openDeleteConfirmFrame(1);
+		end
+		if (link == "NITCustomLink:addinstance") then
+			NIT:enteredInstance();
+		end
+	end)
+end
 
 --Insert our custom link type into blizzards SetHyperlink() func.
 local OriginalSetHyperlink = ItemRefTooltip.SetHyperlink
@@ -2403,9 +2420,28 @@ function NIT:buildInstanceLineFrameString(v, count, logID)
 	end
 	if (v.type == "arena") then
 		timeColor = "|cFFFFA500";
-		local ratingChange = NIT:getRatingChange(v);
-		if (ratingChange) then
-			lockoutTimeString = instance .. " (" .. ratingChange .. " Arena Rating)";
+		local won = v.faction and v.winningFaction and v.faction == v.winningFaction;
+		local ratingChange, isPersonal = NIT:getRatingChange(v);
+		if (ratingChange == "+0" and not won) then
+			ratingChange = "-0";
+		end
+		if (ratingChange and (isPersonal or (v.faction and v.winningFaction and v.faction == v.winningFaction))) then
+			if (v.arenaSizeID and v.personalRatingEnd) then
+				local arenaNames = {
+					[1] = ARENA_2V2,
+					[2] = ARENA_3V3,
+					[3] = ARENA_5V5,
+				};
+				if (arenaNames[v.arenaSizeID]) then
+					lockoutTimeString = instance .. " (" .. (arenaNames[v.arenaSizeID] or "Unknown size") .. " " .. v.personalRatingEnd .. ")";
+				elseif (v.personalRatingEnd > 0) then
+					lockoutTimeString = instance .. " (" .. v.personalRatingEnd .. ")";
+				else
+					lockoutTimeString = instance .. " (Arena)";
+				end
+			else
+				lockoutTimeString = instance .. " (" .. ratingChange .. " " .. L["Rating"] .. ")";
+			end
 		else
 			lockoutTimeString = instance .. " (Arena)";
 		end
@@ -2416,10 +2452,14 @@ function NIT:buildInstanceLineFrameString(v, count, logID)
 				lockoutTimeString = lockoutTimeString .. " (" .. L["stillInArena"] .. ")";
 			end
 		end
-		if (v.faction and v.winningFaction and v.faction == v.winningFaction) then
-			lockoutTimeString = lockoutTimeString .. " |cFF00C800" .. L["Won"] .. "|r";
+		local ratingChangeString = "";
+		if (ratingChange) then
+			ratingChangeString = " |cFF9CD6DE(" .. ratingChange .. ")|r";
+		end
+		if (won) then
+			lockoutTimeString = lockoutTimeString .. " |cFF00C800" .. L["Won"] .. ratingChangeString .. "|r";
 		elseif (v.faction and v.winningFaction) then
-			lockoutTimeString = lockoutTimeString .. " |cFFFF2222" .. L["Lost"] .. "|r";
+			lockoutTimeString = lockoutTimeString .. " |cFFFF2222" .. L["Lost"] .. ratingChangeString .. "|r";
 		end
 	elseif (v.type == "bg") then
 		timeColor = "|cFFFFA500";
@@ -2466,30 +2506,46 @@ function NIT:buildInstanceLineFrameString(v, count, logID)
 end
 
 function NIT:getRatingChange(data)
-	--Find which team we were on.
-	local team;
-	if (data.purpleTeam) then
-		for k, v in pairs(data.purpleTeam) do
-			if (k == data.playerName) then
-				team = data.purpleTeam;
+	if (data) then
+		if (NIT.expansionNum > 4) then
+			--When teams were removed, find personal rating instead.
+			--if (data.ratingChange) then --rbg only?
+			--	return data.ratingChange;
+			--end
+			if (data.personalRatingStart and data.personalRatingEnd) then
+				local delta = data.personalRatingEnd - data.personalRatingStart;
+				if (delta > -1) then
+					delta = "+" .. delta;
+				end
+				return delta, true;
 			end
-		end
-	end
-	if (data.goldTeam) then
-		for k, v in pairs(data.goldTeam) do
-			if (k == data.playerName) then
-				team = data.goldTeam;
+		else
+			--Find which team we were on.
+			local team;
+			if (data.purpleTeam) then
+				for k, v in pairs(data.purpleTeam) do
+					if (k == data.playerName) then
+						team = data.purpleTeam;
+					end
+				end
 			end
-		end
-	end
-	if (team) then
-		local _, first = next(team);
-		if (first and first.newTeamRating and first.teamRating) then
-			local delta = first.newTeamRating - first.teamRating;
-			if (delta > 0) then
-				delta = "+" .. delta;
+			if (data.goldTeam) then
+				for k, v in pairs(data.goldTeam) do
+					if (k == data.playerName) then
+						team = data.goldTeam;
+					end
+				end
 			end
-			return delta;
+			if (team) then
+				local _, first = next(team);
+				if (first and first.newTeamRating and first.teamRating) then
+					local delta = first.newTeamRating - first.teamRating;
+					if (delta > 0) then
+						delta = "+" .. delta;
+					end
+					return delta;
+				end
+			end
 		end
 	end
 end
@@ -2591,7 +2647,10 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 		local text = timeColor .. L["Instance"] .. " " .. obj.count .. " (" .. data.instanceName .. heroicString .. ")|r";
 		if (not NIT:instanceHasLockout(data.instanceID, data)) then
 			timeColor = "|cFFFFA500";
-			text = timeColor .. L["Instance"] .. " " .. obj.count .. " (" .. data.instanceName .. ") (" .. L["noLockout"] .. ")|r";
+			text = timeColor .. L["Instance"] .. " " .. obj.count .. " (" .. data.instanceName .. ")|r";
+			if (data.type ~= "arena") then
+				 text = text .. timeColor .. " (" .. L["noLockout"] .. ")|r";
+			end
 		end
 		if (UnitName("player") ~= data.playerName) then
 			timeColor = "|cFFA1A1A1";
@@ -2724,36 +2783,53 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 		end
 		if (data.isPvp) then
 			if (data.type == "arena") then
-				if (data.faction and data.winningFaction and data.faction == data.winningFaction) then
+				local won = data.faction and data.winningFaction and data.faction == data.winningFaction;
+				local arenaNames = {
+					[1] = ARENA_2V2,
+					[2] = ARENA_3V3,
+					[3] = ARENA_5V5,
+				};
+				local ratingChange, isPersonal = NIT:getRatingChange(data);
+				if (ratingChange == "+0" and not won) then
+					ratingChange = "-0";
+				end
+				if (ratingChange and isPersonal) then
+					if (data.arenaSizeID and data.personalRatingEnd) then
+						if (arenaNames[data.arenaSizeID]) then
+							text = text .. "\n|cFF9CD6DE" .. (arenaNames[data.arenaSizeID] or "Unknown size") .. ":|r " .. data.personalRatingEnd;
+						elseif (data.personalRatingEnd > 0) then
+							text = text .. "\n" .. data.personalRatingEnd;
+						end
+					end
+				end
+				if (won) then
 					text = text .. "\n|cFF00C800" .. L["Won"] .. "|r";
-					--[[if (data.winningFaction == 1) then
-						--Gold won.
-						text = text .. " |cFFFFFFFF(as Gold)|r";
-					elseif (data.winningFaction == 0) then
-						--Purple won.
-						text = text .. " |cFFFFFFFF(as Purple)|r";
-					end]]
+					if (ratingChange and isPersonal) then
+						text = text .. "\n" .. ratingChange .. " " .. L["Rating"];
+					end
 				elseif (data.faction and data.winningFaction) then
 					text = text .. "\n|cFFFF2222" .. L["Lost"] .. "|r";
-					--[[if (data.winningFaction == 1) then
-						text = text .. " |cFFFFFFFF(as Gold)|r";
-					elseif (data.winningFaction == 0) then
-						text = text .. " |cFFFFFFFF(as Purple)|r";
-					end]]
+					if (ratingChange and isPersonal) then
+						text = text .. "\n" .. ratingChange .. " " .. L["Rating"];
+					end
 				end
 				if (data.purpleTeam) then
 					text = text .. "\n\n|cFFB75EFFPurple Team|r";
 					local _, first = next(data.purpleTeam);
 					if (first) then
 						if (NIT.isTBC) then
-							text = text .. "  (|cFFB75EFF" .. first.teamName .. "|r)";
+							text = text .. "  (|cFFB75EFF" .. (first.teamName or "Unknown team name") .. "|r)";
 						end
-						local delta = first.newTeamRating - first.teamRating;
-						if (delta > 0) then
-							delta = "+" .. delta;
+						if (not ratingChange or not isPersonal) then
+							local delta = first.newTeamRating - first.teamRating;
+							if (delta > 0) then
+								delta = "+" .. delta;
+							end
+							text = text .. "\n|cFFB75EFFRating:|r " .. first.newTeamRating .. " (" .. delta .. ")";
+							text = text .. " |cFFB75EFFMMR:|r " .. first.teamMMR;
+						else
+							text = text .. "\n|cFFB75EFFMMR:|r " .. first.teamMMR;
 						end
-						text = text .. "\n|cFFB75EFFRating:|r " .. first.newTeamRating .. " (" .. delta .. ")";
-						text = text .. " |cFFB75EFFMMR:|r " .. first.teamMMR;
 					end
 					for k, v in pairs(data.purpleTeam) do
 						--local coords = CLASS_BUTTONS[v.class];
@@ -2762,13 +2838,13 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 						local _, _, _, classColorHex = GetClassColor(v.class);
 						text = text .. "\n|c" .. classColorHex .. k .. "|r ";
 						if (v.damage) then
-							text = text .. " |cFFB75EFFDmg:|r " .. v.damage;
+							text = text .. " |cFF9CD6DEDmg:|r " .. NIT:commaValue(v.damage);
 						end
 						if (v.healing) then
-							text = text .. " |cFFB75EFFHeals:|r " .. v.healing;
+							text = text .. " |cFF9CD6DEHeals:|r " .. NIT:commaValue(v.healing);
 						end
 						if (v.kb) then
-							text = text .. " |cFFB75EFFKB:|r " .. v.kb;
+							text = text .. " |cFF9CD6DEKB:|r " .. NIT:commaValue(v.kb);
 						end
 					end
 				end
@@ -2777,26 +2853,30 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 					local _, first = next(data.goldTeam);
 					if (first) then
 						if (NIT.isTBC) then
-							text = text .. "  (|cFFFFD101" .. first.teamName .. "|r)";
+							text = text .. "  (|cFFFFD101" .. (first.teamName or "Unknown team name") .. "|r)";
 						end
-						local delta = first.newTeamRating - first.teamRating;
-						if (delta > 0) then
-							delta = "+" .. delta;
+						if (not ratingChange or not isPersonal) then
+							local delta = first.newTeamRating - first.teamRating;
+							if (delta > 0) then
+								delta = "+" .. delta;
+							end
+							text = text .. "\n|cFFFFD101Rating:|r " .. first.newTeamRating .. " (" .. delta .. ")";
+							text = text .. " |cFFFFD101MMR:|r " .. first.teamMMR;
+						else
+							text = text .. "\n|cFFFFD101MMR:|r " .. first.teamMMR;
 						end
-						text = text .. "\n|cFFFFD101Rating:|r " .. first.newTeamRating .. " (" .. delta .. ")";
-						text = text .. " |cFFFFD101MMR:|r " .. first.teamMMR;
 					end
 					for k, v in pairs(data.goldTeam) do
 						local _, _, _, classColorHex = GetClassColor(v.class);
 						text = text .. "\n|c" .. classColorHex .. k .. "|r ";
 						if (v.damage) then
-							text = text .. " |cFFFFD101Dmg:|r " .. v.damage;
+							text = text .. " |cFF9CD6DEDmg:|r " .. NIT:commaValue(v.damage);
 						end
 						if (v.healing) then
-							text = text .. " |cFFFFD101Heals:|r " .. v.healing;
+							text = text .. " |cFF9CD6DEHeals:|r " .. NIT:commaValue(v.healing);
 						end
 						if (v.kb) then
-							text = text .. " |cFFFFD101KB:|r " .. v.kb;
+							text = text .. " |cFF9CD6DEKB:|r " .. NIT:commaValue(v.kb);
 						end
 					end
 				end
@@ -2820,8 +2900,8 @@ function NIT:recalcInstanceLineFramesTooltip(obj)
 					if (data.damage) then
 						text = text .. "\n\n|cFF9CD6DE-" .. DAMAGE .. ":|r " .. NIT:commaValue(data.damage);
 					end
-					if (data.healing) then
-						text = text .. "\n|cFF9CD6DE-" .. SHOW_COMBAT_HEALING_TEXT .. ":|r " .. NIT:commaValue(data.healing);
+					if (data.healing) then					--Renamed at some by Blizzard for retail.
+						text = text .. "\n|cFF9CD6DE-" .. (SHOW_COMBAT_HEALING_TEXT or SHOW_COMBAT_HEALING) .. ":|r " .. NIT:commaValue(data.healing);
 					end
 				end
 				if (data.hk) then
@@ -5972,7 +6052,7 @@ function NIT:getActiveSpec()
 					if (specID == 66) then
 						specType = "tank";
 						role = "tank";
-						dmgType = "both";
+						dmgType = "physical";
 					elseif (specID == 65) then
 						specType = "healer";
 						role = "healer";
@@ -5980,7 +6060,7 @@ function NIT:getActiveSpec()
 					else
 						specType = "melee";
 						role = "dps";
-						dmgType = "both";
+						dmgType = "physical";
 					end
 				elseif (class == "PRIEST") then
 					if (specID == 258) then

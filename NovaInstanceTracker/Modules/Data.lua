@@ -46,6 +46,7 @@ NIT.currentInstanceID = 0;
 --Can't use CHAT_MSG_CURRENCY becaus bg bonus honor doesn't trigger it.
 --local usePreHonor = true;
 local usePreHonor;
+local personalRatingStart;
 
 --Some of this addon comm stuff is copied from my other addon NovaWorldBuffs and is left here incase of future stuff being added.
 function NIT:OnCommReceived(commPrefix, string, distribution, sender)
@@ -784,8 +785,21 @@ function NIT:chatMsgCombatFactionChange(...)
 	end
 	local text = ...;
 	local repName, repAmount, decrease;
-	--Your %s reputation has increased by %d.
-	local repName, repAmount = string.match(text, string.gsub(string.gsub(FACTION_STANDING_INCREASED, "%%s", "(.+)"), "%%d", "(%%d+)"));
+	--local repName, repAmount = string.match(text, string.gsub(string.gsub(FACTION_STANDING_INCREASED, "%%s", "(.+)"), "%%d", "(%%d+)"));
+	--The structure of these looks strange but it's like that to work in all expansions even if a global is missing in one.
+	--Bbut only bothers with these checks if the most comon first match fails.
+	local repName, repAmount = NIT.libDeformat(text, FACTION_STANDING_INCREASED);
+	if (not repName) then
+		if (FACTION_STANDING_INCREASED_ACH_BONUS) then
+			repName, repAmount = NIT.libDeformat(text, FACTION_STANDING_INCREASED_ACH_BONUS);
+		end
+		if (FACTION_STANDING_INCREASED_BONUS and not repName) then
+			repName, repAmount = NIT.libDeformat(text, FACTION_STANDING_INCREASED_BONUS);
+		end
+		if (FACTION_STANDING_INCREASED_DOUBLE_BONUS and not repName) then
+			repName, repAmount = NIT.libDeformat(text, FACTION_STANDING_INCREASED_DOUBLE_BONUS);
+		end
+	end
 	--The above line doesn't work on RU clients due to declensions.
 	if (LOCALE_ruRU and not repName or not repAmount) then
 		--With declension.
@@ -798,7 +812,8 @@ function NIT:chatMsgCombatFactionChange(...)
 	end
 	--Faction decrease.
 	if (not repName or not repAmount) then
-		repName, repAmount = string.match(text, string.gsub(string.gsub(FACTION_STANDING_DECREASED, "%%s", "(.+)"), "%%d", "(%%d+)"));
+		--repName, repAmount = string.match(text, string.gsub(string.gsub(FACTION_STANDING_DECREASED, "%%s", "(.+)"), "%%d", "(%%d+)"));
+		repName, repAmount = NIT.libDeformat(text, FACTION_STANDING_DECREASED);
 		decrease = true;
 		if (LOCALE_ruRU and not repName or not repAmount) then
 			--With Declension.
@@ -814,7 +829,7 @@ function NIT:chatMsgCombatFactionChange(...)
 		--Brann XP comes through in the rep event, could track this later.
 	else
 		if (not repName or not repAmount) then
-			NIT:debug("Faction error:", text);
+			NIT:debug("Faction error:", text, repName, repAmount);
 			return;
 		end
 		if (not NIT.data.instances[1].rep[repName]) then
@@ -961,11 +976,90 @@ function NIT:playerLogout(...)
 	end
 end
 
+function NIT:recordArenaMatchSize()
+	if (not NIT.inInstance) then
+		return;
+	end
+	local arenaSizeID, arenaSizeName = NIT:getArenaMatchSize();
+	if (arenaSizeID and personalRatingStart) then
+		local instance = NIT.data.instances[1];
+		if (instance and instance.type == "arena") then
+			instance.personalRatingStart = personalRatingStart;
+			instance.personalRatingEnd = GetPersonalRatedInfo(arenaSizeID);
+			instance.arenaSizeID = arenaSizeID;
+			instance.arenaSizeName = arenaSizeName;
+		end
+	end
+end
+
+--There's gotta be an easier way to get this what type of match we're in, investigate later.
+function NIT:getArenaMatchSize()
+	local types = {
+		[2] = {
+			index = 1,
+			name = "2v2",
+		},
+		[3] = {
+			index = 2,
+			name = "3v3",
+		},
+		[5] = {
+			index = 3,
+			name = "5v5",
+		},
+	};
+	
+	for i = 1, GetMaxBattlefieldID() do
+		local status, _, _, _, _, teamSize, _, _, _, type = GetBattlefieldStatus(i);
+		if (status == "active" and teamSize and type == "ARENA") then
+			if (types[teamSize]) then
+				local arenaIndex = types[teamSize].index;
+				local arenaType = types[teamSize].name;
+				return arenaIndex, arenaType;
+			end
+		end
+	end
+	--Backup way checking team size.
+	--Get arena instance type from team size, check both teams incase someone forgets to join on one.
+	--We need to record personal rating cache when gates open and not when entering arena for this to work properly.
+	--[[local types = {
+		[2] = {
+			index = 1,
+			name = "2v2",
+		},
+		[3] = {
+			index = 2,
+			name = "3v3",
+		},
+		[4] = { --4 players has to be 5v5 also.
+			index = 3,
+			name = "5v5",
+		},
+		[5] = {
+			index = 3,
+			name = "5v5",
+		},
+	};
+	local arenaIndex, arenaType;
+	local myTeamSize = GetNumGroupMembers() or 0;
+	local enemyTeamSize = GetNumArenaOpponents and GetNumArenaOpponents() or 0;
+	local biggestGroup = math.max(myTeamSize, enemyTeamSize);
+	if (types[biggestGroup]) then
+		arenaIndex = types[biggestGroup].index;
+		arenaType = types[biggestGroup].name;
+		return arenaIndex, arenaType;
+	end]]
+	--MAX_ARENA_ENEMIES
+end
+
 function NIT:recordBgStats()
 	if (not NIT.inInstance) then
 		return;
 	end
 	local instance = NIT.data.instances[1];
+	if (not instance) then
+		return;
+	end
 	local totalPlayers = GetNumBattlefieldScores();
 	--local mapID = C_Map.GetBestMapForUnit("player");
 	if (NIT.data.instances[1].type == "bg") then
@@ -1024,7 +1118,8 @@ function NIT:recordBgStats()
 		local me = UnitName("player");
 		local purpleTeam, goldTeam = {}, {};
 		for i = 1, totalPlayers do
-			local name, kb, hk, deaths, honor, faction, rank, race, class, classEnglish, damage, healing = GetBattlefieldScore(i);
+			local name, kb, hk, deaths, honor, faction, rank, race, class, classEnglish, damage, healing, ratingStart, ratingChange = GetBattlefieldScore(i);
+			--NIT:debug(GetBattlefieldScore(i));
 			--Record all players.
 			if (name) then
 				local t = {
@@ -1034,6 +1129,8 @@ function NIT:recordBgStats()
 					damage = damage,
 					healing = healing,
 					race = race,
+					ratingStart = ratingStart, --Do these only show in rbg?
+					ratingChange = ratingChange, --Do these only show in rbg?
 				};
 				local teamName, teamRating, newTeamRating, teamMMR = GetBattlefieldTeamInfo(faction);
 				--if (NIT.isTBC) then
@@ -1088,6 +1185,11 @@ function NIT:recordBgStats()
 		end
 		if (next(goldTeam)) then
 			instance.goldTeam = goldTeam;
+		end
+		
+		--When teams were removed.
+		if (GetPersonalRatedInfo) then
+			NIT:recordArenaMatchSize();
 		end
 	end
 	--instance.pvpStats = stats;
@@ -1305,6 +1407,12 @@ function NIT:enteredInstance(isReload, isLogon, checkAgain)
 	if (instanceType == "pvp" or instanceType == "arena") then
 		if (NIT:isInArena() or instanceType == "arena") then
 			type = "arena";
+			if (GetPersonalRatedInfo) then
+				local arenaSize = NIT:getArenaMatchSize();
+				if (arenaSize) then
+					personalRatingStart = GetPersonalRatedInfo(arenaSize);
+				end
+			end
 		elseif (UnitInBattleground("player")) then
 			type = "bg";
 		end
@@ -1582,6 +1690,7 @@ function NIT:leftInstance()
 	NIT.currentInstanceID = 0;
 	NIT.lastNpcID = 999999999;
 	NIT.lastInstanceName = "(Unknown Instance)";
+	personalRatingStart = nil;
 	if (NITAUTORESET) then
 		if (NIT.data.instances[1] and NIT.data.instances[1].mobCount and NIT.data.instances[1].mobCount > 10) then
 			C_Timer.After(2, function()

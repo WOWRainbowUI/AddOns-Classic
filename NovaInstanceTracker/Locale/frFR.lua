@@ -626,3 +626,25 @@ L["World Boss"] = "Boss mondial";
 
 L["autoCelestialBuffReminder"] = "Obtenez le buff céleste auprès de %s.";
 L["NPC"] = "PNJ";
+
+--Abbreviated days/months.
+L["Mon"] = "Lun";
+L["Tue"] = "Mar";
+L["Wed"] = "Mer";
+L["Thu"] = "Jeu";
+L["Fri"] = "Ven";
+L["Sat"] = "Sam";
+L["Sun"] = "Dim";
+
+L["Jan"] = "Jan";
+L["Feb"] = "Fév";
+L["Mar"] = "Mar";
+L["Apr"] = "Avr";
+L["May"] = "Mai";
+L["Jun"] = "Juin";
+L["Jul"] = "Juil";
+L["Aug"] = "Août";
+L["Sep"] = "Sep";
+L["Oct"] = "Oct";
+L["Nov"] = "Nov";
+L["Dec"] = "Déc";

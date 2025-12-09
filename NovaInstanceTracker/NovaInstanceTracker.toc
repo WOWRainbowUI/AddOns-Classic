@@ -1,4 +1,4 @@
-## Interface: 11507, 40402, 50500, 110200
+## Interface: 11508, 40402, 50502, 110207
 ## Notes: Instance lockout tracking with mob count/xp/gold/trade logs, battleground/arena logs, and much more.
 ## Notes-esES: Seguimiento de bloqueos de estancias con conteo de mobs/exp/oro/registros de comercio, registros de campos de batalla/arenas y mucho más.
 ## Notes-esMX: Seguimiento de bloqueos de estancias con conteo de mobs/exp/oro/registros de comercio, registros de campos de batalla/arenas y mucho más.
@@ -6,7 +6,7 @@
 ## Notes-ptBR: Rastreamento de bloqueios de instâncias com contagem de mobs/exp/oro/registros de comércio, registros de campos de batalha/arenas e muito mais.
 ## Title: Nova Instance Tracker
 ## Author: Novaspark-Arugal OCE
-## Version: 2.07
+## Version: 2.09
 ## SavedVariables: NITdatabase
 
 embeds.xml
