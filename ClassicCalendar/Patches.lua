@@ -685,10 +685,19 @@ function SlashCmdList.CALWBCLEAR(_msg, _editBox)
 		else
 			print("ClassicCalendar: DataSync not available")
 		end
+	elseif _msg == "status" then
+		-- Show wipe timestamp status
+		local timestamp = WorldBuffLastWipeTimestamp or 0
+		if timestamp > 0 then
+			print("ClassicCalendar: Last wipe timestamp: " .. timestamp .. " (" .. date("%Y-%m-%d %H:%M:%S", timestamp) .. ")")
+		else
+			print("ClassicCalendar: No wipe has been performed (timestamp: 0)")
+		end
 	else
 		print("ClassicCalendar: Clear WorldBuff data:")
 		print("  /calwbclear confirm - Clear your local data only")
 		print("  /calwbclear guild - Clear data for entire guild (officer only)")
+		print("  /calwbclear status - Show last wipe timestamp")
 	end
 end
 

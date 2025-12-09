@@ -79,7 +79,7 @@ f:SetScript("OnEvent", function()
 			-- Create a host addon object for VersionCheck (exactly like SandPacker)
 			local hostAddon = {
 				GetName = function() return "Classic Calendar - Revived" end,
-				Version = (C_AddOns and C_AddOns.GetAddOnMetadata("ClassicCalendar", "Version")) or GetAddOnMetadata("ClassicCalendar", "Version") or "ClassicCalendar-v1.1.1"
+				Version = (C_AddOns and C_AddOns.GetAddOnMetadata("ClassicCalendar", "Version")) or GetAddOnMetadata("ClassicCalendar", "Version") or "ClassicCalendar-v1.1.3"
 			}
 			VC:Enable(hostAddon)
 			print("ClassicCalendar: VersionCheck-1.0 integration enabled (v" .. hostAddon.Version .. ")")
@@ -2061,6 +2061,16 @@ function CalendarAddonDropDown_OnClick(self, arg1)
 			SlashCmdList["WORLDBUFF"]("")
 		end
 	elseif arg1 == "raids" then
+		-- Check if player is an officer (same check as WorldBuffs)
+		local guildName, guildRankName, guildRankIndex = GetGuildInfo("player")
+		local isOfficer = (guildRankIndex and guildRankIndex <= 2)
+		
+		if not isOfficer then
+			print("Raid event management is only available to guild officers.")
+			CloseDropDownMenus()
+			return
+		end
+		
 		-- Open Calendar Helper raid selection
 		-- Close dropdown first to prevent it from interfering
 		CloseDropDownMenus()

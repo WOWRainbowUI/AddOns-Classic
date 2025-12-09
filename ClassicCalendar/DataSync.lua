@@ -11,6 +11,9 @@ local AceSerializer = LibStub("AceSerializer-3.0")
 local SYNC_PREFIX = "CCWB"
 local SYNC_VERSION = 1  -- Keep at 1 for backwards compatibility with old versions
 
+-- Track last wipe timestamp to reject old data
+WorldBuffLastWipeTimestamp = WorldBuffLastWipeTimestamp or 0
+
 -- DataSync module
 local DataSync = {}
 
@@ -18,6 +21,9 @@ local DataSync = {}
 function DataSync:Initialize()
     -- Register communication prefix
     AceComm:RegisterComm(SYNC_PREFIX, function(prefix, message, distribution, sender)
+        if DEBUG_MODE then
+            print("ClassicCalendar: RAW message received - prefix: " .. prefix .. ", sender: " .. sender .. ", dist: " .. distribution .. ", msgLen: " .. #message)
+        end
         self:OnSyncMessage(prefix, message, distribution, sender)
     end)
     
@@ -84,10 +90,52 @@ end
 -- Handle incoming sync messages
 function DataSync:OnSyncMessage(prefix, message, distribution, sender)
     if not self:CanSync() then return end
-    if sender == UnitName("player") then return end -- Don't process our own messages
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: OnSyncMessage called - sender: '" .. sender .. "', msgLen: " .. #message)
+    end
+    
+    -- Normalize sender name - ensure it has realm suffix for comparison
+    local playerName, playerRealm = UnitFullName("player")
+    local fullPlayerName = playerRealm and (playerName .. "-" .. playerRealm) or playerName
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: Player identity - name: '" .. playerName .. "', realm: '" .. (playerRealm or "nil") .. "', full: '" .. fullPlayerName .. "'")
+    end
+    
+    -- Normalize sender - add realm if missing
+    local senderName, senderRealm = sender:match("^([^-]+)-(.+)$")
+    if not senderName then
+        -- No realm in sender, add player's realm
+        senderName = sender
+        senderRealm = playerRealm
+        sender = senderRealm and (senderName .. "-" .. senderRealm) or senderName
+    end
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: Normalized sender - name: '" .. senderName .. "', realm: '" .. (senderRealm or "nil") .. "', full: '" .. sender .. "'")
+    end
     
     local success, msgType, data = AceSerializer:Deserialize(message)
-    if not success then return end
+    if not success then
+        if DEBUG_MODE then
+            print("ClassicCalendar: Failed to deserialize message from " .. sender .. " (len: " .. #message .. ")")
+        end
+        return
+    end
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: Received '" .. tostring(msgType) .. "' message from " .. sender .. " via " .. distribution)
+    end
+    
+    -- Don't process our own SYNC/REQUEST messages, but DO process our own WIPE
+    local isOwnMessage = (sender == fullPlayerName or senderName == playerName)
+    if isOwnMessage and msgType ~= "WIPE" then
+        if DEBUG_MODE then
+            print("ClassicCalendar: Ignoring own message")
+        end
+        return
+    end
     
     if msgType == "REQUEST" then
         -- Someone is requesting sync data, send ours
@@ -101,14 +149,37 @@ function DataSync:OnSyncMessage(prefix, message, distribution, sender)
         
     elseif msgType == "WIPE" then
         -- Officer-initiated guild-wide data wipe
+        if DEBUG_MODE then
+            print("ClassicCalendar: WIPE message type detected, calling HandleGuildWipe")
+        end
         self:HandleGuildWipe(data, sender)
+    else
+        if DEBUG_MODE then
+            print("ClassicCalendar: Unknown message type '" .. tostring(msgType) .. "' from " .. sender)
+        end
     end
 end
 
 -- Merge incoming guild sync data (single table per message)
 function DataSync:MergeGuildSyncData(syncData, sender)
-    if not syncData or not syncData.buffType or not syncData.entries then return end
-    if syncData.version ~= SYNC_VERSION then return end
+    if DEBUG_MODE then
+        print("ClassicCalendar: MergeGuildSyncData called - WorldBuffLastWipeTimestamp: " .. WorldBuffLastWipeTimestamp)
+    end
+    
+    -- Reject old format syncs (they have syncData.data instead of syncData.buffType)
+    if not syncData or not syncData.buffType or not syncData.entries then
+        if DEBUG_MODE and syncData then
+            print("ClassicCalendar: Rejected old format sync from " .. sender)
+        end
+        return
+    end
+    
+    if syncData.version ~= SYNC_VERSION then
+        if DEBUG_MODE then
+            print("ClassicCalendar: Rejected sync from " .. sender .. " - version mismatch")
+        end
+        return
+    end
     
     local hasChanges = false
     local buffType = syncData.buffType
@@ -155,6 +226,25 @@ function DataSync:MergeGuildSyncData(syncData, sender)
         if not WorldBuffs or not WorldBuffs.SanitizeEntry then
             if DEBUG_MODE then
                 print("ClassicCalendar: WorldBuffs not ready, skipping sync entry")
+            end
+            shouldProcess = false
+        end
+        
+        -- If wipe has occurred, reject entries without lastModified (pre-wipe format)
+        -- Check BEFORE sanitization because SanitizeEntry adds lastModified = time()
+        if shouldProcess and WorldBuffLastWipeTimestamp > 0 and not entry.lastModified then
+            if DEBUG_MODE then
+                local playerName = entry.playerName or "unknown"
+                print("ClassicCalendar: Rejected " .. buffType .. " entry for " .. playerName .. " - missing lastModified (pre-wipe data)")
+            end
+            shouldProcess = false
+        end
+        
+        -- If wipe has occurred, reject entries with lastModified older than wipe
+        if shouldProcess and WorldBuffLastWipeTimestamp > 0 and entry.lastModified and entry.lastModified < WorldBuffLastWipeTimestamp then
+            if DEBUG_MODE then
+                local playerName = entry.playerName or "unknown"
+                print("ClassicCalendar: Rejected " .. buffType .. " entry for " .. playerName .. " - older than last wipe (" .. entry.lastModified .. " < " .. WorldBuffLastWipeTimestamp .. ")")
             end
             shouldProcess = false
         end
@@ -238,20 +328,75 @@ end
 
 -- Handle guild-wide wipe command (officer only)
 function DataSync:HandleGuildWipe(data, sender)
-    if not data or not data.timestamp then return end
+    if DEBUG_MODE then
+        print("ClassicCalendar: WIPE command received from " .. sender)
+    end
     
-    -- Verify sender is an officer
-    local guildName, guildRankName, guildRankIndex = GetGuildInfo(sender)
-    if not guildRankIndex or guildRankIndex > 2 then
+    if not data or not data.timestamp then
+        if DEBUG_MODE then
+            print("ClassicCalendar: WIPE received but missing data/timestamp")
+        end
+        return
+    end
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: Processing WIPE command from " .. sender)
+    end
+    
+    -- Verify sender is an officer by checking guild roster
+    local senderIsOfficer = false
+    local numMembers = GetNumGuildMembers()
+    
+    -- Extract sender name without realm for comparison
+    local senderNameOnly = sender:match("^([^-]+)") or sender
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: Checking " .. numMembers .. " guild members for sender rank")
+        print("ClassicCalendar: Looking for sender: " .. sender .. " (name only: " .. senderNameOnly .. ")")
+    end
+    
+    -- If guild roster not loaded yet (numMembers == 0), accept the wipe
+    -- The roster loads asynchronously and may not be ready immediately after login
+    if numMembers == 0 then
+        if DEBUG_MODE then
+            print("ClassicCalendar: Guild roster not loaded, accepting WIPE (will verify on next roster update)")
+        end
+        senderIsOfficer = true  -- Trust the wipe when roster unavailable
+    else
+        for i = 1, numMembers do
+            local name, rank, rankIndex = GetGuildRosterInfo(i)
+            if name then
+                local rosterNameOnly = name:match("^([^-]+)") or name
+                if name == sender or rosterNameOnly == senderNameOnly then
+                    if DEBUG_MODE then
+                        print("ClassicCalendar: Found sender " .. name .. " with rank " .. (rank or "nil") .. " (index " .. (rankIndex or "nil") .. ")")
+                    end
+                    if rankIndex and rankIndex <= 2 then
+                        senderIsOfficer = true
+                    end
+                    break
+                end
+            end
+        end
+    end
+    
+    if not senderIsOfficer then
         print("ClassicCalendar: Ignoring wipe command from non-officer: " .. sender)
         return
     end
+    
+    -- Store wipe timestamp to reject old data
+    WorldBuffLastWipeTimestamp = data.timestamp
     
     -- Wipe all tables
     WorldBuffRendData = {}
     WorldBuffHakkarData = {}
     WorldBuffOnyxiaData = {}
     WorldBuffNefarianData = {}
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: Stored wipe timestamp: " .. WorldBuffLastWipeTimestamp)
+    end
     
     print("ClassicCalendar: Guild officer " .. sender .. " wiped all WorldBuff data")
     
@@ -273,23 +418,53 @@ function DataSync:SendGuildWipe()
     
     -- Check if player is an officer
     local guildName, guildRankName, guildRankIndex = GetGuildInfo("player")
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: SendGuildWipe - guildName: " .. tostring(guildName) .. ", rank: " .. tostring(guildRankName) .. ", rankIndex: " .. tostring(guildRankIndex))
+    end
+    
     if not guildRankIndex or guildRankIndex > 2 then
-        print("ClassicCalendar: Only guild officers can wipe WorldBuff data")
+        print("ClassicCalendar: Only guild officers can wipe WorldBuff data (your rank index: " .. tostring(guildRankIndex) .. ")")
         return
     end
     
-    -- Wipe locally first
+    -- Send WIPE message to guild BEFORE clearing local data
+    -- This avoids the sync flood that happens when we clear our tables
+    local wipeData = {
+        timestamp = time()
+    }
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: About to serialize and send WIPE message")
+        print("  - Prefix: " .. SYNC_PREFIX)
+        print("  - Channel: GUILD")
+        print("  - Data: timestamp=" .. wipeData.timestamp)
+    end
+    
+    local wipeMessage = AceSerializer:Serialize("WIPE", wipeData)
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: Serialized WIPE message length: " .. #wipeMessage)
+    end
+    
+    AceComm:SendCommMessage(SYNC_PREFIX, wipeMessage, "GUILD")
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: Sent WIPE message on prefix '" .. SYNC_PREFIX .. "' to GUILD channel")
+    end
+    
+    -- Store wipe timestamp immediately (don't wait to receive our own message back)
+    WorldBuffLastWipeTimestamp = wipeData.timestamp
+    
+    if DEBUG_MODE then
+        print("ClassicCalendar: Stored wipe timestamp: " .. WorldBuffLastWipeTimestamp)
+    end
+    
+    -- Now wipe locally
     WorldBuffRendData = {}
     WorldBuffHakkarData = {}
     WorldBuffOnyxiaData = {}
     WorldBuffNefarianData = {}
-    
-    -- Send WIPE message to guild
-    local wipeData = {
-        timestamp = time()
-    }
-    local wipeMessage = AceSerializer:Serialize("WIPE", wipeData)
-    AceComm:SendCommMessage(SYNC_PREFIX, wipeMessage, "GUILD")
     
     print("ClassicCalendar: Guild-wide WorldBuff data wipe sent")
     print("Note: Only affects guild members with updated addon version")
