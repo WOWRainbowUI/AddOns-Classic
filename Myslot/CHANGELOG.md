@@ -1,6 +1,6 @@
 # Myslot
 
-## [v5.23.4](https://github.com/tg123/myslot/tree/v5.23.4) (2025-10-06)
-[Full Changelog](https://github.com/tg123/myslot/commits/v5.23.4) 
+## [v5.24.1](https://github.com/tg123/myslot/tree/v5.24.1) (2025-12-06)
+[Full Changelog](https://github.com/tg123/myslot/commits/v5.24.1) 
 
-- Fix formatting in companion ignore message to include spell link  
+- Update interface version to include 120000 for compatibility  
