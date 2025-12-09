@@ -1229,3 +1229,5 @@ L["Sep"] = "Sep";
 L["Oct"] = "Oct";
 L["Nov"] = "Nov";
 L["Dec"] = "Dic";
+
+L["for"] = "por";

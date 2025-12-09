@@ -22,6 +22,9 @@ end
 
 --Adding a central place to control whether an event should fire, things are changing a lot recently in classic with buff cooldowns etc and this just make it easier to change things in one place.
 function NWB:checkEventStatus(event, type, subEvent, channel)
+	if (type == "rendCrossroads") then
+		type = "rend";
+	end
 	if (event == subEvent) then
 		--Just incase I'm writing code half asleep one day...
 		NWB:debug("ERROR: NWB:checkEventStatus() events could cause an endless loop. (" .. event .. ")");
@@ -188,10 +191,8 @@ local function monsterYell(...)
 			and (string.match(msg, L["Rend Blackhand, has fallen"]) or skipStringCheck)) then
 		--6 seconds between first rend yell and buff applied.
 		NWB.data.rendYell = GetServerTime();
-		NWB:doFirstYell("rend", layerNum);
 		--Send first yell msg to guild so people in org see it, needed because 1 person online only will send msg.
 		local _, _, zone = NWB:GetPlayerZonePosition();
-		NWB:sendYell("GUILD", "rend", nil, layerNum);
 		if  (name == L["Herald of Thrall"]) then
 			--If it was herald we may we in the barrens but not in crossraods to receive buff, set buff timer.
 			if (not NWB.isLayered) then
@@ -206,6 +207,11 @@ local function monsterYell(...)
 					end)
 				end]]
 			end
+			NWB:doFirstYell("rendCrossroads", layerNum);
+			NWB:sendYell("GUILD", "rendCrossroads", nil, layerNum);
+		else
+			NWB:doFirstYell("rend", layerNum);
+			NWB:sendYell("GUILD", "rend", nil, layerNum);
 		end
 		if (NWB.isLayered and (zone == 1454 or zone == 1413) and NWB.faction == "Alliance") then
 			--Testing tracking rend for alliance here by attaching it to the layermap.
@@ -1371,6 +1377,29 @@ function NWB:doFirstYell(type, layer, source, distribution, arg)
 				end
 				NWB:playSound("soundsFirstYell", "rend");
 				NWB:sendBigWigs(6, "[NWB] " .. L["rend"], type);
+			end
+			rendFirstYell = GetServerTime();
+		end
+	elseif (type == "rendCrossroads") then
+		type = "rend"; --Treat this as a rend drop for shared cooldown etc.
+		if ((GetServerTime() - rendFirstYell) > 40) then
+			local crossroadsMsg = "(" .. L["Crossroads"] .. ") ";
+			--6 seconds from rend first yell to buff drop.
+			if (source == "self") then
+				NWB.data.rendYell = GetServerTime();
+			end
+			if (NWB:checkEventStatus("firstYell", type)) then
+				if (NWB.db.global.guildNpcDialogue == 1 and (NWB.faction == "Horde" or NWB.db.global.allianceEnableRend)) then
+					NWB:sendGuildMsg(crossroadsMsg .. L["rendFirstYellMsg"] .. layerMsg, "guildNpcDialogue", "rend");
+				end
+				if (NWB.faction == "Horde" or NWB.db.global.allianceEnableRend) then
+					NWB:startFlash("flashFirstYell", type);
+					if (NWB.db.global.middleBuffWarning and (not NWB.db.global.chatOnlyInCity or NWB:isCapitalCityAction(type))) then
+						NWB:middleScreenMsg("rendFirstYell", crossroadsMsg .. L["rendFirstYellMsg"] .. layerMsg, nil, 5);
+					end
+				end
+				NWB:playSound("soundsFirstYell", "rend");
+				NWB:sendBigWigs(6, "[NWB] " .. crossroadsMsg .. L["rend"], type);
 			end
 			rendFirstYell = GetServerTime();
 		end

@@ -716,7 +716,8 @@ L["buffHelpersTextDesc5"] = "Buff de Ony/Rend";
 L["cityGotBuffSummonTitle"] = "Invocation de Ony/Rend";
 L["cityGotBuffSummonDesc"] = "Acceptez-vous automatiquement toute invitation en attente lorsque vous obtenez un buff de Ony/Nef/Rend.";
 
-L["heraldFoundCrossroads"] = "Héraut trouvé ! Le buff de Rend à La Croisée va poser dans 20 secondes.";
+L["heraldFoundCrossroads"] = "Héraut trouvé ! Rend dans La Croisée va être posé dans 20 secondes.";
+L["heraldFoundTimerMsg"] = "Rend La Croisée";
 
 L["guildNpcWalkingTitle"] = "PNJ en marche";
 L["guildNpcWalkingDesc"] = "Envoie un message à la guilde et joue un son lorsque vous activez ou recevez une alerte de déplacement de PNJ ? (Ouvre la fenêtre de discussion avec les PNJ d'Ony/Nef à Orgrimmar et attendez que quelqu'un remette la tête pour activer cette alerte précoce).";
@@ -1145,3 +1146,5 @@ L["minimapLayerZoneIDTooltipTitle"] = "Infobulle des ID de zones";
 L["minimapLayerZoneIDTooltipDesc"] = "Fait en sorte que l’infobulle au survol affiche tous les ID de couches de la zone actuelle pour que tu puisses les comparer avec ton personnage secondaire d’une autre faction ou pour toute autre raison.";
 
 L["Unknown"] = "Inconnu";
+
+L["for"] = "depuis";

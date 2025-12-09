@@ -714,8 +714,8 @@ L["buffHelpersTextDesc5"] = "Beneficio de Ony/Rend";
 L["cityGotBuffSummonTitle"] = "Invocación Ony/Rend";
 L["cityGotBuffSummonDesc"] = "Acepta automáticamente cualquier invocación pendiente cuando obtienes un beneficio de Ony/Nef/Rend.";
 
-L["heraldFoundCrossroads"] = "¡Heraldo encontrado! Beneficio de Rend en El Cruce caerá en 20 segundos.";
-L["heraldFoundTimerMsg"] = "Beneficio de Rend en El Cruce"; --DBM/Bigwigs timer bar text.
+L["heraldFoundCrossroads"] = "¡Heraldo encontrado! Rend en El Cruce caerá en 20 segundos.";
+L["heraldFoundTimerMsg"] = "Rend El Cruce"; --DBM/Bigwigs timer bar text.
 
 L["guildNpcWalkingTitle"] = "PNJ caminando";
 L["guildNpcWalkingDesc"] = "¿Envia un mensaje a la hermandad y reproduce un sonido cuando activas o recibes una alerta de caminata de NPJ? (Abre el diálogo de chat con los PNJs de Ony/Nef en Orgrimmar y espera a que alguien entregue la cabeza para activar esta alerta temprana).";
@@ -1161,3 +1161,5 @@ L["Sep"] = "Sep";
 L["Oct"] = "Oct";
 L["Nov"] = "Nov";
 L["Dec"] = "Dic";
+
+L["for"] = "por";

@@ -13134,9 +13134,9 @@ if (NWB.isClassic) then
 
 	function NWB:verifyDmfPos()
 		--English only for starters while testing.
-		if (not LOCALE_enUS and not LOCALE_enGB) then
-			return;
-		end
+		--if (not LOCALE_enUS and not LOCALE_enGB) then
+		--	return;
+		--end
 		if (not UnitIsGhost("player")) then
 			return;
 		end

@@ -725,8 +725,8 @@ L["buffHelpersTextDesc5"] = "Bônus de Ony/Laceral";
 L["cityGotBuffSummonTitle"] = "Convocação de Ony/Laceral";
 L["cityGotBuffSummonDesc"] = "Aceita automaticamente qualquer convocação pendente quando você obtém um bônus de Onyxia/Nefarian/Laceral.";
 
-L["heraldFoundCrossroads"] = "Arauto encontrado! Bônus de Laceral em A Encruzilhada cairá em 20 segundos.";
-L["heraldFoundTimerMsg"] = "Bônus de Laceral em A Encruzilhada" --DBM/Bigwigs timer bar text.
+L["heraldFoundCrossroads"] = "Arauto encontrado! Laceral em A Encruzilhada cairá em 20 segundos.";
+L["heraldFoundTimerMsg"] = "Laceral Encruzilhada"; --DBM/Bigwigs timer bar text.
 
 L["guildNpcWalkingTitle"] = "NPC em movimento";
 L["guildNpcWalkingDesc"] = "Envia uma mensagem para a guilda e reproduz um som quando você ativa ou recebe um alerta de movimento de NPC? (Abra o diálogo de chat com os NPCs de Onyxia/Nefarian em Orgrimmar e espere alguém entregar a cabeça para ativar este alerta antecipado).";
@@ -1177,3 +1177,5 @@ L["Sep"] = "Set";
 L["Oct"] = "Out";
 L["Nov"] = "Nov";
 L["Dec"] = "Dez";
+
+L["for"] = "por";
