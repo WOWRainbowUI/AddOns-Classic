@@ -1,8 +1,26 @@
 # TomTom
 
-## [v4.0.18-release](https://github.com/jnwhiteh/TomTom/tree/v4.0.18-release) (2025-10-05)
-[Full Changelog](https://github.com/jnwhiteh/TomTom/commits/v4.0.18-release) [Previous Releases](https://github.com/jnwhiteh/TomTom/releases)
+## [v4.2.4-release](https://github.com/jnwhiteh/TomTom/tree/v4.2.4-release) (2025-12-03)
+[Full Changelog](https://github.com/jnwhiteh/TomTom/commits/v4.2.4-release) [Previous Releases](https://github.com/jnwhiteh/TomTom/releases)
 
+- Update frFR Localization  
+- Update TOC  
+- Update HBD to work properly with some Midnight zones  
+- Add a minimap button for /ttpaste  
+    Can be configured in the options window or /ttpaste minimap  
+- Added text color customization  
+- Fix missing label and update localization  
+- Add new /ttpaste window  
+- Update localization  
+- Fix an issue with the purple ring theme  
+- Update HereBeDragons  
+- Add support for minimap and worldmap themes  
+- Add support for modern and modern-top-down themes  
+- Move some small util functions  
+- Add new modern theme, as default  
+- Add credits to addon options panel  
+- Update TomTom Logo and add license for new assets  
+- Update TOC for 11.2.5  
 - Initial support for Midnight  
 - Update embedded libraries  
 - Fix remove waypoint  
@@ -674,25 +692,3 @@
 - * Make sure to return the uid from AddZWaypoints  
 - * Fixed the parenting of the options panel  
 - * Added property so zips are generated properly  
-- * Removed Dongle from .toc  
-    * Updated externals  
-    * Updated localization file  
-- Fixed an issue  
-- Fixed the parsing of the description part of the slash comman  
-- * Fixed the loading of arrows from storage, and enabled right-click to set as crazy arrow  
-- Lots of changes, including a working slash command  
-- Major update to TomTom, everything except CrazyTaxi queuing "works"  
-- * Made changes to allow for better operations with 2.4  
-- Moving over to AceDB and removing dependecy on Dongle  
-    * Reconfigured options screens  
-- Removed override of GetBuildInfo.  
-- * Fixed the size of the tooltip.. thanks Kergoth  
-- * Fixed a bug that could occur when zoning into instances  
-- * Merging all changes from 2.4 branch  
-    * Configuration dialog should work on 2.3 and 2.4  
-- * Updating externals  
-- * Re-generated the localiztion file  
-- I changed things  
-- * Added an option to clear waypoints (set the distance > 0)  
-    * Altered the callback system to allow for arbitrary distance callbacks  
-- * Re-working the internals of TomTom yet again.  Tooltips for minimap nodes should work  
