@@ -1,7 +1,6 @@
 # Baganator
 
-## [769](https://github.com/TheMouseNest/Baganator/tree/769) (2025-11-07)
-[Full Changelog](https://github.com/TheMouseNest/Baganator/compare/768...769) 
+## [773](https://github.com/TheMouseNest/Baganator/tree/773) (2025-12-08)
+[Full Changelog](https://github.com/TheMouseNest/Baganator/compare/772...773) 
 
-- Fix leaking globals  
-- Tag as supporting 12.0  
+- [Fixes #584] Retail: Fix search not clearing when changing bank type  
