@@ -1,7 +1,8 @@
 # HandyNotes
 
-## [v1.6.22](https://github.com/Nevcairiel/HandyNotes/tree/v1.6.22) (2024-11-03)
-[Full Changelog](https://github.com/Nevcairiel/HandyNotes/compare/v1.6.21...v1.6.22) [Previous Releases](https://github.com/Nevcairiel/HandyNotes/releases)
+## [v1.6.27](https://github.com/Nevcairiel/HandyNotes/tree/v1.6.27) (2025-12-08)
+[Full Changelog](https://github.com/Nevcairiel/HandyNotes/compare/v1.6.26...v1.6.27) [Previous Releases](https://github.com/Nevcairiel/HandyNotes/releases)
 
-- Update template usage on classic  
-- Update TOCs  
+- Update TOC  
+- Set Category instead of X-Category  
+- Remove AddonLoader, the concept is dead  
