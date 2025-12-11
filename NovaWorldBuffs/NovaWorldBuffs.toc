@@ -1,4 +1,4 @@
-## Interface: 11508, 50502
+## Interface: 11508, 50503
 ## Notes: World buff timers and much more.
 ## Notes-esES: Temporizadores de beneficios del mundo y mucho más.
 ## Notes-esMX: Temporizadores de beneficios del mundo y mucho más.

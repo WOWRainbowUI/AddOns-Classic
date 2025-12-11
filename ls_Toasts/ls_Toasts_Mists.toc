@@ -1,6 +1,6 @@
-## Interface: 50502
+## Interface: 50503
 ## Author: lightspark
-## Version: 50502.02
+## Version: 50503.02
 ## Title: LS: |cff00cc99Toasts|r
 ## Notes: Better toasts, cheers!
 ## SavedVariables: LS_TOASTS_GLOBAL_CONFIG

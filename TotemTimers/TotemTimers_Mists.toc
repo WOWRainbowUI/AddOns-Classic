@@ -1,4 +1,4 @@
-## Interface: 50502
+## Interface: 50503
 ## Title: TotemTimers
 ## Author:  Xianghar
 ## Version: 5.0.3

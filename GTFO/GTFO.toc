@@ -1,4 +1,4 @@
-## Interface: 11508, 30405, 50502, 110205, 110207
+## Interface: 11508, 30405, 50503, 110205, 110207
 ## X-Min-Interface: 110207
 ## X-Min-Interface-BCC: 20504
 ## X-Min-Interface-Wrath: 30403

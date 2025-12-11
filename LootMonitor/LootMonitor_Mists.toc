@@ -1,4 +1,4 @@
-## Interface: 50502
+## Interface: 50503
 ## Version: 3.41
 ## Title: LootMonitor
 ## Author: Aoikaze

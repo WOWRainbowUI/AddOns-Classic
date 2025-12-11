@@ -1,4 +1,4 @@
-## Interface: 30403, 50502, 110002
+## Interface: 30403, 50503, 110002
 ## Title: RangeDisplay
 ## Author: mitch0
 ## Version: v6.1.4

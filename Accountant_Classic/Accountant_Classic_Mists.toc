@@ -1,4 +1,4 @@
-## Interface: 50502
+## Interface: 50503
 #@non-debug@
 ## Title: Accountant Classic
 ## Title-deDE: Accountant Classic
